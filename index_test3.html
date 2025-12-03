@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CareerFit Pro | 履歷健檢與職涯導航系統 (Pro)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /* --- 1. Design System & CSS Variables --- */
+        :root {
+            --primary: #2563eb;       /* Blue 600 */
+            --primary-dark: #1e40af;  /* Blue 800 */
+            --primary-light: #eff6ff; /* Blue 50 */
+            --accent: #3b82f6;        /* Blue 500 */
+            
+            --success: #10b981;       /* Emerald 500 */
+            --warning: #f59e0b;       /* Amber 500 */
+            --danger: #ef4444;        /* Red 500 */
+            
+            --surface: #ffffff;
+            --background: #f8fafc;    /* Slate 50 */
+            --text-main: #1e293b;     /* Slate 800 */
+            --text-muted: #64748b;    /* Slate 500 */
+            
+            --radius: 16px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            
+            --font-main: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+        
+        body {
+            margin: 0;
+            font-family: var(--font-main);
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- 2. Layout & Typography --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+            padding: 24px 0;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-md);
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 { margin: 0; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.025em; }
+        h2 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 16px; }
+        h3 { font-size: 1.0rem; font-weight: 700; color: var(--primary-dark); margin-top: 20px; margin-bottom: 12px; }
+        p { margin-bottom: 1rem; color: var(--text-muted); font-size: 0.95rem; }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        @media (min-width: 1024px) {
+            .grid-layout { grid-template-columns: 1.2fr 0.8fr; }
+        }
+
+        /* --- 3. Component: Cards --- */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover { box-shadow: var(--shadow-md); }
+
+        /* --- 4. Component: Forms & Inputs --- */
+        .form-group { margin-bottom: 16px; }
+        .form-row { display: flex; gap: 16px; margin-bottom: 16px; }
+        .form-col { flex: 1; }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            background-color: #fff;
+        }
+        input[type="text"]:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            outline: none;
+        }
+
+        /* Modern Checkbox/Chips */
+        .chip-group { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 8px; /* For scrollbar */
+        }
+        .chip-label {
+            cursor: pointer;
+            position: relative;
+        }
+        .chip-label input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .chip-text {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--background);
+            border: 1px solid #e2e8f0;
+            border-radius: 99px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .chip-label input:checked + .chip-text {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
+        }
+
+        /* --- 5. Component: Buttons --- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-secondary {
+            background: white;
+            color: var(--text-muted);
+            border: 1px solid #cbd5e1;
+        }
+        .btn-secondary:hover { background: var(--background); color: var(--text-main); }
+        .btn-cta {
+            background: #eef2ff;
+            color: var(--primary);
+            width: 100%;
+            padding: 16px;
+            border: 2px dashed var(--primary);
+            margin-top: 10px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        /* --- 6. Component: Gauge (Dashboard Fix) --- */
+        .dashboard-sticky {
+            position: sticky;
+            top: 20px;
+        }
+        /* 修正：將容器寬高設定為半徑的兩倍，確保半圓在中間 */
+        .gauge-container {
+            position: relative;
+            width: 200px; /* 儀表板寬度 */
+            height: 110px; /* 儀表板高度 (略大於半徑) */
+            margin: 0 auto 10px;
+            overflow: hidden; /* 隱藏下半圓多餘的部分 */
+        }
+        
+        svg.gauge {
+            transform: rotate(-90deg);
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 50%) rotate(-90deg); /* 確保圓心在底部中間 */
+        }
+        
+        .gauge-bg { fill: none; stroke: #e2e8f0; stroke-width: 10; }
+        .gauge-bar { 
+            fill: none; 
+            stroke: url(#gradient); 
+            stroke-width: 10; 
+            stroke-linecap: round; 
+            stroke-dasharray: 0, 1000;
+            transition: stroke-dasharray 1s ease-out;
+        }
+        
+        .gauge-center {
+            position: absolute;
+            top: 60%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .gauge-score { font-size: 2.5rem; font-weight: 800; color: var(--text-main); line-height: 1; }
+        .gauge-label { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; }
+
+        /* --- 7. Result Lists & New Components --- */
+        .result-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0; }
+        .result-list { list-style: none; padding: 0; margin: 0; }
+        .result-item {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .result-item.good { background-color: #ecfdf5; color: #065f46; border-left: 3px solid var(--success); }
+        .result-item.warn { background-color: #fffbeb; color: #92400e; border-left: 3px solid var(--warning); }
+        .result-item.bad  { background-color: #fef2f2; color: #991b1b; border-left: 3px solid var(--danger); }
+        
+        .icon { flex-shrink: 0; margin-top: 2px; }
+
+        /* Timeline Action Plan (30/60/90) */
+        .timeline-box {
+            border-left: 2px solid #e2e8f0;
+            margin-left: 8px;
+            padding-left: 20px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -27px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+        .timeline-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 2px;
+        }
+        .timeline-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        /* Modal Overlay for Login/Register */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--surface);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 400px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        /* Helpers */
+        .hidden { display: none; }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .badge-good { background: #dcfce7; color: var(--success); }
+        
+        /* Animation */
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+<div id="authModal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle" style="margin:0; color:var(--primary-dark);">帳號登入</h2>
+            <button class="modal-close" onclick="App.closeModal()">×</button>
+        </div>
+        <div id="loginForm">
+            <div class="form-group">
+                <label>帳號 (Email)</label>
+                <input type="text" placeholder="your.email@example.com">
+            </div>
+            <div class="form-group">
+                <label>密碼</label>
+                <input type="password" placeholder="輸入密碼">
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:10px;">登入</button>
+            <p style="text-align:center; margin-top:15px; font-size:0.9rem;">
+                還沒有帳號？ <a href="#" onclick="App.toggleAuthMode('register')" style="color:var(--primary); text-decoration:none;">立即註冊</a>
+            </p>
+        </div>
+        <div id="registerForm" class="hidden">
+            <div class="form-group">
+                <label>姓名</label>
+                <input type="text" placeholder="你的名字">
+            </div>
+            <div class="form-group">
+                <label>電子郵件</label>
+                <input type="text" placeholder="your.email@example.com">
+            </div>
+            <div class="form-group">
+                <label>設定密碼</label>
+                <input type="password" placeholder="至少 6 個字元">
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:10px;">註冊並開始健檢</button>
+            <p style="text-align:center; margin-top:15px; font-size:0.9rem;">
+                已有帳號？ <a href="#" onclick="App.toggleAuthMode('login')" style="color:var(--primary); text-decoration:none;">返回登入</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="header-content">
+        <div>
+            <h1>CareerFit Pro | 履歷健檢</h1>
+            <span style="font-size:0.875rem; opacity:0.9;">資管 / 資傳 / 資工 專屬儀表板</span>
+        </div>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size:0.875rem; border-color: rgba(255,255,255,0.4); color:white; background:rgba(255,255,255,0.1);" onclick="App.showModal('login')">
+                🔒 登入/註冊
+            </button>
+            <div style="font-size:0.875rem; background:rgba(255,255,255,0.2); padding:4px 12px; border-radius:20px;">
+                Beta 3.1 Pro
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="grid-layout">
+        
+        <main>
+            <div class="card">
+                <h2>📝 基本資料與課程</h2>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <label>姓名</label>
+                        <input id="inputName" type="text" placeholder="你的名字">
+                    </div>
+                    <div class="form-col">
+                        <label>系所</label>
+                        <select id="deptSelect" onchange="App.onDeptChange()">
+                            <option value="資管">資訊管理學系</option>
+                            <option value="資傳">資訊傳播學系</option>
+                            <option value="資工">資訊工程學系</option>
+                        </select>
+                    </div>
+                    <div class="form-col">
+                        <label>目前學期/年級</label>
+                        <select id="gradeSelect">
+                            <option value="一上">大一上</option>
+                            <option value="一下">大一下</option>
+                            <option value="二上">大二上</option>
+                            <option value="二下">大二下</option>
+                            <option value="三上">大三上</option>
+                            <option value="三下">大三下</option>
+                            <option value="四上">大四上</option>
+                            <option value="四下">大四下</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>課程完成進度 (請勾選已修課程)</label>
+                    <div id="courseContainer">
+                        </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">
+                        ※ 勾選已修習及格的科目。未顯示在清單中的課程不計入分數。
+                    </p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:24px;">
+                <h2>🚀 經歷與特質加權</h2>
+                
+                <div class="form-group">
+                    <label>實作與經歷</label>
+                    <div class="chip-group" id="experienceArea">
+                        <label class="chip-label"><input type="checkbox" value="競賽"><span class="chip-text">🏆 校內外競賽/獎項</span></label>
+                        <label class="chip-label"><input type="checkbox" value="社團幹部"><span class="chip-text">👥 社團幹部/學生會</span></label>
+                        <label class="chip-label"><input type="checkbox" value="專案實作"><span class="chip-text">💻 專題/Side Project</span></label>
+                        <label class="chip-label"><input type="checkbox" value="企業實習"><span class="chip-text">💼 企業實習</span></label>
+                        <label class="chip-label"><input type="checkbox" value="個人品牌"><span class="chip-text">🌐 個人網站/公眾帳號</span></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>專業證照</label>
+                    <div class="chip-group" id="certArea">
+                        <label class="chip-label"><input type="checkbox" value="A級"><span class="chip-text">🥇 A 級 (國際/高階)</span></label>
+                        <label class="chip-label"><input type="checkbox" value="B級"><span class="chip-text">🥈 B 級 (國內/基礎)</span></label>
+                        <label class="chip-label"><input type="checkbox" value="無"><span class="chip-text">無</span></label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Holland 興趣代碼 (RIASEC, 選填)</label>
+                    <div class="chip-group" id="hollandArea">
+                        <label class="chip-label"><input type="checkbox" value="R"><span class="chip-text">R 實作 (Realistic)</span></label>
+                        <label class="chip-label"><input type="checkbox" value="I"><span class="chip-text">I 研究 (Investigative)</span></label>
+                        <label class="chip-label"><input type="checkbox" value="A"><span class="chip-text">A 藝術 (Artistic)</span></label>
+                        <label class="chip-label"><input type="checkbox" value="S"><span class="chip-text">S 社交 (Social)</span></label>
+                        <label class="chip-label"><input type="checkbox" value="E"><span class="chip-text">E 企業 (Enterprising)</span></label>
+                        <label class="chip-label"><input type="checkbox" value="C"><span class="chip-text">C 事務 (Conventional)</span></label>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px; margin-top:24px;">
+                    <button class="btn btn-primary" style="flex:2" onclick="App.calculate()">
+                        📊 計算履歷健康指數
+                    </button>
+                    <button class="btn btn-secondary" style="flex:1" onclick="App.reset()">
+                        重置
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <aside>
+            <div class="card dashboard-sticky" id="dashboardCard">
+                
+                <div style="text-align:center; margin-bottom: 20px;">
+                    <h3 style="margin-bottom:10px;">總分：履歷健康指數</h3>
+                    <div class="gauge-container">
+                        <svg class="gauge" viewBox="0 0 200 200">
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#3b82f6" />
+                                    <stop offset="100%" stop-color="#2563eb" />
+                                </linearGradient>
+                            </defs>
+                            <path class="gauge-bg" d="M20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="15"/>
+                            <path id="gaugePath" class="gauge-bar" d="M20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="15" stroke-dasharray="0, 1000"/>
+                        </svg>
+                        <div class="gauge-center">
+                            <div class="gauge-score" id="scoreValue">0</div>
+                            <div class="gauge-label">總分 (100分制)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="resultContent" class="hidden">
+                    
+                    <div class="result-section fade-in" style="margin-top:0; border-top:none; text-align:center;">
+                        <h3 style="margin-bottom:10px;">📊 五力健檢雷達圖</h3>
+                        <div style="position: relative; height:200px; width:100%;">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="careerSection" class="result-section fade-in">
+                        <h3>🎯 系別與職涯適配</h3>
+                        <div id="deptMatchCard" class="match-card" style="background:#f0f9ff; padding:12px; border-radius:8px; margin-bottom:12px; border:1px solid #bae6fd;">
+                            </div>
+                        <ul class="result-list" id="careerList"></ul>
+                    </div>
+                    
+                    <div class="result-section fade-in">
+                        <h3>✅ 優勢列表</h3>
+                        <ul class="result-list" id="strengthList"></ul>
+                    </div>
+
+                    <div class="result-section fade-in">
+                        <h3>❌ 待補足項 (具體建議)</h3>
+                        <ul class="result-list" id="weakList"></ul>
+                    </div>
+                    
+                    <div class="result-section fade-in">
+                        <h3>📅 30/60/90 天行動計畫</h3>
+                        <div class="timeline-box" id="actionPlanArea">
+                            </div>
+                    </div>
+
+                    <div id="suggestionSection" class="result-section fade-in hidden">
+                        <h3>💡 補強修課 / 跨域推薦</h3>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:8px;">基於 Holland 興趣與技能缺口：</p>
+                        <div class="chip-group" id="recList"></div>
+                    </div>
+
+                </div>
+                
+                <div id="emptyState" style="text-align:center; padding:20px; color:var(--text-muted);">
+                    <p>請填寫左側資料並點擊<br>「計算履歷健康指數」</p>
+                </div>
+            </div>
+
+            <div id="downloadArea" class="hidden" style="margin-top:16px;">
+                <button class="btn btn-primary" style="width:100%; background:var(--text-main);" onclick="App.generatePDF()">
+                    📄 下載完整健檢報告書 (PDF)
+                </button>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script>
+/**
+ * Data Module: 課程與路徑資料 (已整合多系別與更細的結構)
+ */
+const DATA = {
+    // 課程資料結構 (簡化為年級結構，但保留學期劃分)
+    departments: {
+        "資管": {
+            "一上": { "專業必修":["計算機概論","程式設計I","會計學"], "校定必修":["英文","閱讀與書寫"] },
+            "一下": { "專業必修":["程式設計II","經濟學","資訊數學"], "校定必修":["英文","閱讀與書寫"] },
+            "二上": { "專業必修":["資料結構","統計學","資訊管理導論"] },
+            "二下": { "專業必修":["資料庫管理","網路通訊","企業資源規劃"] },
+            "三上": { "專業必修":["系統分析與設計","專案管理"], "系專業選修":["人工智慧","行動物聯網"] },
+            "三下": { "專業必修":["作業系統","專業實作I"], "系專業選修":["影像處理","演算法概論"] },
+            "四上": { "專業必修":["專業實作II","資管講座"], "系專業選修":["企業實習"] },
+            "四下": { "系專業選修":["企業實習"] }
+        },
+        "資傳": { 
+            "一上": { "必修":["新媒體概論","基礎網頁設計","攝影實務"] },
+            "一下": { "必修":["數位音效","設計素描","劇本創作"] },
+            "二上": { "必修":["介面設計","多媒體程式設計"] },
+            "二下": { "必修":["數位行銷","3D動畫基礎"] },
+            "三上": { "必修":["互動科技應用","專題研討"], "選修":["資訊視覺化","校外／海外實習"] },
+            "三下": { "必修":["畢業專題I"], "選修":["社群媒體行銷","數位內容產業法律"] },
+            "四上": { "必修":["畢業專題II"], "選修":["數位整合行銷"] },
+            "四下": { "選修":["校外實習"] }
+        },
+        "資工": { 
+            "一上": { "必修":["微積分","計算機概論","程式設計I"] },
+            "一下": { "必修":["離散數學","物理學","程式設計II"] },
+            "二上": { "必修":["資料結構","線性代數","數位邏輯"] },
+            "二下": { "必修":["演算法","機率統計","計算機組織"] },
+            "三上": { "必修":["作業系統","正規語言"], "選修":["深度學習","人工智慧"] },
+            "三下": { "必修":["編譯器設計","軟體工程"], "選修":["影像處理","嵌入式系統"] },
+            "四上": { "必修":["畢業專題"], "選修":["企業實習"] },
+            "四下": { "選修":["科技實習"] }
+        }
+    },
+    // 擴充：系所特質 (用於適配度分析)
+    deptTraits: {
+        "資管": { holland: ["C", "E", "I"], focus: "商業管理 x 資訊系統" },
+        "資工": { holland: ["I", "R", "C"], focus: "底層技術 x 演算法" },
+        "資傳": { holland: ["A", "S", "E"], focus: "數位內容 x 互動科技" }
+    },
+    // 擴充：行動計畫題庫 (使用用戶指定內容)
+    actionPlans: {
+        immediate: ["盤點本學期必修學分缺口", "與任課老師或助教討論未通過的必修", "修正履歷基本格式與錯字，準備下次行動"],
+        shortTerm: ["參加一場黑客松或校內程式競賽", "針對弱項技能取得一張基礎級證照 (如 ITS)", "加入專業性質社團或實驗室"],
+        longTerm: ["規劃並申請暑期企業實習 (90天內送出申請)", "建立個人作品集網站 (Github/Behance)", "主動尋求跨域課程或專案機會"]
+    },
+    prerequisites: {
+        "資料結構": ["計算機概論", "程式設計I"],
+        "演算法": ["資料結構"],
+        "作業系統": ["計算機概論"],
+        "系統分析與設計": ["資訊管理導論"],
+        "深度學習": ["人工智慧"]
+    },
+    careerPaths: {
+        "AI 工程師 / 分析師": { holland: ["I", "C"], keywords: ["人工智慧","統計","演算法"], certs: ["A級"] },
+        "軟體工程師": { holland: ["R", "I"], keywords: ["程式設計","資料結構","作業系統"], certs: ["A級","B級"] },
+        "PM / 產品經理": { holland: ["E", "C"], keywords: ["管理","分析","資料庫","專案"], certs: ["B級"] },
+        "UI/UX 設計師": { holland: ["A", "E"], keywords: ["網頁","互動","設計","視覺"], certs: ["B級"] }
+    }
+};
+
+/**
+ * Application Logic
+ */
+const App = {
+    state: {
+        dept: "資管",
+        chartInstance: null,
+        currentScore: 0
+    },
+
+    init: function() {
+        this.loadData();
+        this.renderCourses();
+    },
+
+    // 輔助函式：展平課程結構
+    flattenCourses: function(dept) {
+        const required = new Set();
+        const elective = new Set();
+        const deptData = DATA.departments[dept];
+
+        for (const semester in deptData) {
+            const categories = deptData[semester];
+            for (const category in categories) {
+                const courses = categories[category];
+                if (category.includes("必修") || category.includes("校定必修")) {
+                    courses.forEach(c => required.add(c));
+                } else {
+                    courses.forEach(c => elective.add(c));
+                }
+            }
+        }
+        return { 
+            required: Array.from(required), 
+            elective: Array.from(elective) 
+        };
+    },
+
+    // 渲染課程選單 (使用簡化後的新結構)
+    renderCourses: function() {
+        const container = document.getElementById("courseContainer");
+        const deptData = DATA.departments[this.state.dept];
+        container.innerHTML = "";
+
+        const allSemesters = ["一上", "一下", "二上", "二下", "三上", "三下", "四上", "四下"];
+
+        allSemesters.forEach(semester => {
+            const semData = deptData[semester];
+            if (!semData) return;
+
+            const semWrap = document.createElement("div");
+            semWrap.style.marginBottom = "15px";
+            semWrap.innerHTML = `<h4 style="margin:8px 0; color:var(--primary-dark); font-size:0.9rem; font-weight:700;">${this.state.dept} - ${semester} 課程</h4>`;
+            
+            for (const category in semData) {
+                const courses = semData[category];
+                if (courses.length === 0) continue;
+
+                const type = category.includes("必修") ? "required" : "elective";
+                
+                const group = document.createElement("div");
+                group.className = "chip-group";
+                courses.forEach(c => {
+                    const label = document.createElement("label");
+                    label.className = "chip-label";
+                    label.innerHTML = `
+                        <input type="checkbox" value="${c}" data-type="${type}" data-semester="${semester}">
+                        <span class="chip-text">${c}</span>
+                    `;
+                    group.appendChild(label);
+                });
+                semWrap.appendChild(group);
+            }
+            container.appendChild(semWrap);
+        });
+        this.restoreChecks();
+    },
+
+    onDeptChange: function() {
+        this.state.dept = document.getElementById("deptSelect").value;
+        this.renderCourses();
+        this.resetUI();
+    },
+
+    // 核心計算：五大維度分數
+    calculateDimensions: function(inputs, totalReq) {
+        // 1. 學業 (Academic): 必修完成率
+        const academic = totalReq > 0 ? (inputs.required.length / totalReq) * 100 : 0;
+        
+        // 2. 實務 (Practical): 經歷數量 (每項 20分，上限 100)
+        const practical = Math.min(inputs.exp.length * 20, 100);
+        
+        // 3. 技能 (Skill): 證照等級
+        let skill = 20; // 基礎分
+        if(inputs.certs.includes("A級")) skill = 100;
+        else if(inputs.certs.includes("B級")) skill = 60;
+
+        // 4. 適性 (Match): Holland Code 符合度
+        const deptTraits = DATA.deptTraits[this.state.dept].holland;
+        const matchCount = inputs.holland.filter(h => deptTraits.includes(h)).length;
+        const match = inputs.holland.length > 0 ? (matchCount / Math.min(inputs.holland.length, 3)) * 100 : 50; // 沒填算中等
+
+        // 5. 品牌 (Brand): 競賽/品牌經營/幹部
+        let brand = 30; // 基礎分
+        if(inputs.exp.includes("競賽")) brand += 25;
+        if(inputs.exp.includes("社團幹部")) brand += 20;
+        if(inputs.exp.includes("個人品牌")) brand += 25;
+        brand = Math.min(brand, 100);
+
+        return { academic, practical, skill, match, brand };
+    },
+
+
+    calculate: function() {
+        // 1. 收集資料
+        const inputs = {
+            required: Array.from(document.querySelectorAll(`input[data-type="required"]:checked`)).map(i=>i.value),
+            elective: Array.from(document.querySelectorAll(`input[data-type="elective"]:checked`)).map(i=>i.value),
+            exp: Array.from(document.querySelectorAll(`#experienceArea input:checked`)).map(i=>i.value),
+            certs: Array.from(document.querySelectorAll(`#certArea input:checked`)).map(i=>i.value),
+            holland: Array.from(document.querySelectorAll(`#hollandArea input:checked`)).map(i=>i.value),
+            currentGrade: document.getElementById("gradeSelect").value
+        };
+        
+        const flattened = this.flattenCourses(this.state.dept);
+        const deptTotalReq = flattened.required.length;
+        const deptTotalEle = flattened.elective.length;
+
+        // 2. 計算五力維度
+        const dims = this.calculateDimensions(inputs, deptTotalReq);
+
+        // 3. 計算總分 (權重演算法) - 採用五力平均作為總分 (更均衡)
+        const dimValues = Object.values(dims);
+        const total = Math.round(dimValues.reduce((a, b) => a + b, 0) / dimValues.length);
+        this.state.currentScore = total;
+
+        // 4. 執行渲染
+        this.animateGauge(total);
+        this.renderRadar(dims);
+        this.recommendDept(inputs);
+        this.generateActionPlan(inputs, dims);
+        this.generateDetails(inputs, dims, flattened); // 傳入 dims 進行詳細建議深化
+        
+        // 顯示結果區
+        document.getElementById("emptyState").classList.add("hidden");
+        document.getElementById("resultContent").classList.remove("hidden");
+        document.getElementById("downloadArea").classList.remove("hidden");
+        
+        this.saveData();
+    },
+
+    renderRadar: function(dims) {
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        if (this.state.chartInstance) {
+            this.state.chartInstance.destroy();
+        }
+
+        this.state.chartInstance = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['學業完成', '實務經歷', '專業技能', '科系適性', '個人品牌'],
+                datasets: [{
+                    label: '能力分佈 (百分制)',
+                    data: [dims.academic, dims.practical, dims.skill, dims.match, dims.brand],
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: { display: true },
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: { display: false, stepSize: 20 },
+                        pointLabels: { font: { size: 12, family: 'Noto Sans TC' } }
+                    }
+                },
+                plugins: { legend: { display: false } },
+                maintainAspectRatio: false
+            }
+        });
+    },
+
+    recommendDept: function(inputs) {
+        const container = document.getElementById("deptMatchCard");
+        let maxMatch = 0;
+        let bestDept = this.state.dept;
+        
+        for(let [dept, data] of Object.entries(DATA.deptTraits)) {
+            const count = inputs.holland.filter(h => data.holland.includes(h)).length;
+            if(count > maxMatch) {
+                maxMatch = count;
+                bestDept = dept;
+            }
+        }
+
+        let icon = "🌟";
+        let text = "您的興趣與當前系所非常契合！";
+        
+        if (bestDept !== this.state.dept && maxMatch > 0) {
+            icon = "🤔";
+            text = `您的 Holland 興趣更偏向 <strong style="color:var(--primary);">${bestDept}</strong> 領域，建議選修相關課程。`;
+        } else if (inputs.holland.length === 0) {
+            text = "尚未填寫 Holland 代碼，請填寫以獲得適配度分析。";
+            icon = "📝";
+        }
+
+        container.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size:1.5rem;">${icon}</div>
+                <div style="font-size:0.9rem; line-height:1.4; color:var(--text-main); flex:1; margin-left: 10px;">${text}</div>
+            </div>
+        `;
+    },
+
+    generateActionPlan: function(inputs, dims) {
+        const container = document.getElementById("actionPlanArea");
+        
+        // 動態調整 90 天計畫
+        let plan90 = DATA.actionPlans.longTerm[0];
+        if (dims.practical < 60) {
+            plan90 = DATA.actionPlans.longTerm[1]; // 建立作品集
+        } else if (dims.match < 50) {
+            plan90 = DATA.actionPlans.longTerm[2]; // 尋求跨域
+        }
+
+        container.innerHTML = `
+            <div class="timeline-item">
+                <div class="timeline-title">30 天 (短期衝刺)</div>
+                <div class="timeline-desc"><strong>${DATA.actionPlans.immediate[0]}</strong>：確保本學期課程無重大掛科風險。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-title">60 天 (中期目標)</div>
+                <div class="timeline-desc"><strong>${DATA.actionPlans.shortTerm[0]}</strong>：積極參與競賽，提升實戰經驗。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-title">90 天 (長期佈局)</div>
+                <div class="timeline-desc"><strong>${plan90}</strong></div>
+            </div>
+        `;
+    },
+
+    // 增強：詳細建議深化
+    generateDetails: function(inputs, dims, flattened) {
+        const goodList = document.getElementById("strengthList");
+        const weakList = document.getElementById("weakList");
+        goodList.innerHTML = ""; weakList.innerHTML = "";
+        
+        const add = (list, text, type) => {
+            list.innerHTML += `<li class="result-item ${type}"><span class="icon">${type=='good'?'✅':(type=='warn'?'⚠️':'❌')}</span><span>${text}</span></li>`;
+        };
+        const taken = new Set([...inputs.required, ...inputs.elective]);
+
+        // --- 1. 優勢列表 (Strength List) ---
+        if (this.state.currentScore >= 80) add(goodList, `總體分數 ${this.state.currentScore}，履歷狀態極佳，繼續保持！`, "good");
+        else if (this.state.currentScore >= 60) add(goodList, `總體分數 ${this.state.currentScore}，基礎穩固，僅需針對弱項微調。`, "warn");
+        
+        if(dims.practical >= 80) add(goodList, "實務經歷分數極高，您具備強大的專案實戰能力。", "good");
+        if(dims.skill >= 90) add(goodList, "擁有 A 級證照，專業知識已獲得國際/高階認可。", "good");
+        if(dims.brand >= 70) add(goodList, "個人品牌/領導經驗豐富，有利於未來求職或升學面試。", "good");
+
+        // --- 2. 待補足項 (Weakness List & Suggestions) ---
+
+        // A. 學業與擋修檢查 (Academic Check)
+        const reqPct = dims.academic;
+        if (reqPct < 50) {
+            add(weakList, `**學業危機 (完成度 ${Math.round(reqPct)}%)**：必修學分缺口過大，應立刻盤點並補齊。`, "bad");
+        } else if (reqPct < 70) {
+            add(weakList, `**學業警示 (完成度 ${Math.round(reqPct)}%)**：仍有部分核心必修未完成，建議優先安排於下一學期。`, "warn");
+        }
+        
+        for(let [adv, preList] of Object.entries(DATA.prerequisites)) {
+            if(taken.has(adv)) {
+                preList.forEach(pre => {
+                    if(!taken.has(pre)) add(weakList, `**擋修風險**：您已修「${adv}」但缺少基礎「${pre}」，強烈建議回頭補強基礎。`, "bad");
+                });
+            }
+        }
+        
+        // B. 實務與品牌 (Practical & Brand Check)
+        if(dims.practical < 40) {
+            add(weakList, `**缺乏實戰**：實習/專題/競賽等經歷少於兩項，嚴重影響履歷豐富度。建議報名一個實作課或 Side Project。`, "bad");
+        } else if (!inputs.exp.includes("企業實習")) {
+             add(weakList, "**實習缺口**：缺少企業實習經驗，建議在大三暑假前鎖定目標職位準備投遞。", "warn");
+        }
+
+        // C. 專業技能 (Skill Check)
+        if(dims.skill < 60) {
+             add(weakList, "**證照不足**：您尚未取得 B 級以上專業證照。建議考取一項與專業核心相關的技能認證 (如資料庫、程式設計)。", "warn");
+        }
+        
+        // D. 適性 (Match Check)
+        if(dims.match < 50 && inputs.holland.length > 0) {
+            add(weakList, `**興趣偏差**：您的 Holland 代碼與當前系所核心特質匹配度偏低，建議仔細檢視當前選擇的職涯路徑是否正確。`, "warn");
+        }
+
+        // 職涯 & 課程推薦
+        this.matchCareer(inputs, taken);
+        this.recommendCourses(inputs.holland, taken, flattened);
+    },
+
+    // 登入/註冊 Modal 相關功能
+    showModal: function(mode) {
+        document.getElementById("authModal").classList.remove("hidden");
+        this.toggleAuthMode(mode);
+    },
+    closeModal: function() {
+        document.getElementById("authModal").classList.add("hidden");
+    },
+    toggleAuthMode: function(mode) {
+        const title = document.getElementById("modalTitle");
+        const login = document.getElementById("loginForm");
+        const register = document.getElementById("registerForm");
+
+        if (mode === 'login') {
+            title.innerText = "帳號登入";
+            login.classList.remove("hidden");
+            register.classList.add("hidden");
+        } else if (mode === 'register') {
+            title.innerText = "新用戶註冊";
+            login.classList.add("hidden");
+            register.classList.remove("hidden");
+        }
+    },
+
+
+    // 保持不變的輔助功能 (Match Career, Recommend Courses, Save/Load Data, Reset)
+    matchCareer: function(inputs, takenCourses) {
+        // ... (原 matchCareer 邏輯) ...
+        const list = document.getElementById("careerList");
+        list.innerHTML = "";
+        const section = document.getElementById("careerSection");
+        const matches = [];
+
+        for(let [job, criteria] of Object.entries(DATA.careerPaths)) {
+            let score = 0;
+            if(inputs.holland.some(h => criteria.holland.includes(h))) score += 20;
+            let matchCount = 0;
+            takenCourses.forEach(c => {
+                if(criteria.keywords.some(k => c.includes(k))) matchCount++;
+            });
+            score += Math.min(matchCount * 10, 50);
+            if(inputs.certs.some(c => criteria.certs.includes(c))) score += 20;
+            if(inputs.exp.includes("企業實習")) score += 10;
+            
+            if(score >= 30) matches.push({job, score});
+        }
+
+        matches.sort((a,b) => b.score - a.score);
+
+        if(matches.length > 0) {
+            section.classList.remove("hidden");
+            matches.slice(0, 3).forEach(m => {
+                const li = document.createElement("li");
+                li.className = "result-item good";
+                li.style.justifyContent = "space-between";
+                li.innerHTML = `<span><strong>${m.job}</strong></span> <span class="badge badge-good">契合度 ${Math.min(m.score, 100)}%</span>`;
+                list.appendChild(li);
+            });
+        } else {
+            section.classList.add("hidden");
+        }
+    },
+
+    recommendCourses: function(holland, taken, flattened) {
+        // ... (原 recommendCourses 邏輯) ...
+        const container = document.getElementById("recList");
+        const section = document.getElementById("suggestionSection");
+        container.innerHTML = "";
+        
+        const allUntakenCourses = [...flattened.required, ...flattened.elective]
+            .filter(c => !taken.has(c));
+        const recs = new Set();
+
+        const map = {
+            "R": ["實作", "C語言", "物聯網", "嵌入式", "網路"],
+            "I": ["人工智慧", "演算法", "深度學習", "統計", "數學"],
+            "A": ["設計", "影音", "視覺", "敘事", "遊戲"],
+            "S": ["傳播", "服務", "心理", "社會"],
+            "E": ["管理", "企業", "專案", "行銷", "市場"],
+            "C": ["資料庫", "會計", "系統", "法律"]
+        };
+
+        holland.forEach(code => {
+            const keywords = map[code] || [];
+            allUntakenCourses.forEach(c => {
+                if(keywords.some(k => c.includes(k))) {
+                    recs.add(c);
+                }
+            });
+        });
+
+        if(recs.size > 0) {
+            section.classList.remove("hidden");
+            Array.from(recs).slice(0, 5).forEach(c => {
+                const span = document.createElement("span");
+                span.className = "chip-text";
+                span.style.background = "white";
+                span.style.borderColor = "var(--accent)";
+                span.style.color = "var(--accent)";
+                span.innerText = c;
+                container.appendChild(span);
+            });
+        } else {
+            section.classList.add("hidden");
+        }
+    },
+
+    animateGauge: function(targetScore) {
+        const path = document.getElementById("gaugePath");
+        const text = document.getElementById("scoreValue");
+        
+        // 圓周率 * 直徑 / 2 = 半圓長度. 這裡使用 d="M20 100 A 80 80 0 0 1 180 100" 的長度
+        const pathLength = 251.3274; // 80 * PI 
+        const maxDraw = pathLength; 
+        const drawValue = (targetScore / 100) * maxDraw;
+
+        path.style.strokeDasharray = `${drawValue}, ${pathLength}`;
+        
+        // Text Counter Animation
+        let current = parseInt(text.innerText) || 0;
+        const step = Math.ceil((targetScore - current) / 100); 
+        
+        const timer = setInterval(() => {
+            if (current < targetScore) {
+                current += step;
+                if (current > targetScore) current = targetScore;
+                text.innerText = current;
+            } else if (current > targetScore) {
+                current -= step;
+                if (current < targetScore) current = targetScore;
+                text.innerText = current;
+            }
+
+            if(current === targetScore) {
+                clearInterval(timer);
+                text.innerText = targetScore; // Final snap
+            }
+        }, 10);
+    },
+
+    saveData: function() {
+        const data = {
+            name: document.getElementById("inputName").value,
+            dept: this.state.dept,
+            grade: document.getElementById("gradeSelect").value,
+            checks: Array.from(document.querySelectorAll('input:checked')).map(i=>i.value)
+        };
+        localStorage.setItem('careerFitData_v3', JSON.stringify(data));
+    },
+
+    loadData: function() {
+        const raw = localStorage.getItem('careerFitData_v3');
+        if(raw) {
+            const data = JSON.parse(raw);
+            document.getElementById("inputName").value = data.name || "";
+            document.getElementById("gradeSelect").value = data.grade || "一上";
+            if(data.dept) {
+                this.state.dept = data.dept;
+                document.getElementById("deptSelect").value = data.dept;
+            }
+        }
+    },
+
+    restoreChecks: function() {
+        const raw = localStorage.getItem('careerFitData_v3');
+        if(raw) {
+            const data = JSON.parse(raw);
+            if(data.checks) {
+                data.checks.forEach(val => {
+                    const el = document.querySelector(`input[value="${val}"]`);
+                    if(el) el.checked = true;
+                });
+            }
+        }
+    },
+
+    reset: function() {
+        if(confirm("確定要清除所有資料嗎？")) {
+            localStorage.removeItem('careerFitData_v3');
+            location.reload();
+        }
+    },
+    
+    resetUI: function() {
+        document.getElementById("scoreValue").innerText = "0";
+        document.getElementById("gaugePath").style.strokeDasharray = "0, 1000";
+        document.getElementById("resultContent").classList.add("hidden");
+        document.getElementById("emptyState").classList.remove("hidden");
+        document.getElementById("downloadArea").classList.add("hidden");
+    },
+    
+    generatePDF: function() {
+        const { jsPDF } = window.jspdf;
+        const element = document.getElementById("dashboardCard"); // 捕捉整個儀表板卡片
+        const name = document.getElementById("inputName").value || "同學";
+        const btn = document.querySelector("#downloadArea button");
+        
+        const originalText = btn.innerText;
+        btn.innerText = "⏳ 正在生成 PDF，請稍候...";
+        btn.disabled = true;
+
+        html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            
+            // 標題區
+            pdf.setFontSize(22);
+            pdf.setTextColor(37, 99, 235);
+            pdf.text(`CareerFit Pro 履歷健檢報告`, 20, 20);
+            pdf.setFontSize(14);
+            pdf.setTextColor(30);
+            pdf.text(`姓名: ${name}`, 20, 30);
+            pdf.text(`生成日期: ${new Date().toLocaleDateString()}`, 20, 38);
+            pdf.line(20, 45, 190, 45);
+
+            // 貼上儀表板截圖 (確保中文與排版一致)
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgWidth = pdfWidth - 40; 
+            const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'PNG', 20, 55, imgWidth, imgHeight);
+
+            // 頁尾
+            pdf.setFontSize(9);
+            pdf.setTextColor(150);
+            pdf.text("CareerFit Pro (Beta 3.1) | 僅供參考，不具官方效力。", 20, pdfHeight - 10);
+
+            pdf.save(`${name}_CareerFit_Report.pdf`);
+
+            // 恢復按鈕
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }).catch(err => {
+            console.error(err);
+            alert("PDF 生成失敗，請檢查瀏覽器支援性或稍後重試。");
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
+    }
+};
+
+// Start App
+document.addEventListener("DOMContentLoaded", () => App.init());
+
+</script>
+</body>
+</html>
