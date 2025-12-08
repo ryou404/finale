@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerDNA | 智能職涯導航系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Medical Clean Design System --- */
+        :root {
+            --primary: #2563eb;       /* Core Blue */
+            --primary-light: #eff6ff; /* Soft Blue Background */
+            --primary-dark: #1e3a8a;  /* Deep Navy */
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --shadow-soft: 0 10px 40px -10px rgba(37, 99, 235, 0.1);
+            --shadow-hover: 0 20px 40px -10px rgba(37, 99, 235, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Hero Background with subtle gradient mesh */
+        .hero-bg {
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+        }
+
+        /* Card Animations */
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modal Backdrop */
+        .modal-backdrop {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col hero-bg">
+
+    <nav class="w-full fixed top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30">C</div>
+                <span class="text-xl font-bold text-slate-800 tracking-tight">Career<span class="text-blue-600">DNA</span></span>
+            </div>
+
+            <div id="nav-actions">
+                <div id="guest-ui" class="flex gap-4">
+                    <button onclick="Auth.openModal('login')" class="text-slate-500 hover:text-blue-600 font-medium transition">登入</button>
+                    <button onclick="Auth.openModal('register')" class="bg-blue-600 text-white px-5 py-2 rounded-full font-medium hover:bg-blue-700 transition shadow-md shadow-blue-500/20">
+                        免費註冊
+                    </button>
+                </div>
+
+                <div id="user-ui" class="hidden flex items-center gap-4">
+                    <div class="text-right hidden md:block">
+                        <div class="text-xs text-slate-400">Welcome back</div>
+                        <div class="text-sm font-bold text-slate-800" id="user-name-display">User</div>
+                    </div>
+                    <div class="relative group">
+                        <button class="w-10 h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-blue-600 font-bold overflow-hidden">
+                            <span id="avatar-initial">U</span>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                            <div class="py-2">
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">個人檔案設定</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">歷史測評紀錄</a>
+                                <div class="border-t border-slate-100 my-1"></div>
+                                <button onclick="Auth.logout()" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">登出系統</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-32 pb-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="text-center max-w-3xl mx-auto mb-20 fade-in-up">
+                <span class="inline-block py-1 px-4 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-wider mb-6 border border-blue-100">AI-POWERED CAREER NAVIGATION</span>
+                <h1 class="text-5xl md:text-6xl font-black text-slate-900 leading-tight mb-6">
+                    用數據理解自己，<br>打造更強大的<span class="text-blue-600 relative inline-block">未來履歷<svg class="absolute w-full h-3 -bottom-1 left-0 text-blue-200 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="8" fill="none"/></svg></span>。
+                </h1>
+                <p class="text-lg text-slate-500 mb-10 leading-relaxed">
+                    整合 Holland 職涯興趣、Gallup 天賦優勢與大數據學程分析。<br>不只告訴你適合什麼，更直接為你生成履歷與行動計畫。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button onclick="document.getElementById('modules').scrollIntoView({behavior:'smooth'})" class="bg-slate-900 text-white px-8 py-4 rounded-full font-bold hover:bg-slate-800 transition shadow-lg flex items-center justify-center gap-2">
+                        開始探索旅程 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="modules" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <a href="brand_test.html" class="feature-card block p-8 rounded-3xl group relative overflow-hidden fade-in-up delay-100">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white mb-6 relative z-10 shadow-lg shadow-blue-500/30">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">個人品牌測驗</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                        結合 Gallup Strengths 與 Holland 興趣分析，找出您的天賦優勢區。
+                    </p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center text-xs text-slate-500"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>Top 5 天賦分析</li>
+                        <li class="flex items-center text-xs text-slate-500"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>六維能力雷達圖</li>
+                        <li class="flex items-center text-xs text-slate-500"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span>AI 履歷草稿生成</li>
+                    </ul>
+                    <span class="inline-flex items-center text-blue-600 font-bold text-sm group-hover:translate-x-1 transition-transform">
+                        立即開始 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </span>
+                </a>
+
+                <a href="carrer fit.html" class="feature-card block p-8 rounded-3xl group relative overflow-hidden fade-in-up delay-200">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                    <div class="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center text-white mb-6 relative z-10 shadow-lg shadow-teal-500/30">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">履歷健檢中心</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                        輸入您的修課紀錄與經歷，系統自動計算履歷健康指數與競爭力。
+                    </p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center text-xs text-slate-500"><span class="w-1.5 h-1.5 bg-teal-400 rounded-full mr-2"></span>科系契合度診斷</li>
+                        <li class="flex items-center text-xs text-slate-500"><span class="w-1.5 h-1.5 bg-teal-400 rounded-full mr-2"></span>必修/選修學分盤點</li>
+                        <li class="flex items-center text-xs text-slate-500"><span class="w-1.5 h-1.5 bg-teal-400 rounded-full mr-2"></span>30/60/90 行動計畫</li>
+                    </ul>
+                    <span class="inline-flex items-center text-teal-600 font-bold text-sm group-hover:translate-x-1 transition-transform">
+                        進入健檢 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </span>
+                </a>
+
+                <div class="feature-card block p-8 rounded-3xl group relative overflow-hidden opacity-75 grayscale hover:grayscale-0 transition-all fade-in-up delay-300 cursor-not-allowed">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-bl-full -mr-8 -mt-8"></div>
+                    <div class="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="bg-slate-900 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">即將推出</span>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center text-white mb-6 relative z-10 shadow-lg shadow-purple-500/30">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">系別推薦實驗室</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                        不確定要選資工還是資管？讓 AI 根據你的特質推薦最適合的戰場。
+                    </p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center text-xs text-slate-500"><span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>跨領域潛力分析</li>
+                        <li class="flex items-center text-xs text-slate-500"><span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>轉系/輔修評估</li>
+                        <li class="flex items-center text-xs text-slate-500"><span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>畢業出路預測</li>
+                    </ul>
+                    <span class="inline-flex items-center text-purple-600 font-bold text-sm">
+                        敬請期待
+                    </span>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <div id="auth-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 modal-backdrop" onclick="Auth.closeModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 animate-fade-in-up">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="auth-title" class="text-2xl font-bold text-slate-900">歡迎回來</h2>
+                <button onclick="Auth.closeModal()" class="text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
+            </div>
+            
+            <form id="login-form" class="space-y-4" onsubmit="Auth.handleLogin(event)">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">電子郵件</label>
+                    <input type="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition" placeholder="name@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">密碼</label>
+                    <input type="password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">
+                    登入系統
+                </button>
+                <p class="text-center text-sm text-slate-500">
+                    還沒有帳號？ <button type="button" onclick="Auth.switchMode('register')" class="text-blue-600 font-bold hover:underline">立即註冊</button>
+                </p>
+            </form>
+
+            <form id="register-form" class="space-y-4 hidden" onsubmit="Auth.handleRegister(event)">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">姓名</label>
+                    <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition" placeholder="您的名字">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">電子郵件</label>
+                    <input type="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition" placeholder="name@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">設定密碼</label>
+                    <input type="password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition" placeholder="至少 6 個字元">
+                </div>
+                <button type="submit" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition shadow-lg">
+                    註冊並開始
+                </button>
+                <p class="text-center text-sm text-slate-500">
+                    已有帳號？ <button type="button" onclick="Auth.switchMode('login')" class="text-blue-600 font-bold hover:underline">返回登入</button>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t border-slate-100 py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-6 text-center text-slate-400 text-sm">
+            <p>&copy; 2024 CareerDNA. All rights reserved.</p>
+            <p class="mt-2">Designed for CS/IM/Comm Students.</p>
+        </div>
+    </footer>
+
+    <script>
+        /* --- Authentication Logic (Front-end Simulation) --- */
+        const Auth = {
+            state: {
+                isLoggedIn: false,
+                user: null
+            },
+
+            init() {
+                // Check localStorage for session
+                const savedUser = localStorage.getItem('careerDNA_user');
+                if(savedUser) {
+                    this.state.user = JSON.parse(savedUser);
+                    this.state.isLoggedIn = true;
+                    this.updateUI();
+                }
+            },
+
+            openModal(mode) {
+                document.getElementById('auth-modal').classList.remove('hidden');
+                this.switchMode(mode);
+            },
+
+            closeModal() {
+                document.getElementById('auth-modal').classList.add('hidden');
+            },
+
+            switchMode(mode) {
+                const loginForm = document.getElementById('login-form');
+                const regForm = document.getElementById('register-form');
+                const title = document.getElementById('auth-title');
+
+                if(mode === 'login') {
+                    loginForm.classList.remove('hidden');
+                    regForm.classList.add('hidden');
+                    title.innerText = '歡迎回來';
+                } else {
+                    loginForm.classList.add('hidden');
+                    regForm.classList.remove('hidden');
+                    title.innerText = '建立新帳號';
+                }
+            },
+
+            handleLogin(e) {
+                e.preventDefault();
+                // Simulation: In real app, this would POST to /api/login
+                this.loginSuccess({ name: "同學", email: "student@example.com" });
+            },
+
+            handleRegister(e) {
+                e.preventDefault();
+                const name = document.getElementById('reg-name').value;
+                // Simulation: In real app, this would POST to /api/register
+                this.loginSuccess({ name: name, email: "new@example.com" });
+            },
+
+            loginSuccess(user) {
+                this.state.isLoggedIn = true;
+                this.state.user = user;
+                localStorage.setItem('careerDNA_user', JSON.stringify(user));
+                
+                this.closeModal();
+                this.updateUI();
+                
+                // Show toast or alert
+                alert(`歡迎回來，${user.name}！`);
+            },
+
+            logout() {
+                this.state.isLoggedIn = false;
+                this.state.user = null;
+                localStorage.removeItem('careerDNA_user');
+                this.updateUI();
+                window.location.reload();
+            },
+
+            updateUI() {
+                const guestUI = document.getElementById('guest-ui');
+                const userUI = document.getElementById('user-ui');
+                const nameDisplay = document.getElementById('user-name-display');
+                const avatarInitial = document.getElementById('avatar-initial');
+
+                if(this.state.isLoggedIn) {
+                    guestUI.classList.add('hidden');
+                    userUI.classList.remove('hidden');
+                    userUI.classList.add('flex');
+                    nameDisplay.innerText = this.state.user.name;
+                    avatarInitial.innerText = this.state.user.name.charAt(0).toUpperCase();
+                } else {
+                    guestUI.classList.remove('hidden');
+                    userUI.classList.add('hidden');
+                    userUI.classList.remove('flex');
+                }
+            }
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.init();
+        });
+    </script>
+</body>
+</html>

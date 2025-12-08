@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CareerFit Pro | 履歷健檢與職涯導航 (v6.0 Enterprise)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root{
+            --primary:#2563eb; --primary-dark:#1e40af; --bg:#f8fafc; --surface:#fff;
+            --muted:#64748b; --radius:14px; --shadow:0 8px 20px rgba(16,24,40,0.06);
+            --success:#10b981; --warning:#f59e0b; --danger:#ef4444; --font:'Inter','Noto Sans TC',sans-serif;
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%;margin:0;font-family:var(--font);background:var(--bg);color:#0f172a}
+        
+        /* --- Login Overlay (New) --- */
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            opacity: 1; transition: opacity 0.4s ease;
+        }
+        #loginOverlay.hidden-overlay { opacity: 0; pointer-events: none; }
+        
+        .login-card {
+            background: white; padding: 40px; border-radius: 24px;
+            width: 100%; max-width: 380px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center; transform: translateY(0); transition: transform 0.4s ease;
+        }
+        .login-input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 10px; background: #f8fafc; font-size: 1rem; outline: none; transition: all 0.2s;}
+        .login-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        .login-btn { width: 100%; margin-top: 20px; padding: 14px; font-size: 1rem; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .login-btn:hover { background: var(--primary-dark); }
+        .login-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* --- App Layout --- */
+        .container{max-width:1180px;margin:28px auto;padding:18px; filter: blur(0); transition: filter 0.3s;}
+        .container.blur { filter: blur(5px); }
+
+        header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;padding:20px;border-radius:12px;box-shadow:var(--shadow);}
+        .header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}
+        
+        .user-pill { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.1); padding: 6px 6px 6px 16px; border-radius: 99px; }
+        .logout-btn { background: white; color: var(--primary); border: none; padding: 6px 14px; border-radius: 99px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+        .logout-btn:hover { background: #eff6ff; }
+
+        .layout{display:grid;grid-template-columns:1fr;gap:20px;margin-top:20px}
+        @media(min-width:1024px){.layout{grid-template-columns:1.3fr 0.7fr}}
+
+        .card{background:var(--surface);border-radius:10px;padding:18px;box-shadow:var(--shadow);border:1px solid #e6eef8; transition: transform 0.2s;}
+        
+        label{display:block;margin-bottom:6px;font-weight:600;color:#0b1220}
+        input[type=text],select{width:100%;padding:10px;border-radius:8px;border:1px solid #d1e3fb; outline:none; transition: border 0.2s;}
+        input[type=text]:focus,select:focus{border-color: var(--primary);}
+
+        .chip-group{display:flex;flex-wrap:wrap;gap:8px}
+        .chip{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;border:1px solid #e6eef8;background:transparent;cursor:pointer;user-select:none; transition: all 0.2s;}
+        .chip input{display:none}
+        .chip:hover{background: #f1f5f9;}
+        .chip.checked{background:rgba(37,99,235,0.08);border-color:rgba(37,99,235,0.18);color:var(--primary);font-weight:600}
+        
+        /* New: Required Badge */
+        .badge-req { font-size: 0.75rem; background: #fee2e2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; margin-right: 6px; font-weight: 700; }
+
+        .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700; transition: all 0.2s;}
+        .btn-primary{background:var(--primary);color:white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);}
+        .btn-primary:hover{background:var(--primary-dark);}
+        .btn-ghost{background:#fff;border:1px solid #e6eef8;color:var(--muted)}
+        .btn-ghost:hover{background:#f8fafc; border-color: #cbd5e1;}
+
+        .aside-sticky{position:sticky;top:22px}
+        .gauge-wrap{display:flex;flex-direction:column;align-items:center;padding-top:6px}
+        .gauge{width:220px;height:120px;position:relative}
+        svg.gauge-svg{width:100%;height:100%;overflow:visible}
+        .gauge-value{font-size:2.6rem;font-weight:800;line-height:1;color:#0b1220}
+        .gauge-label{font-size:0.85rem;color:var(--muted)}
+
+        .result-section{margin-top:14px}
+        .result-list{list-style:none;padding:0;margin:0}
+        .result-item{display:flex;gap:10px;padding:10px;border-radius:8px;margin-bottom:8px}
+        .good{background:#ecfdf5;color:#065f46;border-left:4px solid var(--success)}
+        .warn{background:#fffbeb;color:#92400e;border-left:4px solid var(--warning)}
+        .bad{background:#fef2f2;color:#7f1d1d;border-left:4px solid var(--danger)}
+
+        .hidden{display:none}
+        .fade-in{animation:fadeIn .45s ease-out both}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+        .radar-box{height:220px;width:100%}
+        
+        /* Toast */
+        .toast-notification {
+            position: fixed; bottom: 24px; right: 24px; 
+            background: #0f172a; color: white; 
+            padding: 12px 20px; border-radius: 8px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            z-index: 10000; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            display: flex; align-items: center; gap: 8px;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="loginOverlay">
+        <div class="login-card">
+            <div style="font-size: 3.5rem; margin-bottom: 10px;">🎓</div>
+            <h2 style="color:var(--primary-dark); margin:0 0 8px 0;">CareerFit Pro</h2>
+            <p style="color:var(--muted); margin-bottom:24px; font-size: 0.95rem;">學生職涯履歷健檢系統 v6.0</p>
+            <form id="loginForm">
+                <input type="text" id="username" class="login-input" placeholder="學號 (User)" value="s1123001" required>
+                <input type="password" id="password" class="login-input" placeholder="密碼 (any)" value="password" required>
+                <button type="submit" class="login-btn">進入系統</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container blur" id="appContainer">
+        <header>
+            <div class="header-inner">
+                <div>
+                    <h1 style="font-size: 1.4rem; font-weight: 800;">CareerFit Pro</h1>
+                    <div style="font-size:.85rem;opacity:.9; margin-top: 4px;">履歷健檢與職涯導航 (Full Stack Ver.)</div>
+                </div>
+                <div class="user-pill">
+                    <span id="displayUser" style="font-size:0.9rem; font-weight:500;">Guest</span>
+                    <button id="logoutBtn" class="logout-btn">登出</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="layout">
+            <main>
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h2 style="margin:0;font-size:1.1rem">📝 修課與班級資料</h2>
+                        <span style="font-size:0.8rem; color:var(--muted); background:#f1f5f9; padding:4px 8px; border-radius:6px;">已同步教務處資料庫</span>
+                    </div>
+                    
+                    <div style="display:grid;grid-template-columns:1fr 1fr 0.8fr 0.8fr;gap:12px;margin-bottom:12px">
+                        <div><label for="inputName">姓名</label><input id="inputName" type="text" placeholder="你的名字"></div>
+                        <div><label for="deptSelect">系所</label>
+                            <select id="deptSelect"></select>
+                        </div>
+                        <div><label for="gradeSelect">年級</label>
+                            <select id="gradeSelect"></select>
+                        </div>
+                        <div><label for="classSelect">班級</label>
+                            <select id="classSelect">
+                                <option value="A">A 班</option>
+                                <option value="B">B 班</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>本學期課程 (紅色標籤為必修)</label>
+                        <div id="courseContainer" class="fade-in"></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top:18px">
+                    <h2 style="margin:0 0 10px;font-size:1.1rem">🚀 經歷與特質加權</h2>
+
+                    <div style="margin-bottom:12px">
+                        <label>實作與經歷</label>
+                        <div id="experienceArea" class="chip-group"></div>
+                    </div>
+
+                    <div style="margin-bottom:12px">
+                        <label>專業證照</label>
+                        <div id="certArea" class="chip-group"></div>
+                    </div>
+
+                    <div style="margin-bottom:12px">
+                        <label>Holland 興趣代碼</label>
+                        <div id="hollandArea" class="chip-group"></div>
+                    </div>
+
+                    <div style="display:flex;gap:10px;margin-top:20px;padding-top:15px;border-top:1px solid #f1f5f9;">
+                        <button class="btn btn-primary" id="calcBtn">📊 計算履歷健康指數</button>
+                        <button class="btn btn-ghost" id="resetBtn">重置</button>
+                    </div>
+                </div>
+
+            </main>
+
+            <aside>
+                <div class="card aside-sticky">
+                    <div style="text-align:center;margin-bottom:8px">
+                        <div class="gauge-wrap">
+                            <div class="gauge">
+                                <svg class="gauge-svg" viewBox="0 0 200 120">
+                                    <defs>
+                                        <linearGradient id="g1" x1="0%" x2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#2563eb"/></linearGradient>
+                                    </defs>
+                                    <path d="M20 100 A 80 80 0 0 1 180 100" stroke="#e6eef8" stroke-width="12" fill="none" stroke-linecap="round"></path>
+                                    <path id="gaugeArc" d="M20 100 A 80 80 0 0 1 180 100" stroke="url(#g1)" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="0 251.2"></path>
+                                </svg>
+                            </div>
+                            <div style="text-align:center;margin-top:6px">
+                                <div class="gauge-value" id="scoreValue">0</div>
+                                <div class="gauge-label">總分 (100分制)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="emptyState" style="text-align:center;color:var(--muted);padding:14px;font-size:0.9rem;">
+                        <p>請確認左側修課與經歷資料<br>系統將進行多維度評分</p>
+                    </div>
+
+                    <div id="resultContent" class="hidden">
+                        <div class="result-section fade-in">
+                            <h3 style="margin:0 0 8px">📊 五力健檢雷達圖</h3>
+                            <div class="radar-box"><canvas id="radarChart"></canvas></div>
+                        </div>
+
+                        <div class="result-section fade-in" style="margin-top:8px">
+                            <h3 style="margin:0 0 8px">🎯 職涯適配分析</h3>
+                            <div id="deptMatchCard" style="padding:12px;border-radius:8px;background:#f0f9ff;border:1px solid #bae6fd;margin-bottom:8px;font-size:0.9rem;"></div>
+                            <ul id="careerList" class="result-list"></ul>
+                        </div>
+
+                        <div class="result-section fade-in" style="margin-top:8px">
+                            <h3 style="margin:0 0 8px">✅ 優勢 / ❌ 待補足</h3>
+                            <ul id="strengthList" class="result-list"></ul>
+                            <ul id="weakList" class="result-list"></ul>
+                        </div>
+                        <div style="margin-top:12px"><button class="btn btn-primary" style="width:100%" id="downloadBtn">📄 下載完整報告 (PDF)</button></div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+<script>
+/* ================================================================
+   MOCK DATABASE (Schema: Dept -> Class -> Grade -> Course Objects)
+   ================================================================ */
+
+// Helper to create course objects quickly
+const c = (n, t='opt') => ({ name: n, type: t }); 
+
+const DB = {
+    "資管": {
+        "A": {
+            "三上": [
+                c("作業系統", "req"), c("作業研究", "req"), c("專案實作(一)", "req"),
+                c("影像處理"), c("機器學習"), c("財務會計資訊系統"), c("物聯網無線通訊技術與應用"),
+                c("Python應用實務"), c("企業流程管理"), c("進階資訊日文"), c("人工智慧與永續發展專題")
+            ]
+        },
+        "B": {
+            "三上": [
+                c("作業系統", "req"), c("作業研究", "req"), c("專案實作(一)", "req"),
+                c("影像處理"), c("機器學習"), c("財務會計資訊系統"), c("物聯網無線通訊技術與應用"),
+                c("Python應用實務"), c("企業流程管理"), c("進階資訊日文"), c("人工智慧與永續發展專題")
+            ]
+        }
+    },
+    "資工": {
+        "A": {
+            "三上": [ // Using B's data as fallback for structure consistency
+                c("作業系統", "req"), c("專案實作(一)", "req"),
+                c("人工智慧"), c("網路安全"), c("動態網頁設計"), c("硬體描述語言"), c("行動應用軟體開發"),
+                c("嵌入式微控制器與物聯網實作"), c("Linux系統與網路管理"), c("電腦視覺概論"),
+                c("系統安全"), c("數位訊號處理"), c("IC設計產業實務應用"), c("進階資訊日文")
+            ]
+        },
+        "B": {
+            "三上": [
+                c("作業系統", "req"), c("專案實作(一)", "req"),
+                c("人工智慧"), c("網路安全"), c("動態網頁設計"), c("硬體描述語言"), c("行動應用軟體開發"),
+                c("嵌入式微控制器與物聯網實作"), c("Linux系統與網路管理"), c("電腦視覺概論"),
+                c("系統安全"), c("數位訊號處理"), c("IC設計產業實務應用"), c("進階資訊日文")
+            ]
+        }
+    },
+    "人工智慧": { // Formerly 資傳
+        "A": {
+            "三上": [
+                c("作業系統", "req"), c("專案實作(一)", "req"), c("演算法概論", "req"),
+                c("組合數學"), c("資料庫管理"), c("網路系統建構實務"), c("深度學習"), c("軟體開發與維運"),
+                c("科技互動藝術"), c("虛擬實境體感開發"), c("進階資訊日文"), c("生成式人工智慧"), c("數位美學應用")
+            ]
+        },
+        "B": {
+            "三上": [ // Mirroring A for consistency
+                c("作業系統", "req"), c("專案實作(一)", "req"), c("演算法概論", "req"),
+                c("組合數學"), c("資料庫管理"), c("網路系統建構實務"), c("深度學習"), c("軟體開發與維運"),
+                c("科技互動藝術"), c("虛擬實境體感開發"), c("進階資訊日文"), c("生成式人工智慧"), c("數位美學應用")
+            ]
+        }
+    }
+};
+
+const TRAITS = {
+    "資管": { holland: ["C", "E", "I"], focus: "商業邏輯 x 資訊技術" },
+    "資工": { holland: ["I", "R", "C"], focus: "演算法 x 系統底層" },
+    "人工智慧": { holland: ["A", "I", "R"], focus: "AI 模型 x 互動應用" }
+};
+
+/* ================================================================
+   AUTH SERVICE (Mock Backend Logic)
+   ================================================================ */
+const AuthService = {
+    login(u, p) {
+        return new Promise((resolve) => {
+            setTimeout(() => { // Simulate API latency
+                const token = 'jwt_' + Math.random().toString(36).substr(2);
+                localStorage.setItem('cf_token', token);
+                localStorage.setItem('cf_user', u);
+                resolve({ name: u, token });
+            }, 800);
+        });
+    },
+    logout() {
+        localStorage.removeItem('cf_token');
+        localStorage.removeItem('cf_user');
+        window.location.reload();
+    },
+    check() {
+        return localStorage.getItem('cf_token') ? true : false;
+    },
+    getUser() { return localStorage.getItem('cf_user') || 'Guest'; }
+};
+
+/* ================================================================
+   APP CONTROLLER
+   ================================================================ */
+const App = {
+    state: { dept: '資管', grade: '三上', classId: 'B', chart: null },
+
+    init() {
+        if (!AuthService.check()) {
+            this.bindLogin();
+        } else {
+            this.unlockApp();
+        }
+    },
+
+    bindLogin() {
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = "驗證中..."; btn.disabled = true;
+
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            
+            await AuthService.login(u, p);
+            this.unlockApp();
+        });
+    },
+
+    unlockApp() {
+        const overlay = document.getElementById('loginOverlay');
+        overlay.classList.add('hidden-overlay');
+        document.getElementById('appContainer').classList.remove('blur');
+        
+        document.getElementById('displayUser').textContent = AuthService.getUser();
+        document.getElementById('logoutBtn').addEventListener('click', AuthService.logout);
+        
+        this.startSystem();
+    },
+
+    startSystem() {
+        this.bindSelectors();
+        this.bindActions();
+        this.renderChipGroups();
+        this.restore(); 
+        this.renderCourses(); // Initial Render
+    },
+
+    bindSelectors() {
+        // Dept
+        const deptSelect = document.getElementById('deptSelect');
+        Object.keys(DB).forEach(k => {
+            const opt = document.createElement('option');
+            opt.value = k; opt.textContent = k;
+            deptSelect.appendChild(opt);
+        });
+        deptSelect.value = this.state.dept;
+
+        // Grade (Demo focused on Year 3)
+        const gradeSelect = document.getElementById('gradeSelect');
+        ['一上','一下','二上','二下','三上','三下','四上','四下'].forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g; opt.textContent = g;
+            gradeSelect.appendChild(opt);
+        });
+        gradeSelect.value = this.state.grade;
+
+        // Class
+        const classSelect = document.getElementById('classSelect');
+        classSelect.value = this.state.classId;
+
+        // Unified Change Handler
+        const handleChange = () => {
+            this.state.dept = deptSelect.value;
+            this.state.grade = gradeSelect.value;
+            this.state.classId = classSelect.value;
+            this.renderCourses();
+        };
+
+        deptSelect.addEventListener('change', handleChange);
+        gradeSelect.addEventListener('change', handleChange);
+        classSelect.addEventListener('change', handleChange);
+    },
+
+    renderCourses() {
+        const container = document.getElementById('courseContainer');
+        container.innerHTML = '';
+
+        // Safe Data Access
+        let courses = [];
+        try {
+            courses = DB[this.state.dept][this.state.classId][this.state.grade] || [];
+        } catch(e) {
+            courses = []; // Fallback if data missing
+        }
+
+        const wrap = document.createElement('div');
+        const header = document.createElement('h4');
+        header.innerHTML = `<span style="color:var(--primary)">${this.state.dept} ${this.state.grade} (${this.state.classId}班)</span> 課程清單`;
+        header.style.margin = "0 0 10px 0";
+        wrap.appendChild(header);
+
+        const group = document.createElement('div');
+        group.className = 'chip-group';
+
+        if(courses.length === 0) {
+            group.innerHTML = `<div style="color:var(--muted); padding:10px; font-style:italic;">⚠️ 此學期/班級尚未建立課程資料，請切換至「三上」查看範例。</div>`;
+        } else {
+            courses.forEach(c => {
+                const label = document.createElement('label');
+                label.className = 'chip';
+                
+                // Visual distinction for Required
+                const badge = c.type === 'req' ? '<span class="badge-req">必</span>' : '';
+                
+                label.innerHTML = `
+                    <input type="checkbox" value="${c.name}" data-type="${c.type}">
+                    ${badge}<span>${c.name}</span>
+                `;
+                
+                // Toggle logic
+                const input = label.querySelector('input');
+                label.addEventListener('click', (e) => {
+                    if(e.target !== input) {
+                        input.checked = !input.checked;
+                        label.classList.toggle('checked', input.checked);
+                    }
+                });
+                
+                group.appendChild(label);
+            });
+        }
+        wrap.appendChild(group);
+        container.appendChild(wrap);
+        this.restoreChecks();
+    },
+
+    renderChipGroups() {
+        const create = (id, items) => {
+            const area = document.getElementById(id); area.innerHTML = '';
+            items.forEach(item => {
+                const label = document.createElement('label'); label.className = 'chip';
+                label.innerHTML = `<input type="checkbox" value="${item.v}"><span>${item.t}</span>`;
+                label.addEventListener('click', function(e){
+                    const inp = this.querySelector('input');
+                    if(e.target !== inp) inp.checked = !inp.checked;
+                    this.classList.toggle('checked', inp.checked);
+                });
+                area.appendChild(label);
+            });
+        };
+
+        create('experienceArea', [
+            {v:'競賽',t:'🏆 競賽得獎'}, {v:'社團',t:'👥 社團幹部'}, 
+            {v:'專題',t:'💻 專題實作'}, {v:'實習',t:'💼 企業實習'}
+        ]);
+        create('certArea', [
+            {v:'A',t:'🥇 國際/高階 (A級)'}, {v:'B',t:'🥈 國內/基礎 (B級)'}, {v:'N',t:'無證照'}
+        ]);
+        create('hollandArea', [
+            {v:'R',t:'R 實作'}, {v:'I',t:'I 研究'}, {v:'A',t:'A 藝術'},
+            {v:'S',t:'S 社交'}, {v:'E',t:'E 企業'}, {v:'C',t:'C 常規'}
+        ]);
+    },
+
+    bindActions() {
+        document.getElementById('calcBtn').addEventListener('click', () => this.calculate());
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if(confirm('重置將清除所有暫存資料，確定嗎？')){ 
+                localStorage.removeItem('cf_state'); 
+                location.reload(); 
+            }
+        });
+        document.getElementById('downloadBtn').addEventListener('click', this.generatePDF);
+    },
+
+    calculate() {
+        // Collect Data
+        const inputs = {
+            reqTotal: document.querySelectorAll('input[data-type="req"]').length,
+            reqChecked: document.querySelectorAll('input[data-type="req"]:checked').length,
+            optChecked: document.querySelectorAll('input[data-type="opt"]:checked').length,
+            exp: Array.from(document.querySelectorAll('#experienceArea input:checked')).map(i=>i.value),
+            cert: Array.from(document.querySelectorAll('#certArea input:checked')).map(i=>i.value),
+            holland: Array.from(document.querySelectorAll('#hollandArea input:checked')).map(i=>i.value)
+        };
+
+        // Algorithm
+        const scores = {};
+        
+        // 1. Academic: Base on Required % + Bonus for Electives
+        let acadBase = inputs.reqTotal > 0 ? (inputs.reqChecked / inputs.reqTotal) * 80 : 0;
+        scores.academic = Math.min(100, Math.round(acadBase + (inputs.optChecked * 5)));
+
+        // 2. Practical: Exp count * 25
+        scores.practical = Math.min(100, inputs.exp.length * 25);
+
+        // 3. Skill: Cert level
+        scores.skill = inputs.cert.includes('A') ? 100 : (inputs.cert.includes('B') ? 70 : 30);
+
+        // 4. Match: Holland overlap
+        const targetTraits = TRAITS[this.state.dept].holland;
+        const overlap = inputs.holland.filter(h => targetTraits.includes(h)).length;
+        scores.match = overlap >= 2 ? 95 : (overlap === 1 ? 70 : 45);
+
+        // 5. Soft Skill
+        scores.soft = (inputs.exp.includes('社團') || inputs.exp.includes('競賽')) ? 90 : 60;
+
+        // Weighted Total
+        const total = Math.round(
+            scores.academic*0.25 + scores.practical*0.2 + scores.skill*0.2 + 
+            scores.match*0.2 + scores.soft*0.15
+        );
+
+        this.updateUI(scores, total, inputs);
+        this.saveState();
+        this.showToast('分析完成！');
+    },
+
+    updateUI(scores, total, inputs) {
+        // Update Gauge
+        const arc = document.getElementById('gaugeArc');
+        const dash = (total/100) * 251.2;
+        arc.style.strokeDasharray = `${dash} 251.2`;
+        document.getElementById('scoreValue').textContent = total;
+
+        // Update Radar
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        if(this.state.chart) this.state.chart.destroy();
+        this.state.chart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['學業完成', '實務經歷', '專業技能', '適性契合', '軟實力'],
+                datasets: [{
+                    label: '我的能力',
+                    data: [scores.academic, scores.practical, scores.skill, scores.match, scores.soft],
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: '#2563eb',
+                    pointBackgroundColor: '#2563eb'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: { r: { min: 0, max: 100, ticks: { display: false } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Report Generation
+        const deptInfo = TRAITS[this.state.dept];
+        document.getElementById('deptMatchCard').innerHTML = `
+            <strong>${this.state.dept} 重點特色：</strong> ${deptInfo.focus}<br>
+            <strong>適性代碼：</strong> ${deptInfo.holland.join('')} 
+            (你的吻合度: ${scores.match >= 80 ? '<span style="color:green">高</span>' : '一般'})
+        `;
+
+        const ulS = document.getElementById('strengthList'); ulS.innerHTML = '';
+        const ulW = document.getElementById('weakList'); ulW.innerHTML = '';
+        const add = (ul, txt, c) => ul.innerHTML += `<li class="result-item ${c}">${txt}</li>`;
+
+        if(scores.academic > 80) add(ulS, "必修課程完成度高，學術基礎穩固", "good");
+        else add(ulW, "必修學分有缺口，請優先確認修課計畫", "bad");
+
+        if(scores.practical > 50) add(ulS, "具備實務/實習經驗，就業競爭力強", "good");
+        else add(ulW, "缺乏專題或實習經歷，建議參加黑客松或 Side Project", "warn");
+
+        // Careers
+        const careers = {
+            "資管": ["PM 專案經理", "ERP 系統分析師", "資料科學家"],
+            "資工": ["全端工程師", "韌體工程師", "系統架構師"],
+            "人工智慧": ["AI 應用工程師", "電腦視覺研發", "互動科技設計師"]
+        };
+        const cList = document.getElementById('careerList'); cList.innerHTML = '';
+        careers[this.state.dept].forEach(c => add(cList, c, "good"));
+
+        document.getElementById('emptyState').classList.add('hidden');
+        document.getElementById('resultContent').classList.remove('hidden');
+    },
+
+    showToast(msg) {
+        const t = document.createElement('div'); t.className = 'toast-notification';
+        t.innerHTML = `✅ ${msg}`; document.body.appendChild(t);
+        setTimeout(()=>t.remove(), 3000);
+    },
+
+    generatePDF() {
+        html2canvas(document.querySelector('.container'), {scale: 2}).then(canvas => {
+            const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+            const w = 210; const h = (canvas.height * w) / canvas.width;
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, w, h);
+            pdf.save('CareerFit_Pro_Report.pdf');
+        });
+    },
+
+    saveState() {
+        const s = {
+            dept: this.state.dept, grade: this.state.grade, classId: this.state.classId,
+            name: document.getElementById('inputName').value,
+            checks: Array.from(document.querySelectorAll('input:checked')).map(i=>i.value)
+        };
+        localStorage.setItem('cf_state', JSON.stringify(s));
+    },
+
+    restore() {
+        const s = JSON.parse(localStorage.getItem('cf_state'));
+        if(s) {
+            if(s.dept) { this.state.dept = s.dept; document.getElementById('deptSelect').value = s.dept; }
+            if(s.grade) { this.state.grade = s.grade; document.getElementById('gradeSelect').value = s.grade; }
+            if(s.classId) { this.state.classId = s.classId; document.getElementById('classSelect').value = s.classId; }
+            if(s.name) document.getElementById('inputName').value = s.name;
+        }
+    },
+
+    restoreChecks() {
+        const s = JSON.parse(localStorage.getItem('cf_state'));
+        if(s && s.checks) {
+            s.checks.forEach(val => {
+                // Escape special chars for selector
+                const safeVal = val.replace(/([ #;?%&,.+*~\':"!^$[\]()=>|\/@])/g,'\\$1'); 
+                const el = document.querySelector(`input[value="${safeVal}"]`);
+                if(el) { el.checked = true; el.closest('.chip').classList.add('checked'); }
+            });
+        }
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>

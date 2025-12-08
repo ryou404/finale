@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CareerFit Pro | 履歷健檢與職涯導航 (v5.1 Integrated)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root{
+            --primary:#2563eb; --primary-dark:#1e40af; --bg:#f8fafc; --surface:#fff;
+            --muted:#64748b; --radius:14px; --shadow:0 8px 20px rgba(16,24,40,0.06);
+            --success:#10b981; --warning:#f59e0b; --danger:#ef4444; --font:'Inter','Noto Sans TC',sans-serif;
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%;margin:0;font-family:var(--font);background:var(--bg);color:#0f172a}
+        .container{max-width:1180px;margin:28px auto;padding:18px}
+        header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;padding:20px;border-radius:12px;box-shadow:var(--shadow);}
+        .header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}
+        h1{margin:0;font-size:1.25rem}
+
+        .layout{display:grid;grid-template-columns:1fr;gap:20px;margin-top:20px}
+        @media(min-width:1024px){.layout{grid-template-columns:1.3fr 0.7fr}}
+
+        .card{background:var(--surface);border-radius:10px;padding:18px;box-shadow:var(--shadow);border:1px solid #e6eef8; transition: transform 0.2s;}
+        .card:hover{border-color: #dbeafe;}
+        
+        label{display:block;margin-bottom:6px;font-weight:600;color:#0b1220}
+        input[type=text],select{width:100%;padding:10px;border-radius:8px;border:1px solid #d1e3fb; outline:none; transition: border 0.2s;}
+        input[type=text]:focus,select:focus{border-color: var(--primary);}
+
+        .chip-group{display:flex;flex-wrap:wrap;gap:8px}
+        .chip{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;border:1px solid #e6eef8;background:transparent;cursor:pointer;user-select:none; transition: all 0.2s;}
+        .chip input{display:none}
+        .chip:hover{background: #f1f5f9;}
+        .chip.checked{background:rgba(37,99,235,0.08);border-color:rgba(37,99,235,0.18);color:var(--primary);font-weight:600}
+
+        .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700; transition: all 0.2s;}
+        .btn:active{transform: scale(0.98);}
+        .btn-primary{background:var(--primary);color:white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);}
+        .btn-primary:hover{background:var(--primary-dark);}
+        .btn-ghost{background:#fff;border:1px solid #e6eef8;color:var(--muted)}
+        .btn-ghost:hover{background:#f8fafc; border-color: #cbd5e1;}
+
+        /* sticky dashboard */
+        .aside-sticky{position:sticky;top:22px}
+        .gauge-wrap{display:flex;flex-direction:column;align-items:center;padding-top:6px}
+        .gauge{width:220px;height:120px;position:relative}
+        svg.gauge-svg{width:100%;height:100%;overflow:visible}
+        .gauge-value{font-size:2.6rem;font-weight:800;line-height:1;color:#0b1220}
+        .gauge-label{font-size:0.85rem;color:var(--muted)}
+
+        /* results */
+        .result-section{margin-top:14px}
+        .result-list{list-style:none;padding:0;margin:0}
+        .result-item{display:flex;gap:10px;padding:10px;border-radius:8px;margin-bottom:8px}
+        .good{background:#ecfdf5;color:#065f46;border-left:4px solid var(--success)}
+        .warn{background:#fffbeb;color:#92400e;border-left:4px solid var(--warning)}
+        .bad{background:#fef2f2;color:#7f1d1d;border-left:4px solid var(--danger)}
+
+        .hidden{display:none}
+
+        /* smooth fade-in */
+        .fade-in{animation:fadeIn .45s ease-out both}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+        .radar-box{height:220px;width:100%}
+
+        /* accessible timeline */
+        .timeline{border-left:3px solid #e6eef8;padding-left:14px;margin-top:10px}
+        .timeline .step{margin-bottom:12px; position: relative;}
+        .timeline .step::before {content:''; position: absolute; left: -20px; top: 6px; width: 9px; height: 9px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 0 4px #eff6ff;}
+
+        /* V5.1 New Components: Toast & Back Button */
+        .nav-back { display: inline-flex; align-items: center; color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.9; margin-bottom: 4px; }
+        .nav-back:hover { opacity: 1; text-decoration: underline; }
+
+        .toast-notification {
+            position: fixed; bottom: 24px; right: 24px; 
+            background: #0f172a; color: white; 
+            padding: 12px 20px; border-radius: 8px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            font-size: 0.9rem; font-weight: 500;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 1000; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .toast-notification svg { width: 20px; height: 20px; color: #4ade80; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="nav-back">← 返回首頁</a>
+            <div class="header-inner">
+                <div>
+                    <h1>CareerFit Pro — 履歷健檢中心</h1>
+                    <div style="font-size:.9rem;opacity:.9">已啟用跨模組資料同步 (v5.1)</div>
+                </div>
+                <div style="font-size:.9rem;background:rgba(255,255,255,0.15);padding:6px 12px;border-radius:999px; font-weight: 600;">Data Synced</div>
+            </div>
+        </header>
+
+        <div class="layout">
+            <main>
+                <div class="card">
+                    <h2 style="margin:0 0 10px;font-size:1rem">📝 基本資料與課程</h2>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+                        <div><label for="inputName">姓名</label><input id="inputName" type="text" placeholder="你的名字" aria-label="姓名"></div>
+                        <div><label for="deptSelect">系所</label>
+                            <select id="deptSelect" aria-label="系所選擇"></select>
+                        </div>
+                        <div><label for="gradeSelect">年級</label>
+                            <select id="gradeSelect" aria-label="年級"></select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>課程完成 (勾選已修課程)</label>
+                        <div id="courseContainer" class="fade-in"></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top:18px">
+                    <h2 style="margin:0 0 10px;font-size:1rem">🚀 經歷與特質加權</h2>
+
+                    <div style="margin-bottom:12px">
+                        <label>實作與經歷</label>
+                        <div id="experienceArea" class="chip-group"></div>
+                    </div>
+
+                    <div style="margin-bottom:12px">
+                        <label>專業證照</label>
+                        <div id="certArea" class="chip-group"></div>
+                    </div>
+
+                    <div style="margin-bottom:12px">
+                        <label>Holland 興趣代碼 (品牌經營區)</label>
+                        <p style="font-size:0.8rem; color:var(--muted); margin-bottom: 6px;">*系統將自動同步個人品牌測驗結果</p>
+                        <div id="hollandArea" class="chip-group"></div>
+                    </div>
+
+                    <div style="display:flex;gap:10px;margin-top:20px;padding-top:15px;border-top:1px solid #f1f5f9;">
+                        <button class="btn btn-primary" id="calcBtn">📊 計算履歷健康指數</button>
+                        <button class="btn btn-ghost" id="resetBtn">重置</button>
+                        <button class="btn btn-ghost" id="saveBtn">💾 儲存檔案</button>
+                    </div>
+                </div>
+
+            </main>
+
+            <aside>
+                <div class="card aside-sticky">
+                    <div style="text-align:center;margin-bottom:8px">
+                        <div class="gauge-wrap">
+                            <div class="gauge" aria-hidden="true">
+                                <svg class="gauge-svg" viewBox="0 0 200 120" role="img" aria-label="分數儀表">
+                                    <defs>
+                                        <linearGradient id="g1" x1="0%" x2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#2563eb"/></linearGradient>
+                                    </defs>
+                                    <path d="M20 100 A 80 80 0 0 1 180 100" stroke="#e6eef8" stroke-width="12" fill="none" stroke-linecap="round"></path>
+                                    <path id="gaugeArc" d="M20 100 A 80 80 0 0 1 180 100" stroke="url(#g1)" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="0 251.2"></path>
+                                </svg>
+                            </div>
+                            <div style="text-align:center;margin-top:6px">
+                                <div class="gauge-value" id="scoreValue">0</div>
+                                <div class="gauge-label">總分 (100分制)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="emptyState" style="text-align:center;color:var(--muted);padding:14px;font-size:0.9rem;">
+                        <p>請填寫資料並點擊「計算」<br>系統將根據五大維度進行評分</p>
+                    </div>
+
+                    <div id="resultContent" class="hidden">
+                        <div class="result-section fade-in">
+                            <h3 style="margin:0 0 8px">📊 五力健檢雷達圖</h3>
+                            <div class="radar-box"><canvas id="radarChart" aria-label="雷達圖" role="img"></canvas></div>
+                        </div>
+
+                        <div class="result-section fade-in" style="margin-top:8px">
+                            <h3 style="margin:0 0 8px">🎯 職涯適配 (Holland Top-3)</h3>
+                            <div id="deptMatchCard" style="padding:10px;border-radius:8px;background:#f0f9ff;border:1px solid #bae6fd;margin-bottom:8px;font-size:0.9rem;"></div>
+                            <ul id="careerList" class="result-list"></ul>
+                        </div>
+
+                        <div class="result-section fade-in" style="margin-top:8px">
+                            <h3 style="margin:0 0 8px">✅ 優勢 / ❌ 待補足</h3>
+                            <ul id="strengthList" class="result-list"></ul>
+                            <ul id="weakList" class="result-list"></ul>
+                        </div>
+
+                        <div class="result-section fade-in" style="margin-top:8px">
+                            <h3 style="margin:0 0 8px">📅 30/60/90 天行動計畫</h3>
+                            <div class="timeline" id="actionPlanArea"></div>
+                        </div>
+
+                        <div style="margin-top:12px"><button class="btn btn-primary" style="width:100%" id="downloadBtn">📄 下載完整報告 (PDF)</button></div>
+                    </div>
+
+                </div>
+            </aside>
+        </div>
+
+    </div>
+
+<script>
+/* ---------- Data (kept simple & extensible) ---------- */
+const DATA = {
+    departments: {
+        "資管": { "一上":["計算機概論","程式設計I","會計學"], "一下":["程式設計II","經濟學","資訊數學"] , "二上":["資料結構","統計學"], "二下":["資料庫管理","網路通訊"], "三上":["系統分析與設計"], "三下":["作業系統"], "四上":["資管講座"], "四下":[]},
+        "資傳": { "一上":["新媒體概論","基礎網頁設計"], "一下":["數位音效","設計素描"], "二上":["介面設計","多媒體程式設計"], "二下":["數位行銷","3D動畫基礎"], "三上":["互動科技應用"], "三下":["畢業專題I"], "四上":["畢業專題II"], "四下":[]},
+        "資工": { "一上":["微積分","計算機概論"], "一下":["離散數學","程式設計II"], "二上":["資料結構","數位邏輯"], "二下":["演算法","機率統計"], "三上":["作業系統"], "三下":["編譯器設計"], "四上":["畢業專題"], "四下":[]}
+    },
+    deptTraits: {"資管":{"holland":["C","E","I"], focus:"商業 x 資訊"},"資工":{"holland":["I","R","C"],focus:"技術 x 演算法"},"資傳":{"holland":["A","S","E"],focus:"內容 x 互動"}},
+    experienceList:[{v:'競賽',t:'🏆 競賽/獎項'},{v:'社團幹部',t:'👥 社團/學生會'},{v:'專案實作',t:'💻 專題/Side Project'},{v:'企業實習',t:'💼 企業實習'}],
+    certList:[{v:'A級',t:'🥇 A 級 (國際/高階)'},{v:'B級',t:'🥈 B 級 (國內/基礎)'},{v:'無',t:'無'}],
+    hollandCodes:['R','I','A','S','E','C']
+};
+
+/* ---------- App ---------- */
+const App = {
+    state:{dept:'資管',chart:null},
+
+    init(){
+        this.bindSelectors();
+        this.renderCourses();
+        this.renderChipGroups();
+        this.checkUser();     // v5.1 New: Auto-fill user name
+        this.restore();
+        this.bindActions();
+        this.checkSyncData(); // v5.1 New: Check for brand test data
+    },
+
+    // v5.1 New: Read user data from index.html session
+    checkUser(){
+        const user = localStorage.getItem('careerDNA_user');
+        if(user){
+            try {
+                const u = JSON.parse(user);
+                if(u.name) document.getElementById('inputName').value = u.name;
+            } catch(e){}
+        }
+    },
+
+    // v5.1 New: Read brand test results and auto-check Holland
+    checkSyncData(){
+        const syncRaw = localStorage.getItem('careerDNA_sync');
+        if(syncRaw){
+            try {
+                const sync = JSON.parse(syncRaw);
+                const hCodes = Array.isArray(sync.holland) ? sync.holland : (typeof sync.holland === 'string' ? sync.holland.split('') : []);
+                
+                let syncedCount = 0;
+                hCodes.forEach(code => {
+                    // Find chip with this value
+                    const input = document.querySelector(`#hollandArea input[value="${code}"]`);
+                    if(input && !input.checked){
+                        input.checked = true;
+                        input.closest('.chip').classList.add('checked');
+                        syncedCount++;
+                    }
+                });
+
+                if(syncedCount > 0){
+                    this.showToast(`已自動同步 ${syncedCount} 項 Holland 測驗結果 (${hCodes.join('')})`);
+                    // Optional: Auto-calculate if synced
+                    this.calculate();
+                }
+            } catch(e){ console.error('Sync error', e); }
+        }
+    },
+
+    // v5.1 New: Elegant Toast Notification
+    showToast(msg){
+        const t = document.createElement('div');
+        t.className = 'toast-notification';
+        t.innerHTML = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <span>${msg}</span>`;
+        document.body.appendChild(t);
+        setTimeout(() => {
+            t.style.opacity = '0';
+            t.style.transform = 'translateY(10px)';
+            t.style.transition = 'all 0.5s';
+            setTimeout(() => t.remove(), 500);
+        }, 4000);
+    },
+
+    bindSelectors(){
+        const deptSelect=document.getElementById('deptSelect');
+        Object.keys(DATA.departments).forEach(k=>{
+            const opt=document.createElement('option');opt.value=k;opt.textContent=k;deptSelect.appendChild(opt);
+        });
+        deptSelect.value=this.state.dept;
+
+        const grade=document.getElementById('gradeSelect');
+        ['一上','一下','二上','二下','三上','三下','四上','四下','延畢'].forEach(g=>{const o=document.createElement('option');o.value=g;o.textContent=g;grade.appendChild(o)});
+
+        deptSelect.addEventListener('change',e=>{this.state.dept=e.target.value;this.renderCourses();});
+    },
+
+    renderCourses(){
+        const container=document.getElementById('courseContainer');container.innerHTML='';
+        const deptData=DATA.departments[this.state.dept];
+        Object.entries(deptData).forEach(([sem,courses])=>{
+            const wrap=document.createElement('div');wrap.style.marginBottom='8px';
+            const title=document.createElement('h4');title.textContent=sem;title.style.margin='6px 0 6px';title.style.fontSize='0.9rem';title.style.fontWeight='700';wrap.appendChild(title);
+            const group=document.createElement('div');group.className='chip-group';
+            courses.forEach(c=>{
+                const label=document.createElement('label');label.className='chip';label.setAttribute('tabindex','0');
+                const input=document.createElement('input');input.type='checkbox';input.value=c;input.dataset.type='required';
+                const span=document.createElement('span');span.textContent=c;label.appendChild(input);label.appendChild(span);
+                // click toggling
+                label.addEventListener('click',()=>{input.checked=!input.checked;label.classList.toggle('checked',input.checked)});
+                input.addEventListener('change',()=>{label.classList.toggle('checked',input.checked)});
+                group.appendChild(label);
+            });
+            if(courses.length===0){ const em=document.createElement('div');em.textContent='(無課程)';em.style.color='var(--muted)';group.appendChild(em);} 
+            wrap.appendChild(group);
+            container.appendChild(wrap);
+        });
+        this.restoreChecks();
+    },
+
+    renderChipGroups(){
+        const expArea=document.getElementById('experienceArea');expArea.innerHTML='';
+        DATA.experienceList.forEach(it=>{
+            const label=document.createElement('label');label.className='chip';label.tabIndex=0;
+            const input=document.createElement('input');input.type='checkbox';input.value=it.v;const span=document.createElement('span');span.textContent=it.t;label.appendChild(input);label.appendChild(span);
+            label.addEventListener('click',()=>{input.checked=!input.checked;label.classList.toggle('checked',input.checked)});
+            expArea.appendChild(label);
+        });
+
+        const certArea=document.getElementById('certArea');certArea.innerHTML='';
+        DATA.certList.forEach(it=>{
+            const label=document.createElement('label');label.className='chip';label.tabIndex=0;
+            const input=document.createElement('input');input.type='checkbox';input.value=it.v;const span=document.createElement('span');span.textContent=it.t;label.appendChild(input);label.appendChild(span);
+            label.addEventListener('click',()=>{input.checked=!input.checked;label.classList.toggle('checked',input.checked)});
+            certArea.appendChild(label);
+        });
+
+        const holland=document.getElementById('hollandArea');holland.innerHTML='';
+        DATA.hollandCodes.forEach(code=>{
+            const label=document.createElement('label');label.className='chip';label.tabIndex=0;
+            const input=document.createElement('input');input.type='checkbox';input.value=code;
+            const span=document.createElement('span');span.textContent = code;
+            
+            // Add tooltip logic for codes
+            const tooltipMap = {R:'實作',I:'研究',A:'藝術',S:'社交',E:'企業',C:'常規'};
+            span.textContent = `${code} ${tooltipMap[code]}`;
+            
+            label.appendChild(input);label.appendChild(span);
+            label.addEventListener('click',()=>{input.checked=!input.checked;label.classList.toggle('checked',input.checked)});
+            holland.appendChild(label);
+        });
+    },
+
+    bindActions(){
+        document.getElementById('calcBtn').addEventListener('click',()=>this.calculate());
+        document.getElementById('resetBtn').addEventListener('click',()=>this.reset());
+        document.getElementById('downloadBtn').addEventListener('click',()=>this.generatePDF());
+        document.getElementById('saveBtn').addEventListener('click',()=>this.saveToFile());
+    },
+
+    collectInputs(){
+        const reqs = Array.from(document.querySelectorAll('input[data-type="required"]:checked')).map(i=>i.value);
+        const totalReq = document.querySelectorAll('input[data-type="required"]').length || 0;
+        const exp = Array.from(document.querySelectorAll('#experienceArea input:checked')).map(i=>i.value);
+        const certs = Array.from(document.querySelectorAll('#certArea input:checked')).map(i=>i.value);
+        const holland = Array.from(document.querySelectorAll('#hollandArea input:checked')).map(i=>i.value);
+        return {reqs,totalReq,exp,certs,holland};
+    },
+
+    calculate(){
+        const inputs=this.collectInputs();
+        const dims = {};
+        dims.academic = inputs.totalReq>0 ? Math.round((inputs.reqs.length/inputs.totalReq)*100) : 0;
+        dims.practical = Math.min(inputs.exp.length * 30, 100);
+        dims.skill = inputs.certs.includes('A級') ? 100 : (inputs.certs.includes('B級')?70:20);
+        
+        const traits=DATA.deptTraits[this.state.dept].holland;
+        const matchCount = inputs.holland.filter(h=>traits.includes(h)).length;
+        dims.match = matchCount>=2 ? 90 : (matchCount===1?70:50);
+        dims.communication = (inputs.exp.includes('社團幹部')||inputs.exp.includes('競賽'))?90:65;
+
+        const weights = {academic:0.22,practical:0.20,skill:0.22,match:0.18,communication:0.18};
+        let total = Math.round((dims.academic*weights.academic + dims.practical*weights.practical + dims.skill*weights.skill + dims.match*weights.match + dims.communication*weights.communication));
+        total = Math.max(0,Math.min(100,total));
+
+        this.updateGauge(total);
+        this.renderRadar(dims);
+        this.renderReport(inputs,dims,total);
+        document.getElementById('emptyState').classList.add('hidden');
+        document.getElementById('resultContent').classList.remove('hidden');
+        this.saveState();
+    },
+
+    updateGauge(score){
+        const arc=document.getElementById('gaugeArc');
+        const circumference=251.2; 
+        const dash = (score/100)*circumference;
+        arc.style.transition='stroke-dasharray 900ms cubic-bezier(.2,.9,.2,1)';
+        arc.setAttribute('stroke-dasharray',`${dash} ${circumference}`);
+        document.getElementById('scoreValue').textContent=score;
+    },
+
+    renderRadar(dims){
+        const ctx=document.getElementById('radarChart').getContext('2d');
+        if(this.state.chart) this.state.chart.destroy();
+        this.state.chart = new Chart(ctx,{
+            type:'radar',
+            data:{labels:['學業完成','實務經歷','專業技能','科系適性','溝通協作'],datasets:[{label:'能力分佈',data:[dims.academic,dims.practical,dims.skill,dims.match,dims.communication],fill:true,backgroundColor:'rgba(37,99,235,0.16)',borderColor:'#2563eb',pointBackgroundColor:'#2563eb',borderWidth:2}]},
+            options:{
+                responsive:true,maintainAspectRatio:false,
+                scales:{r:{beginAtZero:true,min:0,max:100,grid:{color:'#eef6ff'},angleLines:{color:'#eef6ff'},ticks:{display:false}}},
+                plugins:{legend:{display:false}}
+            }
+        });
+    },
+
+    renderReport(inputs,dims,total){
+        const add=(el,txt,cls)=>{const li=document.createElement('li');li.className=`result-item ${cls}`;li.textContent=txt;document.getElementById(el).appendChild(li)};
+        document.getElementById('strengthList').innerHTML='';document.getElementById('weakList').innerHTML='';document.getElementById('careerList').innerHTML='';
+
+        if(dims.academic>=80) add('strengthList','學業基礎穩固，核心課程完成度高。','good'); else add('weakList','必修學分缺口較大，建議優先補齊。','bad');
+        if(dims.practical>=50) add('strengthList','具備實務經驗，履歷競爭力佳。','good'); else add('weakList','缺乏專題或實習經歷，建議參加黑客松或 Side Project。','warn');
+        if(dims.skill>=70) add('strengthList','證照或技能基礎良好。','good'); else add('weakList','建議取得相關證照或完成技能課程。','warn');
+        
+        const hollandTop = inputs.holland.slice(0,3).join('') || '未填寫';
+        const traits = DATA.deptTraits[this.state.dept];
+        document.getElementById('deptMatchCard').innerHTML = `您的 Holland 代碼：<strong>${hollandTop}</strong><br>與 ${this.state.dept} (${traits.focus}) 的契合度：<strong>${(inputs.holland.filter(h=>traits.holland.includes(h)).length>=2)?'高':'一般'}</strong>`;
+
+        const careerMap = { '資管':['PM','系統分析師'], '資工':['軟體工程師','AI工程師'], '資傳':['UI/UX設計師','數位行銷'] };
+        careerMap[this.state.dept].forEach(c=>{const li=document.createElement('li');li.className='result-item good';li.textContent=c;document.getElementById('careerList').appendChild(li)});
+
+        const grade = document.getElementById('gradeSelect').value;
+        let actionHTML = '';
+        if(grade.includes('一')||grade.includes('二')){
+            actionHTML = `<div class="step"><strong>30 天：</strong>探索系上選修，加入一個感興趣的社團或讀書會。</div><div class="step"><strong>60 天：</strong>維持 GPA，並嘗試接觸基礎程式或設計工具 (Git/Figma)。</div>`;
+        } else {
+            actionHTML = `<div class="step"><strong>30 天：</strong>整理 GitHub/Behance 作品集，盤點缺少的關鍵技能。</div><div class="step"><strong>60 天：</strong>投遞實習履歷，並完成一個完整的 Side Project。</div>`;
+        }
+        document.getElementById('actionPlanArea').innerHTML = actionHTML;
+    },
+
+    saveState(){
+        try{
+            const state={dept:this.state.dept,name:document.getElementById('inputName').value,checks:Array.from(document.querySelectorAll('input:checked')).map(i=>i.value)};
+            localStorage.setItem('careerfit_v4',JSON.stringify(state));
+        }catch(e){console.warn('localStorage error',e)}
+    },
+
+    restore(){
+        try{
+            const s=JSON.parse(localStorage.getItem('careerfit_v4')||'null');
+            if(s){if(s.dept){this.state.dept=s.dept;document.getElementById('deptSelect').value=s.dept}if(s.name)document.getElementById('inputName').value=s.name}
+        }catch(e){console.warn('restore error',e)}
+    },
+
+    restoreChecks(){
+        try{
+            const s=JSON.parse(localStorage.getItem('careerfit_v4')||'null');if(!s||!s.checks) return; s.checks.forEach(v=>{const el=document.querySelector(`input[value="${CSS.escape(v)}"]`); if(el){el.checked=true; el.closest('label')?.classList?.add('checked')}});
+        }catch(e){/* ignore malformed */}
+    },
+
+    reset(){ if(confirm('確定要重置所有資料嗎？')){localStorage.removeItem('careerfit_v4');location.reload();} },
+
+    generatePDF(){
+        const el=document.querySelector('.container');
+        html2canvas(el,{scale:2,useCORS:true}).then(canvas=>{
+            const img=canvas.toDataURL('image/png');
+            const pdf = new window.jspdf.jsPDF('p','mm','a4');
+            const pageWidth=210; const pageHeight=297; const imgProps = canvas.width / canvas.height; const imgHeight = pageWidth / imgProps;
+            pdf.addImage(img,'PNG',0,0,pageWidth,imgHeight);
+            pdf.save('CareerFit_Report.pdf');
+        }).catch(e=>{alert('產生 PDF 發生錯誤：'+e.message)});
+    },
+
+    saveToFile(){
+        const payload={name:document.getElementById('inputName').value,dept:this.state.dept,checks:Array.from(document.querySelectorAll('input:checked')).map(i=>i.value)};
+        const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+        const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='careerfit_export.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+    }
+};
+
+// init
+document.addEventListener('DOMContentLoaded',()=>App.init());
+</script>
+</body>
+</html>

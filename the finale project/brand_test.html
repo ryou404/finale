@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerDNA | 全方位個人品牌定位系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- 核心樣式 --- */
+        :root { --primary: #2563eb; --text-main: #0f172a; }
+        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; background-color: #f8fafc; color: var(--text-main); }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08); }
+        .gradient-text { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-bg { background-image: radial-gradient(circle at 50% 0%, #eff6ff 0%, transparent 70%), radial-gradient(circle at 100% 100%, #dbeafe 0%, transparent 50%); }
+        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        
+        .likert-opt input:checked + div { background-color: var(--primary); color: white; border-color: var(--primary); transform: scale(1.05); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
+        .circular-chart { display: block; margin: 0 auto; max-width: 100%; max-height: 250px; }
+        .circle-bg { fill: none; stroke: #e2e8f0; stroke-width: 2.5; }
+        .circle { fill: none; stroke-width: 2.5; stroke-linecap: round; transition: stroke-dasharray 1s ease-out; }
+        .hidden { display: none !important; }
+        .tab-btn.active { border-bottom: 2px solid var(--primary); color: var(--primary); font-weight: 700; }
+        
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+            .glass-panel { box-shadow: none; border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <div id="view-landing" class="flex-grow flex flex-col relative hero-bg">
+        <nav class="w-full px-6 py-4 flex justify-between items-center max-w-7xl mx-auto">
+            <div class="text-2xl font-black tracking-tighter text-blue-700 flex items-center gap-2">
+                <div class="w-3 h-3 bg-blue-600 rounded-full"></div>CareerDNA
+            </div>
+            <button onclick="app.loadDemo()" class="text-sm text-gray-400 hover:text-blue-600 transition font-medium">Demo Mode</button>
+        </nav>
+        <main class="flex-grow flex flex-col items-center justify-center text-center px-4 py-12">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-xs font-bold tracking-wider mb-2 fade-in-up">PERSONAL BRANDING SYSTEM</span>
+                <h1 class="text-5xl md:text-7xl font-black text-slate-900 leading-tight fade-in-up delay-100">探索你的<br><span class="gradient-text">職涯基因序列</span></h1>
+                <p class="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto fade-in-up delay-200">結合 Holland 興趣與 Gallup 優勢。<br>一鍵生成：科系定位、履歷草稿、經營策略。</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4 fade-in-up delay-300">
+                    <button onclick="app.start()" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                        開始免費測評 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="view-quiz" class="hidden min-h-screen bg-white">
+        <div class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+            <div class="max-w-3xl mx-auto px-4 py-3">
+                <div class="flex justify-between text-xs font-bold text-slate-400 mb-1"><span>PROGRESS</span><span id="progress-text">0%</span></div>
+                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden"><div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300 w-0"></div></div>
+            </div>
+        </div>
+        <div class="max-w-3xl mx-auto px-4 py-8 pb-24" id="quiz-container"></div>
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-lg">
+            <div class="max-w-3xl mx-auto flex justify-between gap-4">
+                <button onclick="app.prevPage()" id="btn-prev" class="px-6 py-2 border-2 border-slate-200 text-slate-500 rounded-full font-bold hover:bg-slate-50 transition disabled:opacity-50" disabled>上一頁</button>
+                <button onclick="app.nextPage()" id="btn-next" class="flex-1 bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition shadow-md">下一頁</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-result" class="hidden min-h-screen bg-[#f8fafc] py-8 px-4">
+        <div class="max-w-5xl mx-auto mb-6 flex justify-end gap-3 no-print">
+            <button onclick="app.downloadPDF()" class="bg-slate-800 text-white px-5 py-2 rounded-lg font-bold shadow hover:bg-slate-700 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> 下載完整報告
+            </button>
+        </div>
+
+        <div id="report-container" class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-12 glass-panel rounded-3xl p-8 text-center relative overflow-hidden fade-in-up">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-500"></div>
+                <h2 class="text-xl font-bold text-slate-800 mb-1">My Brand Canvas 品牌定位報告</h2>
+                <span class="text-xs font-mono text-slate-400" id="report-date"></span>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-10 mt-6">
+                    <div class="relative w-40 h-40 flex items-center justify-center">
+                        <svg viewBox="0 0 36 36" class="circular-chart w-full h-full text-blue-600">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="score-display" class="text-4xl font-black text-slate-800 tracking-tighter">0</span>
+                            <span class="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Fit Score</span>
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <div class="mb-4"><div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Best Fit Career</div><div id="best-dept" class="text-3xl md:text-4xl font-black text-blue-700 mt-1">Analyzing...</div></div>
+                        <div class="text-sm text-slate-600 bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 inline-block">與您的特質契合度高達 <span id="fit-score-text" class="font-bold text-blue-700">0%</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 space-y-6 fade-in-up delay-100">
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-blue-500 rounded-full"></span>六維能力雷達</h3>
+                    <div class="relative w-full aspect-square max-w-[300px] mx-auto"><svg id="radar-chart" viewBox="0 0 300 300" class="w-full h-full drop-shadow-lg"></svg></div>
+                </div>
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-orange-500 rounded-full"></span>Holland 興趣光譜</h3>
+                    <div class="flex items-baseline gap-3 mb-4"><span id="holland-code" class="text-4xl font-black text-slate-800 tracking-widest">---</span></div>
+                    <div id="holland-bars" class="space-y-3"></div>
+                </div>
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-pink-500 rounded-full"></span>社群經營策略</h3>
+                    <div id="platform-card" class="p-4 bg-pink-50 rounded-xl border border-pink-100"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 space-y-6 fade-in-up delay-200">
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-teal-500 rounded-full"></span>能力維度量化分析</h3>
+                    <div id="radar-details" class="space-y-4"></div>
+                </div>
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-purple-500 rounded-full"></span>Top 5 天賦優勢</h3>
+                    <div id="strength-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                </div>
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-yellow-500 rounded-full"></span>品牌行動卡片 (Action Card)</h3>
+                    <div id="action-card-content" class="bg-yellow-50 p-4 rounded-xl border border-yellow-100 text-sm text-slate-700 space-y-2"></div>
+                </div>
+
+                <div class="bg-slate-900 rounded-3xl p-6 shadow-xl text-white relative overflow-hidden no-print">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-[60px] opacity-20"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-bold text-xl">🚀 履歷生成器</h3>
+                            <div class="flex gap-4 text-sm font-medium">
+                                <button onclick="app.switchTab('generate')" id="tab-gen" class="tab-btn active text-blue-400 border-b-2 border-blue-400 pb-1">直接產出文案</button>
+                                <button onclick="app.switchTab('ai')" id="tab-ai" class="tab-btn text-slate-400 pb-1 hover:text-white">AI 協作指令</button>
+                            </div>
+                        </div>
+                        <div id="content-generate" class="space-y-4">
+                            <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 max-h-60 overflow-y-auto"><pre id="resume-draft" class="whitespace-pre-wrap font-sans text-sm text-slate-300 leading-relaxed"></pre></div>
+                            <button onclick="app.copyText('resume-draft')" class="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold transition">📋 複製履歷草稿</button>
+                        </div>
+                        <div id="content-ai" class="hidden space-y-4">
+                            <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 max-h-60 overflow-y-auto font-mono text-xs text-green-400"><div id="ai-prompt-text"></div></div>
+                            <button onclick="app.copyText('ai-prompt-text')" class="w-full py-3 bg-green-600 hover:bg-green-700 rounded-xl font-bold transition">🤖 複製 AI 指令</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center pt-8 pb-12 no-print"><button onclick="location.reload()" class="text-sm text-slate-400 hover:text-slate-600 underline">重新開始測驗</button></div>
+    </div>
+
+    <script>
+        const DATA = {
+            // **核心修正：權重差異化**
+            weights: {
+                '資工系 (CS)': { holland: { R: 8, I: 8, A: 1, S: 0, E: 1, C: 5 }, strengths: { Analytical: 8, Focus: 8, Learner: 5, Strategic: 3, Achiever: 3, Ideation: 1, Communication: 0, Relator: 0, Developer: 0, Responsibility: 3 } },
+                '資管系 (IM)': { holland: { R: 1, I: 3, A: 1, S: 3, E: 8, C: 8 }, strengths: { Strategic: 8, Achiever: 5, Responsibility: 5, Communication: 5, Analytical: 3, Focus: 1, Learner: 1, Ideation: 1, Relator: 3, Developer: 3 } },
+                '資傳系 (Comm)': { holland: { R: 1, I: 1, A: 8, S: 8, E: 5, C: 1 }, strengths: { Communication: 8, Ideation: 8, Relator: 5, Developer: 5, Strategic: 1, Achiever: 1, Analytical: 0, Focus: 0, Learner: 3, Responsibility: 1 } }
+            },
+            radarMap: [
+                { name: '邏輯分析', keys: ['Analytical', 'Focus', 'I'] }, { name: '專案執行', keys: ['Achiever', 'Responsibility', 'C'] },
+                { name: '策略思維', keys: ['Strategic', 'E', 'Learner'] }, { name: '人際溝通', keys: ['Communication', 'Relator', 'S'] },
+                { name: '創新創造', keys: ['Ideation', 'A'] }, { name: '技術實作', keys: ['R'] }
+            ],
+            radarBenchmarks: {
+                '邏輯分析': { low: '仰賴直覺決策', mid: '能進行基礎數據判讀', high: '具備拆解複雜系統與數據洞察的卓越能力' },
+                '專案執行': { low: '需要明確指令', mid: '能按時完成交付', high: '具備高度當責感，能優化流程並確保高品質產出' },
+                '策略思維': { low: '專注眼前執行', mid: '能規劃短期目標', high: '具備宏觀視野，能預判風險並制定長期佈局' },
+                '人際溝通': { low: '偏好獨立作業', mid: '能進行團隊協作', high: '擅長跨部門溝通與衝突協調，具影響力' },
+                '創新創造': { low: '偏好標準流程', mid: '能提出改良建議', high: '具備突破性思維，能從0到1建構解決方案' },
+                '技術實作': { low: '偏好理論研究', mid: '能操作基礎工具', high: '具備強烈動手實作能力，能將概念轉化為實體' }
+            },
+            strengthsInfo: {
+                'Strategic': '策略思維', 'Learner': '學習渴望', 'Analytical': '邏輯分析', 'Ideation': '創新思維', 'Communication': '溝通表達',
+                'Achiever': '成就導向', 'Focus': '專注目標', 'Responsibility': '責任紀律', 'Developer': '伯樂特質', 'Relator': '深度交往'
+            },
+            hollandInfo: {
+                'R': {n:'實做型', c:'#ef4444'}, 'I': {n:'研究型', c:'#3b82f6'}, 'A': {n:'藝術型', c:'#e879f9'},
+                'S': {n:'社交型', c:'#f97316'}, 'E': {n:'企業型', c:'#8b5cf6'}, 'C': {n:'常規型', c:'#06b6d4'}
+            },
+            // **新增：平台推薦資料**
+            platforms: {
+                'R': { name: 'GitHub / 技術部落格', desc: '展示你的代碼庫、專案架構與技術筆記，吸引技術主管的目光。' },
+                'I': { name: 'Medium / ResearchGate', desc: '發表深度分析文章或研究成果，建立專業領域的知識權威感。' },
+                'A': { name: 'Instagram / Behance', desc: '透過視覺化作品集展現美感與創意，適合經營個人風格鮮明的品牌。' },
+                'S': { name: 'Facebook 社團 / Podcast', desc: '建立社群連結，透過聲音或文字分享觀點，經營人際影響力。' },
+                'E': { name: 'LinkedIn', desc: '經營專業人脈，分享產業見解與專案成果，適合建立商務與領導形象。' },
+                'C': { name: 'Notion / 個人網站', desc: '整理系統化的知識庫或履歷，展現條理分明與專業可靠的形象。' }
+            },
+            // **新增：行動卡片 (書籍/技能)**
+            actionCards: {
+                'Strategic': { book: '《好策略壞策略》', skill: '心智圖繪製、SWOT分析' },
+                'Learner': { book: '《刻意練習》', skill: '快速閱讀、知識管理系統(Obsidian)' },
+                'Analytical': { book: '《思考快與慢》', skill: 'Python 數據分析、Tableau 視覺化' },
+                'Ideation': { book: '《創意自信帶來力量》', skill: '設計思考 (Design Thinking)、腦力激盪引導' },
+                'Communication': { book: '《跟 TED 學表達》', skill: '簡報設計、故事行銷 (Storytelling)' },
+                'Achiever': { book: '《原子習慣》', skill: '專案管理 (Agile/Scrum)、時間管理 (Pomodoro)' },
+                'Focus': { book: '《深度工作力》', skill: '目標設定 (OKR)、心流觸發' },
+                'Responsibility': { book: '《當責》', skill: '風險管理、品質控管' },
+                'Developer': { book: '《教練》', skill: '導師引導 (Coaching)、教育訓練設計' },
+                'Relator': { book: '《人性的弱點》', skill: '同理心傾聽、衝突管理' }
+            }
+        };
+
+        const QUESTIONS = [
+            // S: Strengths (15題)
+            {t:'面對複雜且模糊的專案需求時，我能迅速找出潛在風險與多種應對路徑。(Strategic)', m:'Strategic', cat:'s'},
+            {t:'面對新技術或陌生領域，我會感到興奮並能快速掌握核心概念應用於工作中。(Learner)', m:'Learner', cat:'s'},
+            {t:'在會議中，我習慣要求以數據、邏輯推演或具體證據來佐證決策，而非憑感覺。(Analytical)', m:'Analytical', cat:'s'},
+            {t:'我常能跳脫現有框架，提出讓團隊耳目一新的非傳統解決方案。(Ideation)', m:'Ideation', cat:'s'},
+            {t:'我擅長將複雜的技術語言，轉化為非技術人員也能聽懂的商業價值或故事。(Communication)', m:'Communication', cat:'s'},
+            {t:'我將完成任務視為基本，並習慣主動設定更高的KPI或優化標準來挑戰自己。(Achiever)', m:'Achiever', cat:'s'},
+            {t:'即使在干擾眾多的環境下，我仍能鎖定關鍵目標，長時間維持高效率產出。(Focus)', m:'Focus', cat:'s'},
+            {t:'對於答應的交付期限(Deadline)，我視為絕對承諾，必要時會自主排除萬難完成。(Responsibility)', m:'Responsibility', cat:'s'},
+            {t:'我能敏銳察覺團隊成員的潛力，並樂於提供指導或資源協助他們突破瓶頸。(Developer)', m:'Developer', cat:'s'},
+            {t:'比起表面寒暄，我更擅長與利害關係人建立長期、深度且具信任感的合作關係。(Relator)', m:'Relator', cat:'s'},
+            {t:'當系統或流程出錯時，我本能地會去拆解底層邏輯，找出根本原因(Root Cause)。(Analytical)', m:'Analytical', cat:'s'},
+            {t:'我習慣將大目標拆解為可執行的步驟，並預先規劃時程表與資源配置。(Strategic)', m:'Strategic', cat:'s'},
+            {t:'我將「持續進修」視為職涯必需品，常在下班後主動學習產業新知。(Learner)', m:'Learner', cat:'s'},
+            {t:'我能夠區分任務的輕重緩急，確保資源集中在對組織最有價值的20%事務上。(Focus)', m:'Focus', cat:'s'},
+            {t:'我重視團隊的心理安全感，能在高壓環境下維繫成員間的和諧與士氣。(Relator)', m:'Relator', cat:'s'},
+            // Holland (15題)
+            {t:'我喜歡操作精密儀器、編寫底層代碼或進行硬體設備的維護與組裝。(R)', m:'R', cat:'h'},
+            {t:'比起抽象的策略討論，我更享受看到自己親手打造的產品實際運作的成就感。(R)', m:'R', cat:'h'},
+            {t:'我喜歡鑽研演算法、數學模型或分析複雜的系統架構，找出最佳化解法。(I)', m:'I', cat:'h'},
+            {t:'遇到未知問題時，我習慣先進行廣泛的資料蒐集與文獻研究，再歸納出結論。(I)', m:'I', cat:'h'},
+            {t:'我對使用者介面(UI)、視覺排版或產品美學有高標準，無法忍受缺乏設計感的產出。(A)', m:'A', cat:'h'},
+            {t:'我不喜歡被既定的SOP綁死，需要能自由發揮創意與個人風格的工作環境。(A)', m:'A', cat:'h'},
+            {t:'我樂於處理「人」的問題，包括輔導他人、解決客戶抱怨或進行教育訓練。(S)', m:'S', cat:'h'},
+            {t:'在跨部門專案中，我常擔任協調者角色，確保各方意見能達成共識。(S)', m:'S', cat:'h'},
+            {t:'我喜歡擔任專案負責人(PM)，帶領團隊衝刺業績或達成專案目標，並對結果負責。(E)', m:'E', cat:'h'},
+            {t:'我具備說服力，樂於向客戶提案或在會議中推銷我的想法與產品價值。(E)', m:'E', cat:'h'},
+            {t:'我擅長建立檔案管理系統，確保資料分類邏輯清晰，方便後續檢索。(C)', m:'C', cat:'h'},
+            {t:'我重視細節與精確度，在執行任務時會嚴格遵守規範與品質標準。(C)', m:'C', cat:'h'},
+            {t:'我會主動參加技術研討會或閱讀論文，以保持在專業領域的領先地位。(I)', m:'I', cat:'h'},
+            {t:'我享受在公開場合演講或進行簡報，展現個人或團隊的成果。(E)', m:'E', cat:'h'},
+            {t:'我無法忍受流程混亂或效率低下的工作方式，會主動尋求優化與標準化。(C)', m:'C', cat:'h'}
+        ];
+
+        const app = {
+            state: { answers: {}, currentPage: 0, pageSize: 5 },
+            start() { this.state = { answers: {}, currentPage: 0, pageSize: 5 }; this.switchView('view-quiz'); this.renderQuiz(); window.scrollTo(0,0); },
+            loadDemo() { QUESTIONS.forEach((q, i) => this.state.answers[i] = Math.floor(Math.random() * 3) + 3); this.calculateResults(); },
+            switchView(id) { ['view-landing', 'view-quiz', 'view-result'].forEach(v => document.getElementById(v).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); },
+            
+            renderQuiz() {
+                const { currentPage, pageSize } = this.state;
+                const start = currentPage * pageSize;
+                const end = start + pageSize;
+                const pageQs = QUESTIONS.slice(start, end);
+                const answeredCount = Object.keys(this.state.answers).length;
+                const progress = Math.min(100, Math.round((answeredCount / QUESTIONS.length) * 100));
+                document.getElementById('progress-bar').style.width = `${progress}%`;
+                document.getElementById('progress-text').innerText = `${progress}%`;
+                let html = '';
+                pageQs.forEach((q, i) => {
+                    const idx = start + i;
+                    const val = this.state.answers[idx] || 0;
+                    html += `<div class="mb-8 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm fade-in-up" style="animation-delay:${i*0.1}s">
+                        <h3 class="font-bold text-lg text-slate-800 mb-4">${idx+1}. ${q.t}</h3>
+                        <div class="flex justify-between gap-2">${[1,2,3,4,5].map(v => `<label class="likert-opt flex-1 cursor-pointer group"><input type="radio" name="q${idx}" value="${v}" ${val==v?'checked':''} class="hidden" onchange="app.answer(${idx}, ${v})"><div class="h-12 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 font-bold transition-all group-hover:border-blue-300">${v}</div></label>`).join('')}</div>
+                        <div class="flex justify-between text-xs text-slate-400 mt-2 px-1"><span>不符合 (1)</span><span>非常符合 (5)</span></div></div>`;
+                });
+                document.getElementById('quiz-container').innerHTML = html;
+                document.getElementById('btn-prev').disabled = currentPage === 0;
+                document.getElementById('btn-next').innerText = (end >= QUESTIONS.length) ? '查看報告' : '下一頁';
+            },
+
+            answer(idx, val) { this.state.answers[idx] = val; this.renderQuiz(); }, // Trigger re-render to update progress
+            prevPage() { if(this.state.currentPage > 0) { this.state.currentPage--; this.renderQuiz(); window.scrollTo(0,0); } },
+            nextPage() {
+                const { currentPage, pageSize } = this.state;
+                const start = currentPage * pageSize;
+                const end = Math.min(start + pageSize, QUESTIONS.length);
+                for(let i=start; i<end; i++) { if(!this.state.answers[i]) { alert(`請完成第 ${i+1} 題`); return; } }
+                if(end >= QUESTIONS.length) this.calculateResults(); else { this.state.currentPage++; this.renderQuiz(); window.scrollTo(0,0); }
+            },
+
+            calculateResults() {
+                this.switchView('view-result');
+                window.scrollTo(0,0);
+                document.getElementById('report-date').innerText = new Date().toLocaleDateString('zh-TW');
+
+                let sScores = {}, hScores = {};
+                QUESTIONS.forEach((q, i) => {
+                    const val = this.state.answers[i] || 3;
+                    if(q.cat === 's') sScores[q.m] = (sScores[q.m] || 0) + val; else hScores[q.m] = (hScores[q.m] || 0) + val;
+                });
+
+                let bestDept = '', maxFit = 0;
+                for(let d in DATA.weights) {
+                    let wSum = 0, maxWSum = 0;
+                    for(let k in DATA.weights[d].holland) {
+                        const w = DATA.weights[d].holland[k];
+                        if(w>0) { wSum += (hScores[k]||0)*w; maxWSum += (QUESTIONS.filter(q=>q.cat==='h'&&q.m===k).length*5)*w; }
+                    }
+                    for(let k in DATA.weights[d].strengths) {
+                        const w = DATA.weights[d].strengths[k];
+                        if(w>0) { wSum += (sScores[k]||0)*w; maxWSum += (QUESTIONS.filter(q=>q.cat==='s'&&q.m===k).length*5)*w; }
+                    }
+                    let fit = (maxWSum > 0) ? Math.round((wSum / maxWSum) * 100) : 0;
+                    if(fit > maxFit) { maxFit = fit; bestDept = d; }
+                }
+
+                let radarData = DATA.radarMap.map(dim => {
+                    let sum = 0, count = 0;
+                    dim.keys.forEach(k => { sum += (k.length > 1 ? (sScores[k]||0) : (hScores[k]||0)); count += QUESTIONS.filter(q => q.m === k).length; });
+                    return (count > 0) ? Math.round((sum / (count*5)) * 100) : 0;
+                });
+
+                document.getElementById('best-dept').innerText = bestDept;
+                document.getElementById('fit-score-text').innerText = maxFit + '%';
+                const circle = document.querySelector('.circle');
+                circle.style.stroke = maxFit >= 80 ? '#2563eb' : (maxFit >= 60 ? '#f59e0b' : '#64748b');
+                setTimeout(() => {
+                    circle.style.strokeDasharray = `${maxFit}, 100`;
+                    let start = 0;
+                    const timer = setInterval(() => { start++; document.getElementById('score-display').innerText = start; if(start >= maxFit) { clearInterval(timer); document.getElementById('score-display').innerText = maxFit; } }, 10);
+                }, 100);
+
+                this.drawRadar(radarData);
+
+                // Render Holland
+                const maxHScores = QUESTIONS.filter(q => q.cat === 'h').reduce((acc, curr) => { const k = curr.m; acc[k] = (acc[k] || 0) + 5; return acc; }, {});
+                const topH = Object.entries(hScores).sort((a,b)=>b[1]-a[1]);
+                const hCode = topH.slice(0,3).map(x=>x[0]).join('');
+                document.getElementById('holland-code').innerText = hCode;
+                document.getElementById('holland-bars').innerHTML = topH.map(h => {
+                    const info = DATA.hollandInfo[h[0]], max = maxHScores[h[0]] || 10, pct = (h[1]/max)*100;
+                    return `<div class="flex items-center text-sm"><span class="w-8 font-bold" style="color:${info.c}">${h[0]}</span><div class="flex-1 h-2 bg-slate-100 rounded-full mx-2 overflow-hidden"><div class="h-full rounded-full" style="width:${pct}%; background:${info.c}"></div></div><span class="w-6 text-right text-slate-400">${h[1]}</span></div>`;
+                }).join('');
+
+                // Render Strengths
+                const topS = Object.entries(sScores).sort((a,b)=>b[1]-a[1]).slice(0,5);
+                document.getElementById('strength-cards').innerHTML = topS.map((s,i) => `<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between"><span class="font-bold text-slate-700">#${i+1} ${DATA.strengthsInfo[s[0]]}</span><span class="text-xs bg-white px-2 py-1 rounded text-slate-400 font-mono">${s[0]}</span></div>`).join('');
+
+                // Render Radar Details
+                let radarDetailsHTML = '';
+                radarData.forEach((score, i) => {
+                    const dim = DATA.radarMap[i];
+                    let meaning = score < 50 ? DATA.radarBenchmarks[dim.name].low : (score < 75 ? DATA.radarBenchmarks[dim.name].mid : DATA.radarBenchmarks[dim.name].high);
+                    let color = score >= 75 ? 'text-green-600' : (score >= 50 ? 'text-blue-600' : 'text-slate-500');
+                    radarDetailsHTML += `<div class="flex items-start justify-between border-b border-slate-50 pb-2 last:border-0"><div class="w-1/3"><span class="block font-bold text-slate-700 text-sm">${dim.name}</span><span class="text-2xl font-black ${color}">${score}</span><span class="text-xs text-slate-400">/100</span></div><div class="w-2/3 pl-4 border-l border-slate-100"><p class="text-xs text-slate-500 leading-relaxed">${meaning}</p></div></div>`;
+                });
+                document.getElementById('radar-details').innerHTML = radarDetailsHTML;
+
+                // **新增：平台推薦**
+                const topHCode = hCode[0];
+                const platformInfo = DATA.platforms[topHCode];
+                document.getElementById('platform-card').innerHTML = `<h4 class="font-bold text-pink-800 mb-1">${platformInfo.name}</h4><p class="text-xs text-pink-600">${platformInfo.desc}</p>`;
+
+                // **新增：行動卡片**
+                const topStrengthKey = topS[0][0];
+                const actionInfo = DATA.actionCards[topStrengthKey];
+                document.getElementById('action-card-content').innerHTML = `<p><strong>📚 推薦書籍：</strong>${actionInfo.book}</p><p><strong>🛠️ 必修技能：</strong>${actionInfo.skill}</p>`;
+
+                this.generateTexts(bestDept, hCode, topS, radarData);
+            },
+
+            drawRadar(data) {
+                const svg = document.getElementById('radar-chart');
+                const center = 150, radius = 100, angles = [0, 60, 120, 180, 240, 300].map(a => (a-90) * Math.PI / 180);
+                let gridHTML = '';
+                [0.2, 0.4, 0.6, 0.8, 1].forEach(scale => { const points = angles.map(a => `${center + radius * scale * Math.cos(a)},${center + radius * scale * Math.sin(a)}`).join(' '); gridHTML += `<polygon points="${points}" fill="none" stroke="#e2e8f0" stroke-width="1"/>`; });
+                angles.forEach((a, i) => {
+                    const x = center + radius * 1.25 * Math.cos(a), y = center + radius * 1.25 * Math.sin(a);
+                    gridHTML += `<line x1="${center}" y1="${center}" x2="${center + radius * Math.cos(a)}" y2="${center + radius * Math.sin(a)}" stroke="#e2e8f0" /><text x="${x}" y="${y}" fill="#64748b" font-size="12" text-anchor="${Math.cos(a)>0.1?'start':(Math.cos(a)<-0.1?'end':'middle')}" dominant-baseline="middle">${DATA.radarMap[i].name}</text>`;
+                });
+                const dataPoints = angles.map((a, i) => `${center + radius * (data[i]/100) * Math.cos(a)},${center + radius * (data[i]/100) * Math.sin(a)}`).join(' ');
+                svg.innerHTML = gridHTML + `<polygon points="${dataPoints}" fill="rgba(37, 99, 235, 0.2)" stroke="#2563eb" stroke-width="3" />` + angles.map((a, i) => `<circle cx="${center + radius * (data[i]/100) * Math.cos(a)}" cy="${center + radius * (data[i]/100) * Math.sin(a)}" r="4" fill="#2563eb"/>`).join('');
+            },
+
+            generateTexts(dept, hCode, topS, radar) {
+                const sNames = topS.map(s => DATA.strengthsInfo[s[0]]).join('、');
+                const topRadar = DATA.radarMap[radar.indexOf(Math.max(...radar))].name;
+                const draft = `【自我介紹草稿】\n\n我是〇〇〇，一位熱愛${dept}領域的探索者。經由專業測評分析，我的核心優勢在於「${sNames}」，這讓我在面對${dept}的挑戰時，能夠發揮${DATA.strengthsInfo[topS[0][0]]}特質，${dept.includes('資工')?'有效解決技術難題':'有效整合資源與溝通'}。\n\n我的 Holland 職業興趣代碼為 ${hCode}，這代表我具備${DATA.hollandInfo[hCode[0]].n}的傾向。在專業能力上，我的「${topRadar}」尤為突出，這將有助於我在團隊中擔任關鍵角色。\n\n未來，我希望能將這些特質轉化為具體的專案成果，為團隊創造價值。`;
+                document.getElementById('resume-draft').innerText = draft;
+                const prompt = `你是一位專業職涯顧問。請根據以下數據為我優化履歷：\n1. 目標：${dept}\n2. 特質：${hCode} (${sNames})\n3. 優勢：${topRadar}能力極強\n請幫我寫一段約 200 字、語氣自信的申請動機，並提供 3 個量化成果範例。`;
+                document.getElementById('ai-prompt-text').innerText = prompt;
+            },
+
+            downloadPDF() {
+                const element = document.getElementById('report-container');
+                const opt = { margin: 10, filename: 'CareerDNA_Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+                html2pdf().set(opt).from(element).save();
+            },
+
+            switchTab(mode) {
+                document.getElementById('content-generate').classList.toggle('hidden', mode !== 'generate');
+                document.getElementById('content-ai').classList.toggle('hidden', mode !== 'ai');
+                document.getElementById('tab-gen').classList.toggle('active', mode === 'generate');
+                document.getElementById('tab-gen').classList.toggle('text-blue-400', mode === 'generate');
+                document.getElementById('tab-gen').classList.toggle('text-slate-400', mode !== 'generate');
+                document.getElementById('tab-ai').classList.toggle('active', mode === 'ai');
+                document.getElementById('tab-ai').classList.toggle('text-blue-400', mode === 'ai');
+                document.getElementById('tab-ai').classList.toggle('text-slate-400', mode !== 'ai');
+            },
+
+            copyText(id) {
+                const text = document.getElementById(id).innerText;
+                navigator.clipboard.writeText(text).then(() => alert('已複製內容！'));
+            }
+        };
+    </script>
+</body>
+</html>
