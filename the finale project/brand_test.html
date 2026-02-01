@@ -38,7 +38,7 @@
             <div class="text-2xl font-black tracking-tighter text-blue-700 flex items-center gap-2">
                 <div class="w-3 h-3 bg-blue-600 rounded-full"></div>CareerDNA
             </div>
-            <button onclick="app.loadDemo()" class="text-sm text-gray-400 hover:text-blue-600 transition font-medium">Demo Mode</button>
+            <button onclick="window.app.loadDemo()" class="text-sm text-gray-400 hover:text-blue-600 transition font-medium">Demo Mode</button>
         </nav>
         <main class="flex-grow flex flex-col items-center justify-center text-center px-4 py-12">
             <div class="max-w-4xl mx-auto space-y-8">
@@ -46,7 +46,7 @@
                 <h1 class="text-5xl md:text-7xl font-black text-slate-900 leading-tight fade-in-up delay-100">探索你的<br><span class="gradient-text">職涯基因序列</span></h1>
                 <p class="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto fade-in-up delay-200">結合 Holland 興趣與 Gallup 優勢。<br>一鍵生成：科系定位、履歷草稿、經營策略。</p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4 fade-in-up delay-300">
-                    <button onclick="app.start()" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                    <button onclick="window.app.start()" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-blue-700 transition flex items-center justify-center gap-2">
                         開始免費測評 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                     </button>
                 </div>
@@ -64,15 +64,15 @@
         <div class="max-w-3xl mx-auto px-4 py-8 pb-24" id="quiz-container"></div>
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-lg">
             <div class="max-w-3xl mx-auto flex justify-between gap-4">
-                <button onclick="app.prevPage()" id="btn-prev" class="px-6 py-2 border-2 border-slate-200 text-slate-500 rounded-full font-bold hover:bg-slate-50 transition disabled:opacity-50" disabled>上一頁</button>
-                <button onclick="app.nextPage()" id="btn-next" class="flex-1 bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition shadow-md">下一頁</button>
+                <button onclick="window.app.prevPage()" id="btn-prev" class="px-6 py-2 border-2 border-slate-200 text-slate-500 rounded-full font-bold hover:bg-slate-50 transition disabled:opacity-50" disabled>上一頁</button>
+                <button onclick="window.app.nextPage()" id="btn-next" class="flex-1 bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition shadow-md">下一頁</button>
             </div>
         </div>
     </div>
 
     <div id="view-result" class="hidden min-h-screen bg-[#f8fafc] py-8 px-4">
         <div class="max-w-5xl mx-auto mb-6 flex justify-end gap-3 no-print">
-            <button onclick="app.downloadPDF()" class="bg-slate-800 text-white px-5 py-2 rounded-lg font-bold shadow hover:bg-slate-700 flex items-center gap-2">
+            <button onclick="window.app.downloadPDF()" class="bg-slate-800 text-white px-5 py-2 rounded-lg font-bold shadow hover:bg-slate-700 flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> 下載完整報告
             </button>
         </div>
@@ -136,17 +136,17 @@
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="font-bold text-xl">🚀 履歷生成器</h3>
                             <div class="flex gap-4 text-sm font-medium">
-                                <button onclick="app.switchTab('generate')" id="tab-gen" class="tab-btn active text-blue-400 border-b-2 border-blue-400 pb-1">直接產出文案</button>
-                                <button onclick="app.switchTab('ai')" id="tab-ai" class="tab-btn text-slate-400 pb-1 hover:text-white">AI 協作指令</button>
+                                <button onclick="window.app.switchTab('generate')" id="tab-gen" class="tab-btn active text-blue-400 border-b-2 border-blue-400 pb-1">直接產出文案</button>
+                                <button onclick="window.app.switchTab('ai')" id="tab-ai" class="tab-btn text-slate-400 pb-1 hover:text-white">AI 協作指令</button>
                             </div>
                         </div>
                         <div id="content-generate" class="space-y-4">
                             <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 max-h-60 overflow-y-auto"><pre id="resume-draft" class="whitespace-pre-wrap font-sans text-sm text-slate-300 leading-relaxed"></pre></div>
-                            <button onclick="app.copyText('resume-draft')" class="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold transition">📋 複製履歷草稿</button>
+                            <button onclick="window.app.copyText('resume-draft')" class="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold transition">📋 複製履歷草稿</button>
                         </div>
                         <div id="content-ai" class="hidden space-y-4">
                             <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 max-h-60 overflow-y-auto font-mono text-xs text-green-400"><div id="ai-prompt-text"></div></div>
-                            <button onclick="app.copyText('ai-prompt-text')" class="w-full py-3 bg-green-600 hover:bg-green-700 rounded-xl font-bold transition">🤖 複製 AI 指令</button>
+                            <button onclick="window.app.copyText('ai-prompt-text')" class="w-full py-3 bg-green-600 hover:bg-green-700 rounded-xl font-bold transition">🤖 複製 AI 指令</button>
                         </div>
                     </div>
                 </div>
@@ -155,9 +155,17 @@
         <div class="text-center pt-8 pb-12 no-print"><button onclick="location.reload()" class="text-sm text-slate-400 hover:text-slate-600 underline">重新開始測驗</button></div>
     </div>
 
-    <script>
+    <script type="module">
+        import { auth, db, doc, setDoc, onAuthStateChanged } 
+        from './static/firebase-config.js';
+
+        let currentUser = null;
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if(user) console.log("User logged in:", user.email);
+        });
+
         const DATA = {
-            // **核心修正：權重差異化**
             weights: {
                 '資工系 (CS)': { holland: { R: 8, I: 8, A: 1, S: 0, E: 1, C: 5 }, strengths: { Analytical: 8, Focus: 8, Learner: 5, Strategic: 3, Achiever: 3, Ideation: 1, Communication: 0, Relator: 0, Developer: 0, Responsibility: 3 } },
                 '資管系 (IM)': { holland: { R: 1, I: 3, A: 1, S: 3, E: 8, C: 8 }, strengths: { Strategic: 8, Achiever: 5, Responsibility: 5, Communication: 5, Analytical: 3, Focus: 1, Learner: 1, Ideation: 1, Relator: 3, Developer: 3 } },
@@ -184,7 +192,6 @@
                 'R': {n:'實做型', c:'#ef4444'}, 'I': {n:'研究型', c:'#3b82f6'}, 'A': {n:'藝術型', c:'#e879f9'},
                 'S': {n:'社交型', c:'#f97316'}, 'E': {n:'企業型', c:'#8b5cf6'}, 'C': {n:'常規型', c:'#06b6d4'}
             },
-            // **新增：平台推薦資料**
             platforms: {
                 'R': { name: 'GitHub / 技術部落格', desc: '展示你的代碼庫、專案架構與技術筆記，吸引技術主管的目光。' },
                 'I': { name: 'Medium / ResearchGate', desc: '發表深度分析文章或研究成果，建立專業領域的知識權威感。' },
@@ -193,7 +200,6 @@
                 'E': { name: 'LinkedIn', desc: '經營專業人脈，分享產業見解與專案成果，適合建立商務與領導形象。' },
                 'C': { name: 'Notion / 個人網站', desc: '整理系統化的知識庫或履歷，展現條理分明與專業可靠的形象。' }
             },
-            // **新增：行動卡片 (書籍/技能)**
             actionCards: {
                 'Strategic': { book: '《好策略壞策略》', skill: '心智圖繪製、SWOT分析' },
                 'Learner': { book: '《刻意練習》', skill: '快速閱讀、知識管理系統(Obsidian)' },
@@ -209,7 +215,6 @@
         };
 
         const QUESTIONS = [
-            // S: Strengths (15題)
             {t:'面對複雜且模糊的專案需求時，我能迅速找出潛在風險與多種應對路徑。(Strategic)', m:'Strategic', cat:'s'},
             {t:'面對新技術或陌生領域，我會感到興奮並能快速掌握核心概念應用於工作中。(Learner)', m:'Learner', cat:'s'},
             {t:'在會議中，我習慣要求以數據、邏輯推演或具體證據來佐證決策，而非憑感覺。(Analytical)', m:'Analytical', cat:'s'},
@@ -225,7 +230,6 @@
             {t:'我將「持續進修」視為職涯必需品，常在下班後主動學習產業新知。(Learner)', m:'Learner', cat:'s'},
             {t:'我能夠區分任務的輕重緩急，確保資源集中在對組織最有價值的20%事務上。(Focus)', m:'Focus', cat:'s'},
             {t:'我重視團隊的心理安全感，能在高壓環境下維繫成員間的和諧與士氣。(Relator)', m:'Relator', cat:'s'},
-            // Holland (15題)
             {t:'我喜歡操作精密儀器、編寫底層代碼或進行硬體設備的維護與組裝。(R)', m:'R', cat:'h'},
             {t:'比起抽象的策略討論，我更享受看到自己親手打造的產品實際運作的成就感。(R)', m:'R', cat:'h'},
             {t:'我喜歡鑽研演算法、數學模型或分析複雜的系統架構，找出最佳化解法。(I)', m:'I', cat:'h'},
@@ -243,7 +247,7 @@
             {t:'我無法忍受流程混亂或效率低下的工作方式，會主動尋求優化與標準化。(C)', m:'C', cat:'h'}
         ];
 
-        const app = {
+        window.app = {
             state: { answers: {}, currentPage: 0, pageSize: 5 },
             start() { this.state = { answers: {}, currentPage: 0, pageSize: 5 }; this.switchView('view-quiz'); this.renderQuiz(); window.scrollTo(0,0); },
             loadDemo() { QUESTIONS.forEach((q, i) => this.state.answers[i] = Math.floor(Math.random() * 3) + 3); this.calculateResults(); },
@@ -264,7 +268,7 @@
                     const val = this.state.answers[idx] || 0;
                     html += `<div class="mb-8 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm fade-in-up" style="animation-delay:${i*0.1}s">
                         <h3 class="font-bold text-lg text-slate-800 mb-4">${idx+1}. ${q.t}</h3>
-                        <div class="flex justify-between gap-2">${[1,2,3,4,5].map(v => `<label class="likert-opt flex-1 cursor-pointer group"><input type="radio" name="q${idx}" value="${v}" ${val==v?'checked':''} class="hidden" onchange="app.answer(${idx}, ${v})"><div class="h-12 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 font-bold transition-all group-hover:border-blue-300">${v}</div></label>`).join('')}</div>
+                        <div class="flex justify-between gap-2">${[1,2,3,4,5].map(v => `<label class="likert-opt flex-1 cursor-pointer group"><input type="radio" name="q${idx}" value="${v}" ${val==v?'checked':''} class="hidden" onchange="window.app.answer(${idx}, ${v})"><div class="h-12 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 font-bold transition-all group-hover:border-blue-300">${v}</div></label>`).join('')}</div>
                         <div class="flex justify-between text-xs text-slate-400 mt-2 px-1"><span>不符合 (1)</span><span>非常符合 (5)</span></div></div>`;
                 });
                 document.getElementById('quiz-container').innerHTML = html;
@@ -272,7 +276,7 @@
                 document.getElementById('btn-next').innerText = (end >= QUESTIONS.length) ? '查看報告' : '下一頁';
             },
 
-            answer(idx, val) { this.state.answers[idx] = val; this.renderQuiz(); }, // Trigger re-render to update progress
+            answer(idx, val) { this.state.answers[idx] = val; this.renderQuiz(); },
             prevPage() { if(this.state.currentPage > 0) { this.state.currentPage--; this.renderQuiz(); window.scrollTo(0,0); } },
             nextPage() {
                 const { currentPage, pageSize } = this.state;
@@ -282,7 +286,7 @@
                 if(end >= QUESTIONS.length) this.calculateResults(); else { this.state.currentPage++; this.renderQuiz(); window.scrollTo(0,0); }
             },
 
-            calculateResults() {
+            async calculateResults() {
                 this.switchView('view-result');
                 window.scrollTo(0,0);
                 document.getElementById('report-date').innerText = new Date().toLocaleDateString('zh-TW');
@@ -314,6 +318,32 @@
                     return (count > 0) ? Math.round((sum / (count*5)) * 100) : 0;
                 });
 
+                // --- Firebase 儲存邏輯 ---
+                const maxHScores = QUESTIONS.filter(q => q.cat === 'h').reduce((acc, curr) => { const k = curr.m; acc[k] = (acc[k] || 0) + 5; return acc; }, {});
+                const topH = Object.entries(hScores).sort((a,b)=>b[1]-a[1]);
+                const hCode = topH.slice(0,3).map(x=>x[0]).join('');
+                const topS = Object.entries(sScores).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+                if (currentUser) {
+                    try {
+                        const resultData = {
+                            date: new Date().toISOString(),
+                            bestDept: bestDept,
+                            fitScore: maxFit,
+                            hollandCode: hCode,
+                            topStrengths: topS.map(s => s[0]),
+                            radarData: radarData
+                        };
+                        await setDoc(doc(db, "users", currentUser.uid, "brand_results", "latest"), resultData);
+                        console.log("✅ 測驗結果已同步至雲端！");
+                    } catch (e) {
+                        console.error("❌ 儲存失敗", e);
+                    }
+                } else {
+                    console.log("⚠️ 未登入，僅顯示結果");
+                }
+                // ---------------------
+
                 document.getElementById('best-dept').innerText = bestDept;
                 document.getElementById('fit-score-text').innerText = maxFit + '%';
                 const circle = document.querySelector('.circle');
@@ -326,21 +356,14 @@
 
                 this.drawRadar(radarData);
 
-                // Render Holland
-                const maxHScores = QUESTIONS.filter(q => q.cat === 'h').reduce((acc, curr) => { const k = curr.m; acc[k] = (acc[k] || 0) + 5; return acc; }, {});
-                const topH = Object.entries(hScores).sort((a,b)=>b[1]-a[1]);
-                const hCode = topH.slice(0,3).map(x=>x[0]).join('');
                 document.getElementById('holland-code').innerText = hCode;
                 document.getElementById('holland-bars').innerHTML = topH.map(h => {
                     const info = DATA.hollandInfo[h[0]], max = maxHScores[h[0]] || 10, pct = (h[1]/max)*100;
                     return `<div class="flex items-center text-sm"><span class="w-8 font-bold" style="color:${info.c}">${h[0]}</span><div class="flex-1 h-2 bg-slate-100 rounded-full mx-2 overflow-hidden"><div class="h-full rounded-full" style="width:${pct}%; background:${info.c}"></div></div><span class="w-6 text-right text-slate-400">${h[1]}</span></div>`;
                 }).join('');
 
-                // Render Strengths
-                const topS = Object.entries(sScores).sort((a,b)=>b[1]-a[1]).slice(0,5);
                 document.getElementById('strength-cards').innerHTML = topS.map((s,i) => `<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between"><span class="font-bold text-slate-700">#${i+1} ${DATA.strengthsInfo[s[0]]}</span><span class="text-xs bg-white px-2 py-1 rounded text-slate-400 font-mono">${s[0]}</span></div>`).join('');
 
-                // Render Radar Details
                 let radarDetailsHTML = '';
                 radarData.forEach((score, i) => {
                     const dim = DATA.radarMap[i];
@@ -350,12 +373,10 @@
                 });
                 document.getElementById('radar-details').innerHTML = radarDetailsHTML;
 
-                // **新增：平台推薦**
                 const topHCode = hCode[0];
                 const platformInfo = DATA.platforms[topHCode];
                 document.getElementById('platform-card').innerHTML = `<h4 class="font-bold text-pink-800 mb-1">${platformInfo.name}</h4><p class="text-xs text-pink-600">${platformInfo.desc}</p>`;
 
-                // **新增：行動卡片**
                 const topStrengthKey = topS[0][0];
                 const actionInfo = DATA.actionCards[topStrengthKey];
                 document.getElementById('action-card-content').innerHTML = `<p><strong>📚 推薦書籍：</strong>${actionInfo.book}</p><p><strong>🛠️ 必修技能：</strong>${actionInfo.skill}</p>`;

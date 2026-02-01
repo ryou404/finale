@@ -1,493 +1,594 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CareerFit Pro | 履歷健檢與職涯導航 (v5.1 Integrated)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerFit Pro | 履歷健檢與職涯導航 (AI-Powered)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        :root{
-            --primary:#2563eb; --primary-dark:#1e40af; --bg:#f8fafc; --surface:#fff;
-            --muted:#64748b; --radius:14px; --shadow:0 8px 20px rgba(16,24,40,0.06);
-            --success:#10b981; --warning:#f59e0b; --danger:#ef4444; --font:'Inter','Noto Sans TC',sans-serif;
-        }
-        *{box-sizing:border-box}
-        html,body{height:100%;margin:0;font-family:var(--font);background:var(--bg);color:#0f172a}
-        .container{max-width:1180px;margin:28px auto;padding:18px}
-        header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;padding:20px;border-radius:12px;box-shadow:var(--shadow);}
-        .header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}
-        h1{margin:0;font-size:1.25rem}
-
-        .layout{display:grid;grid-template-columns:1fr;gap:20px;margin-top:20px}
-        @media(min-width:1024px){.layout{grid-template-columns:1.3fr 0.7fr}}
-
-        .card{background:var(--surface);border-radius:10px;padding:18px;box-shadow:var(--shadow);border:1px solid #e6eef8; transition: transform 0.2s;}
-        .card:hover{border-color: #dbeafe;}
+        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
+        .course-card { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .course-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08); border-color: #94a3b8; }
+        .course-card.selected { border-color: #3b82f6; background-color: #eff6ff; ring: 2px solid #3b82f6; }
+        .hidden-checkbox { display: none; }
         
-        label{display:block;margin-bottom:6px;font-weight:600;color:#0b1220}
-        input[type=text],select{width:100%;padding:10px;border-radius:8px;border:1px solid #d1e3fb; outline:none; transition: border 0.2s;}
-        input[type=text]:focus,select:focus{border-color: var(--primary);}
-
-        .chip-group{display:flex;flex-wrap:wrap;gap:8px}
-        .chip{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;border:1px solid #e6eef8;background:transparent;cursor:pointer;user-select:none; transition: all 0.2s;}
-        .chip input{display:none}
-        .chip:hover{background: #f1f5f9;}
-        .chip.checked{background:rgba(37,99,235,0.08);border-color:rgba(37,99,235,0.18);color:var(--primary);font-weight:600}
-
-        .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700; transition: all 0.2s;}
-        .btn:active{transform: scale(0.98);}
-        .btn-primary{background:var(--primary);color:white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);}
-        .btn-primary:hover{background:var(--primary-dark);}
-        .btn-ghost{background:#fff;border:1px solid #e6eef8;color:var(--muted)}
-        .btn-ghost:hover{background:#f8fafc; border-color: #cbd5e1;}
-
-        /* sticky dashboard */
-        .aside-sticky{position:sticky;top:22px}
-        .gauge-wrap{display:flex;flex-direction:column;align-items:center;padding-top:6px}
-        .gauge{width:220px;height:120px;position:relative}
-        svg.gauge-svg{width:100%;height:100%;overflow:visible}
-        .gauge-value{font-size:2.6rem;font-weight:800;line-height:1;color:#0b1220}
-        .gauge-label{font-size:0.85rem;color:var(--muted)}
-
-        /* results */
-        .result-section{margin-top:14px}
-        .result-list{list-style:none;padding:0;margin:0}
-        .result-item{display:flex;gap:10px;padding:10px;border-radius:8px;margin-bottom:8px}
-        .good{background:#ecfdf5;color:#065f46;border-left:4px solid var(--success)}
-        .warn{background:#fffbeb;color:#92400e;border-left:4px solid var(--warning)}
-        .bad{background:#fef2f2;color:#7f1d1d;border-left:4px solid var(--danger)}
-
-        .hidden{display:none}
-
-        /* smooth fade-in */
-        .fade-in{animation:fadeIn .45s ease-out both}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-        .radar-box{height:220px;width:100%}
-
-        /* accessible timeline */
-        .timeline{border-left:3px solid #e6eef8;padding-left:14px;margin-top:10px}
-        .timeline .step{margin-bottom:12px; position: relative;}
-        .timeline .step::before {content:''; position: absolute; left: -20px; top: 6px; width: 9px; height: 9px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 0 4px #eff6ff;}
-
-        /* V5.1 New Components: Toast & Back Button */
-        .nav-back { display: inline-flex; align-items: center; color: white; text-decoration: none; font-size: 0.9rem; opacity: 0.9; margin-bottom: 4px; }
-        .nav-back:hover { opacity: 1; text-decoration: underline; }
-
-        .toast-notification {
-            position: fixed; bottom: 24px; right: 24px; 
-            background: #0f172a; color: white; 
-            padding: 12px 20px; border-radius: 8px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
-            font-size: 0.9rem; font-weight: 500;
-            display: flex; align-items: center; gap: 10px;
-            z-index: 1000; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        @keyframes dash {
+            from { stroke-dashoffset: 251.2; }
+            to { stroke-dashoffset: var(--target-dash); }
         }
-        .toast-notification svg { width: 20px; height: 20px; color: #4ade80; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* 自定義捲軸 - 提升質感 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <a href="index.html" class="nav-back">← 返回首頁</a>
-            <div class="header-inner">
-                <div>
-                    <h1>CareerFit Pro — 履歷健檢中心</h1>
-                    <div style="font-size:.9rem;opacity:.9">已啟用跨模組資料同步 (v5.1)</div>
-                </div>
-                <div style="font-size:.9rem;background:rgba(255,255,255,0.15);padding:6px 12px;border-radius:999px; font-weight: 600;">Data Synced</div>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition group">
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-blue-100 group-hover:text-blue-600 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    </div>
+                    <span class="font-bold tracking-tight">返回首頁</span>
+                </a>
+                <div class="h-6 w-px bg-slate-200"></div>
+                <h1 class="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+                    CareerFit <span class="text-blue-600">Pro</span>
+                    <span class="text-[10px] bg-slate-800 text-white px-2 py-0.5 rounded-full font-bold tracking-wider">V6.3</span>
+                </h1>
             </div>
-        </header>
-
-        <div class="layout">
-            <main>
-                <div class="card">
-                    <h2 style="margin:0 0 10px;font-size:1rem">📝 基本資料與課程</h2>
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-                        <div><label for="inputName">姓名</label><input id="inputName" type="text" placeholder="你的名字" aria-label="姓名"></div>
-                        <div><label for="deptSelect">系所</label>
-                            <select id="deptSelect" aria-label="系所選擇"></select>
-                        </div>
-                        <div><label for="gradeSelect">年級</label>
-                            <select id="gradeSelect" aria-label="年級"></select>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label>課程完成 (勾選已修課程)</label>
-                        <div id="courseContainer" class="fade-in"></div>
-                    </div>
-                </div>
-
-                <div class="card" style="margin-top:18px">
-                    <h2 style="margin:0 0 10px;font-size:1rem">🚀 經歷與特質加權</h2>
-
-                    <div style="margin-bottom:12px">
-                        <label>實作與經歷</label>
-                        <div id="experienceArea" class="chip-group"></div>
-                    </div>
-
-                    <div style="margin-bottom:12px">
-                        <label>專業證照</label>
-                        <div id="certArea" class="chip-group"></div>
-                    </div>
-
-                    <div style="margin-bottom:12px">
-                        <label>Holland 興趣代碼 (品牌經營區)</label>
-                        <p style="font-size:0.8rem; color:var(--muted); margin-bottom: 6px;">*系統將自動同步個人品牌測驗結果</p>
-                        <div id="hollandArea" class="chip-group"></div>
-                    </div>
-
-                    <div style="display:flex;gap:10px;margin-top:20px;padding-top:15px;border-top:1px solid #f1f5f9;">
-                        <button class="btn btn-primary" id="calcBtn">📊 計算履歷健康指數</button>
-                        <button class="btn btn-ghost" id="resetBtn">重置</button>
-                        <button class="btn btn-ghost" id="saveBtn">💾 儲存檔案</button>
-                    </div>
-                </div>
-
-            </main>
-
-            <aside>
-                <div class="card aside-sticky">
-                    <div style="text-align:center;margin-bottom:8px">
-                        <div class="gauge-wrap">
-                            <div class="gauge" aria-hidden="true">
-                                <svg class="gauge-svg" viewBox="0 0 200 120" role="img" aria-label="分數儀表">
-                                    <defs>
-                                        <linearGradient id="g1" x1="0%" x2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#2563eb"/></linearGradient>
-                                    </defs>
-                                    <path d="M20 100 A 80 80 0 0 1 180 100" stroke="#e6eef8" stroke-width="12" fill="none" stroke-linecap="round"></path>
-                                    <path id="gaugeArc" d="M20 100 A 80 80 0 0 1 180 100" stroke="url(#g1)" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="0 251.2"></path>
-                                </svg>
-                            </div>
-                            <div style="text-align:center;margin-top:6px">
-                                <div class="gauge-value" id="scoreValue">0</div>
-                                <div class="gauge-label">總分 (100分制)</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="emptyState" style="text-align:center;color:var(--muted);padding:14px;font-size:0.9rem;">
-                        <p>請填寫資料並點擊「計算」<br>系統將根據五大維度進行評分</p>
-                    </div>
-
-                    <div id="resultContent" class="hidden">
-                        <div class="result-section fade-in">
-                            <h3 style="margin:0 0 8px">📊 五力健檢雷達圖</h3>
-                            <div class="radar-box"><canvas id="radarChart" aria-label="雷達圖" role="img"></canvas></div>
-                        </div>
-
-                        <div class="result-section fade-in" style="margin-top:8px">
-                            <h3 style="margin:0 0 8px">🎯 職涯適配 (Holland Top-3)</h3>
-                            <div id="deptMatchCard" style="padding:10px;border-radius:8px;background:#f0f9ff;border:1px solid #bae6fd;margin-bottom:8px;font-size:0.9rem;"></div>
-                            <ul id="careerList" class="result-list"></ul>
-                        </div>
-
-                        <div class="result-section fade-in" style="margin-top:8px">
-                            <h3 style="margin:0 0 8px">✅ 優勢 / ❌ 待補足</h3>
-                            <ul id="strengthList" class="result-list"></ul>
-                            <ul id="weakList" class="result-list"></ul>
-                        </div>
-
-                        <div class="result-section fade-in" style="margin-top:8px">
-                            <h3 style="margin:0 0 8px">📅 30/60/90 天行動計畫</h3>
-                            <div class="timeline" id="actionPlanArea"></div>
-                        </div>
-
-                        <div style="margin-top:12px"><button class="btn btn-primary" style="width:100%" id="downloadBtn">📄 下載完整報告 (PDF)</button></div>
-                    </div>
-
-                </div>
-            </aside>
+            <div class="flex gap-2">
+                <button onclick="window.App.reset()" class="text-sm text-slate-500 font-bold hover:bg-slate-100 px-4 py-2 rounded-lg transition">重置</button>
+                <button onclick="window.App.saveProgress()" class="text-sm bg-blue-600 text-white font-bold px-4 py-2 rounded-lg shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition">儲存進度</button>
+            </div>
         </div>
+    </header>
 
+    <div class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <main class="lg:col-span-8 space-y-6">
+            
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                <h2 class="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2 relative z-10">
+                    <span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm">01</span> 
+                    學籍定位
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">姓名</label>
+                        <input type="text" id="inputName" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition font-medium text-slate-700" placeholder="輸入姓名">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">系所</label>
+                        <select id="deptSelect" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none bg-white font-medium text-slate-700 cursor-pointer"></select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">年級</label>
+                        <select id="gradeSelect" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none bg-white font-medium text-slate-700 cursor-pointer">
+                            <option value="1">一年級</option>
+                            <option value="2">二年級</option>
+                            <option value="3" selected>三年級</option>
+                            <option value="4">四年級</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">班級</label>
+                        <select id="classSelect" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none bg-white font-medium text-slate-700 cursor-pointer">
+                            <option value="A">A 班</option>
+                            <option value="B">B 班</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 min-h-[500px]">
+                <div class="flex items-center justify-between mb-6 sticky top-0 bg-white z-20 pb-4 border-b border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-sm">02</span> 
+                        修課盤點
+                    </h2>
+                    <div class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
+                        當前：<span id="current-view-label" class="text-indigo-600">載入中...</span>
+                    </div>
+                </div>
+
+                <div id="course-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+                    </div>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center text-sm">03</span> 
+                    競爭力加值
+                </h2>
+                
+                <div class="grid grid-cols-1 gap-8">
+                    <div>
+                        <h3 class="text-sm font-black text-slate-700 mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            實務經歷
+                        </h3>
+                        <div class="flex flex-wrap gap-2" id="exp-chips"></div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-slate-700 mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            專業證照
+                        </h3>
+                        <div class="flex flex-wrap gap-2" id="cert-chips"></div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-slate-700 mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Holland 興趣代碼 (自品牌測驗)
+                        </h3>
+                        <div class="flex flex-wrap gap-2" id="holland-chips"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <aside class="lg:col-span-4 space-y-6">
+            <div class="sticky top-24 space-y-6">
+                
+                <div class="bg-slate-900 text-white rounded-3xl p-6 shadow-2xl shadow-blue-900/20 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-blue-500 rounded-full blur-[60px] opacity-20 group-hover:opacity-30 transition duration-700"></div>
+                    
+                    <div class="flex flex-col items-center justify-center mb-6 relative z-10">
+                        <div class="relative w-48 h-28 overflow-hidden">
+                            <svg class="w-full h-full" viewBox="0 0 200 120">
+                                <path d="M20 100 A 80 80 0 0 1 180 100" stroke="#334155" stroke-width="12" fill="none" stroke-linecap="round"></path>
+                                <path id="score-arc" d="M20 100 A 80 80 0 0 1 180 100" stroke="#3b82f6" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="transition-all duration-1000 ease-out"></path>
+                            </svg>
+                            <div class="absolute bottom-0 left-0 w-full text-center">
+                                <span id="score-val" class="text-5xl font-black tracking-tighter">0</span>
+                                <span class="text-[10px] text-slate-400 block font-bold tracking-widest mt-1">TOTAL SCORE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="window.App.calculate()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 relative z-10 transform active:scale-95">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        執行健檢運算
+                    </button>
+                </div>
+
+                <div id="result-panel" class="hidden bg-white rounded-3xl shadow-lg border border-slate-100 p-6 space-y-6 fade-in">
+                    <div>
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-4">五維能力雷達</h3>
+                        <div class="relative w-full aspect-square bg-slate-50 rounded-2xl p-2">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">AI 診斷短評</h3>
+                        <div id="ai-comment" class="text-sm text-slate-600 bg-slate-50 p-4 rounded-2xl border border-slate-100 leading-relaxed"></div>
+                    </div>
+
+                    <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl">
+                        <div class="text-[10px] font-black text-indigo-500 uppercase tracking-wider mb-2">職涯適配標籤</div>
+                        <div class="flex flex-wrap gap-1" id="career-tags"></div>
+                    </div>
+
+                    <button onclick="window.App.exportPDF()" class="w-full py-3 border-2 border-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-50 hover:text-slate-900 transition flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        下載完整報告
+                    </button>
+                </div>
+
+            </div>
+        </aside>
     </div>
 
-<script>
-/* ---------- Data (kept simple & extensible) ---------- */
-const DATA = {
-    departments: {
-        "資管": { "一上":["計算機概論","程式設計I","會計學"], "一下":["程式設計II","經濟學","資訊數學"] , "二上":["資料結構","統計學"], "二下":["資料庫管理","網路通訊"], "三上":["系統分析與設計"], "三下":["作業系統"], "四上":["資管講座"], "四下":[]},
-        "資傳": { "一上":["新媒體概論","基礎網頁設計"], "一下":["數位音效","設計素描"], "二上":["介面設計","多媒體程式設計"], "二下":["數位行銷","3D動畫基礎"], "三上":["互動科技應用"], "三下":["畢業專題I"], "四上":["畢業專題II"], "四下":[]},
-        "資工": { "一上":["微積分","計算機概論"], "一下":["離散數學","程式設計II"], "二上":["資料結構","數位邏輯"], "二下":["演算法","機率統計"], "三上":["作業系統"], "三下":["編譯器設計"], "四上":["畢業專題"], "四下":[]}
-    },
-    deptTraits: {"資管":{"holland":["C","E","I"], focus:"商業 x 資訊"},"資工":{"holland":["I","R","C"],focus:"技術 x 演算法"},"資傳":{"holland":["A","S","E"],focus:"內容 x 互動"}},
-    experienceList:[{v:'競賽',t:'🏆 競賽/獎項'},{v:'社團幹部',t:'👥 社團/學生會'},{v:'專案實作',t:'💻 專題/Side Project'},{v:'企業實習',t:'💼 企業實習'}],
-    certList:[{v:'A級',t:'🥇 A 級 (國際/高階)'},{v:'B級',t:'🥈 B 級 (國內/基礎)'},{v:'無',t:'無'}],
-    hollandCodes:['R','I','A','S','E','C']
-};
+    <script type="module">
+        import { auth, db, doc, setDoc, getDoc, onAuthStateChanged } 
+        from './static/firebase-config.js';
 
-/* ---------- App ---------- */
-const App = {
-    state:{dept:'資管',chart:null},
+        let currentUser = null;
 
-    init(){
-        this.bindSelectors();
-        this.renderCourses();
-        this.renderChipGroups();
-        this.checkUser();     // v5.1 New: Auto-fill user name
-        this.restore();
-        this.bindActions();
-        this.checkSyncData(); // v5.1 New: Check for brand test data
-    },
+        const COURSE_DB = {
+            "IM": { // 資管系
+                name: "資訊管理學系",
+                years: {
+                    "1": {
+                        "A": [{n:"計算機概論(一)",t:"必修",c:2,p:"王孝熙"},{n:"程式設計",t:"必修",c:3,p:"王耀德"},{n:"計算機應用與實務",t:"選修",c:1,p:"簡永仁"},{n:"專業英文導讀(一)",t:"選修",c:1,p:"王孝熙"},{n:"資訊入門(一)",t:"選修",c:1,p:"馬宏諭"}],
+                        "B": [{n:"計算機概論(一)",t:"必修",c:2,p:"簡永仁"},{n:"程式設計",t:"必修",c:3,p:"張怡君"},{n:"計算機應用與實務",t:"選修",c:1,p:"簡永仁"},{n:"專業英文導讀(一)",t:"選修",c:1,p:"簡永仁"},{n:"資訊入門(一)",t:"選修",c:1,p:"康贊清"}]
+                    },
+                    "2": {
+                        "A": [{n:"資料結構",t:"必修",c:3,p:"鄭婉淑"},{n:"網路通訊概論",t:"必修",c:3,p:"康贊清"},{n:"程式語言",t:"選修",c:3,p:"徐牧群"},{n:"行動應用軟體開發",t:"選修",c:3,p:"楊子青"},{n:"物聯網概論",t:"選修",c:3,p:"王耀德"}],
+                        "B": [{n:"資料結構",t:"必修",c:3,p:"張怡君"},{n:"網路通訊概論",t:"必修",c:3,p:"鄭婉淑"},{n:"程式語言",t:"選修",c:3,p:"徐牧群"},{n:"行動應用軟體開發",t:"選修",c:3,p:"楊子青"},{n:"物聯網概論",t:"選修",c:3,p:"王耀德"}]
+                    },
+                    "3": {
+                        "A": [{n:"作業系統",t:"必修",c:3,p:"馬宏諭"},{n:"作業研究",t:"必修",c:3,p:"康贊清"},{n:"專案實作(一)",t:"必修",c:2,p:"楊子青"},{n:"影像處理",t:"選修",c:3,p:"王俊傑"},{n:"機器學習",t:"選修",c:3,p:"張怡君"},{n:"財務會計資訊系統",t:"選修",c:3,p:"陳怡瑾"},{n:"Python應用實務",t:"選修",c:3,p:"簡永仁"},{n:"企業流程管理",t:"選修",c:3,p:"康贊清"},{n:"進階資訊日文",t:"選修",c:3,p:"蔡季汝"},{n:"人工智慧與永續發展",t:"選修",c:3,p:"劉德安"}],
+                        "B": [{n:"作業系統",t:"必修",c:3,p:"馬宏諭"},{n:"作業研究",t:"必修",c:3,p:"康贊清"},{n:"專案實作(一)",t:"必修",c:2,p:"簡永仁"},{n:"影像處理",t:"選修",c:3,p:"王俊傑"},{n:"機器學習",t:"選修",c:3,p:"張怡君"},{n:"財務會計資訊系統",t:"選修",c:3,p:"陳怡瑾"},{n:"Python應用實務",t:"選修",c:3,p:"簡永仁"},{n:"企業流程管理",t:"選修",c:3,p:"康贊清"},{n:"進階資訊日文",t:"選修",c:3,p:"蔡季汝"},{n:"人工智慧與永續發展",t:"選修",c:3,p:"劉德安"}]
+                    },
+                    "4": {
+                        "A": [
+                            {n:"顧客關係管理",t:"選修",c:3,p:"顏永森"},{n:"企業實習(三)",t:"選修",c:9,p:"羅峻旗"},{n:"企業實習(四)",t:"選修",c:6,p:"陳智賢"},{n:"企業流程管理",t:"選修",c:3,p:"康贊清"},{n:"電商社群媒體經營",t:"選修",c:3,p:"莊宜達"},{n:"人工智慧與永續發展專題",t:"選修",c:3,p:"劉德安"}
+                        ],
+                        "B": [
+                            {n:"顧客關係管理",t:"選修",c:3,p:"顏永森"},{n:"企業實習(四)",t:"選修",c:6,p:"陳智賢"},{n:"企業流程管理",t:"選修",c:3,p:"康贊清"},{n:"電商社群媒體經營",t:"選修",c:3,p:"莊宜達"},{n:"人工智慧與永續發展專題",t:"選修",c:3,p:"劉德安"}
+                        ]
+                    }
+                }
+            },
+            "CS": { // 資工系
+                name: "資訊工程學系",
+                years: {
+                    "1": {
+                        "A": [
+                            {n:"英文(二)",t:"必修",c:2,p:"巴布魯克"},{n:"離散數學",t:"必修",c:3,p:"蔡奇偉"},{n:"計算機概論(二)",t:"必修",c:2,p:"劉建興"},{n:"進階程式設計",t:"必修",c:3,p:"李冠憬/滕元翔"},{n:"物件導向程式設計",t:"必修",c:2,p:"謝孟諺"},{n:"資訊數學(二)",t:"必修",c:2,p:"滕元翔"},{n:"基本電學",t:"選修",c:3,p:"林全財"}
+                        ],
+                        "B": [
+                            {n:"英文(二)",t:"必修",c:2,p:"張文忠"},{n:"離散數學",t:"必修",c:3,p:"蔡奇偉"},{n:"計算機概論(二)",t:"必修",c:2,p:"劉建興"},{n:"進階程式設計",t:"必修",c:3,p:"陳威仁"},{n:"物件導向程式設計",t:"必修",c:2,p:"謝孟諺"},{n:"資訊數學(二)",t:"必修",c:2,p:"滕元翔"}
+                        ]
+                    },
+                    "2": {
+                        "A": [
+                            {n:"工程數學",t:"必修",c:3,p:"林耀鈴"},{n:"機率與統計",t:"必修",c:3,p:"翁永昌"},{n:"組合語言與系統程式",t:"必修",c:3,p:"羅峻旗"},{n:"生涯規劃及職場倫理",t:"必修",c:1,p:"羅峻旗"},{n:"Python程式設計",t:"選修",c:3,p:"蔡育姍"},{n:"智慧機器人原理",t:"選修",c:3,p:"呂芳川"},{n:"可重組計算平台",t:"選修",c:3,p:"戴自強"},{n:"互動式微控原理",t:"選修",c:3,p:"林浩仁"},{n:"基礎日文(二)",t:"選修",c:3,p:"卓美幸"},{n:"機器學習",t:"選修",c:3,p:"翁永昌"},{n:"進階資料結構",t:"選修",c:3,p:"蕭承諺"},{n:"計算機網路",t:"選修",c:3,p:"陳威仁"}
+                        ],
+                        "B": [
+                            {n:"工程數學",t:"必修",c:3,p:"林耀鈴"},{n:"機率與統計",t:"必修",c:3,p:"翁永昌"},{n:"組合語言與系統程式",t:"必修",c:3,p:"羅峻旗"},{n:"生涯規劃及職場倫理",t:"必修",c:1,p:"羅峻旗"},{n:"Python程式設計",t:"選修",c:3,p:"蔡育姍"},{n:"智慧機器人原理",t:"選修",c:3,p:"呂芳川"},{n:"可重組計算平台",t:"選修",c:3,p:"戴自強"},{n:"互動式微控原理",t:"選修",c:3,p:"林浩仁"},{n:"基礎日文(二)",t:"選修",c:3,p:"卓美幸"},{n:"機器學習",t:"選修",c:3,p:"翁永昌"},{n:"進階資料結構",t:"選修",c:3,p:"蕭承諺"},{n:"計算機網路",t:"選修",c:3,p:"陳威仁"}
+                        ]
+                    },
+                    "3": {
+                        "A": [
+                            {n:"作業系統",t:"必修",c:3,p:"劉建興"},{n:"專案實作(一)",t:"必修",c:2,p:"李冠憬"},{n:"人工智慧",t:"選修",c:3,p:"林全財"},{n:"網路安全",t:"選修",c:3,p:"方百立"},{n:"動態網頁設計",t:"選修",c:3,p:"謝孟諺/李冠憬"},{n:"硬體描述語言",t:"選修",c:3,p:"林浩仁"},{n:"行動應用軟體開發",t:"選修",c:3,p:"羅峻旗"},{n:"嵌入式微控制器",t:"選修",c:3,p:"戴自強"},{n:"Linux系統與網路管理",t:"選修",c:3,p:"謝孟諺"},{n:"電腦視覺概論",t:"選修",c:3,p:"蔡奇偉"},{n:"系統安全",t:"選修",c:3,p:"陳秋男"},{n:"數位訊號處理",t:"選修",c:3,p:"戴自強"},{n:"IC設計產業實務",t:"選修",c:3,p:"吳上玄"},{n:"進階資訊日文",t:"選修",c:3,p:"蔡季汝"}
+                        ],
+                        "B": [
+                            {n:"作業系統(合授)",t:"必修",c:3,p:"李冠憬/劉建興"},{n:"專案實作(一)",t:"必修",c:2,p:"李冠憬"},{n:"人工智慧",t:"選修",c:3,p:"林全財"},{n:"網路安全",t:"選修",c:3,p:"方百立"},{n:"動態網頁設計",t:"選修",c:3,p:"謝孟諺/李冠憬"},{n:"硬體描述語言",t:"選修",c:3,p:"林浩仁"},{n:"行動應用軟體開發",t:"選修",c:3,p:"羅峻旗"},{n:"嵌入式微控制器",t:"選修",c:3,p:"戴自強"},{n:"Linux系統與網路管理",t:"選修",c:3,p:"謝孟諺"},{n:"電腦視覺概論",t:"選修",c:3,p:"蔡奇偉"},{n:"系統安全",t:"選修",c:3,p:"陳秋男"}
+                        ]
+                    }
+                }
+            },
+            "AI": { // 人工智慧學系
+                name: "人工智慧學系",
+                years: {
+                    "1": {
+                        "A": [{n:"英文(二)",t:"必修",c:2,p:"陳麗如"},{n:"離散數學",t:"必修",c:3,p:"楊孟蒨"},{n:"計算機概論(二)",t:"必修",c:2,p:"許慈芳"},{n:"進階程式設計",t:"必修",c:3,p:"陳文敬"},{n:"資訊數學",t:"必修",c:3,p:"張瑋珊"},{n:"色彩學",t:"選修",c:3,p:"王肇"},{n:"遊戲企劃",t:"選修",c:3,p:"王岱伊"},{n:"素描",t:"選修",c:2,p:"林康琦"}],
+                        "B": [{n:"英文(二)",t:"必修",c:2,p:"唐嘉憶"},{n:"離散數學",t:"必修",c:3,p:"楊孟蒨"},{n:"計算機概論(二)",t:"必修",c:2,p:"胡學誠"},{n:"進階程式設計",t:"必修",c:3,p:"劉國有"},{n:"資訊數學",t:"必修",c:3,p:"陳智賢"},{n:"色彩學",t:"選修",c:3,p:"王肇"},{n:"遊戲企劃",t:"選修",c:3,p:"王岱伊"},{n:"素描",t:"選修",c:2,p:"林康琦"}]
+                    },
+                    "2": {
+                        "A": [{n:"機率與統計",t:"必修",c:3,p:"莊潤洲"},{n:"生涯規劃及職場倫理",t:"必修",c:1,p:"王肇/許慈芳"},{n:"數位作品實作(一)",t:"必修",c:1,p:"鄧佩珊/許慈芳"},{n:"動態網頁設計",t:"選修",c:3,p:"胡學誠"},{n:"視覺傳達",t:"選修",c:3,p:"鄧佩珊"},{n:"基礎日文(二)",t:"選修",c:3,p:"卓美幸"},{n:"藝術視覺心理學",t:"選修",c:2,p:"王肇"},{n:"3D遊戲設計",t:"選修",c:3,p:"吳賦哲"},{n:"數位特效與影像美學",t:"選修",c:3,p:"王肇"},{n:"音樂初階實作",t:"選修",c:3,p:"彭宇薰"}],
+                        "B": [{n:"機率與統計",t:"必修",c:3,p:"莊潤洲"},{n:"生涯規劃及職場倫理",t:"必修",c:1,p:"王肇/許慈芳"},{n:"數位作品實作(一)",t:"必修",c:1,p:"吳賦哲/王肇"},{n:"動態網頁設計",t:"選修",c:3,p:"胡學誠"},{n:"視覺傳達",t:"選修",c:3,p:"鄧佩珊"},{n:"基礎日文(二)",t:"選修",c:3,p:"卓美幸"},{n:"藝術視覺心理學",t:"選修",c:2,p:"王肇"},{n:"3D遊戲設計",t:"選修",c:3,p:"吳賦哲"},{n:"數位特效與影像美學",t:"選修",c:3,p:"王肇"},{n:"音樂初階實作",t:"選修",c:3,p:"彭宇薰"}]
+                    },
+                    "3": {
+                        "A": [{n:"作業系統(合授)",t:"必修",c:3,p:"林峻安/劉國有"},{n:"專案實作(一)",t:"必修",c:2,p:"鄧佩珊/陳智賢"},{n:"演算法概論",t:"必修",c:3,p:"蔡英德"},{n:"組合數學",t:"選修",c:3,p:"楊孟蒨"},{n:"資料庫管理",t:"選修",c:3,p:"許慈芳"},{n:"網路系統建構實務",t:"選修",c:3,p:"許慈芳"},{n:"深度學習",t:"選修",c:3,p:"陳文敬"},{n:"軟體開發與維運",t:"選修",c:3,p:"吳賦哲"},{n:"科技互動藝術",t:"選修",c:3,p:"陳文敬/鄧佩珊"},{n:"虛擬實境體感開發",t:"選修",c:3,p:"陳智賢"},{n:"進階資訊日文",t:"選修",c:3,p:"蔡季汝"},{n:"生成式人工智慧",t:"選修",c:3,p:"吳賦哲"},{n:"數位美學應用",t:"選修",c:3,p:"鄧佩珊"}]
+                    },
+                    "4": {
+                        "A": [{n:"網路系統建構實務",t:"選修",c:3,p:"許慈芳"},{n:"企業實習(三)",t:"選修",c:9,p:"羅峻旗"},{n:"深度學習",t:"選修",c:3,p:"陳文敬"},{n:"企業實習(四)",t:"選修",c:6,p:"陳智賢"},{n:"軟體開發與維運",t:"選修",c:3,p:"吳賦哲"},{n:"虛擬實境體感開發",t:"選修",c:3,p:"陳智賢"},{n:"生成式人工智慧",t:"選修",c:3,p:"吳賦哲"},{n:"AI數位媒體行銷",t:"選修",c:2,p:"陳正榮"},{n:"數位美學應用",t:"選修",c:3,p:"鄧佩珊"}]
+                    }
+                }
+            }
+        };
 
-    // v5.1 New: Read user data from index.html session
-    checkUser(){
-        const user = localStorage.getItem('careerDNA_user');
-        if(user){
-            try {
-                const u = JSON.parse(user);
-                if(u.name) document.getElementById('inputName').value = u.name;
-            } catch(e){}
-        }
-    },
+        const TRAITS = {
+            "IM": { focus: "商業與管理", holland: ['C','E','I'], jobs: ["PM 產品經理", "SA 系統分析師", "MIS 工程師"] },
+            "CS": { focus: "技術與演算法", holland: ['I','R','C'], jobs: ["後端工程師", "嵌入式工程師", "資安專家"] },
+            "AI": { focus: "模型與互動科技", holland: ['I','A','R'], jobs: ["AI 演算法工程師", "互動科技研發", "資料科學家"] }
+        };
 
-    // v5.1 New: Read brand test results and auto-check Holland
-    checkSyncData(){
-        const syncRaw = localStorage.getItem('careerDNA_sync');
-        if(syncRaw){
-            try {
-                const sync = JSON.parse(syncRaw);
-                const hCodes = Array.isArray(sync.holland) ? sync.holland : (typeof sync.holland === 'string' ? sync.holland.split('') : []);
+        const EXP_OPTS = [
+            {id:'contest', l:'🏆 校外競賽獲獎'}, {id:'leader', l:'👥 社團/系學會幹部'}, {id:'intern', l:'💼 企業實習(2個月+)'},
+            {id:'project', l:'💻 Side Project'}, {id:'paper', l:'📄 研討會論文發表'}
+        ];
+        const CERT_OPTS = [
+            {id:'en', l:'🇬🇧 多益 850+ / 托福'}, {id:'jp', l:'🇯🇵 日檢 N2 以上'}, 
+            {id:'cloud', l:'☁️ AWS/GCP 證照'}, {id:'dev', l:'🛠️ 乙級證照 / iPAS'}
+        ];
+
+        window.App = {
+            state: { dept: "IM", grade: "4", cls: "A", courses: new Set(), exp: new Set(), chart: null },
+
+            init() {
+                this.renderSelectors();
+                this.renderChips();
+                this.bindEvents();
                 
-                let syncedCount = 0;
-                hCodes.forEach(code => {
-                    // Find chip with this value
-                    const input = document.querySelector(`#hollandArea input[value="${code}"]`);
-                    if(input && !input.checked){
+                // 監聽登入並載入資料
+                onAuthStateChanged(auth, async (user) => {
+                    currentUser = user;
+                    if (user) {
+                        console.log("載入雲端資料中...", user.uid);
+                        await this.loadFromFirebase(user.uid);
+                    } else {
+                        this.loadLocalUser();
+                    }
+                    setTimeout(() => this.renderCourses(), 100);
+                });
+            },
+
+            async loadFromFirebase(uid) {
+                try {
+                    const docRef = doc(db, "users", uid, "resume_data", "latest");
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        document.getElementById('inputName').value = data.userName || "";
+                        this.state.dept = data.dept || "IM";
+                        this.state.grade = data.grade || "4";
+                        this.state.cls = data.cls || "A";
+                        
+                        this.state.courses = new Set(data.courses || []);
+                        this.state.exp = new Set(data.exp || []);
+                        
+                        document.getElementById('deptSelect').value = this.state.dept;
+                        document.getElementById('gradeSelect').value = this.state.grade;
+                        document.getElementById('classSelect').value = this.state.cls;
+                        
+                        this.renderChips(); 
+                        this.restoreCheckboxes(data.exp, 'exp-chips');
+                        this.restoreCheckboxes(data.holland, 'holland-chips');
+                        if(data.certs) this.restoreCheckboxes(data.certs, 'cert-chips');
+                    }
+                } catch (e) {
+                    console.error("載入失敗", e);
+                }
+            },
+            
+            restoreCheckboxes(list, containerId) {
+                if(!list) return;
+                const container = document.getElementById(containerId);
+                if(!container) return;
+                list.forEach(val => {
+                    const input = container.querySelector(`input[value="${val}"]`);
+                    if(input) {
                         input.checked = true;
-                        input.closest('.chip').classList.add('checked');
-                        syncedCount++;
+                        this.toggleChip(input, containerId.includes('holland') ? 'holland' : 'exp');
                     }
                 });
+            },
 
-                if(syncedCount > 0){
-                    this.showToast(`已自動同步 ${syncedCount} 項 Holland 測驗結果 (${hCodes.join('')})`);
-                    // Optional: Auto-calculate if synced
-                    this.calculate();
+            async saveProgress() {
+                if (!currentUser) {
+                    alert("請先登入才能使用雲端儲存功能！(僅暫存於本機)");
+                    const d = { 
+                        user: document.getElementById('inputName').value, 
+                        courses: Array.from(this.state.courses)
+                    };
+                    localStorage.setItem('careerDNA_user', JSON.stringify(d));
+                    return;
                 }
-            } catch(e){ console.error('Sync error', e); }
-        }
-    },
 
-    // v5.1 New: Elegant Toast Notification
-    showToast(msg){
-        const t = document.createElement('div');
-        t.className = 'toast-notification';
-        t.innerHTML = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <span>${msg}</span>`;
-        document.body.appendChild(t);
-        setTimeout(() => {
-            t.style.opacity = '0';
-            t.style.transform = 'translateY(10px)';
-            t.style.transition = 'all 0.5s';
-            setTimeout(() => t.remove(), 500);
-        }, 4000);
-    },
+                try {
+                    const certs = Array.from(document.querySelectorAll('#cert-chips input:checked')).map(i => i.value);
+                    const holland = Array.from(document.querySelectorAll('#holland-chips input:checked')).map(i => i.value);
 
-    bindSelectors(){
-        const deptSelect=document.getElementById('deptSelect');
-        Object.keys(DATA.departments).forEach(k=>{
-            const opt=document.createElement('option');opt.value=k;opt.textContent=k;deptSelect.appendChild(opt);
-        });
-        deptSelect.value=this.state.dept;
+                    const dataToSave = {
+                        userName: document.getElementById('inputName').value,
+                        dept: this.state.dept,
+                        grade: this.state.grade,
+                        cls: this.state.cls,
+                        courses: Array.from(this.state.courses),
+                        exp: Array.from(this.state.exp),
+                        certs: certs,
+                        holland: holland,
+                        lastUpdated: new Date().toISOString()
+                    };
 
-        const grade=document.getElementById('gradeSelect');
-        ['一上','一下','二上','二下','三上','三下','四上','四下','延畢'].forEach(g=>{const o=document.createElement('option');o.value=g;o.textContent=g;grade.appendChild(o)});
+                    await setDoc(doc(db, "users", currentUser.uid, "resume_data", "latest"), dataToSave);
+                    alert("✅ 進度已成功儲存至雲端！");
+                } catch (e) {
+                    console.error("儲存失敗", e);
+                    alert("儲存失敗，請檢查網路連線");
+                }
+            },
 
-        deptSelect.addEventListener('change',e=>{this.state.dept=e.target.value;this.renderCourses();});
-    },
+            renderSelectors() {
+                const deptSel = document.getElementById('deptSelect');
+                deptSel.innerHTML = Object.entries(COURSE_DB).map(([k,v]) => `<option value="${k}">${v.name}</option>`).join('');
+                deptSel.value = "IM"; 
+            },
 
-    renderCourses(){
-        const container=document.getElementById('courseContainer');container.innerHTML='';
-        const deptData=DATA.departments[this.state.dept];
-        Object.entries(deptData).forEach(([sem,courses])=>{
-            const wrap=document.createElement('div');wrap.style.marginBottom='8px';
-            const title=document.createElement('h4');title.textContent=sem;title.style.margin='6px 0 6px';title.style.fontSize='0.9rem';title.style.fontWeight='700';wrap.appendChild(title);
-            const group=document.createElement('div');group.className='chip-group';
-            courses.forEach(c=>{
-                const label=document.createElement('label');label.className='chip';label.setAttribute('tabindex','0');
-                const input=document.createElement('input');input.type='checkbox';input.value=c;input.dataset.type='required';
-                const span=document.createElement('span');span.textContent=c;label.appendChild(input);label.appendChild(span);
-                // click toggling
-                label.addEventListener('click',()=>{input.checked=!input.checked;label.classList.toggle('checked',input.checked)});
-                input.addEventListener('change',()=>{label.classList.toggle('checked',input.checked)});
-                group.appendChild(label);
-            });
-            if(courses.length===0){ const em=document.createElement('div');em.textContent='(無課程)';em.style.color='var(--muted)';group.appendChild(em);} 
-            wrap.appendChild(group);
-            container.appendChild(wrap);
-        });
-        this.restoreChecks();
-    },
+            renderChips() {
+                const mk = (list, type) => list.map(i => `
+                    <label class="cursor-pointer select-none group">
+                        <input type="checkbox" value="${i.id}" class="hidden-checkbox" onchange="window.App.toggleChip(this, '${type}')">
+                        <div class="px-3 py-2 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-500 transition group-hover:border-blue-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 shadow-sm">
+                            ${i.l}
+                        </div>
+                    </label>`).join('');
+                document.getElementById('exp-chips').innerHTML = mk(EXP_OPTS, 'exp');
+                document.getElementById('cert-chips').innerHTML = mk(CERT_OPTS, 'cert');
+                
+                const codes = ['R','I','A','S','E','C'];
+                document.getElementById('holland-chips').innerHTML = codes.map(c => `
+                    <label class="cursor-pointer select-none">
+                        <input type="checkbox" value="${c}" class="hidden-checkbox" onchange="window.App.toggleChip(this, 'holland')">
+                        <div class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-sm font-black text-slate-300 bg-white transition hover:bg-slate-50 peer-checked:bg-teal-500 peer-checked:text-white peer-checked:border-teal-500 shadow-sm">
+                            ${c}
+                        </div>
+                    </label>`).join('');
+            },
 
-    renderChipGroups(){
-        const expArea=document.getElementById('experienceArea');expArea.innerHTML='';
-        DATA.experienceList.forEach(it=>{
-            const label=document.createElement('label');label.className='chip';label.tabIndex=0;
-            const input=document.createElement('input');input.type='checkbox';input.value=it.v;const span=document.createElement('span');span.textContent=it.t;label.appendChild(input);label.appendChild(span);
-            label.addEventListener('click',()=>{input.checked=!input.checked;label.classList.toggle('checked',input.checked)});
-            expArea.appendChild(label);
-        });
+            bindEvents() {
+                ['deptSelect', 'gradeSelect', 'classSelect'].forEach(id => {
+                    document.getElementById(id).addEventListener('change', (e) => {
+                        if(id === 'deptSelect') this.state.dept = e.target.value;
+                        if(id === 'gradeSelect') this.state.grade = e.target.value;
+                        if(id === 'classSelect') this.state.cls = e.target.value;
+                        this.renderCourses();
+                    });
+                });
+            },
 
-        const certArea=document.getElementById('certArea');certArea.innerHTML='';
-        DATA.certList.forEach(it=>{
-            const label=document.createElement('label');label.className='chip';label.tabIndex=0;
-            const input=document.createElement('input');input.type='checkbox';input.value=it.v;const span=document.createElement('span');span.textContent=it.t;label.appendChild(input);label.appendChild(span);
-            label.addEventListener('click',()=>{input.checked=!input.checked;label.classList.toggle('checked',input.checked)});
-            certArea.appendChild(label);
-        });
+            renderCourses() {
+                const { dept, grade, cls } = this.state;
+                const db = COURSE_DB[dept];
+                const list = db?.years?.[grade]?.[cls] || [];
+                
+                document.getElementById('current-view-label').innerText = `${db.name} ${grade}年級 ${cls}班`;
+                const container = document.getElementById('course-grid');
 
-        const holland=document.getElementById('hollandArea');holland.innerHTML='';
-        DATA.hollandCodes.forEach(code=>{
-            const label=document.createElement('label');label.className='chip';label.tabIndex=0;
-            const input=document.createElement('input');input.type='checkbox';input.value=code;
-            const span=document.createElement('span');span.textContent = code;
+                if(list.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full py-12 flex flex-col items-center justify-center text-slate-400 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                            <svg class="w-10 h-10 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span class="text-sm font-medium">此班級暫無課程資料</span>
+                            <span class="text-xs mt-1 text-slate-400">(如：人工智慧系 B 班或資工系 C/D 班)</span>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = list.map(c => {
+                    const isSel = this.state.courses.has(c.n);
+                    const tagClass = c.t === "必修" ? "bg-red-50 text-red-600 border-red-100" : "bg-blue-50 text-blue-600 border-blue-100";
+                    return `
+                    <div onclick="window.App.toggleCourse(this, '${c.n}')" 
+                         class="course-card relative p-4 rounded-xl bg-white border border-slate-200 cursor-pointer ${isSel ? 'selected' : ''}">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${tagClass}">${c.t}</span>
+                            <span class="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded">${c.c} 學分</span>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-base mb-1.5 leading-tight line-clamp-2">${c.n}</h3>
+                        <div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                            <div class="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] text-slate-600">
+                                ${c.p.charAt(0)}
+                            </div>
+                            ${c.p}
+                        </div>
+                        <div class="absolute top-3 right-3 w-5 h-5 rounded-full border-2 border-slate-200 flex items-center justify-center transition-all ${isSel ? 'bg-blue-500 border-blue-500 scale-110' : 'bg-transparent'}">
+                            <svg class="w-3 h-3 text-white ${isSel ? 'opacity-100' : 'opacity-0'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                    </div>`;
+                }).join('');
+            },
+
+            toggleCourse(el, name) {
+                if(this.state.courses.has(name)) {
+                    this.state.courses.delete(name);
+                    el.classList.remove('selected');
+                    el.querySelector('.bg-blue-500')?.classList.remove('bg-blue-500', 'border-blue-500', 'scale-110');
+                    el.querySelector('svg.text-white')?.classList.replace('opacity-100', 'opacity-0');
+                } else {
+                    this.state.courses.add(name);
+                    el.classList.add('selected');
+                    el.querySelector('.border-slate-200')?.classList.add('bg-blue-500', 'border-blue-500', 'scale-110');
+                    el.querySelector('svg.text-white')?.classList.replace('opacity-0', 'opacity-100');
+                }
+            },
+
+            toggleChip(input, type) {
+                const div = input.nextElementSibling;
+                if(input.checked) {
+                    if(type === 'exp') this.state.exp.add(input.value);
+                    div.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+                    div.classList.remove('bg-white', 'text-slate-500');
+                    if(type === 'holland') {
+                        div.classList.remove('bg-white', 'text-slate-300'); 
+                        div.classList.add('bg-teal-500', 'text-white', 'border-teal-500');
+                    }
+                } else {
+                    if(type === 'exp') this.state.exp.delete(input.value);
+                    div.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                    div.classList.add('bg-white', 'text-slate-500');
+                    if(type === 'holland') {
+                        div.classList.remove('bg-teal-500', 'text-white', 'border-teal-500');
+                        div.classList.add('bg-white', 'text-slate-300');
+                    }
+                }
+            },
+
+            calculate() {
+                const reqCount = this.state.courses.size;
+                const expCount = this.state.exp.size;
+                const certCount = document.querySelectorAll('#cert-chips input:checked').length;
+                const hollandCount = document.querySelectorAll('#holland-chips input:checked').length;
+
+                const s = {
+                    acad: Math.min(100, reqCount * 12),
+                    exp: Math.min(100, expCount * 25),
+                    skill: Math.min(100, certCount * 35),
+                    match: Math.min(100, hollandCount * 25),
+                    social: 70
+                };
+                const total = Math.round(s.acad*0.3 + s.exp*0.25 + s.skill*0.2 + s.match*0.15 + s.social*0.1);
+
+                this.animateScore(total);
+                this.renderChart(s);
+                this.renderReport(total, s);
+                document.getElementById('result-panel').classList.remove('hidden');
+                document.getElementById('result-panel').scrollIntoView({ behavior: 'smooth' });
+            },
+
+            animateScore(score) {
+                const circle = document.getElementById('score-arc');
+                const offset = 251.2 - (score / 100) * 251.2;
+                document.documentElement.style.setProperty('--target-dash', offset);
+                circle.style.animation = 'dash 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards';
+                
+                let current = 0;
+                const timer = setInterval(() => {
+                    current += 1;
+                    document.getElementById('score-val').innerText = current;
+                    if(current >= score) { clearInterval(timer); document.getElementById('score-val').innerText = score; }
+                }, 15);
+            },
+
+            renderChart(s) {
+                const ctx = document.getElementById('radarChart').getContext('2d');
+                if(this.state.chart) this.state.chart.destroy();
+                this.state.chart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['學業', '實務', '技能', '適性', '社交'],
+                        datasets: [{
+                            data: [s.acad, s.exp, s.skill, s.match, s.social],
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderColor: '#2563eb',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#2563eb'
+                        }]
+                    },
+                    options: {
+                        scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: '#e2e8f0' } } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            },
+
+            renderReport(total, s) {
+                const t = TRAITS[this.state.dept];
+                const comm = total < 60 ? `修課學分略顯不足，建議優先鞏固${t.focus}核心必修。` :
+                             (total < 85 ? `基礎不錯！建議加強${t.focus}相關的實習或專案經驗。` : `履歷極具競爭力！您的${t.focus}能力突出，可挑戰高階職位。`);
+                
+                document.getElementById('ai-comment').innerHTML = `<p class="font-bold text-slate-800 mb-1">診斷結果：</p>${comm}`;
+                document.getElementById('career-tags').innerHTML = t.jobs.map(j => 
+                    `<span class="inline-block bg-white border border-indigo-200 text-indigo-700 text-xs font-bold px-2 py-1 rounded-md shadow-sm">${j}</span>`
+                ).join('');
+            },
+
+            loadLocalUser() {
+                const u = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
+                if(u.name) document.getElementById('inputName').value = u.name;
+            },
             
-            // Add tooltip logic for codes
-            const tooltipMap = {R:'實作',I:'研究',A:'藝術',S:'社交',E:'企業',C:'常規'};
-            span.textContent = `${code} ${tooltipMap[code]}`;
-            
-            label.appendChild(input);label.appendChild(span);
-            label.addEventListener('click',()=>{input.checked=!input.checked;label.classList.toggle('checked',input.checked)});
-            holland.appendChild(label);
-        });
-    },
+            reset() {
+                if(confirm('確定要清除所有選項嗎？')) {
+                    this.state.courses.clear();
+                    this.state.exp.clear();
+                    this.renderCourses();
+                    this.renderChips();
+                    document.getElementById('result-panel').classList.add('hidden');
+                }
+            },
 
-    bindActions(){
-        document.getElementById('calcBtn').addEventListener('click',()=>this.calculate());
-        document.getElementById('resetBtn').addEventListener('click',()=>this.reset());
-        document.getElementById('downloadBtn').addEventListener('click',()=>this.generatePDF());
-        document.getElementById('saveBtn').addEventListener('click',()=>this.saveToFile());
-    },
+            exportPDF() { alert('PDF 匯出模組準備中...'); }
+        };
 
-    collectInputs(){
-        const reqs = Array.from(document.querySelectorAll('input[data-type="required"]:checked')).map(i=>i.value);
-        const totalReq = document.querySelectorAll('input[data-type="required"]').length || 0;
-        const exp = Array.from(document.querySelectorAll('#experienceArea input:checked')).map(i=>i.value);
-        const certs = Array.from(document.querySelectorAll('#certArea input:checked')).map(i=>i.value);
-        const holland = Array.from(document.querySelectorAll('#hollandArea input:checked')).map(i=>i.value);
-        return {reqs,totalReq,exp,certs,holland};
-    },
-
-    calculate(){
-        const inputs=this.collectInputs();
-        const dims = {};
-        dims.academic = inputs.totalReq>0 ? Math.round((inputs.reqs.length/inputs.totalReq)*100) : 0;
-        dims.practical = Math.min(inputs.exp.length * 30, 100);
-        dims.skill = inputs.certs.includes('A級') ? 100 : (inputs.certs.includes('B級')?70:20);
-        
-        const traits=DATA.deptTraits[this.state.dept].holland;
-        const matchCount = inputs.holland.filter(h=>traits.includes(h)).length;
-        dims.match = matchCount>=2 ? 90 : (matchCount===1?70:50);
-        dims.communication = (inputs.exp.includes('社團幹部')||inputs.exp.includes('競賽'))?90:65;
-
-        const weights = {academic:0.22,practical:0.20,skill:0.22,match:0.18,communication:0.18};
-        let total = Math.round((dims.academic*weights.academic + dims.practical*weights.practical + dims.skill*weights.skill + dims.match*weights.match + dims.communication*weights.communication));
-        total = Math.max(0,Math.min(100,total));
-
-        this.updateGauge(total);
-        this.renderRadar(dims);
-        this.renderReport(inputs,dims,total);
-        document.getElementById('emptyState').classList.add('hidden');
-        document.getElementById('resultContent').classList.remove('hidden');
-        this.saveState();
-    },
-
-    updateGauge(score){
-        const arc=document.getElementById('gaugeArc');
-        const circumference=251.2; 
-        const dash = (score/100)*circumference;
-        arc.style.transition='stroke-dasharray 900ms cubic-bezier(.2,.9,.2,1)';
-        arc.setAttribute('stroke-dasharray',`${dash} ${circumference}`);
-        document.getElementById('scoreValue').textContent=score;
-    },
-
-    renderRadar(dims){
-        const ctx=document.getElementById('radarChart').getContext('2d');
-        if(this.state.chart) this.state.chart.destroy();
-        this.state.chart = new Chart(ctx,{
-            type:'radar',
-            data:{labels:['學業完成','實務經歷','專業技能','科系適性','溝通協作'],datasets:[{label:'能力分佈',data:[dims.academic,dims.practical,dims.skill,dims.match,dims.communication],fill:true,backgroundColor:'rgba(37,99,235,0.16)',borderColor:'#2563eb',pointBackgroundColor:'#2563eb',borderWidth:2}]},
-            options:{
-                responsive:true,maintainAspectRatio:false,
-                scales:{r:{beginAtZero:true,min:0,max:100,grid:{color:'#eef6ff'},angleLines:{color:'#eef6ff'},ticks:{display:false}}},
-                plugins:{legend:{display:false}}
-            }
-        });
-    },
-
-    renderReport(inputs,dims,total){
-        const add=(el,txt,cls)=>{const li=document.createElement('li');li.className=`result-item ${cls}`;li.textContent=txt;document.getElementById(el).appendChild(li)};
-        document.getElementById('strengthList').innerHTML='';document.getElementById('weakList').innerHTML='';document.getElementById('careerList').innerHTML='';
-
-        if(dims.academic>=80) add('strengthList','學業基礎穩固，核心課程完成度高。','good'); else add('weakList','必修學分缺口較大，建議優先補齊。','bad');
-        if(dims.practical>=50) add('strengthList','具備實務經驗，履歷競爭力佳。','good'); else add('weakList','缺乏專題或實習經歷，建議參加黑客松或 Side Project。','warn');
-        if(dims.skill>=70) add('strengthList','證照或技能基礎良好。','good'); else add('weakList','建議取得相關證照或完成技能課程。','warn');
-        
-        const hollandTop = inputs.holland.slice(0,3).join('') || '未填寫';
-        const traits = DATA.deptTraits[this.state.dept];
-        document.getElementById('deptMatchCard').innerHTML = `您的 Holland 代碼：<strong>${hollandTop}</strong><br>與 ${this.state.dept} (${traits.focus}) 的契合度：<strong>${(inputs.holland.filter(h=>traits.holland.includes(h)).length>=2)?'高':'一般'}</strong>`;
-
-        const careerMap = { '資管':['PM','系統分析師'], '資工':['軟體工程師','AI工程師'], '資傳':['UI/UX設計師','數位行銷'] };
-        careerMap[this.state.dept].forEach(c=>{const li=document.createElement('li');li.className='result-item good';li.textContent=c;document.getElementById('careerList').appendChild(li)});
-
-        const grade = document.getElementById('gradeSelect').value;
-        let actionHTML = '';
-        if(grade.includes('一')||grade.includes('二')){
-            actionHTML = `<div class="step"><strong>30 天：</strong>探索系上選修，加入一個感興趣的社團或讀書會。</div><div class="step"><strong>60 天：</strong>維持 GPA，並嘗試接觸基礎程式或設計工具 (Git/Figma)。</div>`;
-        } else {
-            actionHTML = `<div class="step"><strong>30 天：</strong>整理 GitHub/Behance 作品集，盤點缺少的關鍵技能。</div><div class="step"><strong>60 天：</strong>投遞實習履歷，並完成一個完整的 Side Project。</div>`;
-        }
-        document.getElementById('actionPlanArea').innerHTML = actionHTML;
-    },
-
-    saveState(){
-        try{
-            const state={dept:this.state.dept,name:document.getElementById('inputName').value,checks:Array.from(document.querySelectorAll('input:checked')).map(i=>i.value)};
-            localStorage.setItem('careerfit_v4',JSON.stringify(state));
-        }catch(e){console.warn('localStorage error',e)}
-    },
-
-    restore(){
-        try{
-            const s=JSON.parse(localStorage.getItem('careerfit_v4')||'null');
-            if(s){if(s.dept){this.state.dept=s.dept;document.getElementById('deptSelect').value=s.dept}if(s.name)document.getElementById('inputName').value=s.name}
-        }catch(e){console.warn('restore error',e)}
-    },
-
-    restoreChecks(){
-        try{
-            const s=JSON.parse(localStorage.getItem('careerfit_v4')||'null');if(!s||!s.checks) return; s.checks.forEach(v=>{const el=document.querySelector(`input[value="${CSS.escape(v)}"]`); if(el){el.checked=true; el.closest('label')?.classList?.add('checked')}});
-        }catch(e){/* ignore malformed */}
-    },
-
-    reset(){ if(confirm('確定要重置所有資料嗎？')){localStorage.removeItem('careerfit_v4');location.reload();} },
-
-    generatePDF(){
-        const el=document.querySelector('.container');
-        html2canvas(el,{scale:2,useCORS:true}).then(canvas=>{
-            const img=canvas.toDataURL('image/png');
-            const pdf = new window.jspdf.jsPDF('p','mm','a4');
-            const pageWidth=210; const pageHeight=297; const imgProps = canvas.width / canvas.height; const imgHeight = pageWidth / imgProps;
-            pdf.addImage(img,'PNG',0,0,pageWidth,imgHeight);
-            pdf.save('CareerFit_Report.pdf');
-        }).catch(e=>{alert('產生 PDF 發生錯誤：'+e.message)});
-    },
-
-    saveToFile(){
-        const payload={name:document.getElementById('inputName').value,dept:this.state.dept,checks:Array.from(document.querySelectorAll('input:checked')).map(i=>i.value)};
-        const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-        const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='careerfit_export.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
-    }
-};
-
-// init
-document.addEventListener('DOMContentLoaded',()=>App.init());
-</script>
+        document.addEventListener('DOMContentLoaded', () => window.App.init());
+    </script>
 </body>
 </html>
