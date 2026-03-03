@@ -60,55 +60,179 @@
             --text-main: #0f172a;
             --text-sub: #64748b;
             --shadow-soft: 0 10px 40px -10px rgba(37, 99, 235, 0.1);
-            --shadow-hover: 0 20px 40px -10px rgba(37, 99, 235, 0.2);
+            --shadow-hover: 0 25px 50px -12px rgba(37, 99, 235, 0.25);
         }
 
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: #f8fafc;
+            background-color: #fdfdfd; /* 稍微亮一點的白，減少灰度 */
             color: var(--text-main);
             overflow-x: hidden;
         }
 
         .hero-bg {
+            background-color: #f8fafc;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.08) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(34, 211, 238, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            background-size: 120% 120%;
+            animation: aurora 20s ease-in-out infinite alternate;
         }
+        @keyframes aurora { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
 
         .feature-card {
-            background: var(--surface);
-            border: 1px solid #e2e8f0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05); /* 基礎陰影更柔和 */
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* 更有彈性的動畫 */
         }
         
         .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--primary);
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(37, 99, 235, 0.3);
+            background: rgba(255, 255, 255, 0.95);
         }
+        
+        /* --- Awwwards Inspired Enhancements --- */
+        .cursor, .cursor-follower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference; /* 讓游標在不同背景下都有對比 */
+        }
+        .cursor {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+        }
+        .cursor-follower {
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .cursor-hover {
+            transform: scale(2.5);
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 針對不同卡片的有色光暈 (Colored Glows) */
+        .feature-card:hover.card-blue { box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.25); }
+        .feature-card:hover.card-teal { box-shadow: 0 20px 40px -10px rgba(20, 184, 166, 0.25); }
+        .feature-card:hover.card-purple { box-shadow: 0 20px 40px -10px rgba(147, 51, 234, 0.25); }
+
+        /* 3D Card Tilt & Headline Animation */
+        .feature-card:hover { transform: translateY(-10px) scale(1.02) perspective(1000px) rotateY(var(--rotateY)) rotateX(var(--rotateX)); }
+        h1.animated-headline > span { display: inline-block; opacity: 0; transform: translateY(20px) rotate(5deg); animation: word-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes word-reveal { to { opacity: 1; transform: translateY(0) rotate(0); } }
 
         .fade-in-up {
             animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
             transform: translateY(20px);
         }
-
         .delay-100 { animation-delay: 0.1s; }
         .delay-200 { animation-delay: 0.2s; }
         .delay-300 { animation-delay: 0.3s; }
-
         @keyframes fadeInUp {
             to { opacity: 1; transform: translateY(0); }
         }
-
         .modal-backdrop {
             background: rgba(15, 23, 42, 0.4);
             backdrop-filter: blur(4px);
         }
+
+        /* --- Global Dark Mode --- */
+        body.dark-mode { background-color: #0f172a; color: #f1f5f9; }
+        /* Typography */
+        body.dark-mode .text-slate-900,
+        body.dark-mode .text-slate-800,
+        body.dark-mode .text-slate-700 { color: #f1f5f9; }
+        body.dark-mode .text-slate-600 { color: #cbd5e1; }
+        body.dark-mode .text-slate-500 { color: #94a3b8; }
+        /* Backgrounds */
+        body.dark-mode .bg-white { background-color: #1e293b; }
+        /* Special Backgrounds */
+        body.dark-mode .hero-bg { background-color: #0f172a; background-image: none; }
+        body.dark-mode nav[class*="bg-white"] { background-color: rgba(30, 41, 59, 0.8) !important; border-color: #334155; }
+        /* Components */
+        body.dark-mode .feature-card { background: rgba(30, 41, 59, 0.7); border-color: rgba(255,255,255,0.1); }
+        body.dark-mode .feature-card:hover { background: rgba(49, 62, 82, 0.9); }
+        /* Forms */
+        body.dark-mode input[type="text"],
+        body.dark-mode input[type="email"],
+        body.dark-mode input[type="password"] { background-color: #334155; color: white; border-color: #475569 !important; }
+        body.dark-mode input:focus { border-color: #3b82f6 !important; background-color: #1e293b; }
+        /* Modals */
+        body.dark-mode .modal-backdrop { background: rgba(15, 23, 42, 0.8); }
+
+        /* --- Intro Animation (Sofi Health Style) --- */
+        #intro-layer {
+            position: fixed; inset: 0; z-index: 9999;
+            background-color: #f8fafc; /* Light Mode Default */
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 1.2s cubic-bezier(0.76, 0, 0.24, 1); /* Elegant Easing */
+        }
+        .intro-text-mask { overflow: hidden; margin-bottom: 1rem; }
+        .intro-text { 
+            transform: translateY(110%); 
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            color: #0f172a; /* Light Mode Text */
+        }
+        .intro-sub-mask { overflow: hidden; }
+        .intro-sub { 
+            transform: translateY(110%); 
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition-delay: 0.1s;
+        }
+        .slide-out { transform: translateY(-100%); }
+        .text-reveal { transform: translateY(0); }
+
+        /* Dark Mode Overrides for Intro */
+        body.dark-mode #intro-layer { background-color: #0f172a; }
+        body.dark-mode .intro-text { color: #f1f5f9; }
+        
+        /* Skip Intro State (for session check) */
+        body.skip-intro #intro-layer { display: none !important; }
+        body.skip-intro #main-page-content { opacity: 1 !important; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col hero-bg">
+    <!-- Intro Animation Layer -->
+    <div id="intro-layer">
+        <div class="text-center px-4">
+            <div class="intro-text-mask">
+                <h1 class="text-6xl md:text-8xl font-black tracking-tighter intro-text" id="intro-title">CareerDNA</h1>
+            </div>
+            <div class="intro-sub-mask">
+                <p class="text-blue-500 font-bold tracking-[0.4em] text-sm md:text-base intro-sub" id="intro-subtitle">DISCOVER YOUR FUTURE</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      // Apply dark mode instantly to prevent FOUC (Flash of Unstyled Content)
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+      }
+      
+      // Check if intro has been shown in this session
+      if (sessionStorage.getItem('introShown')) {
+        document.body.classList.add('skip-intro');
+      }
+    </script>
+
+    <!-- Awwwards Style Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
 
     <nav class="w-full fixed top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
         <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
@@ -136,7 +260,7 @@
                         </button>
                         <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
                             <div class="py-2">
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">個人檔案設定</a>
+                            <a href="profile.html" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">個人檔案設定</a>
                                 <button onclick="AuthUI.handleLogout()" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">登出系統</button>
                             </div>
                         </div>
@@ -146,12 +270,12 @@
         </div>
     </nav>
 
-    <main class="flex-grow pt-32 pb-20 px-6">
+    <main id="main-page-content" class="flex-grow pt-32 pb-20 px-6 opacity-0 transition-opacity duration-1000">
         <div class="max-w-7xl mx-auto">
             <div class="text-center max-w-3xl mx-auto mb-20 fade-in-up">
                 <span class="inline-block py-1 px-4 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-wider mb-6 border border-blue-100">AI-POWERED CAREER NAVIGATION</span>
-                <h1 class="text-5xl md:text-6xl font-black text-slate-900 leading-tight mb-6">
-                    用數據理解自己，<br>打造更強大的<span class="text-blue-600 relative inline-block">未來履歷</span>。
+                <h1 id="main-headline" class="text-5xl md:text-6xl font-black text-slate-900 leading-tight mb-6">
+                    用數據理解自己， <br>打造更強大的<span class="text-blue-600 relative inline-block">未來履歷</span>。
                 </h1>
                 <p class="text-lg text-slate-500 mb-10 leading-relaxed">
                     整合 Holland 職涯興趣、Gallup 天賦優勢與大數據學程分析。<br>不只告訴你適合什麼，更直接為你生成履歷與行動計畫。
@@ -164,7 +288,7 @@
             </div>
 
             <div id="modules" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <a href="brand_test.html" class="feature-card block p-8 rounded-3xl group relative overflow-hidden fade-in-up delay-100">
+                <a href="brand_test.html" class="feature-card card-blue block p-8 rounded-3xl group relative overflow-hidden fade-in-up delay-100">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
                     <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white mb-6 relative z-10 shadow-lg shadow-blue-500/30">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -176,7 +300,7 @@
                     <span class="inline-flex items-center text-blue-600 font-bold text-sm group-hover:translate-x-1 transition-transform">立即開始 &rarr;</span>
                 </a>
 
-                <a href="carrer fit.html" class="feature-card block p-8 rounded-3xl group relative overflow-hidden fade-in-up delay-200">
+                <a href="carrer fit.html" class="feature-card card-teal block p-8 rounded-3xl group relative overflow-hidden fade-in-up delay-200">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
                     <div class="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center text-white mb-6 relative z-10 shadow-lg shadow-teal-500/30">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -188,17 +312,17 @@
                     <span class="inline-flex items-center text-teal-600 font-bold text-sm group-hover:translate-x-1 transition-transform">進入健檢 &rarr;</span>
                 </a>
 
-                <div class="feature-card block p-8 rounded-3xl group relative overflow-hidden opacity-75 grayscale hover:grayscale-0 transition-all fade-in-up delay-300">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-bl-full -mr-8 -mt-8"></div>
+                <a href="lab_recommendation.html" class="feature-card card-purple block p-8 rounded-3xl group relative overflow-hidden fade-in-up delay-300">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
                     <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center text-white mb-6 relative z-10 shadow-lg shadow-purple-500/30">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">系別推薦實驗室</h3>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-purple-600 transition-colors">系別推薦實驗室</h3>
                     <p class="text-slate-500 text-sm leading-relaxed mb-6">
                         不確定要選資工還是資管？讓 AI 根據你的特質推薦最適合的戰場。
                     </p>
-                    <span class="inline-flex items-center text-purple-600 font-bold text-sm">即將推出</span>
-                </div>
+                    <span class="inline-flex items-center text-purple-600 font-bold text-sm group-hover:translate-x-1 transition-transform">立即開始測驗 &rarr;</span>
+                </a>
             </div>
         </div>
     </main>
@@ -361,6 +485,64 @@
             if(savedUser) {
                 AuthUI.loginSuccess(JSON.parse(savedUser));
             }
+        });
+
+        // --- Awwwards Inspired Interactions ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Only play intro if not skipped
+            if (!document.body.classList.contains('skip-intro')) {
+            // --- 0. Intro Animation Sequence ---
+            setTimeout(() => {
+                document.getElementById('intro-title').classList.add('text-reveal');
+                document.getElementById('intro-subtitle').classList.add('text-reveal');
+            }, 300);
+
+            setTimeout(() => {
+                document.getElementById('intro-layer').classList.add('slide-out');
+                // 當遮罩滑開時，同步淡入主內容
+                document.getElementById('main-page-content').classList.remove('opacity-0');
+            }, 2400); // 讓文字停留約 2 秒
+            
+            setTimeout(() => {
+                // 動畫結束後隱藏 DOM 以優化效能
+                document.getElementById('intro-layer').style.display = 'none';
+                // Set flag in session storage
+                sessionStorage.setItem('introShown', 'true');
+            }, 3600);
+            }
+
+            // --- 1. Custom Cursor ---
+            const cursor = document.querySelector('.cursor');
+            const follower = document.querySelector('.cursor-follower');
+            const interactiveElements = document.querySelectorAll('a, button');
+
+            document.addEventListener('mousemove', e => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                follower.style.left = e.clientX + 'px';
+                follower.style.top = e.clientY + 'px';
+            });
+
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => follower.classList.add('cursor-hover'));
+                el.addEventListener('mouseleave', () => follower.classList.remove('cursor-hover'));
+            });
+
+            // --- 3. 3D Card Tilt ---
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    card.style.setProperty('--rotateX', `${-y / 20}deg`);
+                    card.style.setProperty('--rotateY', `${x / 20}deg`);
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.setProperty('--rotateX', '0deg');
+                    card.style.setProperty('--rotateY', '0deg');
+                });
+            });
         });
     </script>
 </body>

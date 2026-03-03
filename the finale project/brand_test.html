@@ -44,10 +44,13 @@
             <div class="max-w-4xl mx-auto space-y-8">
                 <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-xs font-bold tracking-wider mb-2 fade-in-up">PERSONAL BRANDING SYSTEM</span>
                 <h1 class="text-5xl md:text-7xl font-black text-slate-900 leading-tight fade-in-up delay-100">探索你的<br><span class="gradient-text">職涯基因序列</span></h1>
-                <p class="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto fade-in-up delay-200">結合 Holland 興趣與 Gallup 優勢。<br>一鍵生成：科系定位、履歷草稿、經營策略。</p>
+                <p class="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto fade-in-up delay-200">結合 Holland 興趣與 Gallup 優勢。<br>一鍵生成：角色定位、履歷草稿、經營策略。</p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4 fade-in-up delay-300">
                     <button onclick="window.app.start()" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-blue-700 transition flex items-center justify-center gap-2">
                         開始免費測評 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </button>
+                    <button id="btn-load-last" onclick="window.app.loadLastReport()" class="hidden bg-white text-blue-600 border border-blue-200 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-blue-50 transition flex items-center justify-center gap-2">
+                        查看上次結果 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
             </div>
@@ -94,7 +97,11 @@
                         </div>
                     </div>
                     <div class="text-left">
-                        <div class="mb-4"><div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Best Fit Career</div><div id="best-dept" class="text-3xl md:text-4xl font-black text-blue-700 mt-1">Analyzing...</div></div>
+                        <div class="mb-4">
+                            <div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Brand Archetype</div>
+                            <div id="best-dept" class="text-3xl md:text-4xl font-black text-blue-700 mt-1">Analyzing...</div>
+                            <div id="archetype-desc" class="text-sm text-slate-500 mt-1 font-medium"></div>
+                        </div>
                         <div class="text-sm text-slate-600 bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 inline-block">與您的特質契合度高達 <span id="fit-score-text" class="font-bold text-blue-700">0%</span></div>
                     </div>
                 </div>
@@ -129,6 +136,10 @@
                     <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-yellow-500 rounded-full"></span>品牌行動卡片 (Action Card)</h3>
                     <div id="action-card-content" class="bg-yellow-50 p-4 rounded-xl border border-yellow-100 text-sm text-slate-700 space-y-2"></div>
                 </div>
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-indigo-500 rounded-full"></span>30/60/90 天成長計畫</h3>
+                    <div id="action-plan-timeline" class="space-y-4"></div>
+                </div>
 
                 <div class="bg-slate-900 rounded-3xl p-6 shadow-xl text-white relative overflow-hidden no-print">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-[60px] opacity-20"></div>
@@ -156,13 +167,38 @@
     </div>
 
     <script type="module">
-        import { auth, db, doc, setDoc, onAuthStateChanged } 
-        from './static/firebase-config.js';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // [FIX] 內嵌 Firebase 設定，解決因找不到外部設定檔導致程式無法執行(按鈕沒反應)的問題
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
+            authDomain: "ai-resume-health-check.firebaseapp.com",
+            projectId: "ai-resume-health-check",
+            storageBucket: "ai-resume-health-check.firebasestorage.app",
+            messagingSenderId: "659646169112",
+            appId: "1:659646169112:web:d11eccae4f6abfa56a436d",
+            measurementId: "G-5E2C8FJWX5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
         let currentUser = null;
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             currentUser = user;
-            if(user) console.log("User logged in:", user.email);
+            if(user) {
+                console.log("User logged in:", user.email);
+                try {
+                    const docSnap = await getDoc(doc(db, "users", user.uid, "brand_results", "latest"));
+                    if (docSnap.exists()) {
+                        window.app.state.lastReport = docSnap.data();
+                        document.getElementById('btn-load-last').classList.remove('hidden');
+                    }
+                } catch (e) { console.error("Error fetching last report:", e); }
+            }
         });
 
         const DATA = {
@@ -170,6 +206,12 @@
                 '資工系 (CS)': { holland: { R: 8, I: 8, A: 1, S: 0, E: 1, C: 5 }, strengths: { Analytical: 8, Focus: 8, Learner: 5, Strategic: 3, Achiever: 3, Ideation: 1, Communication: 0, Relator: 0, Developer: 0, Responsibility: 3 } },
                 '資管系 (IM)': { holland: { R: 1, I: 3, A: 1, S: 3, E: 8, C: 8 }, strengths: { Strategic: 8, Achiever: 5, Responsibility: 5, Communication: 5, Analytical: 3, Focus: 1, Learner: 1, Ideation: 1, Relator: 3, Developer: 3 } },
                 '資傳系 (Comm)': { holland: { R: 1, I: 1, A: 8, S: 8, E: 5, C: 1 }, strengths: { Communication: 8, Ideation: 8, Relator: 5, Developer: 5, Strategic: 1, Achiever: 1, Analytical: 0, Focus: 0, Learner: 3, Responsibility: 1 } }
+            },
+            // [NEW] 新增角色原型定義，解決與系別推薦的邏輯衝突
+            archetypes: {
+                '資工系 (CS)': { title: '技術領航者 (Tech Lead)', desc: '以技術實力解決核心問題的架構師，適合深耕底層技術或研發。' },
+                '資管系 (IM)': { title: '數位策略家 (Strategist)', desc: '連結技術與商業價值的產品經理，擅長資源整合與流程優化。' },
+                '資傳系 (Comm)': { title: '跨域整合者 (Integrator)', desc: '融合創意與科技的體驗設計師，擅長將技術轉化為感性價值。' }
             },
             radarMap: [
                 { name: '邏輯分析', keys: ['Analytical', 'Focus', 'I'] }, { name: '專案執行', keys: ['Achiever', 'Responsibility', 'C'] },
@@ -189,28 +231,82 @@
                 'Achiever': '成就導向', 'Focus': '專注目標', 'Responsibility': '責任紀律', 'Developer': '伯樂特質', 'Relator': '深度交往'
             },
             hollandInfo: {
-                'R': {n:'實做型', c:'#ef4444'}, 'I': {n:'研究型', c:'#3b82f6'}, 'A': {n:'藝術型', c:'#e879f9'},
-                'S': {n:'社交型', c:'#f97316'}, 'E': {n:'企業型', c:'#8b5cf6'}, 'C': {n:'常規型', c:'#06b6d4'}
+                'R': {n:'實做型 (Doer)', c:'#ef4444'}, 'I': {n:'研究型 (Thinker)', c:'#3b82f6'}, 'A': {n:'藝術型 (Creator)', c:'#e879f9'},
+                'S': {n:'社交型 (Helper)', c:'#f97316'}, 'E': {n:'企業型 (Persuader)', c:'#8b5cf6'}, 'C': {n:'常規型 (Organizer)', c:'#06b6d4'}
             },
             platforms: {
-                'R': { name: 'GitHub / 技術部落格', desc: '展示你的代碼庫、專案架構與技術筆記，吸引技術主管的目光。' },
-                'I': { name: 'Medium / ResearchGate', desc: '發表深度分析文章或研究成果，建立專業領域的知識權威感。' },
-                'A': { name: 'Instagram / Behance', desc: '透過視覺化作品集展現美感與創意，適合經營個人風格鮮明的品牌。' },
-                'S': { name: 'Facebook 社團 / Podcast', desc: '建立社群連結，透過聲音或文字分享觀點，經營人際影響力。' },
-                'E': { name: 'LinkedIn', desc: '經營專業人脈，分享產業見解與專案成果，適合建立商務與領導形象。' },
-                'C': { name: 'Notion / 個人網站', desc: '整理系統化的知識庫或履歷，展現條理分明與專業可靠的形象。' }
+                'R': { 
+                    name: 'GitHub / 技術部落格', 
+                    role: '技術實踐者 (Builder)',
+                    strategy: '「Show, Don\'t Tell」。你的代碼就是最好的履歷。專注於開源貢獻與技術難點的解決紀錄，讓獵頭直接看到你的實力。',
+                    bio: '👨‍💻 [語言] Developer | 熱愛造輪子與解決 [特定領域] 問題 | 正在研究 [新技術]',
+                    content: ['分享一個你最近解決的 Bug 及其底層原理', '重構一段舊代碼的前後對比 (Before/After)', '參與開源專案的 PR 紀錄或 Side Project 開發日誌']
+                },
+                'I': { 
+                    name: 'Medium / 技術專欄', 
+                    role: '知識領袖 (Thought Leader)',
+                    strategy: '建立「領域權威感」。將複雜的技術或趨勢拆解為易懂的分析文章，展現深度思考能力，吸引尋找高階人才的企業。',
+                    bio: '🔍 [領域] Researcher | 擅長數據分析與趨勢洞察 | 寫作是為了釐清思考',
+                    content: ['針對某個新技術趨勢的深度分析報告', '學習某個硬核知識的筆記與心智圖', '比較不同解決方案優缺點的評測文']
+                },
+                'A': { 
+                    name: 'Behance / Instagram', 
+                    role: '風格創作者 (Creator)',
+                    strategy: '「視覺化你的思考」。不只是放完成圖，更要展示草圖、發想過程與設計理念，讓業主看到你的美感與解決問題的創意。',
+                    bio: '🎨 Designer & Creator | 用視覺說故事 | [風格關鍵字] 愛好者',
+                    content: ['從草稿到完稿的縮時影片 (Reels)', '拆解一個設計作品背後的設計心理學', '分享你的靈感來源與素材庫']
+                },
+                'S': { 
+                    name: 'LinkedIn / Podcast', 
+                    role: '社群連結者 (Connector)',
+                    strategy: '「人脈即資產」。分享團隊合作經驗、訪談業界前輩，或舉辦讀書會。展現你的軟實力與影響力，這對 PM 或業務職位極有幫助。',
+                    bio: '🤝 Community Builder | 熱衷於 [領域] 交流與分享 | [社群名稱] 發起人',
+                    content: ['分享一次團隊衝突的解決經驗與反思', '訪談一位業界前輩的心得筆記', '舉辦線下/線上活動的幕後花絮']
+                },
+                'E': { 
+                    name: 'LinkedIn / 個人官網', 
+                    role: '商業推動者 (Driver)',
+                    strategy: '「打造專業形象」。關注產業動態，發表對商業模式的看法。展現你的領導潛力與商業嗅覺，吸引管理職或儲備幹部計畫的目光。',
+                    bio: '🚀 Aspiring PM/Entrepreneur | 專注於 [產業] 創新與成長 | 解決問題的人',
+                    content: ['分析一個你喜歡的產品的商業模式', '分享你設定目標並達成過程的復盤 (Review)', '對產業新聞的個人觀點與預測']
+                },
+                'C': { 
+                    name: 'Notion / Gumroad', 
+                    role: '流程優化師 (Optimizer)',
+                    strategy: '「結構化輸出」。分享你的筆記模板、SOP 或效率工具。展現條理分明與高執行力，這是所有高效率團隊都夢寐以求的特質。',
+                    bio: '⚡ Efficiency Enthusiast | 擅長流程優化與知識管理 | [工具] 重度使用者',
+                    content: ['分享你的專案管理模板或讀書筆記模板', '如何優化某個工作流程的 Before/After', '整理一份新手入門 [領域] 的資源包']
+                }
             },
             actionCards: {
-                'Strategic': { book: '《好策略壞策略》', skill: '心智圖繪製、SWOT分析' },
-                'Learner': { book: '《刻意練習》', skill: '快速閱讀、知識管理系統(Obsidian)' },
-                'Analytical': { book: '《思考快與慢》', skill: 'Python 數據分析、Tableau 視覺化' },
-                'Ideation': { book: '《創意自信帶來力量》', skill: '設計思考 (Design Thinking)、腦力激盪引導' },
-                'Communication': { book: '《跟 TED 學表達》', skill: '簡報設計、故事行銷 (Storytelling)' },
-                'Achiever': { book: '《原子習慣》', skill: '專案管理 (Agile/Scrum)、時間管理 (Pomodoro)' },
-                'Focus': { book: '《深度工作力》', skill: '目標設定 (OKR)、心流觸發' },
-                'Responsibility': { book: '《當責》', skill: '風險管理、品質控管' },
-                'Developer': { book: '《教練》', skill: '導師引導 (Coaching)、教育訓練設計' },
-                'Relator': { book: '《人性的弱點》', skill: '同理心傾聽、衝突管理' }
+                'Strategic': { book: '《好策略壞策略》', skill: '心智圖繪製、SWOT分析', task: '每週挑選一則產業新聞，練習寫出 3 種可能的未來發展劇本。' },
+                'Learner': { book: '《刻意練習》', skill: '快速閱讀、知識管理系統(Obsidian)', task: '建立一個「學習收件匣」，每天記錄 3 個新學到的知識點。' },
+                'Analytical': { book: '《思考快與慢》', skill: 'Python 數據分析、Tableau 視覺化', task: '嘗試用數據來佐證你的一個日常決策 (例如：記帳分析)。' },
+                'Ideation': { book: '《創意自信帶來力量》', skill: '設計思考 (Design Thinking)、腦力激盪引導', task: '每天強迫自己寫下 10 個關於現有產品的改進點子 (Idea Quota)。' },
+                'Communication': { book: '《跟 TED 學表達》', skill: '簡報設計、故事行銷 (Storytelling)', task: '練習用「黃金圈法則 (Why-How-What)」來介紹你自己或一個專案。' },
+                'Achiever': { book: '《原子習慣》', skill: '專案管理 (Agile/Scrum)、時間管理 (Pomodoro)', task: '列出明天的 3 個最重要的待辦事項 (MIT)，並堅持完成。' },
+                'Focus': { book: '《深度工作力》', skill: '目標設定 (OKR)、心流觸發', task: '每天設定一段 90 分鐘的「無干擾工作時間」，手機開飛航。' },
+                'Responsibility': { book: '《當責》', skill: '風險管理、品質控管', task: '在小組作業中主動擔任「最後檢查者 (Gatekeeper)」，確保交付品質。' },
+                'Developer': { book: '《教練》', skill: '導師引導 (Coaching)、教育訓練設計', task: '教一位同學學會你擅長的一個小技能，直到他能教會別人。' },
+                'Relator': { book: '《人性的弱點》', skill: '同理心傾聽、衝突管理', task: '本週約一位很久沒見的朋友或前輩喝咖啡，只傾聽不評判。' }
+            },
+            // 新增：30/60/90 天計畫邏輯
+            plans: {
+                '資工系 (CS)': [
+                    { d: '30天 (短期)', t: '技能奠基', c: '熟悉一種程式語言 (Python/C++) 語法，並在 LeetCode 完成 10 題 Easy 題目。' },
+                    { d: '60天 (中期)', t: '專案實作', c: '完成一個小型 Side Project (如爬蟲或簡單網頁)，並將程式碼整理上傳至 GitHub。' },
+                    { d: '90天 (長期)', t: '經歷驗證', c: '參加一場黑客松 (Hackathon) 或開源專案貢獻，累積實戰開發經驗。' }
+                ],
+                '資管系 (IM)': [
+                    { d: '30天 (短期)', t: '工具熟悉', c: '精通 Office 文書軟體 (Word/Excel) 與基礎商業邏輯，準備相關基礎檢定。' },
+                    { d: '60天 (中期)', t: '證照加值', c: '考取 ERP 證照 (如配銷模組)，或利用現成網頁模板建立個人履歷網站。' },
+                    { d: '90天 (長期)', t: '專題整合', c: '完成一個學期的小型專題 (如電商企劃書或系統分析)，並嘗試參加商業競賽。' }
+                ],
+                '資傳系 (Comm)': [
+                    { d: '30天 (短期)', t: '軟體精熟', c: '熟悉設計軟體 (PS/AI) 或影音剪輯工具，產出第一個練習作品。' },
+                    { d: '60天 (中期)', t: '作品集結', c: '建立個人作品集網站 (Portfolio)，整理 3-5 件完整作品並上架。' },
+                    { d: '90天 (長期)', t: '流量經營', c: '經營自媒體帳號 (IG/TikTok) 達到特定流量目標，或參加設計類競賽。' }
+                ]
             }
         };
 
@@ -253,6 +349,13 @@
             loadDemo() { QUESTIONS.forEach((q, i) => this.state.answers[i] = Math.floor(Math.random() * 3) + 3); this.calculateResults(); },
             switchView(id) { ['view-landing', 'view-quiz', 'view-result'].forEach(v => document.getElementById(v).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); },
             
+            loadLastReport() {
+                if (this.state.lastReport) {
+                    this.switchView('view-result');
+                    this.renderReportView(this.state.lastReport);
+                }
+            },
+            
             renderQuiz() {
                 const { currentPage, pageSize } = this.state;
                 const start = currentPage * pageSize;
@@ -288,8 +391,6 @@
 
             async calculateResults() {
                 this.switchView('view-result');
-                window.scrollTo(0,0);
-                document.getElementById('report-date').innerText = new Date().toLocaleDateString('zh-TW');
 
                 let sScores = {}, hScores = {};
                 QUESTIONS.forEach((q, i) => {
@@ -323,18 +424,21 @@
                 const topH = Object.entries(hScores).sort((a,b)=>b[1]-a[1]);
                 const hCode = topH.slice(0,3).map(x=>x[0]).join('');
                 const topS = Object.entries(sScores).sort((a,b)=>b[1]-a[1]).slice(0,5);
+                
+                const resultData = {
+                    date: new Date().toISOString(),
+                    bestDept: bestDept,
+                    fitScore: maxFit,
+                    hollandCode: hCode,
+                    topStrengths: topS.map(s => s[0]), // Save keys
+                    radarData: radarData,
+                    hollandScores: topH.slice(0, 3) // Save top 3 with scores
+                };
 
                 if (currentUser) {
                     try {
-                        const resultData = {
-                            date: new Date().toISOString(),
-                            bestDept: bestDept,
-                            fitScore: maxFit,
-                            hollandCode: hCode,
-                            topStrengths: topS.map(s => s[0]),
-                            radarData: radarData
-                        };
                         await setDoc(doc(db, "users", currentUser.uid, "brand_results", "latest"), resultData);
+                        this.state.lastReport = resultData; // Update local state
                         console.log("✅ 測驗結果已同步至雲端！");
                     } catch (e) {
                         console.error("❌ 儲存失敗", e);
@@ -342,27 +446,45 @@
                 } else {
                     console.log("⚠️ 未登入，僅顯示結果");
                 }
-                // ---------------------
+                
+                this.renderReportView(resultData);
+            },
 
-                document.getElementById('best-dept').innerText = bestDept;
-                document.getElementById('fit-score-text').innerText = maxFit + '%';
+            renderReportView(data) {
+                window.scrollTo(0,0);
+                const { bestDept, fitScore, hollandCode, topStrengths, radarData, hollandScores, date } = data;
+                
+                // Handle date
+                document.getElementById('report-date').innerText = date ? new Date(date).toLocaleDateString('zh-TW') : new Date().toLocaleDateString('zh-TW');
+
+                // [FIX] 顯示角色原型而非科系名稱
+                const archetype = DATA.archetypes[bestDept];
+                document.getElementById('best-dept').innerText = archetype.title;
+                document.getElementById('archetype-desc').innerText = archetype.desc;
+                
+                document.getElementById('fit-score-text').innerText = fitScore + '%';
                 const circle = document.querySelector('.circle');
-                circle.style.stroke = maxFit >= 80 ? '#2563eb' : (maxFit >= 60 ? '#f59e0b' : '#64748b');
+                circle.style.stroke = fitScore >= 80 ? '#2563eb' : (fitScore >= 60 ? '#f59e0b' : '#64748b');
                 setTimeout(() => {
-                    circle.style.strokeDasharray = `${maxFit}, 100`;
+                    circle.style.strokeDasharray = `${fitScore}, 100`;
                     let start = 0;
-                    const timer = setInterval(() => { start++; document.getElementById('score-display').innerText = start; if(start >= maxFit) { clearInterval(timer); document.getElementById('score-display').innerText = maxFit; } }, 10);
+                    const timer = setInterval(() => { start++; document.getElementById('score-display').innerText = start; if(start >= fitScore) { clearInterval(timer); document.getElementById('score-display').innerText = fitScore; } }, 10);
                 }, 100);
 
                 this.drawRadar(radarData);
 
-                document.getElementById('holland-code').innerText = hCode;
-                document.getElementById('holland-bars').innerHTML = topH.map(h => {
-                    const info = DATA.hollandInfo[h[0]], max = maxHScores[h[0]] || 10, pct = (h[1]/max)*100;
+                document.getElementById('holland-code').innerText = hollandCode;
+                
+                // Handle Holland Bars (data.hollandScores might be missing in old data, fallback needed)
+                const hScoresToRender = hollandScores || hollandCode.split('').map(c => [c, 10]); // Fallback
+                const maxHScore = hScoresToRender[0] ? hScoresToRender[0][1] : 10;
+
+                document.getElementById('holland-bars').innerHTML = hScoresToRender.map(h => {
+                    const info = DATA.hollandInfo[h[0]], pct = (h[1]/maxHScore)*100;
                     return `<div class="flex items-center text-sm"><span class="w-8 font-bold" style="color:${info.c}">${h[0]}</span><div class="flex-1 h-2 bg-slate-100 rounded-full mx-2 overflow-hidden"><div class="h-full rounded-full" style="width:${pct}%; background:${info.c}"></div></div><span class="w-6 text-right text-slate-400">${h[1]}</span></div>`;
                 }).join('');
 
-                document.getElementById('strength-cards').innerHTML = topS.map((s,i) => `<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between"><span class="font-bold text-slate-700">#${i+1} ${DATA.strengthsInfo[s[0]]}</span><span class="text-xs bg-white px-2 py-1 rounded text-slate-400 font-mono">${s[0]}</span></div>`).join('');
+                document.getElementById('strength-cards').innerHTML = topStrengths.map((s,i) => `<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between"><span class="font-bold text-slate-700">#${i+1} ${DATA.strengthsInfo[s]}</span><span class="text-xs bg-white px-2 py-1 rounded text-slate-400 font-mono">${s}</span></div>`).join('');
 
                 let radarDetailsHTML = '';
                 radarData.forEach((score, i) => {
@@ -373,15 +495,57 @@
                 });
                 document.getElementById('radar-details').innerHTML = radarDetailsHTML;
 
-                const topHCode = hCode[0];
+                const topHCode = hollandCode[0];
                 const platformInfo = DATA.platforms[topHCode];
-                document.getElementById('platform-card').innerHTML = `<h4 class="font-bold text-pink-800 mb-1">${platformInfo.name}</h4><p class="text-xs text-pink-600">${platformInfo.desc}</p>`;
+                // [FIX] 升級社群經營策略卡片，顯示 Bio 範本與貼文靈感
+                document.getElementById('platform-card').innerHTML = `
+                    <div class="mb-3">
+                        <h4 class="font-bold text-pink-800 text-lg flex items-center gap-2">
+                            ${platformInfo.name}
+                            <span class="text-xs bg-pink-200 text-pink-800 px-2 py-0.5 rounded-full">${platformInfo.role}</span>
+                        </h4>
+                        <p class="text-sm text-slate-600 mt-2 font-medium leading-relaxed">${platformInfo.strategy}</p>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="bg-white p-3 rounded-lg border border-pink-100 shadow-sm">
+                            <div class="text-xs font-bold text-slate-400 uppercase mb-1">Bio 範本 (個人簡介)</div>
+                            <p class="text-sm text-slate-800 font-mono bg-slate-50 p-2 rounded select-all cursor-pointer hover:bg-slate-100 transition" title="點擊複製" onclick="navigator.clipboard.writeText(this.innerText);alert('已複製 Bio！')">${platformInfo.bio}</p>
+                        </div>
+                        
+                        <div class="bg-white p-3 rounded-lg border border-pink-100 shadow-sm">
+                            <div class="text-xs font-bold text-slate-400 uppercase mb-1">Content Ideas (貼文靈感)</div>
+                            <ul class="text-sm text-slate-700 space-y-1 list-disc list-inside">
+                                ${platformInfo.content.map(c => `<li>${c}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
 
-                const topStrengthKey = topS[0][0];
+                const topStrengthKey = topStrengths[0];
                 const actionInfo = DATA.actionCards[topStrengthKey];
-                document.getElementById('action-card-content').innerHTML = `<p><strong>📚 推薦書籍：</strong>${actionInfo.book}</p><p><strong>🛠️ 必修技能：</strong>${actionInfo.skill}</p>`;
+                // [FIX] 升級行動卡片，加入微行動 (Micro-Action)
+                document.getElementById('action-card-content').innerHTML = `
+                    <div class="grid grid-cols-1 gap-2">
+                        <div class="bg-white p-2 rounded border border-yellow-100"><span class="text-xs font-bold text-slate-400 block">📚 推薦書籍</span><span class="text-sm font-medium text-slate-800">${actionInfo.book}</span></div>
+                        <div class="bg-white p-2 rounded border border-yellow-100"><span class="text-xs font-bold text-slate-400 block">🛠️ 必修技能</span><span class="text-sm font-medium text-slate-800">${actionInfo.skill}</span></div>
+                        <div class="bg-yellow-100 p-3 rounded border border-yellow-200 mt-1">
+                            <span class="text-xs font-bold text-yellow-700 block mb-1">⚡ 今日微行動 (Micro-Action)</span>
+                            <span class="text-sm font-bold text-yellow-900">${actionInfo.task}</span>
+                        </div>
+                    </div>
+                `;
 
-                this.generateTexts(bestDept, hCode, topS, radarData);
+                // 渲染 30/60/90 天計畫
+                const planData = DATA.plans[bestDept] || DATA.plans['資管系 (IM)']; // Default fallback
+                document.getElementById('action-plan-timeline').innerHTML = planData.map(p => `
+                    <div class="flex gap-4 items-start">
+                        <div class="w-24 flex-shrink-0 text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-center border border-blue-100">${p.d}</div>
+                        <div><h5 class="text-sm font-bold text-slate-800">${p.t}</h5><p class="text-xs text-slate-500 leading-relaxed">${p.c}</p></div>
+                    </div>
+                `).join('');
+
+                this.generateTexts(bestDept, hollandCode, topStrengths, radarData);
             },
 
             drawRadar(data) {
@@ -397,12 +561,17 @@
                 svg.innerHTML = gridHTML + `<polygon points="${dataPoints}" fill="rgba(37, 99, 235, 0.2)" stroke="#2563eb" stroke-width="3" />` + angles.map((a, i) => `<circle cx="${center + radius * (data[i]/100) * Math.cos(a)}" cy="${center + radius * (data[i]/100) * Math.sin(a)}" r="4" fill="#2563eb"/>`).join('');
             },
 
-            generateTexts(dept, hCode, topS, radar) {
-                const sNames = topS.map(s => DATA.strengthsInfo[s[0]]).join('、');
+            generateTexts(dept, hCode, topStrengths, radar) {
+                const sNames = topStrengths.map(s => DATA.strengthsInfo[s]).join('、');
                 const topRadar = DATA.radarMap[radar.indexOf(Math.max(...radar))].name;
-                const draft = `【自我介紹草稿】\n\n我是〇〇〇，一位熱愛${dept}領域的探索者。經由專業測評分析，我的核心優勢在於「${sNames}」，這讓我在面對${dept}的挑戰時，能夠發揮${DATA.strengthsInfo[topS[0][0]]}特質，${dept.includes('資工')?'有效解決技術難題':'有效整合資源與溝通'}。\n\n我的 Holland 職業興趣代碼為 ${hCode}，這代表我具備${DATA.hollandInfo[hCode[0]].n}的傾向。在專業能力上，我的「${topRadar}」尤為突出，這將有助於我在團隊中擔任關鍵角色。\n\n未來，我希望能將這些特質轉化為具體的專案成果，為團隊創造價值。`;
+                const archetype = DATA.archetypes[dept];
+                
+                // [FIX] 更新履歷草稿，強調角色原型與跨域特質
+                const draft = `【自我介紹草稿】\n\n我是〇〇〇，一位具備「${archetype.title}」潛力的跨領域人才。經由專業測評分析，我的核心優勢在於「${sNames}」，這讓我在面對挑戰時，能夠發揮${DATA.strengthsInfo[topStrengths[0]]}特質，${dept.includes('資工')?'有效解決技術難題':'有效整合資源與溝通'}。\n\n我的 Holland 職業興趣代碼為 ${hCode}，這代表我具備${DATA.hollandInfo[hCode[0]].n}的傾向。在專業能力上，我的「${topRadar}」尤為突出，這將有助於我在團隊中擔任關鍵角色。\n\n未來，我希望能將這些特質轉化為具體的專案成果，為團隊創造價值。`;
                 document.getElementById('resume-draft').innerText = draft;
-                const prompt = `你是一位專業職涯顧問。請根據以下數據為我優化履歷：\n1. 目標：${dept}\n2. 特質：${hCode} (${sNames})\n3. 優勢：${topRadar}能力極強\n請幫我寫一段約 200 字、語氣自信的申請動機，並提供 3 個量化成果範例。`;
+                
+                // [FIX] 更新 AI Prompt，強調角色原型
+                const prompt = `你是一位專業職涯顧問。請根據以下數據為我優化履歷：\n1. 品牌原型：${archetype.title}\n2. 特質：${hCode} (${sNames})\n3. 優勢：${topRadar}能力極強\n請幫我寫一段約 200 字、語氣自信的申請動機，並提供 3 個量化成果範例，強調我的跨域整合潛力。`;
                 document.getElementById('ai-prompt-text').innerText = prompt;
             },
 
