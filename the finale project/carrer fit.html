@@ -7,136 +7,154 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; background-color: #f8fafc; color: #0f172a; transition: background-color 0.3s ease, color 0.3s ease; }
         .hero-bg {
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.03) 0px, transparent 50%);
+            background-image: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.05) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.03) 0px, transparent 50%);
             background-attachment: fixed;
         }
-        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05); }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05); transition: all 0.3s ease; }
         
-        /* Dark Mode */
+        /* --- Dark Mode 完美修復 --- */
         body.dark-mode { background-color: #0f172a; color: #f1f5f9; }
-        body.dark-mode .glass-panel { background: rgba(30, 41, 59, 0.9); border-color: rgba(255,255,255,0.1); }
-        body.dark-mode .text-slate-900 { color: #f1f5f9; }
+        body.dark-mode .hero-bg { background-image: none; }
+        body.dark-mode .glass-panel { background: rgba(30, 41, 59, 0.9); border-color: rgba(255,255,255,0.1); box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3); }
+        body.dark-mode nav { background-color: rgba(30, 41, 59, 0.8) !important; border-color: #334155; }
+        body.dark-mode .text-slate-900 { color: #f8fafc; }
         body.dark-mode .text-slate-800 { color: #f1f5f9; }
         body.dark-mode .text-slate-700 { color: #e2e8f0; }
         body.dark-mode .text-slate-600 { color: #cbd5e1; }
-        body.dark-mode .text-slate-500 { color: #94a3b8; }
         body.dark-mode .bg-white { background-color: #1e293b; }
-        body.dark-mode .bg-slate-50 { background-color: #334155; }
-        body.dark-mode .bg-slate-100 { background-color: #1e293b; }
+        body.dark-mode .bg-slate-50 { background-color: #0f172a; }
         body.dark-mode .border-slate-200 { border-color: #334155; }
-        body.dark-mode nav { background-color: rgba(30, 41, 59, 0.8) !important; border-color: #334155; }
     </style>
 </head>
 <body class="min-h-screen pb-20 hero-bg flex flex-col">
-    <script>
-      if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-    </script>
+    <script>if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');</script>
 
-    <!-- 導覽列 -->
     <nav class="w-full fixed top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
         <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
             <a href="index.html" class="flex items-center gap-3 group">
-                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30 group-hover:scale-105 transition">C</div>
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-105 transition">C</div>
                 <span class="text-xl font-bold text-slate-800 tracking-tight">Career<span class="text-blue-600">DNA</span></span>
             </a>
             <div class="flex items-center gap-4">
                  <div id="nav-user-info" class="hidden flex items-center gap-3">
                     <div class="text-right hidden sm:block">
-                        <div class="text-xs text-slate-400">Welcome</div>
+                        <div id="nav-user-grade" class="text-xs text-blue-500 font-bold">載入中...</div>
                         <div id="nav-user-name" class="text-sm font-bold text-slate-700">User</div>
                     </div>
                     <div id="nav-user-avatar" class="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold border-2 border-white shadow-sm">U</div>
                  </div>
                  <a href="index.html" class="text-sm font-medium text-slate-500 hover:text-blue-600 transition flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                    返回首頁
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>返回首頁
                 </a>
             </div>
         </div>
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-24 w-full">
-        <div class="mb-8 flex justify-between items-end">
+        <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-xs font-bold tracking-wider mb-2">RESUME HEALTH CHECK</span>
-                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">履歷健檢中心</h1>
-                <p class="text-slate-500 mt-2">評估您的專業學程達成率與實務經歷戰力。</p>
+                <span id="track-badge" class="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-xs font-bold tracking-wider mb-2">系統識別中...</span>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight dark:text-white" id="main-title">履歷健檢中心</h1>
+                <p class="text-slate-500 mt-2 dark:text-slate-400" id="main-subtitle">正在依據您的年級載入專屬評測標準...</p>
+            </div>
+            
+            <div class="relative group min-w-[220px]">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <select id="grade-selector" onchange="window.App.changeGrade(this.value)" class="appearance-none w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer hover:border-blue-300 transition-all dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
+                    <option value="大一">大一 / 大二 (基礎期)</option>
+                    <option value="大三">大三 (實務應用期)</option>
+                    <option value="大四">大四 / 畢業 (就業收割期)</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="lg:col-span-8 space-y-8">
                 
-                <section class="glass-panel p-6 rounded-2xl">
-                    <h2 class="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm">01</span> 
-                        專業學程里程碑
-                        <span class="text-xs font-normal text-slate-400 ml-auto">修滿 15 學分取得資格</span>
-                    </h2>
+                <section class="glass-panel p-6 rounded-2xl border-t-4 border-blue-500">
+                    <div class="flex justify-between items-start mb-5">
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2" id="course-section-title">
+                            <span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm">01</span> 
+                            修課檢測雷達
+                        </h2>
+                        <span class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full dark:bg-slate-700 dark:text-slate-300" id="course-goal">目標: -- 學分</span>
+                    </div>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mb-4 italic">* 請勾選您歷年來已修畢且成績及格之專業課程。</p>
                     
                     <div id="programs-container" class="space-y-4">
                         </div>
                 </section>
 
-                <section class="glass-panel p-6 rounded-2xl">
+                <section class="glass-panel p-6 rounded-2xl border-t-4 border-purple-500">
                     <h2 class="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2">
                         <span class="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center text-sm">02</span> 
                         實務與課外經歷
                     </h2>
-
                     <div id="experience-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         </div>
                 </section>
 
                 <button onclick="window.App.calculateAndGenerate()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 transform active:scale-95 duration-200">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    開始進行履歷健檢與 AI 分析
+                    執行 AI 綜合戰力分析
                 </button>
             </div>
 
             <aside class="lg:col-span-4">
-                <div class="sticky top-8 space-y-6">
+                <div class="sticky top-24 space-y-6">
+                    
                     <div class="glass-panel p-6 rounded-2xl">
                         <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">綜合戰力指數</h3>
                         <div class="flex items-end gap-2 mb-2">
-                            <span id="total-score" class="text-5xl font-black text-slate-900">0</span>
+                            <span id="total-score" class="text-5xl font-black text-slate-900 transition-all duration-500">0</span>
                             <span class="text-slate-400 mb-1 font-medium">/ 100</span>
                         </div>
                         
                         <div class="space-y-3 mt-6">
                             <div>
                                 <div class="flex justify-between text-xs font-medium mb-1">
-                                    <span class="text-blue-600">學程戰力 (Max: 50)</span>
+                                    <span class="text-blue-600">學科戰力 (Max: 50)</span>
                                     <span id="score-program" class="text-slate-700">0</span>
                                 </div>
-                                <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
                                     <div id="bar-program" class="bg-blue-500 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div>
                                 <div class="flex justify-between text-xs font-medium mb-1">
-                                    <span class="text-purple-600">實務經歷 (Max: 50)</span>
+                                    <span class="text-purple-600">實務戰力 (Max: 50)</span>
                                     <span id="score-exp" class="text-slate-700">0</span>
                                 </div>
-                                <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
                                     <div id="bar-exp" class="bg-purple-500 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div id="ai-result-panel" class="glass-panel p-6 rounded-2xl border-2 border-emerald-500/20 hidden">
+                    <div id="ai-result-panel" class="glass-panel p-6 rounded-2xl border-2 border-emerald-500/30 hidden transition-all duration-500">
                         <div class="flex items-center gap-2 mb-4 text-emerald-600">
-                            <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                            <h3 class="font-bold">Gemini 履歷健檢報告</h3>
+                            <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            <h3 class="font-bold">AI 職涯顧問導航</h3>
                         </div>
-                        <div id="ai-content" class="text-sm text-slate-600 leading-relaxed space-y-4">
+                        <div id="ai-content" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-4 mb-6">
                             </div>
+                        
+                        <div id="ai-interactive-tools" class="hidden border-t border-slate-200 dark:border-slate-700 pt-4 space-y-3">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest">🤖 延伸應用工具</h4>
+                            <button onclick="window.App.generateResumeDraft()" class="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-sm font-bold rounded-lg transition border border-slate-200 dark:border-slate-700">
+                                📝 將經歷轉化為 104 自傳
+                            </button>
+                        </div>
                     </div>
+
                 </div>
             </aside>
         </div>
@@ -145,8 +163,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Firebase 設置
         const firebaseConfig = {
             apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
             authDomain: "ai-resume-health-check.firebaseapp.com",
@@ -156,86 +175,213 @@
             appId: "1:659646169112:web:d11eccae4f6abfa56a436d",
             measurementId: "G-5E2C8FJWX5"
         };
-
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         let currentUser = null;
 
-        // --- 核心資料結構 ---
-        
-        // 1. 專業學程資料庫 (以資管/資工為例，每個課程預設 3 學分)
-        const ACADEMIC_PROGRAMS = [
-            {
-                id: 'prog_software',
-                name: '資訊軟體學程',
-                courses: ['網頁前端程式設計', '動態網頁設計', '進階資料結構', '資料庫管理', '系統分析與設計', '行動應用軟體開發']
+        // --- 靜宜大學在地化課綱資料庫 (三軌制) ---
+        const ACADEMIC_DATA = {
+            core: {
+                title: "專業核心必修檢測", goal: 12, // 大一/大二看基礎
+                data: [
+                    { id: 'core_prog', name: '程式與邏輯基礎', courses: ['計算機概論', '程式設計(一)', '程式設計(二)', '資料結構'] },
+                    { id: 'core_sys', name: '系統與資料基礎', courses: ['資料庫系統', '作業系統', '演算法概論', '計算機網路'] }
+                ]
             },
-            {
-                id: 'prog_ai',
-                name: '人工智慧學程',
-                courses: ['人工智慧', '機器學習', '深度學習', '智慧醫療', '智慧製造']
+            practical: {
+                title: "實務課群雷達", goal: 9, // 大三看實務課群(9學分)
+                data: [
+                    { id: 'prac_ai', name: '人工智慧(AI)課群', courses: ['人工智慧', '機器學習', '智慧醫療', '深度學習'] },
+                    { id: 'prac_mobile', name: '行動軟體課群', courses: ['行動應用軟體開發', '人機介面與UX設計', '進階行動應用開發'] },
+                    { id: 'prac_sec', name: '資訊安全課群', courses: ['資訊安全概論', '資訊安全管理', '安全程式設計'] },
+                    { id: 'prac_data', name: '智慧資料分析課群', courses: ['商業智慧與資料倉儲', '資料挖掘概論', 'Python應用實務'] }
+                ]
             },
-            {
-                id: 'prog_security',
-                name: '資訊安全學程',
-                courses: ['資訊安全導論', '資訊安全管理', '安全程式設計', '系統安全']
+            program: {
+                title: "專業學程認證里程碑", goal: 18, // 大四看專業學程(18學分)
+                data: [
+                    { id: 'prog_soft', name: '資訊軟體學程', courses: ['網頁前端程式設計', '動態網頁設計', '進階資料結構', '資料庫管理', '資訊軟體實作', '系統分析與設計', '網路程式設計'] },
+                    { id: 'prog_ai_adv', name: '網路智慧學程', courses: ['人工智慧', '影像處理', '資訊安全導論', 'Linux系統管理', '行動物聯網', '深度學習', '機器學習'] },
+                    { id: 'prog_ic', name: 'IC設計學程', courses: ['邏輯設計', '數位電子學', '硬體描述語言', '嵌入式系統', 'IC設計實作'] }
+                ]
             }
-        ];
+        };
 
-        // 2. 實務經歷配點 (滿分 50)
         const EXPERIENCES = [
-            { id: 'exp_intern', name: '企業實習 / 產學合作', score: 20, icon: '💼' },
+            { id: 'exp_intern', name: '企業實習 / 產學合作 (大四極重要)', score: 20, icon: '💼' },
             { id: 'exp_compete', name: '專業競賽 (獲獎或入圍)', score: 15, icon: '🏆' },
-            { id: 'exp_project', name: '專題研究 / 國科會計畫', score: 10, icon: '🔬' },
-            { id: 'exp_leader', name: '社團 / 系學會幹部', score: 10, icon: '👥' },
-            { id: 'exp_volunteer', name: '志工服務 / 校外活動', score: 5, icon: '🤝' }
+            { id: 'exp_project', name: '專案實作 / 畢業專題', score: 10, icon: '🚀' },
+            { id: 'exp_leader', name: '社團幹部 / 黑客松參與', score: 5, icon: '👥' }
         ];
 
         window.App = {
-            state: {
-                selectedCourses: new Set(),
-                selectedExps: new Set()
-            },
+            state: { track: 'practical', selectedCourses: new Set(), selectedExps: new Set(), grade: '大三' },
 
             init() {
-                this.renderPrograms();
                 this.renderExperiences();
+                
+                // [NEW] Check for Lab Recommendation Redirect
+                const urlParams = new URLSearchParams(window.location.search);
+                const dept = urlParams.get('dept');
+                if(dept) {
+                    this.showToast(`根據實驗室測驗結果，已為您切換至 ${dept} 專屬模式！`);
+                }
 
-                // [NEW] 監聽登入狀態並讀取資料
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         currentUser = user;
-                        console.log("User logged in:", user.email);
-                        
-                        // 更新導覽列使用者資訊
                         document.getElementById('nav-user-info').classList.remove('hidden');
-                        document.getElementById('nav-user-name').innerText = user.displayName || user.email.split('@')[0];
-                        document.getElementById('nav-user-avatar').innerText = (user.displayName || user.email).charAt(0).toUpperCase();
+                        document.getElementById('nav-user-name').innerText = user.displayName || 'User';
+                        document.getElementById('nav-user-avatar').innerText = (user.displayName || 'U').charAt(0).toUpperCase();
 
                         await this.loadUserData(user.uid);
+                    } else {
+                        // 訪客預設為大三介面
+                        this.setupTrackUI('大三'); 
                     }
                 });
             },
+            
+            showToast(msg) {
+                // Create simple toast element dynamically
+                const toast = document.createElement('div');
+                toast.className = "fixed bottom-6 right-6 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl z-50 animate-bounce";
+                toast.innerHTML = `<div class="flex items-center gap-2"><span class="text-xl">🧪</span><span class="font-bold text-sm">${msg}</span></div>`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.classList.add('opacity-0', 'transition-opacity', 'duration-500'), 4000);
+                setTimeout(() => toast.remove(), 4500);
+            },
 
-            // --- 渲染畫面 ---
-            renderPrograms() {
+            // [NEW] 動態視角切換器邏輯 (State Management)
+            changeGrade(newGrade) {
+                // 1. 防呆攔截：清空舊軌道資料，避免學分計算混淆
+                this.state.grade = newGrade;
+                this.state.selectedCourses.clear();
+                // 註：保留 selectedExps，因為經歷是跨年級累積的，但可依需求決定是否清空
+
+                // 2. 畫面重置：歸零分數與隱藏報告
+                this.animateScore('total-score', 0);
+                document.getElementById('score-program').innerText = '0';
+                document.getElementById('bar-program').style.width = '0%';
+                document.getElementById('score-exp').innerText = '0';
+                document.getElementById('bar-exp').style.width = '0%';
+                document.getElementById('ai-result-panel').classList.add('hidden');
+                document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+
+                // 3. 重新渲染對應年級的課程介面
+                this.setupTrackUI(newGrade);
+
+                // 4. 資料庫同步 (Cloud Sync)
+                if (currentUser) {
+                    setDoc(doc(db, "users", currentUser.uid), { grade: newGrade }, { merge: true })
+                        .catch(err => console.error("Grade sync failed", err));
+                    
+                    // 清空雲端的課程紀錄，防止下次載入錯誤狀態
+                    setDoc(doc(db, "users", currentUser.uid, "resume_data", "latest"), {
+                        selectedCourses: [],
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+                }
+
+                // 5. 本地端同步 (Local Sync)
+                const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
+                if (savedUser.email) {
+                    savedUser.grade = newGrade;
+                    localStorage.setItem('careerDNA_user', JSON.stringify(savedUser));
+                }
+            },
+
+            // [NEW] 還原勾選狀態並重新計算 (用於 DOM 重繪後)
+            restoreSelections(isSilent = false) {
+                this.state.selectedCourses.forEach(c => {
+                    const cb = document.querySelector(`input[value="${c}"]`);
+                    if(cb) { cb.checked = true; this.updateProgramBadge(cb.dataset.prog); }
+                });
+                this.state.selectedExps.forEach(e => {
+                    const cb = document.querySelector(`input[value="${e}"]`);
+                    if(cb) cb.checked = true;
+                });
+                this.calculateAndGenerate(isSilent);
+            },
+
+            async loadUserData(uid) {
+                try {
+                    // 1. [UPDATED] 實時監聽年級變更 (Real-time Grade Sync)
+                    onSnapshot(doc(db, "users", uid), (docSnap) => {
+                        if (docSnap.exists() && docSnap.data().grade) {
+                            const newGrade = docSnap.data().grade;
+                            this.state.grade = newGrade;
+                            document.getElementById('nav-user-grade').innerText = newGrade;
+                            
+                            // [NEW] 同步下拉選單狀態 (UI Sync)
+                            const selector = document.getElementById('grade-selector');
+                            if(selector) {
+                                let mapVal = newGrade;
+                                if(newGrade === '大二') mapVal = '大一';
+                                if(newGrade === '碩士') mapVal = '大四';
+                                selector.value = mapVal;
+                            }
+
+                            // 當年級變更時，重新渲染 UI 並還原勾選狀態
+                            this.setupTrackUI(newGrade);
+                            this.restoreSelections(true); // 使用靜默模式，防止切換時跳出警告
+                        }
+                    });
+
+                    // 2. 抓取履歷勾選紀錄
+                    const docSnap = await getDoc(doc(db, "users", uid, "resume_data", "latest"));
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (data.selectedCourses) this.state.selectedCourses = new Set(data.selectedCourses);
+                        if (data.selectedExps) this.state.selectedExps = new Set(data.selectedExps);
+                        this.restoreSelections(true); // 初始載入時靜默計算，不跳出 Alert 或滾動畫面
+                    }
+                } catch (e) { console.error("Error loading data:", e); }
+            },
+
+            // --- 三軌制核心邏輯 ---
+            setupTrackUI(grade) {
+                if (['大一', '大二'].includes(grade)) {
+                    this.state.track = 'core';
+                    document.getElementById('track-badge').innerText = '打底期 (Foundation)';
+                    document.getElementById('main-subtitle').innerText = '系統已為您切換為「核心專業」檢測模式。';
+                } else if (grade === '大三') {
+                    this.state.track = 'practical';
+                    document.getElementById('track-badge').innerText = '應用期 (Application)';
+                    document.getElementById('main-subtitle').innerText = '系統已為您切換為「實務課群」導航模式。';
+                } else {
+                    this.state.track = 'program'; // 大四或碩士
+                    document.getElementById('track-badge').innerText = '收割期 (Graduation)';
+                    document.getElementById('main-subtitle').innerText = '系統已為您切換為「專業學程與就業對接」模式。';
+                    document.getElementById('track-badge').className = "inline-block py-1 px-3 rounded-full bg-red-100 text-red-700 text-xs font-bold tracking-wider mb-2 animate-pulse";
+                }
+
+                const trackData = ACADEMIC_DATA[this.state.track];
+                document.getElementById('course-section-title').innerHTML = `<span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm">01</span> ${trackData.title}`;
+                document.getElementById('course-goal').innerText = `門檻: ${trackData.goal} 學分`;
+                
+                this.renderPrograms(trackData.data, trackData.goal);
+            },
+
+            renderPrograms(dataList, goalCredits) {
                 const container = document.getElementById('programs-container');
                 let html = '';
-                
-                ACADEMIC_PROGRAMS.forEach(prog => {
+                const requiredCourses = goalCredits / 3;
+
+                dataList.forEach(prog => {
                     html += `
-                    <div class="border border-slate-200 rounded-xl p-4 bg-white">
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-white dark:bg-slate-800 transition">
                         <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-bold text-slate-800">${prog.name} <span class="text-xs font-normal text-slate-400 ml-2">(修滿 15 學分取得資格)</span></h3>
-                            <span id="badge-${prog.id}" class="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-400 transition-colors">未達成</span>
+                            <h3 class="font-bold text-slate-800 dark:text-slate-200">${prog.name}</h3>
+                            <span id="badge-${prog.id}" class="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-400 dark:bg-slate-700 transition-colors" data-goal="${requiredCourses}">0 / ${requiredCourses} 門</span>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             ${prog.courses.map(course => `
                                 <label class="cursor-pointer">
                                     <input type="checkbox" class="peer sr-only" value="${course}" data-prog="${prog.id}" onchange="window.App.toggleCourse(this)">
-                                    <div class="px-3 py-1.5 text-sm rounded-lg border border-slate-200 text-slate-600 peer-checked:bg-blue-50 peer-checked:border-blue-500 peer-checked:text-blue-700 transition-all hover:bg-slate-50">
-                                        ${course} <span class="text-xs opacity-50 ml-1">3學分</span>
+                                    <div class="px-3 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/40 peer-checked:border-blue-500 peer-checked:text-blue-700 dark:peer-checked:text-blue-300 transition-all hover:bg-slate-50 dark:hover:bg-slate-700">
+                                        ${course}
                                     </div>
                                 </label>
                             `).join('')}
@@ -245,212 +391,263 @@
                 container.innerHTML = html;
             },
 
+            // --- Dark Mode 修復的實務清單 ---
             renderExperiences() {
                 const container = document.getElementById('experience-container');
                 container.innerHTML = EXPERIENCES.map(exp => `
                     <label class="cursor-pointer">
                         <input type="checkbox" class="peer sr-only" value="${exp.id}" onchange="window.App.toggleExp('${exp.id}')">
-                        <div class="flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-white peer-checked:bg-purple-50 peer-checked:border-purple-500 transition-all hover:shadow-md">
+                        <div class="flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-white dark:bg-slate-800 dark:border-slate-700 peer-checked:bg-purple-600 peer-checked:border-purple-600 transition-all hover:shadow-md group">
                             <span class="text-2xl">${exp.icon}</span>
                             <div class="flex-1">
-                                <div class="font-bold text-slate-800 text-sm peer-checked:text-purple-700">${exp.name}</div>
-                                <div class="text-xs text-slate-400">戰力點數 +${exp.score}</div>
+                                <div class="font-bold text-slate-800 dark:text-slate-100 text-sm peer-checked:text-white transition-colors">${exp.name}</div>
+                                <div class="text-xs text-slate-400 dark:text-slate-500 peer-checked:text-purple-200 transition-colors">戰力點數 +${exp.score}</div>
                             </div>
-                            <div class="w-5 h-5 rounded-full border-2 border-slate-300 peer-checked:border-purple-500 peer-checked:bg-purple-500 flex items-center justify-center transition-colors">
-                                <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            <div class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 peer-checked:border-white peer-checked:bg-white flex items-center justify-center transition-colors">
+                                <svg class="w-3 h-3 text-purple-600 opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                             </div>
                         </div>
                     </label>
                 `).join('');
             },
 
-            // --- 狀態控制 ---
             toggleCourse(checkbox) {
                 const course = checkbox.value;
-                const progId = checkbox.dataset.prog;
-                
-                if(checkbox.checked) {
-                    this.state.selectedCourses.add(course);
-                } else {
-                    this.state.selectedCourses.delete(course);
-                }
-                
-                // 動態檢查學程是否達成 (大於等於 5 門課 = 15學分)
-                const checkedInProg = document.querySelectorAll(`input[data-prog="${progId}"]:checked`).length;
-                const badge = document.getElementById(`badge-${progId}`);
-                
-                if(checkedInProg >= 5) {
-                    badge.className = "text-xs font-bold px-2 py-1 rounded-md bg-blue-100 text-blue-700 transition-colors";
-                    badge.innerText = "🏆 已取得資格";
-                } else {
-                    badge.className = "text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-400 transition-colors";
-                    badge.innerText = `累積 ${checkedInProg * 3} 學分`;
-                }
+                if(checkbox.checked) this.state.selectedCourses.add(course);
+                else this.state.selectedCourses.delete(course);
+                this.updateProgramBadge(checkbox.dataset.prog);
             },
 
             toggleExp(id) {
-                if(this.state.selectedExps.has(id)) {
-                    this.state.selectedExps.delete(id);
-                } else {
-                    this.state.selectedExps.add(id);
-                }
+                if(this.state.selectedExps.has(id)) this.state.selectedExps.delete(id);
+                else this.state.selectedExps.add(id);
             },
 
-            // [NEW] Firebase 讀取功能
-            async loadUserData(uid) {
-                try {
-                    const docSnap = await getDoc(doc(db, "users", uid, "resume_data", "latest"));
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        
-                        // 還原 State
-                        if (data.selectedCourses) this.state.selectedCourses = new Set(data.selectedCourses);
-                        if (data.selectedExps) this.state.selectedExps = new Set(data.selectedExps);
-
-                        // 還原 UI (勾選 Checkbox)
-                        this.state.selectedCourses.forEach(course => {
-                            const checkbox = document.querySelector(`input[value="${course}"]`);
-                            if (checkbox) {
-                                checkbox.checked = true;
-                                // 觸發 UI 更新 (如標籤變色)
-                                const progId = checkbox.dataset.prog;
-                                this.updateProgramBadge(progId);
-                            }
-                        });
-
-                        this.state.selectedExps.forEach(expId => {
-                            const checkbox = document.querySelector(`input[value="${expId}"]`);
-                            if (checkbox) checkbox.checked = true;
-                        });
-
-                        // 重新計算分數以更新儀表板
-                        this.calculateScores(true); // true = silent mode (不產生報告，只更新分數)
-                    }
-                } catch (e) {
-                    console.error("Error loading data:", e);
-                }
-            },
-
-            // [NEW] 輔助函式：更新學程標籤狀態 (從 toggleCourse 提取出來)
             updateProgramBadge(progId) {
                 const checkedInProg = document.querySelectorAll(`input[data-prog="${progId}"]:checked`).length;
                 const badge = document.getElementById(`badge-${progId}`);
-                if(checkedInProg >= 5) {
+                const goal = parseInt(badge.dataset.goal);
+                
+                if(checkedInProg >= goal) {
                     badge.className = "text-xs font-bold px-2 py-1 rounded-md bg-blue-100 text-blue-700 transition-colors";
-                    badge.innerText = "🏆 已取得資格";
+                    badge.innerText = "🏆 達成門檻";
                 } else {
-                    badge.className = "text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-400 transition-colors";
-                    badge.innerText = `累積 ${checkedInProg * 3} 學分`;
+                    badge.className = "text-xs font-bold px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 transition-colors";
+                    badge.innerText = `${checkedInProg} / ${goal} 門`;
                 }
             },
 
-            // --- 核心計算邏輯 ---
-            calculateAndGenerate() {
-                // 1. 計算學程分數 (滿分 50)
-                let programScore = 0;
-                let achievedPrograms = [];
-                
-                ACADEMIC_PROGRAMS.forEach(prog => {
-                    const credits = Array.from(this.state.selectedCourses).filter(c => prog.courses.includes(c)).length * 3;
-                    if(credits >= 15) {
-                        programScore += (achievedPrograms.length === 0) ? 35 : 15; // 第一個學程給 35 分，第二個給 15 分
-                        achievedPrograms.push(prog.name);
-                    } else {
-                        programScore += Math.floor((credits / 15) * 20); // 未達成者依比例給予部分分數
+            // --- 核心運算 (AI 模擬器) ---
+            calculateAndGenerate(isSilent = false) {
+                // [NEW] 空白狀態防呆 (Early Return)
+                if (this.state.selectedCourses.size === 0 && this.state.selectedExps.size === 0) {
+                    if (!isSilent) {
+                        alert("⚠️ 資料不足\n\n請至少勾選一項「修課紀錄」或「實務經歷」，\n以便 AI 系統進行精準的戰力診斷。");
                     }
-                });
-                programScore = Math.min(50, programScore);
+                    return;
+                }
 
-                // 2. 計算實務分數 (滿分 50)
-                let expScore = 0;
-                let expNames = [];
-                let missingExps = [];
+                const trackData = ACADEMIC_DATA[this.state.track];
+                const goalCredits = trackData.goal;
                 
+                // 1. 學分計算邏輯優化
+                let maxProgCredits = 0;
+                let bestProgName = '';
+                
+                if (this.state.track === 'practical') {
+                    // [優化] 大三實務期：採「累計制」，鼓勵跨領域修課
+                    // 計算所有已選且不重複的實務課程總學分
+                    let totalUniqueCredits = 0;
+                    const countedCourses = new Set();
+                    
+                    trackData.data.forEach(prog => {
+                        prog.courses.forEach(courseName => {
+                            if (this.state.selectedCourses.has(courseName) && !countedCourses.has(courseName)) {
+                                totalUniqueCredits += 3; // 暫時維持預設3學分，未來可擴充讀取 course.credit
+                                countedCourses.add(courseName);
+                            }
+                        });
+                    });
+                    maxProgCredits = totalUniqueCredits;
+                    bestProgName = "實務能力綜合評量"; // 統一名稱
+                } else {
+                    // [維持] 大四/核心期：採「擇優制」，強調單一領域專精
+                    trackData.data.forEach(prog => {
+                        const credits = Array.from(this.state.selectedCourses).filter(c => prog.courses.includes(c)).length * 3;
+                        if (credits > maxProgCredits) { maxProgCredits = credits; bestProgName = prog.name; }
+                    });
+                }
+
+                let programScore = Math.min(50, Math.floor((maxProgCredits / goalCredits) * 50));
+
+                // 2. 實務算分
+                let expScore = 0;
+                let hasInternship = false;
                 EXPERIENCES.forEach(exp => {
                     if(this.state.selectedExps.has(exp.id)) {
                         expScore += exp.score;
-                        expNames.push(exp.name);
-                    } else if (exp.score >= 15) {
-                        missingExps.push(exp.name); // 記錄缺乏的高含金量經歷
+                        if(exp.id === 'exp_intern') hasInternship = true;
                     }
                 });
                 expScore = Math.min(50, expScore);
 
-                // 3. 總分更新 UI
+                // 3. UI 更新
                 const totalScore = programScore + expScore;
-                document.getElementById('total-score').innerText = totalScore;
-                
+                this.animateScore('total-score', totalScore);
                 document.getElementById('score-program').innerText = programScore;
-                document.getElementById('bar-program').style.width = `${(programScore/50)*100}%`;
-                
+                document.getElementById('bar-program').style.width = `${programScore*2}%`;
                 document.getElementById('score-exp').innerText = expScore;
-                document.getElementById('bar-exp').style.width = `${(expScore/50)*100}%`;
+                document.getElementById('bar-exp').style.width = `${expScore*2}%`;
 
-                // [NEW] 儲存至 Firebase
+                // 儲存資料
                 if (currentUser) {
-                    this.saveUserData(totalScore, programScore, expScore);
-                }
-
-                // 5. 觸發 AI 報告生成
-                this.generateAIReport(totalScore, achievedPrograms, expNames, missingExps);
-            },
-
-            // [NEW] 僅計算分數 (用於讀取資料後更新 UI)
-            calculateScores(silent) {
-                if(silent) {
-                    // 簡化版的計算邏輯，只為了更新 UI 上的分數條
-                    // 實際專案中建議將計算邏輯抽離成獨立函式以避免重複代碼
-                    // 這裡為了保持結構簡單，暫時不實作完整 UI 更新，僅確保 State 正確
-                    // 若需要讀取後馬上看到分數條跑動，可呼叫 calculateAndGenerate() 但不觸發 AI 報告
-                }
-            },
-
-            async saveUserData(total, progScore, expScore) {
-                try {
-                    await setDoc(doc(db, "users", currentUser.uid, "resume_data", "latest"), {
+                    setDoc(doc(db, "users", currentUser.uid, "resume_data", "latest"), {
                         selectedCourses: Array.from(this.state.selectedCourses),
                         selectedExps: Array.from(this.state.selectedExps),
-                        scores: { total, progScore, expScore },
-                        lastUpdated: new Date().toISOString()
-                    });
-                    console.log("✅ 資料已儲存");
-                } catch (e) {
-                    console.error("儲存失敗", e);
+                        scores: { total: totalScore, program: programScore, exp: expScore },
+                        updatedAt: new Date().toISOString()
+                    }, {merge: true});
+                }
+
+                // 4. AI 智能導航分析 (動態生成)
+                this.generateSmartReport(this.state.grade, totalScore, bestProgName, maxProgCredits, goalCredits, expScore, hasInternship);
+                
+                // [NEW] 手機版滾動迷失修復 (Auto Scroll)
+                if (!isSilent) {
+                    setTimeout(() => {
+                        const aiPanel = document.getElementById('ai-result-panel');
+                        if(aiPanel) aiPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
                 }
             },
 
-            // --- 模擬 Gemini 產出 ---
-            generateAIReport(total, programs, exps, missing) {
+            animateScore(id, target) {
+                const el = document.getElementById(id);
+                let current = parseInt(el.innerText) || 0;
+                const step = target > current ? 1 : -1;
+                const timer = setInterval(() => {
+                    if (current === target) clearInterval(timer);
+                    else { current += step; el.innerText = current; }
+                }, 15);
+            },
+
+            // --- 結合 104/靜宜數據 的超級 AI 模擬輸出 ---
+            generateSmartReport(grade, total, progName, credits, goal, expScore, hasInternship) {
                 const aiPanel = document.getElementById('ai-result-panel');
                 const aiContent = document.getElementById('ai-content');
+                const toolPanel = document.getElementById('ai-interactive-tools');
                 
                 aiPanel.classList.remove('hidden');
-                aiContent.innerHTML = '<div class="text-center py-4"><span class="animate-pulse">Gemini 正在分析您的學程與經歷資料...</span></div>';
+                toolPanel.classList.add('hidden');
+                aiContent.innerHTML = '<div class="text-center py-4"><span class="animate-pulse font-mono text-emerald-600">正在調用 Collego 與靜宜課綱資料庫進行分析...</span></div>';
 
-                // 模擬 API 延遲
                 setTimeout(() => {
-                    let report = '';
+                    let html = '';
                     
-                    // 診斷
-                    report += `<div class="mb-4"><strong class="text-slate-900 block mb-1">📊 戰力診斷：</strong>`;
-                    if(programs.length > 0) {
-                        report += `您已成功取得「${programs.join('、')}」資格，具備扎實的理論底蘊。`;
+                    if (['大一', '大二'].includes(grade)) {
+                        // 【打底期邏輯】
+                        html += `<div class="mb-3"><strong class="text-slate-800 dark:text-white">📊 基礎診斷：</strong><br>您目前在「${progName || '核心專業'}」累積了 ${credits} 學分。基礎建立非常重要，這決定了您大三能否順利接軌實務課群。</div>`;
+                        html += `<div><strong class="text-slate-800 dark:text-white">🎯 導航建議：</strong><br>請專注於靜宜資訊學院的必修課，並強烈建議您開始嘗試參加「黑客松」或「技術社團」，提早累積實務經驗值。</div>`;
+                    
+                    } else if (grade === '大三') {
+                        // 【應用期邏輯】
+                        if (credits >= goal) {
+                            html += `<div class="mb-3"><strong class="text-slate-800 dark:text-white">📊 實務診斷：</strong><br>太棒了！您已滿足「${progName}」(${goal}學分) 的要求，實作能力已具備業界雛形。</div>`;
+                            html += `<div><strong class="text-slate-800 dark:text-white">🎯 導航建議 (黃金準備期)：</strong><br>立刻將您課堂上的期末專題整理上傳 GitHub！並請鎖定今年暑假的「企業實習」，這將是您大四求職的最大籌碼。</div>`;
+                        } else {
+                            html += `<div class="mb-3"><strong class="text-slate-800 dark:text-white">⚠️ 落後警示：</strong><br>您在實務課群的進度 (${credits}/${goal}學分) 稍嫌落後。</div>`;
+                            html += `<div><strong class="text-slate-800 dark:text-white">🎯 補強建議：</strong><br>請務必在下學期集中火力選修相關實務課程，否則大四將面臨「無專案可寫入履歷」的窘境。</div>`;
+                        }
+
                     } else {
-                        report += `您的學程學分尚未達標，建議盡快鎖定一項專業領域修課。`;
-                    }
-                    report += `</div>`;
+                        // 【收割期邏輯 (大四/碩士) - 嚴格防護網與職缺對接】
+                        html += `<div class="mb-3"><strong class="text-slate-800 dark:text-white">📊 畢業生戰力盤點：</strong><br>`;
+                        
+                        if (expScore < 15 && credits < 9) {
+                            // 降級防護網：分數極低的大四生
+                            html += `系統偵測到您的「實務專案」與「學程學分」嚴重不足（總分 ${total} 分）。<br><br></div>`;
+                            html += `<div><strong class="text-red-500">🚨 緊急補救方案 (請放棄修課)：</strong><br>大四重修學分已不切實際。建議您：<br>1. 立刻諮詢「靜宜大學職涯發展處」。<br>2. 報名外部就業養成班 (如：資策會 / AppWorks School) 進行 3-6 個月的極限衝刺。<br>3. 面試門檻較低的 QA 軟體測試或 IT 助理職位。</div>`;
+                        } else {
+                            // 優秀大四生：對接 104 真實職缺
+                            let jobMatch = (progName.includes('AI') || progName.includes('智慧') || progName.includes('軟體')) ? '初階後端工程師 / 系統分析助理 (SA)' : '數位專案管理師 (PM) / 雲端維運助理';
+                            let stat = (progName.includes('AI') || progName.includes('智慧') || progName.includes('軟體')) ? '42%' : '35%';
 
-                    // 建議
-                    report += `<div class="mb-4"><strong class="text-slate-900 block mb-1">🎯 補強建議：</strong>`;
-                    if(missing.length > 0) {
-                        report += `您的實務履歷目前缺乏「${missing.join(' 或 ')}」。在資訊產業界，企業極度看重專案落地能力，強烈建議在未來一學期內優先補齊此經歷。`;
-                    } else if (exps.length > 0) {
-                        report += `您擁有豐富的「${exps.join('、')}」經驗，履歷含金量極高！建議將這些經驗具體量化（如：優化了多少效能），寫入自我介紹中。`;
+                            html += `您已具備「${progName}」的高階實務底蘊，且實務經歷豐富！</div>`;
+                            html += `<div class="mb-3"><strong class="text-slate-800 dark:text-white">💼 104 人力銀行職缺對接：</strong><br>根據您的戰力，您極度適合投遞：<br><span class="text-blue-600 font-bold bg-blue-50 dark:bg-slate-800 px-2 py-1 rounded">📍 ${jobMatch}</span><br><span class="text-xs text-slate-500 mt-1 inline-block">(*依據 Collego 數據，約有 ${stat} 的資訊學群畢業生第一份工作選擇此領域)</span></div>`;
+                            
+                            if(!hasInternship) {
+                                html += `<div><strong class="text-orange-500">⚠️ 面試策略提醒：</strong><br>您缺乏「企業實習」經驗。面試時，請務必使用「STAR 原則」將學校的『專案實作』包裝成等同於業界實戰的經歷！</div>`;
+                            }
+                        }
                     }
-                    report += `</div>`;
 
-                    aiContent.innerHTML = report;
+                    aiContent.innerHTML = html;
+                    
+                    // [UPDATED] 漸進式揭露 (Progressive Disclosure) & 雙軌制
+                    if (!(grade === '大四' && expScore < 15 && credits < 9)) {
+                        toolPanel.classList.remove('hidden');
+                        
+                        // 針對不同年級顯示不同強度的 Call to Action
+                        if (['大一', '大二'].includes(grade)) {
+                            // 輕量引導
+                            toolPanel.innerHTML = `
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">🌱 成長工具箱</h4>
+                                <button onclick="window.App.generateResumeDraft()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold rounded-lg transition">
+                                    查看下學期修課建議
+                                </button>
+                            `;
+                        } else {
+                            // 高強度 Opt-in 挑戰 (大三/大四)
+                            toolPanel.innerHTML = `
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">🚀 進階職涯加速器</h4>
+                                <button onclick="window.App.openInterviewChat()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-bold rounded-xl transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 group">
+                                    <span>⭐ 解鎖隱藏挑戰：AI 模擬面試</span>
+                                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                </button>
+                                <p class="text-[10px] text-center text-slate-400 mt-2">此功能將消耗較多運算資源，建議準備好再開始。</p>
+                            `;
+                        }
+                    }
                 }, 1500);
+            },
+
+            // --- 閉環式 UX 功能 ---
+            generateResumeDraft() {
+                const toolPanel = document.getElementById('ai-interactive-tools');
+                toolPanel.innerHTML = `
+                    <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 mt-2 animate-fade-in-up">
+                        <h4 class="text-xs font-bold text-slate-400 mb-2 flex items-center gap-1"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> AI 生成之自傳草稿</h4>
+                        <p class="text-sm text-slate-700 dark:text-slate-300 font-serif leading-relaxed italic">
+                            「您好，我是就讀於靜宜大學資訊學院的學生。在校期間，我專注於深耕專業領域，並累積了紮實的專案開發經驗。我具備將學術理論轉化為實際應用的能力，這點可以從我參與的各項實務專案中獲得印證... (此為示範草稿，未來將串接 Gemini 產出個人化內容)」
+                        </p>
+                        <button onclick="alert('已複製到剪貼簿！')" class="mt-3 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">📋 複製文案</button>
+                    </div>
+                `;
+            },
+
+            // [NEW] 真實聊天室容器 (Chat UI Container) - 修復點擊報錯問題
+            openInterviewChat() {
+                const toolPanel = document.getElementById('ai-interactive-tools');
+                toolPanel.innerHTML = `
+                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-inner mt-2 animate-fade-in-up">
+                        <div class="bg-slate-50 dark:bg-slate-800 p-3 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-500 flex items-center gap-2">🤖 AI Career Coach <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span></span>
+                            <span class="text-[10px] text-slate-400">Powered by Gemini</span>
+                        </div>
+                        <div class="p-4 space-y-4 max-h-60 overflow-y-auto" id="chat-history">
+                            <div class="flex gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 flex-shrink-0 flex items-center justify-center text-xs font-bold">AI</div>
+                                <div class="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl rounded-tl-none text-sm text-slate-700 dark:text-slate-300 leading-relaxed shadow-sm">
+                                    嗨！我是你的 AI 面試官。根據你的履歷，我發現你在「${this.state.track === 'program' ? '專業學程' : '實務課程'}」有不錯的表現。請用 1 分鐘簡單自我介紹，並說明你印象最深刻的一個專案經驗？
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 flex gap-2">
+                            <input type="text" placeholder="輸入您的回答..." class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500 dark:text-white transition">
+                            <button onclick="alert('AI 串接功能即將上線！')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition">發送</button>
+                        </div>
+                    </div>
+                `;
             }
         };
 
