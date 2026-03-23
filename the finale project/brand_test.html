@@ -23,6 +23,21 @@
         .circle { fill: none; stroke-width: 2.5; stroke-linecap: round; transition: stroke-dasharray 1s ease-out; }
         .hidden { display: none !important; }
         .tab-btn.active { border-bottom: 2px solid var(--primary); color: var(--primary); font-weight: 700; }
+
+        /* --- Dark Mode --- */
+        body.dark-mode { background-color: #0f172a; color: #f1f5f9; }
+        body.dark-mode .hero-bg { background-image: none; }
+        body.dark-mode .glass-panel { background: rgba(30, 41, 59, 0.9); border-color: rgba(255,255,255,0.1); }
+        body.dark-mode .text-slate-900 { color: #f8fafc; }
+        body.dark-mode .text-slate-800 { color: #f1f5f9; }
+        body.dark-mode .text-slate-700 { color: #e2e8f0; }
+        body.dark-mode .text-slate-600 { color: #cbd5e1; }
+        body.dark-mode .text-slate-500 { color: #94a3b8; }
+        body.dark-mode .text-slate-400 { color: #64748b; }
+        body.dark-mode .bg-white { background-color: #1e293b; }
+        body.dark-mode .bg-slate-50 { background-color: #334155; }
+        body.dark-mode .border-slate-100 { border-color: #334155; }
+        body.dark-mode .border-slate-50 { border-color: #334155; }
         
         @media print {
             .no-print { display: none !important; }
@@ -31,6 +46,10 @@
         }
     </style>
 </head>
+<script>
+    // Apply dark mode instantly to prevent FOUC
+    if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
+</script>
 <body class="min-h-screen flex flex-col">
 
     <div id="view-landing" class="flex-grow flex flex-col relative hero-bg">
@@ -97,67 +116,73 @@
                         </div>
                     </div>
                     <div class="text-left">
-                        <div class="mb-4">
-                            <div class="text-sm font-bold text-slate-400 uppercase tracking-wide">Brand Archetype</div>
-                            <div id="best-dept" class="text-3xl md:text-4xl font-black text-blue-700 mt-1">Analyzing...</div>
-                            <div id="archetype-desc" class="text-sm text-slate-500 mt-1 font-medium"></div>
-                        </div>
-                        <div class="text-sm text-slate-600 bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 inline-block">與您的特質契合度高達 <span id="fit-score-text" class="font-bold text-blue-700">0%</span></div>
+                        <div class="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">推薦職涯角色</div>
+                        <div id="best-dept" class="text-2xl md:text-3xl font-black text-blue-700 dark:text-blue-400 mt-1">分析中...</div>
+                        <div id="archetype-desc" class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-md font-medium"></div>
+                        <div class="mt-4 text-sm text-slate-600 dark:text-slate-300 bg-blue-50 dark:bg-slate-800 px-4 py-2 rounded-lg border border-blue-100 dark:border-slate-700 inline-block">與您的特質契合度高達 <span id="fit-score-text" class="font-bold text-blue-700 dark:text-blue-400">0%</span></div>
                     </div>
                 </div>
             </div>
 
             <div class="lg:col-span-5 space-y-6 fade-in-up delay-100">
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-blue-500 rounded-full"></span>六維能力雷達</h3>
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-blue-500 rounded-full"></span>六維能力雷達</h3>
                     <div class="relative w-full aspect-square max-w-[300px] mx-auto"><svg id="radar-chart" viewBox="0 0 300 300" class="w-full h-full drop-shadow-lg"></svg></div>
                 </div>
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-orange-500 rounded-full"></span>Holland 興趣光譜</h3>
-                    <div class="flex items-baseline gap-3 mb-4"><span id="holland-code" class="text-4xl font-black text-slate-800 tracking-widest">---</span></div>
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-orange-500 rounded-full"></span>Holland 興趣光譜</h3>
+                    <div class="flex items-baseline gap-3 mb-4"><span id="holland-code" class="text-4xl font-black text-slate-800 dark:text-slate-100 tracking-widest">---</span></div>
                     <div id="holland-bars" class="space-y-3"></div>
                 </div>
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-pink-500 rounded-full"></span>社群經營策略</h3>
-                    <div id="platform-card" class="p-4 bg-pink-50 rounded-xl border border-pink-100"></div>
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-pink-500 rounded-full"></span>社群經營策略</h3>
+                    <div id="platform-card" class="p-4 bg-pink-50 dark:bg-slate-800/50 rounded-xl border border-pink-100 dark:border-slate-700"></div>
                 </div>
             </div>
 
             <div class="lg:col-span-7 space-y-6 fade-in-up delay-200">
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-teal-500 rounded-full"></span>能力維度量化分析</h3>
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-teal-500 rounded-full"></span>能力維度量化分析</h3>
                     <div id="radar-details" class="space-y-4"></div>
                 </div>
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-purple-500 rounded-full"></span>Top 5 天賦優勢</h3>
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-purple-500 rounded-full"></span>Top 5 天賦優勢</h3>
                     <div id="strength-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
                 </div>
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-yellow-500 rounded-full"></span>品牌行動卡片 (Action Card)</h3>
-                    <div id="action-card-content" class="bg-yellow-50 p-4 rounded-xl border border-yellow-100 text-sm text-slate-700 space-y-2"></div>
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-yellow-500 rounded-full"></span>品牌行動卡片 (Action Card)</h3>
+                    <div id="action-card-content" class="bg-yellow-50 dark:bg-slate-800/50 p-4 rounded-xl border border-yellow-100 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-300 space-y-2"></div>
                 </div>
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-indigo-500 rounded-full"></span>30/60/90 天成長計畫</h3>
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2"><span class="w-2 h-6 bg-indigo-500 rounded-full"></span>30/60/90 天成長計畫</h3>
                     <div id="action-plan-timeline" class="space-y-4"></div>
                 </div>
 
                 <div class="bg-slate-900 rounded-3xl p-6 shadow-xl text-white relative overflow-hidden no-print">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-[60px] opacity-20"></div>
                     <div class="relative z-10">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="font-bold text-xl">🚀 履歷生成器</h3>
-                            <div class="flex gap-4 text-sm font-medium">
-                                <button onclick="window.app.switchTab('generate')" id="tab-gen" class="tab-btn active text-blue-400 border-b-2 border-blue-400 pb-1">直接產出文案</button>
-                                <button onclick="window.app.switchTab('ai')" id="tab-ai" class="tab-btn text-slate-400 pb-1 hover:text-white">AI 協作指令</button>
+                        <h3 class="font-bold text-xl mb-4">🚀 AI 閉環互動</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <button onclick="app.toggleAISection('resume')" class="w-full text-left flex justify-between items-center p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 transition">
+                                    <span class="font-bold">📝 產生 104 自傳亮點</span>
+                                    <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div id="ai-section-resume" class="hidden mt-2 bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+                                    <pre id="resume-draft" class="whitespace-pre-wrap font-sans text-sm text-slate-300 leading-relaxed"></pre>
+                                    <button onclick="window.app.copyText('resume-draft')" class="mt-3 w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transition text-xs">📋 複製自傳亮點</button>
+                                </div>
                             </div>
-                        </div>
-                        <div id="content-generate" class="space-y-4">
-                            <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 max-h-60 overflow-y-auto"><pre id="resume-draft" class="whitespace-pre-wrap font-sans text-sm text-slate-300 leading-relaxed"></pre></div>
-                            <button onclick="window.app.copyText('resume-draft')" class="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold transition">📋 複製履歷草稿</button>
-                        </div>
-                        <div id="content-ai" class="hidden space-y-4">
-                            <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 max-h-60 overflow-y-auto font-mono text-xs text-green-400"><div id="ai-prompt-text"></div></div>
-                            <button onclick="window.app.copyText('ai-prompt-text')" class="w-full py-3 bg-green-600 hover:bg-green-700 rounded-xl font-bold transition">🤖 複製 AI 指令</button>
+                            <div>
+                                <button onclick="app.toggleAISection('interview')" class="w-full text-left flex justify-between items-center p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 transition">
+                                    <span class="font-bold">🎤 AI 模擬面試</span>
+                                    <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div id="ai-section-interview" class="hidden mt-2 bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+                                    <p id="interview-question" class="font-mono text-sm text-green-400 leading-relaxed"></p>
+                                    <button onclick="window.app.copyText('interview-question', true)" class="mt-3 w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg font-bold transition text-xs">🤖 複製面試題目</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -169,7 +194,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // [FIX] 內嵌 Firebase 設定，解決因找不到外部設定檔導致程式無法執行(按鈕沒反應)的問題
         const firebaseConfig = {
@@ -196,22 +221,94 @@
                     if (docSnap.exists()) {
                         window.app.state.lastReport = docSnap.data();
                         document.getElementById('btn-load-last').classList.remove('hidden');
+                        
+                        // [新增] 檢查網址參數，若是由儀表板跳轉而來，則自動渲染報告畫面
+                        const urlParams = new URLSearchParams(window.location.search);
+                        if(urlParams.get('view') === 'report') {
+                            window.app.loadLastReport();
+                        }
                     }
                 } catch (e) { console.error("Error fetching last report:", e); }
+            } else {
+                alert('請先登入系統，以啟用 AI 職涯導航與專屬數據儲存功能！');
+                window.location.href = 'index.html';
             }
         });
 
         const DATA = {
-            weights: {
-                '資工系 (CS)': { holland: { R: 8, I: 8, A: 1, S: 0, E: 1, C: 5 }, strengths: { Analytical: 8, Focus: 8, Learner: 5, Strategic: 3, Achiever: 3, Ideation: 1, Communication: 0, Relator: 0, Developer: 0, Responsibility: 3 } },
-                '資管系 (IM)': { holland: { R: 1, I: 3, A: 1, S: 3, E: 8, C: 8 }, strengths: { Strategic: 8, Achiever: 5, Responsibility: 5, Communication: 5, Analytical: 3, Focus: 1, Learner: 1, Ideation: 1, Relator: 3, Developer: 3 } },
-                '資傳系 (Comm)': { holland: { R: 1, I: 1, A: 8, S: 8, E: 5, C: 1 }, strengths: { Communication: 8, Ideation: 8, Relator: 5, Developer: 5, Strategic: 1, Achiever: 1, Analytical: 0, Focus: 0, Learner: 3, Responsibility: 1 } }
-            },
-            // [NEW] 新增角色原型定義，解決與系別推薦的邏輯衝突
-            archetypes: {
-                '資工系 (CS)': { title: '技術領航者 (Tech Lead)', desc: '以技術實力解決核心問題的架構師，適合深耕底層技術或研發。' },
-                '資管系 (IM)': { title: '數位策略家 (Strategist)', desc: '連結技術與商業價值的產品經理，擅長資源整合與流程優化。' },
-                '資傳系 (Comm)': { title: '跨域整合者 (Integrator)', desc: '融合創意與科技的體驗設計師，擅長將技術轉化為感性價值。' }
+            roles: {
+                'R': {
+                    title: '實作型人才 (Realistic)',
+                    jobs: ['網路維運助理', 'IoT 測試工程師'],
+                    stat: '依據 Collego 數據統計，約有 15% 具備實作特質的畢業生第一份工作選擇此領域。',
+                    plan: [
+                        { d: '30天 (短期)', t: '硬體與網路基礎', c: '學習網路七層協定，並練習使用 Wireshark 進行基礎封包分析，可考慮準備 CCNA 證照。' },
+                        { d: '60天 (中期)', t: '腳本與自動化', c: '學習 Python 或 Shell Script，撰寫一個自動化備份或監控腳本，並上傳至 GitHub。' },
+                        { d: '90天 (長期)', t: '實戰演練', c: '在家中建置一個小型網路環境 (例如使用 Raspberry Pi)，或參與 IoT 相關的開源專案。' }
+                    ],
+                    interviewQuestion: "情境題：公司內部網路突然大規模中斷，用戶回報無法連線。你的標準作業流程(SOP)是什麼？你會如何一步步排查問題並與團隊溝通？",
+                    resumeHighlight: "我是一位享受動手解決問題的實作型人才。我熱衷於透過實際操作來建構與維護穩定可靠的系統，並具備系統化解決硬體與網路問題的能力。在校期間，我透過 {請填寫相關專案或經驗}，成功 {請填寫量化成果，例如：將處理時間縮短 20%}。我相信我的特質能讓我在網路維運或 IoT 測試崗位上快速貢獻價值。"
+                },
+                'I': {
+                    title: '研究型人才 (Investigative)',
+                    jobs: ['後端工程師', '資料分析助理'],
+                    stat: '依據 104 人力銀行數據，後端工程師為資訊領域最大宗職缺，佔比超過 30%。',
+                    plan: [
+                        { d: '30天 (短期)', t: '程式與演算法', c: '精通一種後端語言 (如 Java/Python/Go)，並在 LeetCode 上完成 20 題 Easy/Medium 題目，理解時間/空間複雜度。' },
+                        { d: '60天 (中期)', t: '框架與資料庫', c: '學習一個主流後端框架 (如 Spring Boot/Django)，並完成一個包含 CRUD 功能的 API 專案，串接 SQL 或 NoSQL 資料庫。' },
+                        { d: '90天 (長期)', t: '系統設計與部署', c: '將專案打包成 Docker Image 並部署至雲端平台 (如 AWS/GCP)，並為你的 API 撰寫單元測試。' }
+                    ],
+                    interviewQuestion: "行為題：請描述一個你曾經遇過最複雜的技術問題。你是如何拆解它、尋找解決方案，最後又是如何解決的？從中你學到了什麼？",
+                    resumeHighlight: "我是一位具備深度思考與邏輯分析能力的研究型人才。我擅長拆解複雜問題，並透過數據與程式碼找出根本原因。在校期間，我專注於 {請填寫技術領域，如：後端開發}，並在 {請填寫相關專案或經驗} 中，負責 {請填寫擔任角色}，達成 {請填寫量化成果，例如：優化 API 效能 50%}。我對技術充滿熱情，相信能為後端或資料分析崗位帶來紮實的貢獻。"
+                },
+                'A': {
+                    title: '藝術型人才 (Artistic)',
+                    jobs: ['UI/UX 設計師', '前端工程師'],
+                    stat: '依據 104 人力銀行趨勢，前端與 UI/UX 職缺需求年增長率超過 15%，是市場熱門方向。',
+                    plan: [
+                        { d: '30天 (短期)', t: '設計與技術基礎', c: '精通 HTML/CSS/JavaScript，並學習使用 Figma 進行介面設計與 Prototype 製作。' },
+                        { d: '60天 (中期)', t: '框架與作品集', c: '學習一個前端框架 (如 React/Vue)，並將設計稿轉化為一個互動式的網頁作品，建置個人作品集網站。' },
+                        { d: '90天 (長期)', t: '使用者為中心', c: '學習使用者研究方法，為你的作品進行一次易用性測試，並根據回饋迭代設計，將過程記錄下來。' }
+                    ],
+                    interviewQuestion: "情境題：如果產品經理(PM)提出一個你認為不符合使用者體驗(UX)的設計需求，你會如何溝通？請描述你的思考過程與應對策略。",
+                    resumeHighlight: "我是一位兼具美感與技術實現能力的藝術型人才。我熱愛創造優雅且直觀的使用者介面，並能將設計理念轉化為高品質的前端程式碼。在 {請填寫相關專案或經驗} 中，我運用 {請填寫設計或前端技能}，成功 {請填寫量化成果，例如：提升使用者滿意度 10%}。我相信我對細節的追求與同理心，能為 UI/UX 設計或前端開發團隊創造獨特價值。"
+                },
+                'S': {
+                    title: '社交型人才 (Social)',
+                    jobs: ['IT 客服工程師', '軟體技術業務 (Pre-sales)'],
+                    stat: '根據調查，具備技術背景與溝通能力的 Pre-sales 人才，薪資成長潛力高於平均 20%。',
+                    plan: [
+                        { d: '30天 (短期)', t: '產品知識與溝通', c: '深入了解一項你感興趣的技術產品 (如雲端服務)，並練習用 3 分鐘向不懂技術的人說明其價值 (電梯簡報)。' },
+                        { d: '60天 (中期)', t: '簡報與問題解決', c: '製作一份該產品的介紹簡報，並模擬回答 10 個客戶可能會提出的尖銳問題。' },
+                        { d: '90天 (長期)', t: '建立人脈與實戰', c: '參加技術社群或研討會，主動與人交流。或嘗試在校內擔任助教，練習教學與解決他人問題的能力。' }
+                    ],
+                    interviewQuestion: "行為題：請描述一次你成功說服他人接受你想法的經驗。你當時的目標是什麼？你用了什麼方法？最後結果如何？",
+                    resumeHighlight: "我是一位善於溝通、樂於助人的社交型人才。我享受與人互動，並擅長將複雜的技術概念轉化為客戶能理解的語言，以解決他們的痛點。在 {請填寫社團或打工經驗} 中，我曾負責 {請填寫擔任角色}，成功 {請填寫量化成果，例如：提升客戶滿意度或活動參與人數}。我相信我的同理心與技術熱情，能在 IT 客戶服務或技術業務崗位上成為團隊與客戶間的關鍵橋樑。"
+                },
+                'E': {
+                    title: '企業型人才 (Enterprising)',
+                    jobs: ['專案管理助理 (PM)', '系統分析師 (SA)'],
+                    stat: '依據 PMI 報告，未來十年全球將需要近 2500 萬名新專案管理人才，是極具前景的職位。',
+                    plan: [
+                        { d: '30天 (短期)', t: '工具與方法論', c: '學習使用專案管理工具 (如 Trello/Jira)，並理解敏捷開發 (Agile/Scrum) 的基本流程。' },
+                        { d: '60天 (中期)', t: '規劃與文件', c: '為一個虛擬專案撰寫一份簡易的專案需求文件 (PRD)，包含目標、功能列表與時程規劃 (Gantt Chart)。' },
+                        { d: '90天 (長期)', t: '領導與溝通', c: '在分組報告或專題中主動擔任組長，練習任務分配、進度追蹤與跨組溝通，並記錄下遇到的困難與解法。' }
+                    ],
+                    interviewQuestion: "情境題：你的專案開發到一半，客戶突然提出一個全新的、不在原規劃內的功能需求，但時程(deadline)不變。你會如何處理？",
+                    resumeHighlight: "我是一位目標導向、具備商業思維的企業型人才。我擅長規劃與執行，能帶領團隊在時限內達成目標。在 {請填寫專案或社團經驗} 中，我擔任 {請填寫 PM 或組長角色}，透過 {請填寫你使用的方法}，最終達成 {請填寫量化成果，例如：提前一週完成專案或提升團隊效率 15%}。我享受從 0 到 1 打造產品的過程，並渴望在專案管理或系統分析領域持續成長。"
+                },
+                'C': {
+                    title: '常規型人才 (Conventional)',
+                    jobs: ['QA 測試工程師', '資料庫管理員 (DBA)'],
+                    stat: '軟體開發流程中，QA 測試是確保產品質量不可或缺的一環，職位穩定性高。',
+                    plan: [
+                        { d: '30天 (短期)', t: '細心與SOP', c: '學習軟體測試理論 (黑箱/白箱測試)，並為一個你常用的 APP 撰寫測試案例 (Test Case)。' },
+                        { d: '60天 (中期)', t: '工具與腳本', c: '學習使用自動化測試工具 (如 Selenium) 或 SQL 語法，撰寫一個簡單的自動化測試腳本或資料查詢指令。' },
+                        { d: '90天 (長期)', t: '實戰與回報', c: '參與開源專案的測試，或主動幫同學的專案找 Bug，並學習如何撰寫一份清晰、可重現的錯誤回報單 (Bug Report)。' }
+                    ],
+                    interviewQuestion: "行為題：請描述一個你發現的、別人沒注意到的細節或錯誤。你是如何發現的？你後續採取了什麼行動？",
+                    resumeHighlight: "我是一位注重細節、有條理的常規型人才。我享受在規範的流程中確保最高的品質與準確性。在 {請填寫相關課程或專案經驗} 中，我負責 {請填寫測試或資料整理任務}，透過細心檢查，成功 {請填寫量化成果，例如：找出 3 個潛在的嚴重 Bug 或將資料錯誤率降低 90%}。我相信我的耐心與責任感，能在 QA 測試或資料庫管理崗位上成為產品質量的堅實後盾。"
+                }
             },
             radarMap: [
                 { name: '邏輯分析', keys: ['Analytical', 'Focus', 'I'] }, { name: '專案執行', keys: ['Achiever', 'Responsibility', 'C'] },
@@ -290,24 +387,6 @@
                 'Developer': { book: '《教練》', skill: '導師引導 (Coaching)、教育訓練設計', task: '教一位同學學會你擅長的一個小技能，直到他能教會別人。' },
                 'Relator': { book: '《人性的弱點》', skill: '同理心傾聽、衝突管理', task: '本週約一位很久沒見的朋友或前輩喝咖啡，只傾聽不評判。' }
             },
-            // 新增：30/60/90 天計畫邏輯
-            plans: {
-                '資工系 (CS)': [
-                    { d: '30天 (短期)', t: '技能奠基', c: '熟悉一種程式語言 (Python/C++) 語法，並在 LeetCode 完成 10 題 Easy 題目。' },
-                    { d: '60天 (中期)', t: '專案實作', c: '完成一個小型 Side Project (如爬蟲或簡單網頁)，並將程式碼整理上傳至 GitHub。' },
-                    { d: '90天 (長期)', t: '經歷驗證', c: '參加一場黑客松 (Hackathon) 或開源專案貢獻，累積實戰開發經驗。' }
-                ],
-                '資管系 (IM)': [
-                    { d: '30天 (短期)', t: '工具熟悉', c: '精通 Office 文書軟體 (Word/Excel) 與基礎商業邏輯，準備相關基礎檢定。' },
-                    { d: '60天 (中期)', t: '證照加值', c: '考取 ERP 證照 (如配銷模組)，或利用現成網頁模板建立個人履歷網站。' },
-                    { d: '90天 (長期)', t: '專題整合', c: '完成一個學期的小型專題 (如電商企劃書或系統分析)，並嘗試參加商業競賽。' }
-                ],
-                '資傳系 (Comm)': [
-                    { d: '30天 (短期)', t: '軟體精熟', c: '熟悉設計軟體 (PS/AI) 或影音剪輯工具，產出第一個練習作品。' },
-                    { d: '60天 (中期)', t: '作品集結', c: '建立個人作品集網站 (Portfolio)，整理 3-5 件完整作品並上架。' },
-                    { d: '90天 (長期)', t: '流量經營', c: '經營自媒體帳號 (IG/TikTok) 達到特定流量目標，或參加設計類競賽。' }
-                ]
-            }
         };
 
         const QUESTIONS = [
@@ -362,7 +441,7 @@
                 const end = start + pageSize;
                 const pageQs = QUESTIONS.slice(start, end);
                 const answeredCount = Object.keys(this.state.answers).length;
-                const progress = Math.min(100, Math.round((answeredCount / QUESTIONS.length) * 100));
+                const progress = Math.min(100, Math.floor((answeredCount / QUESTIONS.length) * 100));
                 document.getElementById('progress-bar').style.width = `${progress}%`;
                 document.getElementById('progress-text').innerText = `${progress}%`;
                 let html = '';
@@ -398,48 +477,55 @@
                     if(q.cat === 's') sScores[q.m] = (sScores[q.m] || 0) + val; else hScores[q.m] = (hScores[q.m] || 0) + val;
                 });
 
-                let bestDept = '', maxFit = 0;
-                for(let d in DATA.weights) {
-                    let wSum = 0, maxWSum = 0;
-                    for(let k in DATA.weights[d].holland) {
-                        const w = DATA.weights[d].holland[k];
-                        if(w>0) { wSum += (hScores[k]||0)*w; maxWSum += (QUESTIONS.filter(q=>q.cat==='h'&&q.m===k).length*5)*w; }
-                    }
-                    for(let k in DATA.weights[d].strengths) {
-                        const w = DATA.weights[d].strengths[k];
-                        if(w>0) { wSum += (sScores[k]||0)*w; maxWSum += (QUESTIONS.filter(q=>q.cat==='s'&&q.m===k).length*5)*w; }
-                    }
-                    let fit = (maxWSum > 0) ? Math.round((wSum / maxWSum) * 100) : 0;
-                    if(fit > maxFit) { maxFit = fit; bestDept = d; }
-                }
+                const topH = Object.entries(hScores).sort((a,b)=>b[1]-a[1]);
+                const topHollandCode = topH[0][0];
+                const topHollandScore = topH[0][1];
+                const maxPossibleScore = QUESTIONS.filter(q => q.m === topHollandCode && q.cat === 'h').length * 5;
+                const fitScore = maxPossibleScore > 0 ? Math.round((topHollandScore / maxPossibleScore) * 100) : 0;
+
+                const hCode = topH.slice(0,3).map(x=>x[0]).join('');
+                const topS = Object.entries(sScores).sort((a,b)=>b[1]-a[1]).slice(0,5);
 
                 let radarData = DATA.radarMap.map(dim => {
                     let sum = 0, count = 0;
                     dim.keys.forEach(k => { sum += (k.length > 1 ? (sScores[k]||0) : (hScores[k]||0)); count += QUESTIONS.filter(q => q.m === k).length; });
                     return (count > 0) ? Math.round((sum / (count*5)) * 100) : 0;
                 });
-
-                // --- Firebase 儲存邏輯 ---
-                const maxHScores = QUESTIONS.filter(q => q.cat === 'h').reduce((acc, curr) => { const k = curr.m; acc[k] = (acc[k] || 0) + 5; return acc; }, {});
-                const topH = Object.entries(hScores).sort((a,b)=>b[1]-a[1]);
-                const hCode = topH.slice(0,3).map(x=>x[0]).join('');
-                const topS = Object.entries(sScores).sort((a,b)=>b[1]-a[1]).slice(0,5);
                 
                 const resultData = {
                     date: new Date().toISOString(),
-                    bestDept: bestDept,
-                    fitScore: maxFit,
+                    topHollandCode: topHollandCode,
+                    fitScore: fitScore,
                     hollandCode: hCode,
-                    topStrengths: topS.map(s => s[0]), // Save keys
+                    topStrengths: topS.map(s => s[0]),
                     radarData: radarData,
-                    hollandScores: topH.slice(0, 3) // Save top 3 with scores
+                    hollandScores: topH
                 };
 
                 if (currentUser) {
                     try {
-                        await setDoc(doc(db, "users", currentUser.uid, "brand_results", "latest"), resultData);
+                        const batch = writeBatch(db);
+                        
+                        // 1. 保存歷史快照 (History Logging) - 自動產生 ID
+                        const historyRef = doc(collection(db, "users", currentUser.uid, "history_brand"));
+                        batch.set(historyRef, resultData);
+
+                        // 2. 更新聚合快取 (Summary Cache)
+                        const userRef = doc(db, "users", currentUser.uid);
+                        batch.set(userRef, {
+                            summary_cache: {
+                                brand: {
+                                    date: resultData.date,
+                                    topHollandCode: resultData.topHollandCode,
+                                    fitScore: resultData.fitScore,
+                                    topStrengths: resultData.topStrengths
+                                }
+                            }
+                        }, { merge: true });
+
+                        await batch.commit();
                         this.state.lastReport = resultData; // Update local state
-                        console.log("✅ 測驗結果已同步至雲端！");
+                        console.log("✅ 測驗結果已同步至雲端 (歷史快照 + 聚合快取)！");
                     } catch (e) {
                         console.error("❌ 儲存失敗", e);
                     }
@@ -452,21 +538,20 @@
 
             renderReportView(data) {
                 window.scrollTo(0,0);
-                const { bestDept, fitScore, hollandCode, topStrengths, radarData, hollandScores, date } = data;
+                const { topHollandCode, fitScore, hollandCode, topStrengths, radarData, hollandScores, date } = data;
                 
                 // Handle date
                 document.getElementById('report-date').innerText = date ? new Date(date).toLocaleDateString('zh-TW') : new Date().toLocaleDateString('zh-TW');
 
-                // [FIX] 顯示角色原型而非科系名稱
-                const archetype = DATA.archetypes[bestDept];
-                document.getElementById('best-dept').innerText = archetype.title;
-                document.getElementById('archetype-desc').innerText = archetype.desc;
+                const roleInfo = DATA.roles[topHollandCode];
+                document.getElementById('best-dept').innerText = roleInfo.jobs.join(' / ');
+                document.getElementById('archetype-desc').innerText = roleInfo.stat;
                 
                 document.getElementById('fit-score-text').innerText = fitScore + '%';
                 const circle = document.querySelector('.circle');
                 circle.style.stroke = fitScore >= 80 ? '#2563eb' : (fitScore >= 60 ? '#f59e0b' : '#64748b');
                 setTimeout(() => {
-                    circle.style.strokeDasharray = `${fitScore}, 100`;
+                    circle.style.strokeDasharray = `${fitScore || 0}, 100`;
                     let start = 0;
                     const timer = setInterval(() => { start++; document.getElementById('score-display').innerText = start; if(start >= fitScore) { clearInterval(timer); document.getElementById('score-display').innerText = fitScore; } }, 10);
                 }, 100);
@@ -477,102 +562,93 @@
                 
                 // Handle Holland Bars (data.hollandScores might be missing in old data, fallback needed)
                 const hScoresToRender = hollandScores || hollandCode.split('').map(c => [c, 10]); // Fallback
-                const maxHScore = hScoresToRender[0] ? hScoresToRender[0][1] : 10;
+                const maxHScore = hScoresToRender[0] ? hScoresToRender[0][1] : 1;
 
                 document.getElementById('holland-bars').innerHTML = hScoresToRender.map(h => {
-                    const info = DATA.hollandInfo[h[0]], pct = (h[1]/maxHScore)*100;
-                    return `<div class="flex items-center text-sm"><span class="w-8 font-bold" style="color:${info.c}">${h[0]}</span><div class="flex-1 h-2 bg-slate-100 rounded-full mx-2 overflow-hidden"><div class="h-full rounded-full" style="width:${pct}%; background:${info.c}"></div></div><span class="w-6 text-right text-slate-400">${h[1]}</span></div>`;
+                    const info = DATA.hollandInfo[h[0]], pct = Math.max(0, (h[1]/maxHScore)*100);
+                    return `<div class="flex items-center text-sm"><span class="w-8 font-bold" style="color:${info.c}">${h[0]}</span><div class="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full mx-2 overflow-hidden"><div class="h-full rounded-full" style="width:${pct}%; background:${info.c}"></div></div><span class="w-6 text-right text-slate-400 dark:text-slate-500">${h[1]}</span></div>`;
                 }).join('');
 
-                document.getElementById('strength-cards').innerHTML = topStrengths.map((s,i) => `<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between"><span class="font-bold text-slate-700">#${i+1} ${DATA.strengthsInfo[s]}</span><span class="text-xs bg-white px-2 py-1 rounded text-slate-400 font-mono">${s}</span></div>`).join('');
+                document.getElementById('strength-cards').innerHTML = topStrengths.map((s,i) => `<div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center justify-between"><span class="font-bold text-slate-700 dark:text-slate-200">#${i+1} ${DATA.strengthsInfo[s]}</span><span class="text-xs bg-white dark:bg-slate-800 px-2 py-1 rounded text-slate-400 dark:text-slate-500 font-mono">${s}</span></div>`).join('');
 
                 let radarDetailsHTML = '';
                 radarData.forEach((score, i) => {
                     const dim = DATA.radarMap[i];
                     let meaning = score < 50 ? DATA.radarBenchmarks[dim.name].low : (score < 75 ? DATA.radarBenchmarks[dim.name].mid : DATA.radarBenchmarks[dim.name].high);
                     let color = score >= 75 ? 'text-green-600' : (score >= 50 ? 'text-blue-600' : 'text-slate-500');
-                    radarDetailsHTML += `<div class="flex items-start justify-between border-b border-slate-50 pb-2 last:border-0"><div class="w-1/3"><span class="block font-bold text-slate-700 text-sm">${dim.name}</span><span class="text-2xl font-black ${color}">${score}</span><span class="text-xs text-slate-400">/100</span></div><div class="w-2/3 pl-4 border-l border-slate-100"><p class="text-xs text-slate-500 leading-relaxed">${meaning}</p></div></div>`;
+                    radarDetailsHTML += `<div class="flex items-start justify-between border-b border-slate-50 dark:border-slate-700 pb-2 last:border-0"><div class="w-1/3"><span class="block font-bold text-slate-700 dark:text-slate-200 text-sm">${dim.name}</span><span class="text-2xl font-black ${color}">${score}</span><span class="text-xs text-slate-400 dark:text-slate-500">/100</span></div><div class="w-2/3 pl-4 border-l border-slate-100 dark:border-slate-700"><p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">${meaning}</p></div></div>`;
                 });
                 document.getElementById('radar-details').innerHTML = radarDetailsHTML;
 
-                const topHCode = hollandCode[0];
-                const platformInfo = DATA.platforms[topHCode];
-                // [FIX] 升級社群經營策略卡片，顯示 Bio 範本與貼文靈感
+                const platformInfo = DATA.platforms[hollandCode[0]];
                 document.getElementById('platform-card').innerHTML = `
                     <div class="mb-3">
-                        <h4 class="font-bold text-pink-800 text-lg flex items-center gap-2">
+                        <h4 class="font-bold text-pink-800 dark:text-pink-300 text-lg flex items-center gap-2">
                             ${platformInfo.name}
-                            <span class="text-xs bg-pink-200 text-pink-800 px-2 py-0.5 rounded-full">${platformInfo.role}</span>
+                            <span class="text-xs bg-pink-200 dark:bg-pink-900/50 text-pink-800 dark:text-pink-300 px-2 py-0.5 rounded-full">${platformInfo.role}</span>
                         </h4>
-                        <p class="text-sm text-slate-600 mt-2 font-medium leading-relaxed">${platformInfo.strategy}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-2 font-medium leading-relaxed">${platformInfo.strategy}</p>
                     </div>
                     
                     <div class="space-y-3">
-                        <div class="bg-white p-3 rounded-lg border border-pink-100 shadow-sm">
-                            <div class="text-xs font-bold text-slate-400 uppercase mb-1">Bio 範本 (個人簡介)</div>
-                            <p class="text-sm text-slate-800 font-mono bg-slate-50 p-2 rounded select-all cursor-pointer hover:bg-slate-100 transition" title="點擊複製" onclick="navigator.clipboard.writeText(this.innerText);alert('已複製 Bio！')">${platformInfo.bio}</p>
+                        <div class="bg-white dark:bg-slate-900/50 p-3 rounded-lg border border-pink-100 dark:border-slate-700 shadow-sm">
+                            <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Bio 範本 (個人簡介)</div>
+                            <p class="text-sm text-slate-800 dark:text-slate-300 font-mono bg-slate-50 dark:bg-slate-800 p-2 rounded select-all cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="點擊複製" onclick="navigator.clipboard.writeText(this.innerText);alert('已複製 Bio！')">${platformInfo.bio}</p>
                         </div>
                         
-                        <div class="bg-white p-3 rounded-lg border border-pink-100 shadow-sm">
-                            <div class="text-xs font-bold text-slate-400 uppercase mb-1">Content Ideas (貼文靈感)</div>
-                            <ul class="text-sm text-slate-700 space-y-1 list-disc list-inside">
+                        <div class="bg-white dark:bg-slate-900/50 p-3 rounded-lg border border-pink-100 dark:border-slate-700 shadow-sm">
+                            <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Content Ideas (貼文靈感)</div>
+                            <ul class="text-sm text-slate-700 dark:text-slate-400 space-y-1 list-disc list-inside">
                                 ${platformInfo.content.map(c => `<li>${c}</li>`).join('')}
                             </ul>
                         </div>
                     </div>
                 `;
 
-                const topStrengthKey = topStrengths[0];
-                const actionInfo = DATA.actionCards[topStrengthKey];
-                // [FIX] 升級行動卡片，加入微行動 (Micro-Action)
+                const actionInfo = DATA.actionCards[topStrengths[0]];
                 document.getElementById('action-card-content').innerHTML = `
                     <div class="grid grid-cols-1 gap-2">
-                        <div class="bg-white p-2 rounded border border-yellow-100"><span class="text-xs font-bold text-slate-400 block">📚 推薦書籍</span><span class="text-sm font-medium text-slate-800">${actionInfo.book}</span></div>
-                        <div class="bg-white p-2 rounded border border-yellow-100"><span class="text-xs font-bold text-slate-400 block">🛠️ 必修技能</span><span class="text-sm font-medium text-slate-800">${actionInfo.skill}</span></div>
-                        <div class="bg-yellow-100 p-3 rounded border border-yellow-200 mt-1">
-                            <span class="text-xs font-bold text-yellow-700 block mb-1">⚡ 今日微行動 (Micro-Action)</span>
-                            <span class="text-sm font-bold text-yellow-900">${actionInfo.task}</span>
+                        <div class="bg-white dark:bg-slate-900/50 p-2 rounded border border-yellow-100 dark:border-slate-700"><span class="text-xs font-bold text-slate-400 dark:text-slate-500 block">📚 推薦書籍</span><span class="text-sm font-medium text-slate-800 dark:text-slate-300">${actionInfo.book}</span></div>
+                        <div class="bg-white dark:bg-slate-900/50 p-2 rounded border border-yellow-100 dark:border-slate-700"><span class="text-xs font-bold text-slate-400 dark:text-slate-500 block">🛠️ 必修技能</span><span class="text-sm font-medium text-slate-800 dark:text-slate-300">${actionInfo.skill}</span></div>
+                        <div class="bg-yellow-100 dark:bg-yellow-900/30 p-3 rounded border border-yellow-200 dark:border-yellow-800/50 mt-1">
+                            <span class="text-xs font-bold text-yellow-700 dark:text-yellow-300 block mb-1">⚡ 今日微行動 (Micro-Action)</span>
+                            <span class="text-sm font-bold text-yellow-900 dark:text-yellow-200">${actionInfo.task}</span>
                         </div>
                     </div>
                 `;
 
                 // 渲染 30/60/90 天計畫
-                const planData = DATA.plans[bestDept] || DATA.plans['資管系 (IM)']; // Default fallback
+                const planData = roleInfo.plan;
                 document.getElementById('action-plan-timeline').innerHTML = planData.map(p => `
                     <div class="flex gap-4 items-start">
-                        <div class="w-24 flex-shrink-0 text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-center border border-blue-100">${p.d}</div>
-                        <div><h5 class="text-sm font-bold text-slate-800">${p.t}</h5><p class="text-xs text-slate-500 leading-relaxed">${p.c}</p></div>
+                        <div class="w-24 flex-shrink-0 text-xs font-bold text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded text-center border border-blue-100 dark:border-blue-800/50">${p.d}</div>
+                        <div><h5 class="text-sm font-bold text-slate-800 dark:text-slate-200">${p.t}</h5><p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">${p.c}</p></div>
                     </div>
                 `).join('');
 
-                this.generateTexts(bestDept, hollandCode, topStrengths, radarData);
+                // 填充 AI 互動區塊
+                document.getElementById('resume-draft').innerText = roleInfo.resumeHighlight;
+                document.getElementById('interview-question').innerText = roleInfo.interviewQuestion;
             },
 
             drawRadar(data) {
                 const svg = document.getElementById('radar-chart');
                 const center = 150, radius = 100, angles = [0, 60, 120, 180, 240, 300].map(a => (a-90) * Math.PI / 180);
+                
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                const gridColor = isDarkMode ? '#334155' : '#e2e8f0';
+                const textColor = isDarkMode ? '#94a3b8' : '#64748b';
+                const areaFillColor = isDarkMode ? 'rgba(96, 165, 250, 0.2)' : 'rgba(37, 99, 235, 0.2)';
+                const strokeColor = isDarkMode ? '#60a5fa' : '#2563eb';
+
                 let gridHTML = '';
-                [0.2, 0.4, 0.6, 0.8, 1].forEach(scale => { const points = angles.map(a => `${center + radius * scale * Math.cos(a)},${center + radius * scale * Math.sin(a)}`).join(' '); gridHTML += `<polygon points="${points}" fill="none" stroke="#e2e8f0" stroke-width="1"/>`; });
+                [0.2, 0.4, 0.6, 0.8, 1].forEach(scale => { const points = angles.map(a => `${center + radius * scale * Math.cos(a)},${center + radius * scale * Math.sin(a)}`).join(' '); gridHTML += `<polygon points="${points}" fill="none" stroke="${gridColor}" stroke-width="1"/>`; });
                 angles.forEach((a, i) => {
                     const x = center + radius * 1.25 * Math.cos(a), y = center + radius * 1.25 * Math.sin(a);
-                    gridHTML += `<line x1="${center}" y1="${center}" x2="${center + radius * Math.cos(a)}" y2="${center + radius * Math.sin(a)}" stroke="#e2e8f0" /><text x="${x}" y="${y}" fill="#64748b" font-size="12" text-anchor="${Math.cos(a)>0.1?'start':(Math.cos(a)<-0.1?'end':'middle')}" dominant-baseline="middle">${DATA.radarMap[i].name}</text>`;
+                    gridHTML += `<line x1="${center}" y1="${center}" x2="${center + radius * Math.cos(a)}" y2="${center + radius * Math.sin(a)}" stroke="${gridColor}" /><text x="${x}" y="${y}" fill="${textColor}" font-size="12" text-anchor="${Math.cos(a)>0.1?'start':(Math.cos(a)<-0.1?'end':'middle')}" dominant-baseline="middle">${DATA.radarMap[i].name}</text>`;
                 });
                 const dataPoints = angles.map((a, i) => `${center + radius * (data[i]/100) * Math.cos(a)},${center + radius * (data[i]/100) * Math.sin(a)}`).join(' ');
-                svg.innerHTML = gridHTML + `<polygon points="${dataPoints}" fill="rgba(37, 99, 235, 0.2)" stroke="#2563eb" stroke-width="3" />` + angles.map((a, i) => `<circle cx="${center + radius * (data[i]/100) * Math.cos(a)}" cy="${center + radius * (data[i]/100) * Math.sin(a)}" r="4" fill="#2563eb"/>`).join('');
-            },
-
-            generateTexts(dept, hCode, topStrengths, radar) {
-                const sNames = topStrengths.map(s => DATA.strengthsInfo[s]).join('、');
-                const topRadar = DATA.radarMap[radar.indexOf(Math.max(...radar))].name;
-                const archetype = DATA.archetypes[dept];
-                
-                // [FIX] 更新履歷草稿，強調角色原型與跨域特質
-                const draft = `【自我介紹草稿】\n\n我是〇〇〇，一位具備「${archetype.title}」潛力的跨領域人才。經由專業測評分析，我的核心優勢在於「${sNames}」，這讓我在面對挑戰時，能夠發揮${DATA.strengthsInfo[topStrengths[0]]}特質，${dept.includes('資工')?'有效解決技術難題':'有效整合資源與溝通'}。\n\n我的 Holland 職業興趣代碼為 ${hCode}，這代表我具備${DATA.hollandInfo[hCode[0]].n}的傾向。在專業能力上，我的「${topRadar}」尤為突出，這將有助於我在團隊中擔任關鍵角色。\n\n未來，我希望能將這些特質轉化為具體的專案成果，為團隊創造價值。`;
-                document.getElementById('resume-draft').innerText = draft;
-                
-                // [FIX] 更新 AI Prompt，強調角色原型
-                const prompt = `你是一位專業職涯顧問。請根據以下數據為我優化履歷：\n1. 品牌原型：${archetype.title}\n2. 特質：${hCode} (${sNames})\n3. 優勢：${topRadar}能力極強\n請幫我寫一段約 200 字、語氣自信的申請動機，並提供 3 個量化成果範例，強調我的跨域整合潛力。`;
-                document.getElementById('ai-prompt-text').innerText = prompt;
+                svg.innerHTML = gridHTML + `<polygon points="${dataPoints}" fill="${areaFillColor}" stroke="${strokeColor}" stroke-width="3" />` + angles.map((a, i) => `<circle cx="${center + radius * (data[i]/100) * Math.cos(a)}" cy="${center + radius * (data[i]/100) * Math.sin(a)}" r="4" fill="${strokeColor}"/>`).join('');
             },
 
             downloadPDF() {
@@ -581,20 +657,27 @@
                 html2pdf().set(opt).from(element).save();
             },
 
-            switchTab(mode) {
-                document.getElementById('content-generate').classList.toggle('hidden', mode !== 'generate');
-                document.getElementById('content-ai').classList.toggle('hidden', mode !== 'ai');
-                document.getElementById('tab-gen').classList.toggle('active', mode === 'generate');
-                document.getElementById('tab-gen').classList.toggle('text-blue-400', mode === 'generate');
-                document.getElementById('tab-gen').classList.toggle('text-slate-400', mode !== 'generate');
-                document.getElementById('tab-ai').classList.toggle('active', mode === 'ai');
-                document.getElementById('tab-ai').classList.toggle('text-blue-400', mode === 'ai');
-                document.getElementById('tab-ai').classList.toggle('text-slate-400', mode !== 'ai');
+            toggleAISection(section) {
+                const el = document.getElementById(`ai-section-${section}`);
+                const btn = el.previousElementSibling;
+                const icon = btn.querySelector('svg');
+                const isHidden = el.classList.contains('hidden');
+                
+                // Close all sections first
+                document.getElementById('ai-section-resume').classList.add('hidden');
+                document.getElementById('ai-section-interview').classList.add('hidden');
+                document.querySelector('#ai-section-resume').previousElementSibling.querySelector('svg').classList.remove('rotate-180');
+                document.querySelector('#ai-section-interview').previousElementSibling.querySelector('svg').classList.remove('rotate-180');
+
+                if (isHidden) {
+                    el.classList.remove('hidden');
+                    icon.classList.add('rotate-180');
+                }
             },
 
-            copyText(id) {
-                const text = document.getElementById(id).innerText;
-                navigator.clipboard.writeText(text).then(() => alert('已複製內容！'));
+            copyText(id, isP = false) {
+                const text = document.getElementById(id)[isP ? 'innerText' : 'textContent'];
+                navigator.clipboard.writeText(text).then(() => alert('已複製內容！')).catch(err => console.error('Copy failed', err));
             }
         };
     </script>

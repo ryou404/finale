@@ -19,6 +19,8 @@
         }
         .fade-in { animation: fadeIn 0.6s ease-out forwards; opacity: 0; transform: translateY(10px); }
         @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .tag-pop-in { animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         /* --- Global Dark Mode --- */
         body, body * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
@@ -47,6 +49,11 @@
         body.dark-mode .border-slate-100 { border-color: #334155; }
         /* Gradients & Special Colors */
         body.dark-mode .bg-gradient-to-br { background: linear-gradient(to bottom right, #1e3a8a, #3730a3); }
+        
+        /* Autocomplete Dark Mode */
+        body.dark-mode #autocomplete-dropdown { background-color: #1e293b; border-color: #475569; }
+        body.dark-mode .autocomplete-item { color: #cbd5e1; }
+        body.dark-mode .autocomplete-item:hover { background-color: #334155; color: #f1f5f9; }
     </style>
 </head>
 <body class="min-h-screen hero-bg flex flex-col">
@@ -157,6 +164,23 @@
                         </div>
 
                         <div class="pt-6 border-t border-slate-100">
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-slate-600 ml-1">你擅長哪些工具或技術？</label>
+                                <p class="text-xs text-slate-400 ml-1">點擊下方熱門選項，或直接輸入你最自豪的武器（例如：Python, 影片剪輯, 專案管理...）</p>
+                                <div class="flex gap-2 relative">
+                                    <div class="relative flex-grow">
+                                        <input type="text" id="skill-input" class="input-field w-full px-4 py-3 rounded-xl bg-slate-50 border-2 border-transparent focus:bg-white focus:border-blue-200 outline-none text-slate-800 font-medium placeholder-slate-400" placeholder="輸入武器後按 Enter 或點擊新增" autocomplete="off">
+                                        <div id="autocomplete-dropdown" class="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl hidden max-h-48 overflow-y-auto"></div>
+                                    </div>
+                                    <button type="button" id="add-skill-btn" class="bg-blue-600 text-white px-5 rounded-xl font-bold hover:bg-blue-700 transition shrink-0">新增</button>
+                                </div>
+                                <div id="skills-container" class="flex flex-wrap gap-2 pt-3">
+                                    <!-- Tags will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-slate-100">
                             <div class="space-y-2 opacity-60">
                                 <label class="text-sm font-bold text-slate-600 ml-1">登入帳號 (Email)</label>
                                 <input type="email" id="email" disabled class="w-full px-4 py-3 rounded-xl bg-slate-100 border border-transparent text-slate-500 font-medium cursor-not-allowed">
@@ -166,6 +190,15 @@
                     </form>
                 </div>
             </div>
+        </div>
+
+        <!-- GDPR 資料下載 -->
+        <div class="max-w-4xl mx-auto mt-12 text-center fade-in" style="animation-delay: 0.4s;">
+            <button id="download-data-btn" class="bg-slate-100 text-slate-600 px-6 py-3 rounded-xl font-bold hover:bg-slate-200 transition shadow-sm flex items-center gap-2 mx-auto">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                下載我的數位履歷資料包
+            </button>
+            <p class="text-xs text-slate-400 mt-2">我們重視您的資料自主權 (GDPR)。</p>
         </div>
     </main>
 
@@ -180,7 +213,6 @@
         import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // [FIX] 內嵌 Firebase 設定
         const firebaseConfig = {
             apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
             authDomain: "ai-resume-health-check.firebaseapp.com",
@@ -195,41 +227,87 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // 設定問候語
-        const hour = new Date().getHours();
-        const greeting = hour < 12 ? "早安" : (hour < 18 ? "午安" : "晚安");
-        document.getElementById('greeting-text').innerText = `${greeting}，很高興見到你`;
+        const POPULAR_SKILLS = [
+            "Python", "Java", "C++", "C#", "JavaScript", "TypeScript",
+            "React", "Vue.js", "Node.js", "Spring Boot", "Django",
+            "Docker", "Kubernetes", "AWS", "GCP", "Linux",
+            "SQL", "MySQL", "MongoDB", "Redis",
+            "Git", "GitHub", "UI/UX Design", "Figma",
+            "Machine Learning", "Deep Learning", "PyTorch", "TensorFlow", "Data Analysis"
+        ];
 
-        // Dark Mode Logic
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-            darkModeToggle.checked = true;
-        }
-        
-        // [UPDATED] Dark Mode Toggle with Firebase Sync
-        darkModeToggle.addEventListener('change', async (e) => {
-            const isDark = e.target.checked;
-            document.body.classList.toggle('dark-mode', isDark);
-            localStorage.setItem('darkMode', isDark);
-            
-            // 如果已登入，同步設定到雲端
-            if (currentUser) {
+        window.ProfileApp = {
+            currentUser: null,
+            state: {
+                skills: new Set()
+            },
+
+            init() {
+                const hour = new Date().getHours();
+                const greeting = hour < 12 ? "早安" : (hour < 18 ? "午安" : "晚安");
+                document.getElementById('greeting-text').innerText = `${greeting}，很高興見到你`;
+
+                const darkModeToggle = document.getElementById('dark-mode-toggle');
+                if (localStorage.getItem('darkMode') === 'true') {
+                    document.body.classList.add('dark-mode');
+                    darkModeToggle.checked = true;
+                }
+                darkModeToggle.addEventListener('change', (e) => this.toggleDarkMode(e.target.checked));
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        this.currentUser = user;
+                        this.loadUserData(user);
+                    } else {
+                        alert('請先登入系統，以啟用 AI 職涯導航與專屬數據儲存功能！');
+                        window.location.href = 'index.html';
+                    }
+                });
+
+                document.getElementById('save-btn').addEventListener('click', (e) => { e.preventDefault(); this.saveProfile(); });
+                document.getElementById('grade').addEventListener('change', (e) => this.syncGrade(e.target.value));
+                
+                const skillInput = document.getElementById('skill-input');
+                document.getElementById('add-skill-btn').addEventListener('click', () => this.addSkill());
+                skillInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.addSkill(); } });
+                skillInput.addEventListener('input', (e) => this.handleSkillInput(e));
+                
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#skill-input') && !e.target.closest('#autocomplete-dropdown')) {
+                        this.hideAutocomplete();
+                    }
+                });
+                document.getElementById('download-data-btn').addEventListener('click', () => this.downloadUserData());
+            },
+
+            async toggleDarkMode(isDark) {
+                document.body.classList.toggle('dark-mode', isDark);
+                localStorage.setItem('darkMode', isDark);
+                if (this.currentUser) {
+                    try {
+                        await setDoc(doc(db, "users", this.currentUser.uid), { settings: { darkMode: isDark } }, { merge: true });
+                    } catch(err) { console.error("Settings sync failed", err); }
+                }
+            },
+
+            showToast(message, isSuccess = true) {
+                const toast = document.getElementById('toast');
+                toast.querySelector('span').innerText = message;
+                toast.querySelector('svg').innerHTML = isSuccess ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>` : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>`;
+                toast.querySelector('svg').setAttribute('class', isSuccess ? 'w-5 h-5 text-green-400' : 'w-5 h-5 text-red-400');
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+            },
+
+            async syncGrade(newGrade) {
+                if (!this.currentUser || !newGrade) return;
                 try {
-                    await setDoc(doc(db, "users", currentUser.uid), { 
-                        settings: { darkMode: isDark } 
-                    }, { merge: true });
-                } catch(err) { console.error("Settings sync failed", err); }
-            }
-        });
+                    await setDoc(doc(db, "users", this.currentUser.uid), { grade: newGrade }, { merge: true });
+                    this.showToast(`已切換為 ${newGrade} 標準，履歷健檢將自動更新！`);
+                } catch (err) { console.error("Grade sync failed", err); }
+            },
 
-        const form = document.getElementById('profileForm');
-        const saveBtn = document.getElementById('save-btn');
-        let currentUser = null;
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
+            async loadUserData(user) {
                 document.getElementById('email').value = user.email;
                 document.getElementById('display-email').innerText = user.email;
                 document.getElementById('avatar-text').innerText = (user.displayName || user.email).charAt(0).toUpperCase();
@@ -242,70 +320,168 @@
                         document.getElementById('school').value = data.school || '';
                         document.getElementById('department').value = data.department || '';
                         document.getElementById('grade').value = data.grade || '';
-                        
                         if(data.name) document.getElementById('display-name').innerText = data.name;
+
+                        this.state.skills = new Set(data.skills || []);
+                        this.renderSkills();
                         
-                        // [NEW] 讀取雲端設定 (依照帳號為主)
                         if (data.settings && data.settings.darkMode !== undefined) {
-                            const cloudDark = data.settings.darkMode;
-                            // 更新本地狀態以符合雲端
-                            localStorage.setItem('darkMode', cloudDark);
-                            document.body.classList.toggle('dark-mode', cloudDark);
-                            darkModeToggle.checked = cloudDark;
+                            this.toggleDarkMode(data.settings.darkMode);
+                            document.getElementById('dark-mode-toggle').checked = data.settings.darkMode;
                         }
                     } else {
                         document.getElementById('display-name').innerText = user.displayName || "新朋友";
                     }
-                } catch (e) {
-                    console.error("Error loading profile:", e);
+                } catch (e) { console.error("Error loading profile:", e); }
+            },
+
+            async saveProfile() {
+                if (!this.currentUser) return;
+                const saveBtn = document.getElementById('save-btn');
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> 儲存中...`;
+
+                try {
+                    const updatedData = {
+                        name: document.getElementById('username').value,
+                        school: document.getElementById('school').value,
+                        department: document.getElementById('department').value,
+                        grade: document.getElementById('grade').value,
+                        skills: Array.from(this.state.skills),
+                        updatedAt: new Date()
+                    };
+                    
+                    await setDoc(doc(db, "users", this.currentUser.uid), updatedData, { merge: true });
+                    await updateProfile(this.currentUser, { displayName: updatedData.name });
+                    
+                    const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
+                    if (savedUser.email) {
+                        savedUser.name = updatedData.name;
+                        localStorage.setItem('careerDNA_user', JSON.stringify(savedUser));
+                    }
+                    
+                    document.getElementById('display-name').innerText = updatedData.name;
+                    document.getElementById('avatar-text').innerText = updatedData.name.charAt(0).toUpperCase();
+                    this.showToast("資料更新成功！");
+                } catch (error) {
+                    alert("更新失敗：" + error.message);
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = `<span>儲存變更</span>`;
                 }
-            } else {
-                window.location.href = 'index.html';
-            }
-        });
+            },
 
-        saveBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            if (!currentUser) return;
-
-            saveBtn.disabled = true;
-            saveBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> 儲存中...`;
-
-            try {
-                const updatedData = {
-                    name: document.getElementById('username').value,
-                    school: document.getElementById('school').value,
-                    department: document.getElementById('department').value,
-                    grade: document.getElementById('grade').value,
-                    updatedAt: new Date()
-                };
-                
-                await setDoc(doc(db, "users", currentUser.uid), updatedData, { merge: true });
-                
-                // [FIX] 同步更新 Firebase Auth Profile 與 LocalStorage，確保首頁名稱即時變更
-                await updateProfile(currentUser, { displayName: updatedData.name });
-                
-                const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
-                if (savedUser.email) {
-                    savedUser.name = updatedData.name;
-                    localStorage.setItem('careerDNA_user', JSON.stringify(savedUser));
+            handleSkillInput(e) {
+                const val = e.target.value.trim().toLowerCase();
+                if (!val) {
+                    this.hideAutocomplete();
+                    return;
                 }
-                
-                // Update UI immediately
-                document.getElementById('display-name').innerText = updatedData.name;
-                document.getElementById('avatar-text').innerText = updatedData.name.charAt(0).toUpperCase();
+                const matches = POPULAR_SKILLS.filter(s => s.toLowerCase().includes(val) && !this.state.skills.has(s));
+                this.renderAutocomplete(matches);
+            },
 
-                // Show Toast
-                const toast = document.getElementById('toast');
-                toast.classList.remove('translate-y-20', 'opacity-0');
-                setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
-            } catch (error) {
-                alert("更新失敗：" + error.message);
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = `<span>儲存變更</span>`;
+            renderAutocomplete(matches) {
+                const dropdown = document.getElementById('autocomplete-dropdown');
+                if (matches.length === 0) {
+                    this.hideAutocomplete();
+                    return;
+                }
+                dropdown.innerHTML = matches.map(s => `
+                    <div class="autocomplete-item px-4 py-2.5 cursor-pointer hover:bg-blue-50 text-slate-700 text-sm transition font-medium" onclick="ProfileApp.selectSkill('${s}')">
+                        ${s}
+                    </div>
+                `).join('');
+                dropdown.classList.remove('hidden');
+            },
+
+            hideAutocomplete() {
+                document.getElementById('autocomplete-dropdown').classList.add('hidden');
+            },
+
+            selectSkill(skill) {
+                document.getElementById('skill-input').value = skill;
+                this.hideAutocomplete();
+                this.addSkill();
+            },
+
+            addSkill() {
+                const skillInput = document.getElementById('skill-input');
+                const skill = skillInput.value.trim();
+                if (skill && !this.state.skills.has(skill)) {
+                    this.state.skills.add(skill);
+                    this.renderSkills(skill);
+                    this.syncSkills();
+                }
+                skillInput.value = '';
+                skillInput.focus();
+                this.hideAutocomplete();
+            },
+
+            removeSkill(skillToRemove) {
+                this.state.skills.delete(skillToRemove);
+                this.renderSkills();
+                this.syncSkills();
+            },
+
+            renderSkills(newSkill = null) {
+                document.getElementById('skills-container').innerHTML = Array.from(this.state.skills).map(skill => `
+                    <div class="flex items-center gap-1 bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1.5 rounded-full dark:bg-blue-900/50 dark:text-blue-300 ${skill === newSkill ? 'tag-pop-in' : ''}">
+                        <span>${skill}</span>
+                        <button type="button" onclick="ProfileApp.removeSkill('${skill}')" class="text-blue-500 hover:text-blue-700 dark:hover:text-blue-200">&times;</button>
+                    </div>
+                `).join('');
+            },
+            
+            async syncSkills() {
+                if (!this.currentUser) return;
+                try {
+                    const skillsArray = Array.from(this.state.skills);
+                    await setDoc(doc(db, "users", this.currentUser.uid), { skills: skillsArray }, { merge: true });
+                    
+                    const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
+                    if (savedUser.email) {
+                        savedUser.skills = skillsArray;
+                        localStorage.setItem('careerDNA_user', JSON.stringify(savedUser));
+                    }
+                } catch (err) {
+                    console.error("Skills sync failed", err);
+                }
+            },
+
+            async downloadUserData() {
+                if (!this.currentUser) {
+                    this.showToast('請先登入系統。', false);
+                    return;
+                }
+                try {
+                    this.showToast('正在準備您的數位履歷資料包...');
+                    const userSnap = await getDoc(doc(db, "users", this.currentUser.uid));
+                    const fullUserData = userSnap.exists() ? userSnap.data() : {};
+                    
+                    // 加入基本識別資訊與匯出戳記
+                    fullUserData.uid = this.currentUser.uid;
+                    fullUserData.email = this.currentUser.email;
+                    fullUserData.exportDate = new Date().toISOString();
+
+                    const blob = new Blob([JSON.stringify(fullUserData, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `careerDNA_GDPR_Export_${this.currentUser.uid}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    this.showToast('✅ 資料包下載完成！包含所有測驗與 AI 紀錄。');
+                } catch (err) {
+                    console.error('匯出資料失敗', err);
+                    this.showToast('下載失敗，請稍後再試。', false);
+                }
             }
-        });
+        };
+
+        document.addEventListener('DOMContentLoaded', () => ProfileApp.init());
     </script>
 </body>
 </html>

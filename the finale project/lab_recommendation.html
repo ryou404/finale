@@ -129,7 +129,7 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a id="btn-career-fit" href="carrer fit.html" class="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-purple-700 transition shadow-lg flex items-center justify-center gap-2">
+                        <a id="btn-career-fit" href="career_fit.html" class="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-purple-700 transition shadow-lg flex items-center justify-center gap-2">
                             查看該系所必修課 &rarr;
                         </a>
                         <button onclick="location.reload()" class="px-8 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition">
@@ -145,7 +145,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
@@ -161,7 +161,13 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         let currentUser = null;
-        onAuthStateChanged(auth, (user) => currentUser = user);
+        onAuthStateChanged(auth, (user) => {
+            if (user) currentUser = user;
+            else {
+                alert('請先登入系統，以啟用 AI 職涯導航與專屬數據儲存功能！');
+                window.location.href = 'index.html';
+            }
+        });
 
         const QUESTIONS = [
             {
@@ -312,19 +318,34 @@
 
                 // Update Link to Career Fit
                 const btn = document.getElementById('btn-career-fit');
-                btn.href = `carrer fit.html?dept=${winner}`;
+                btn.href = `career_fit.html?dept=${winner}`;
                 btn.innerHTML = `查看 ${winner} 必修課 &rarr;`;
 
                 // [NEW] 儲存結果到 Firebase
                 if (currentUser) {
                     try {
-                        await setDoc(doc(db, "users", currentUser.uid, "lab_results", "latest"), {
+                        const batch = writeBatch(db);
+                        const resultData = {
                             dept: winner,
                             deptName: data.title,
                             date: new Date().toISOString(),
                             scores: this.scores
-                        });
-                        console.log("✅ 推薦結果已儲存");
+                        };
+                        
+                        // 1. 保存歷史快照
+                        const historyRef = doc(collection(db, "users", currentUser.uid, "history_lab"));
+                        batch.set(historyRef, resultData);
+
+                        // 2. 更新聚合快取
+                        const userRef = doc(db, "users", currentUser.uid);
+                        batch.set(userRef, {
+                            summary_cache: {
+                                lab: { dept: winner, deptName: data.title, date: resultData.date }
+                            }
+                        }, { merge: true });
+
+                        await batch.commit();
+                        console.log("✅ 推薦結果已儲存 (歷史快照 + 聚合快取)");
                     } catch (e) {
                         console.error("儲存失敗", e);
                     }
