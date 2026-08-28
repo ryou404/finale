@@ -153,10 +153,20 @@
                 <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
             </div>
 
-            <div>
+            <div class="flex items-center gap-4">
                 <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> 返回首頁
                 </a>
+                <div id="nav-auth-section" class="flex items-center gap-4 border-l border-klein/10 pl-4">
+                    <button id="nav-login-btn" onclick="window.App.login()" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入 / 註冊</button>
+                    <div id="nav-user-info" class="hidden flex items-center gap-3">
+                        <div class="flex flex-col text-right">
+                            <span id="nav-user-name" class="text-xs font-bold text-klein"></span>
+                            <button onclick="window.App.logout()" class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
+                        </div>
+                        <div id="nav-user-avatar" class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -177,7 +187,7 @@
             
             <!-- Grade Switcher Dropdown -->
             <div class="relative min-w-[240px] shrink-0">
-                <label class="block font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40 mb-1.5">GRADE_TRACK // 年級視角</label>
+                <label class="block font-bold text-klein/60 mb-1.5 text-xs">年級視角</label>
                 <div class="relative">
                     <select id="grade-selector" onchange="window.App.changeGrade(this.value)" class="w-full px-4 py-3 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-xs font-bold uppercase tracking-wider appearance-none cursor-pointer">
                         <option value="大一">大一 / 大二 (基礎打底期)</option>
@@ -326,7 +336,6 @@
                     <div class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1">
                         <div class="flex justify-between items-center border-b border-klein/10 pb-4 mb-6">
                             <div>
-                                <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40">TELEMETRY // REALTIME_STATS</span>
                                 <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">即時戰力儀表板</h3>
                             </div>
                             <div class="text-right">
@@ -376,7 +385,6 @@
 
                     <!-- 3-Axis ATS Dimension Progress Bars -->
                     <div class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2">
-                        <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40">AUDIT // ATS_GOLDEN_TRIANGLE</span>
                         <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6">AI 履歷三大維度檢核</h3>
                         
                         <div class="space-y-6">
@@ -425,7 +433,6 @@
                                 <i class="fa-solid fa-compass animate-spin" style="animation-duration: 8s;"></i>
                             </div>
                             <div>
-                                <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40">OUTPUT // ADVISORY_REPORT</span>
                                 <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">AI 職涯顧問導航報告</h3>
                             </div>
                         </div>
@@ -465,7 +472,6 @@
             
             <div class="flex items-center justify-between border-b border-klein/10 pb-4 mb-6">
                 <div>
-                    <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40">SYS // OFFLINE_AI_FALLBACK</span>
                     <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
                         <i class="fa-solid fa-triangle-exclamation text-flame-orange text-sm"></i>
                         手動 AI 降級模式 (Manual Mode)
@@ -515,18 +521,18 @@
     <!-- Global Footer -->
     <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
         <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-            &copy; 2026 Providence University // CareerDNA Engine
+            
         </div>
         <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
-            <span class="hidden sm:inline">LATENCY: &lt;12ms</span>
+            
+            
         </div>
     </footer>
 
     <!-- Application Script Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
 
@@ -674,6 +680,7 @@
                     if (user) {
                         currentUser = user;
                         document.getElementById('nav-user-info').classList.remove('hidden');
+                        document.getElementById('nav-login-btn').classList.add('hidden');
                         document.getElementById('nav-user-name').innerText = user.displayName || 'User';
                         document.getElementById('nav-user-avatar').innerText = (user.displayName || 'U').charAt(0).toUpperCase();
 
@@ -885,7 +892,27 @@
                 this.restoreSelections(true);
             },
 
-            setupTrackUI(grade) {
+            
+            async login() {
+                try {
+                    const provider = new GoogleAuthProvider();
+                    await signInWithPopup(auth, provider);
+                } catch (error) {
+                    console.error("Login Error:", error);
+                    alert("登入失敗：" + error.message);
+                }
+            },
+            async logout() {
+                try {
+                    await signOut(auth);
+                    document.getElementById('nav-user-info').classList.add('hidden');
+                    document.getElementById('nav-login-btn').classList.remove('hidden');
+                    this.showToast('已登出');
+                } catch (error) {
+                    console.error("Logout Error:", error);
+                }
+            },
+setupTrackUI(grade) {
                 const deptNames = { CS: '資工系', IM: '資管系', AI: 'AI系' };
                 const deptDisplay = this.state.dept ? `（${deptNames[this.state.dept] || this.state.dept}）` : '';
                 const config = {
@@ -1234,24 +1261,25 @@
                         actionItems.push("📚 【學業扎根】目前專業學分完成度偏低，建議下學期優先將系上核心或實務課程修滿，打好地基。");
                     }
 
-                    const draftText = document.getElementById('resume-draft-input').value.trim() || '無';
+                    
+                      const hollandCode = localStorage.getItem('cdna_primary_holland') || '未知';
+                      let hollandTrait = '';
+                      switch(hollandCode.charAt(0).toUpperCase()) {
+                          case 'R': hollandTrait = '【個人特質優勢】：具備強烈的實務執行力與解決問題的能力，擅長透過動手操作與工具應用來達成目標，重視具體成果。'; break;
+                          case 'I': hollandTrait = '【個人特質優勢】：具備出色的分析與邏輯思考能力，擅長研究複雜問題、挖掘數據背後的洞察，並提出基於證據的解決方案。'; break;
+                          case 'A': hollandTrait = '【個人特質優勢】：擁有豐富的創造力與獨特的視角，擅長將創新思維融入專案設計中，具備優異的美感與靈活的表達能力。'; break;
+                          case 'S': hollandTrait = '【個人特質優勢】：具備高度的同理心與溝通協調能力，擅長團隊合作、跨部門溝通，並能有效協助團隊達成共識。'; break;
+                          case 'E': hollandTrait = '【個人特質優勢】：具備卓越的領導力與商業敏銳度，擅長發起專案、說服他人，並能帶領團隊在快節奏環境中達成目標。'; break;
+                          case 'C': hollandTrait = '【個人特質優勢】：具備極高的細心度與組織規劃能力，擅長流程優化、資料管理，並能在工作中維持高度的精確與穩定性。'; break;
+                          default: hollandTrait = '【個人特質優勢】：具備快速學習與適應環境的能力，重視團隊合作與專業成長。';
+                      }
+const draftText = document.getElementById('resume-draft-input').value.trim() || '無';
                     const expNames = Array.from(this.state.selectedExps).map(id => {
                         const found = EXPERIENCES.find(e => e.id === id);
                         return found ? found.name : id;
                     }).join(', ') || '無';
 
-                    const resumeMarkdown = `### 個人簡介
-(本報告由本地靜態規則引擎生成)
-
-### 專業技能
-${(this.state.skills || []).join(', ') || '尚未建立'}
-
-### 實務經驗與修課紀錄
-- 實務經驗：${expNames}
-- 已修課程：${Array.from(this.state.selectedCourses).join(', ') || '無'} (${this.state.selectedCourses.size} 門)
-
-### 原始草稿參考
-${draftText}`;
+                    const resumeMarkdown = `# 履歷表 (Resume)\n\n## 關於我 (About Me)\n[請在此用 2-3 句話總結您的核心優勢與目標職位]\n* ${hollandTrait}\n${draftText ? '\n**使用者草稿/簡介：**\n' + draftText : ''}\n\n## 專業技能 (Professional Skills)\n> 💡 *Yourator 履歷指南建議：避免使用無意義的「能量條」圖表，請直接列出並以熟練度分類，讓人資一目了然。*\n\n- **核心技能 (精通)**：${(this.state.skills || []).slice(0,3).join(', ') || '請填寫您最擅長的 3-5 項技能'}\n- **熟悉工具 (進階)**：${(this.state.skills || []).slice(3).join(', ') || '請填寫相關軟體或工具'}\n\n## 專案與實務經歷 (Experience & Projects)\n> 💡 *1111 人力銀行與人資專家建議：避免「許多」、「善於」等抽象詞彙。請採用「Micro-STAR」與「Google XYZ」量化句型。*\n\n### ${expNames || '[請填寫專案或公司名稱]'}\n- **[Situation / Task 情境與任務]**：在什麼情境下，面臨什麼挑戰或任務？\n- **[Action 具體行動]**：你具體採取了什麼行動？使用了什麼技術或工具？\n- **[Result 成果表現 (Google XYZ)]**：達成 [X] 成果，以 [Y] 數據為衡量指標，透過 [Z] 方法完成。\n  *(範例：透過優化資料庫查詢結構 (Z)，成功將系統載入時間降低 30% (Y)，大幅提升了整體用戶體驗 (X)。)*\n\n## 學歷與進修 (Education)\n- **系所**：${localStorage.getItem('cdna_department') || this.state.dept || '未知科系'} (年級：${this.state.grade})\n- **專業修課紀錄**：${Array.from(this.state.selectedCourses).join(', ') || '無'} (${this.state.selectedCourses.size} 門)\n`;
 
                     const result = {
                         quantifiability: quantScore,
@@ -1327,7 +1355,7 @@ ${localContext}
   "keywordRelevance": 70,
   "analysis": "整體分析與具體的職位對接建議 (HTML 格式，使用 <strong> 與 <br>)",
   "actionItems": ["具體行動建議 1", "具體行動建議 2 (必須包含具體的校內修課建議，例如推薦去修資料庫或演算法)"],
-  "resumeMarkdown": "在此撰寫一份排版專業的 Markdown 履歷。請將上述的課程、實務經歷、技能，結合使用者的草稿擴寫成流暢的個人簡介與經歷列表。不要寫在 code block 裡，這是一個字串。"
+  "resumeMarkdown": "在此撰寫一份符合企業的 Markdown 履歷。\n1. 【個人簡介】：請結合學生的 UCAN 類型(\${holland})與草稿，撰寫一段突顯其個人特質與軟實力的簡介。\n2. 【經歷改寫】：必須使用『Micro-STAR』以及『Google XYZ 句型』改寫經歷。\n3. 【嚴格限制】：絕對禁止過度美化或捏造數據。只能重組使用者提供的內容，不可無中生有，請保持大學生的誠懇質樸。不要寫在 code block 裡，就是一個字串。"
 }
 注意：
 1. 評分與建議請以「大學生/應屆畢業生」的合理標準出發，不要使用過度浮誇的商業行銷術語，請保持大學生真實、質樸但具備潛力的語氣。

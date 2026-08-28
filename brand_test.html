@@ -425,43 +425,7 @@
                     <div id="action-plan-timeline" class="space-y-4 divide-y divide-klein/10"></div>
                 </div>
 
-                <!-- AI Copilot Closed-Loop Hub (no-print) -->
-                <div class="p-8 bg-white border border-klein/20 crosshair-corner no-print">
-                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> AI 閉環互動模組 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">AI_COPILOT</span>
-                    </h3>
-                    <div class="space-y-4">
-                        <!-- Resume Highlight Accordion -->
-                        <div class="border border-klein/15">
-                            <button onclick="window.app.toggleAISection('resume')" class="w-full text-left flex justify-between items-center p-4 bg-klein/5 hover:bg-klein/10 transition font-heading font-bold text-base text-klein">
-                                <span class="flex items-center gap-2">📝 產生 104 自傳亮點</span>
-                                <i class="fa-solid fa-chevron-down text-klein/60 transition-transform"></i>
-                            </button>
-                            <div id="ai-section-resume" class="hidden p-5 bg-white border-t border-klein/15">
-                                <pre id="resume-draft" class="whitespace-pre-wrap font-body text-sm text-klein/80 leading-relaxed"></pre>
-                                <button onclick="window.app.copyText('resume-draft')" class="hover-spring mt-4 w-full py-3 bg-klein text-white hover:bg-klein/90 font-heading font-bold uppercase tracking-wider text-xs flex items-center justify-center gap-2 rounded-none">
-                                    <i class="fa-solid fa-copy"></i> 複製自傳亮點
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Interview Question Accordion -->
-                        <div class="border border-klein/15">
-                            <button onclick="window.app.toggleAISection('interview')" class="w-full text-left flex justify-between items-center p-4 bg-klein/5 hover:bg-klein/10 transition font-heading font-bold text-base text-klein">
-                                <span class="flex items-center gap-2">🎤 AI 模擬面試題目</span>
-                                <i class="fa-solid fa-chevron-down text-klein/60 transition-transform"></i>
-                            </button>
-                            <div id="ai-section-interview" class="hidden p-5 bg-white border-t border-klein/15">
-                                <p id="interview-question" class="font-mono text-sm text-klein font-semibold leading-relaxed"></p>
-                                <button onclick="window.app.copyText('interview-question', true)" class="hover-spring mt-4 w-full py-3 bg-klein text-white hover:bg-klein/90 font-heading font-bold uppercase tracking-wider text-xs flex items-center justify-center gap-2 rounded-none">
-                                    <i class="fa-solid fa-robot"></i> 複製面試題目
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-
-            </div>
         </div>
 
         <!-- Retake Button -->
@@ -1145,13 +1109,7 @@
                     `).join('');
                 }
 
-                // 11. AI Copilot Accordions Content
-                const resumeDraftEl = document.getElementById('resume-draft');
-                if (resumeDraftEl) resumeDraftEl.innerText = roleInfo.resumeHighlight;
                 
-                const interviewQEl = document.getElementById('interview-question');
-                if (interviewQEl) interviewQEl.innerText = roleInfo.interviewQuestion;
-            },
 
             drawRadar(data) {
                 const svg = document.getElementById('radar-chart');
