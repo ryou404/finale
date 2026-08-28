@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth bg-white text-klein">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerDNA | 個人檔案與技能庫</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Syne, Inter, Noto Sans TC, Chakra Petch, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        klein: '#002fa7',
+                        'deep-klein': '#001a5e',
+                        cobalt: '#1a4ec4',
+                        'electric-blue': '#00e5ff',
+                        'flame-orange': '#ff4500'
+                    },
+                    fontFamily: {
+                        syne: ['"Syne"', 'sans-serif'],
+                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"Chakra Petch"', '"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #002fa7;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Stryde Spring Animations */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(30px) scale(0.99);
+            transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* Interactive Spring Lift */
+        .hover-spring {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+        .hover-spring:hover {
+            transform: translateY(-6px) scale(1.01) !important;
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.08) !important;
+            z-index: 50;
+        }
+
+        /* Brutalist Crosshairs */
+        .crosshair-corner {
+            position: relative;
+        }
+        .crosshair-corner::before, .crosshair-corner::after {
+            content: '+';
+            position: absolute;
+            color: rgba(0, 47, 167, 0.3);
+            font-family: monospace;
+            font-size: 1rem;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .crosshair-corner::before { top: -8px; left: -4px; }
+        .crosshair-corner::after { bottom: -8px; right: -4px; }
+
+        /* Outline Display Typography */        .outline-text {
+            color: #ffffff;
+            -webkit-text-stroke: 1.5px #002fa7;
+            paint-order: stroke fill;
+            transition: all 0.4s ease;
+        }
+        .outline-text:hover {
+            color: #002fa7;
+            -webkit-text-stroke: 1.5px transparent;
+        }
+
+        /* Brutalist Form Controls */
+        input, select, textarea {
+            background-color: #ffffff !important;
+            border: 1px solid rgba(0, 47, 167, 0.2) !important;
+            color: #002fa7 !important;
+            border-radius: 0 !important;
+            font-family: 'Chakra Petch', 'Noto Sans TC', sans-serif !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #002fa7 !important;
+            outline: none !important;
+            box-shadow: 0 0 0 1px #002fa7 !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #ffffff; }
+        ::-webkit-scrollbar-thumb { background: #a3bdf2; }
+        ::-webkit-scrollbar-thumb:hover { background: #002fa7; }
+
+        /* Autocomplete scroll styling */
+        #autocomplete-dropdown::-webkit-scrollbar { width: 4px; }
+        #autocomplete-dropdown::-webkit-scrollbar-thumb { background: #002fa7; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col">
+    <script>
+      // Apply dark mode instantly to prevent FOUC (Flash of Unstyled Content)
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+      }
+    </script>
+
+    <!-- Global Navigation Bar -->
+    <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-4 group">
+                <div class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">USER_PROFILE // v2026</span>
+                </div>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">個人檔案</a>
+                <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
+                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+            </div>
+
+            <div>
+                <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> 返回首頁
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Title Banner (Hero Display) -->
+    <section class="max-w-[1400px] mx-auto border-x border-klein/10 px-6 md:px-12 pt-28 pb-10 crosshair-corner">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-klein/10 pb-8 reveal-up">
+            <div>
+                
+                <h1 class="font-syne font-extrabold text-4xl md:text-6xl uppercase tracking-tight text-klein flex items-center gap-3">
+                    Profile <span class="outline-text">Settings</span>
+                </h1>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Main Content Dual-Column Layout -->
+    <main class="flex-grow max-w-[1400px] mx-auto w-full border-x border-klein/10 px-6 md:px-12 pb-24">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- ================= LEFT COLUMN: Identity & Greeting (4 Cols) ================= -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- Identity Monogram Card -->
+                <div class="p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1 flex flex-col items-center text-center">
+                    
+                    <!-- Technical Identity Monogram Icon Box -->
+                    <div class="w-20 h-20 border border-klein/20 flex items-center justify-center text-klein font-syne font-black text-3xl mb-6 relative bg-klein/[0.02]">
+                        <i class="fa-solid fa-user-astronaut"></i>
+                        <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border border-white"></div>
+                    </div>
+
+                    <h2 id="display-name" class="font-heading font-black text-2xl uppercase tracking-tight text-klein mb-1">
+                        載入中...
+                    </h2>
+                    <p id="display-email" class="font-mono text-xs text-klein/50 tracking-wider mb-6">
+                        ...
+                    </p>
+
+                    <!-- Academic Info Display (Injected via JS updateAcademicDisplay) -->
+                    <div id="academic-info-display" class="w-full space-y-2 text-left pt-6 border-t border-klein/10">
+                        <!-- Dynamic Pill Badges generated by updateAcademicDisplay() -->
+                    </div>
+                </div>
+
+                <!-- System Greeting & Mission Briefing Card -->
+                <div class="p-8 bg-klein text-white border border-klein crosshair-corner reveal-up reveal-delay-2 flex flex-col justify-between">
+                    <div>
+                        <div class="font-mono text-xs uppercase tracking-[0.2em] text-white/60 mb-2">SYS // BRIEFING</div>
+                        <h3 class="font-heading font-black text-xl uppercase mb-3 flex items-center gap-2">
+                            <span id="greeting-text">早安，很高興見到你</span>
+                        </h3>
+                        <p class="font-body text-white/80 text-sm leading-relaxed mb-6">
+                            完善學籍與技能武器庫，將使 AI 履歷健檢與科系適配引擎獲得更高維度的精準判讀。
+                        </p>
+                    </div>
+                    <div class="font-mono text-xs text-white/40 tracking-[0.2em] uppercase border-t border-white/10 pt-4 flex items-center justify-between">
+                        <span>CAREER_DNA_CORE</span>
+                        <span><i class="fa-solid fa-shield-halved"></i> 256-BIT LOCAL_SYNC</span>
+                    </div>
+                </div>
+
+                <!-- Quick Jump Navigation Card -->
+                <div class="p-6 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-3">
+                    <div class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-klein/40 mb-4">NAV // QUICK_OPERATIONS</div>
+                    <div class="space-y-3">
+                        <a href="career_fit_v2.html" class="flex items-center justify-between p-3 border border-klein/10 hover:border-klein text-klein text-xs font-mono font-bold tracking-wider hover:bg-klein hover:text-white transition-all group">
+                            <span>01 前往履歷健檢</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <a href="brand_test.html" class="flex items-center justify-between p-3 border border-klein/10 hover:border-klein text-klein text-xs font-mono font-bold tracking-wider hover:bg-klein hover:text-white transition-all group">
+                            <span>02 個人品牌測驗</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <a href="lab_recommendation.html" class="flex items-center justify-between p-3 border border-klein/10 hover:border-klein text-klein text-xs font-mono font-bold tracking-wider hover:bg-klein hover:text-white transition-all group">
+                            <span>03 科系適配診斷</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ================= RIGHT COLUMN: Form & Skill Arsenal (8 Cols) ================= -->
+            <div class="lg:col-span-8 space-y-8">
+                
+                <!-- Master Profile Form Card -->
+                <div class="p-8 md:p-12 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1">
+                    
+                    <!-- Section Header with Save Button -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-klein/10 pb-6 mb-8">
+                        <div>
+                            <div class="h-2"></div>
+                            <h2 class="font-heading font-black text-2xl uppercase tracking-tight text-klein">基本資料設定</h2>
+                        </div>
+                        <button id="save-btn" class="hover-spring bg-klein text-white font-heading font-bold text-sm uppercase tracking-wider px-8 py-3.5 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-floppy-disk text-xs"></i>
+                            <span>儲存變更</span>
+                        </button>
+                    </div>
+
+                    <!-- Form -->
+                    <form id="profileForm" class="space-y-8">
+                        
+                        <!-- 2x2 Grid of Main Inputs -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            <!-- Name Input -->
+                            <div class="space-y-2">
+                                <label class="font-mono text-xs font-bold uppercase tracking-wider text-klein flex items-center gap-2">
+                                    <i class="fa-solid fa-id-card text-klein/40"></i> 怎麼稱呼您？ (Name)
+                                </label>
+                                <input type="text" id="username" class="w-full px-4 py-3.5 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-sm" placeholder="您的姓名或暱稱">
+                            </div>
+
+                            <!-- School Input -->
+                            <div class="space-y-2">
+                                <label class="font-mono text-xs font-bold uppercase tracking-wider text-klein flex items-center gap-2">
+                                    <i class="fa-solid fa-graduation-cap text-klein/40"></i> 就讀學校 (School)
+                                </label>
+                                <input type="text" id="school" class="w-full px-4 py-3.5 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-sm" placeholder="例如：靜宜大學">
+                            </div>
+
+                            <!-- Department Select -->
+                            <div class="space-y-2">
+                                <label class="font-mono text-xs font-bold uppercase tracking-wider text-klein flex items-center gap-2">
+                                    <i class="fa-solid fa-diagram-project text-klein/40"></i> 系所 / 專業 (Department)
+                                </label>
+                                <div class="relative">
+                                    <select id="department" class="w-full px-4 py-3.5 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-sm appearance-none cursor-pointer">
+                                        <option value="">請選擇靜宜大學現有系所</option>
+                                        <option value="CS">資訊工程學系 (CS)</option>
+                                        <option value="IM">資訊管理學系 (IM)</option>
+                                        <option value="AI">人工智慧學系 (AI)</option>
+                                    </select>
+                                    <div class="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-klein/40">
+                                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Grade Select -->
+                            <div class="space-y-2">
+                                <label class="font-mono text-xs font-bold uppercase tracking-wider text-klein flex items-center gap-2">
+                                    <i class="fa-solid fa-layer-group text-klein/40"></i> 目前年級 (Grade)
+                                </label>
+                                <div class="relative">
+                                    <select id="grade" class="w-full px-4 py-3.5 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-sm appearance-none cursor-pointer">
+                                        <option value="">請選擇年級</option>
+                                        <option value="大一">大一 (Freshman)</option>
+                                        <option value="大二">大二 (Sophomore)</option>
+                                        <option value="大三">大三 (Junior)</option>
+                                        <option value="大四">大四 (Senior)</option>
+                                        <option value="碩士">碩士 (Master)</option>
+                                    </select>
+                                    <div class="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-klein/40">
+                                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Theme Switcher Section -->
+                        <div class="pt-8 border-t border-klein/10">
+                            <div class="flex items-center justify-between p-5 border border-klein/10 bg-klein/[0.02]">
+                                <div>
+                                    <div class="h-2"></div>
+                                    <h3 class="font-heading font-black text-lg uppercase tracking-tight text-klein">深色模式 (Dark Mode)</h3>
+                                    <p class="font-body text-xs text-klein/60 mt-1">切換全站極黑 Cyber-HUD 與經典純白賽博極簡主題。</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
+                                    <div class="w-12 h-6 border border-klein/30 bg-white peer-focus:outline-none peer peer-checked:after:translate-x-6 peer-checked:after:bg-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-klein after:border after:border-klein after:h-4 after:w-4 after:transition-all peer-checked:bg-klein"></div>
+                                </label>
+                            </div>
+                        </div>
+
+
+                        <!-- Email Field (Read Only) -->
+                        <div class="pt-8 border-t border-klein/10">
+                            <div class="space-y-2 opacity-70">
+                                <label class="font-mono text-xs font-bold uppercase tracking-wider text-klein flex items-center gap-2">
+                                    <i class="fa-solid fa-lock text-klein/40"></i> 登入帳號 (Email)
+                                </label>
+                                <input type="email" id="email" disabled class="w-full px-4 py-3.5 bg-klein/5 border border-klein/10 text-klein/60 font-mono text-sm cursor-not-allowed">
+                                <p class="font-mono text-[11px] text-klein/40">* 帳號電子郵件由認證中心鎖定，無法手動變更</p>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                </div>
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
+        <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+            &copy; 2026 Providence University // CareerDNA Engine
+        </div>
+        <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
+            <span class="hidden sm:inline">LATENCY: &lt;12ms</span>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 right-8 z-50 transform translate-y-20 opacity-0 transition-all duration-400 pointer-events-none">
+        <div class="p-4 bg-klein text-white border border-white/20 shadow-2xl flex items-center gap-3 font-mono text-xs tracking-wider uppercase crosshair-corner">
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="font-bold">資料更新成功！</span>
+        </div>
+    </div>
+
+    <!-- Firebase SDK & Profile Runtime -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
+            authDomain: "ai-resume-health-check.firebaseapp.com",
+            projectId: "ai-resume-health-check",
+            storageBucket: "ai-resume-health-check.firebasestorage.app",
+            messagingSenderId: "659646169112",
+            appId: "1:659646169112:web:d11eccae4f6abfa56a436d",
+            measurementId: "G-5E2C8FJWX5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.ProfileApp = {
+            currentUser: null,
+            state: {
+                
+            },
+
+            init() {
+                const hour = new Date().getHours();
+                const greeting = hour < 12 ? "早安" : (hour < 18 ? "午安" : "晚安");
+                const greetingEl = document.getElementById('greeting-text');
+                if (greetingEl) greetingEl.innerText = `${greeting}，很高興見到你`;
+
+                const darkModeToggle = document.getElementById('dark-mode-toggle');
+                if (darkModeToggle) {
+                    if (localStorage.getItem('darkMode') === 'true') {
+                        document.body.classList.add('dark-mode');
+                        darkModeToggle.checked = true;
+                    }
+                    darkModeToggle.addEventListener('change', (e) => this.toggleDarkMode(e.target.checked));
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        this.currentUser = user;
+                        this.loadUserData(user);
+                    } else {
+                        alert('請先登入系統，以啟用 AI 職涯導航與專屬數據儲存功能！');
+                        window.location.href = 'index.html';
+                    }
+                });
+
+                const saveBtn = document.getElementById('save-btn');
+                if (saveBtn) saveBtn.addEventListener('click', (e) => { e.preventDefault(); this.saveProfile(); });
+                
+                const gradeSelect = document.getElementById('grade');
+                if (gradeSelect) gradeSelect.addEventListener('change', (e) => this.syncGrade(e.target.value));
+                
+                const skillInput = document.getElementById('skill-input');
+                const addSkillBtn = document.getElementById('add-skill-btn');
+                if (addSkillBtn) addSkillBtn.addEventListener('click', () => this.addSkill());
+                if (skillInput) {
+                    skillInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.addSkill(); } });
+                    skillInput.addEventListener('input', (e) => this.handleSkillInput(e));
+                }
+                
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('#skill-input') && !e.target.closest('#autocomplete-dropdown')) {
+                        this.hideAutocomplete();
+                    }
+                });
+
+                },
+
+            async toggleDarkMode(isDark) {
+                document.body.classList.toggle('dark-mode', isDark);
+                localStorage.setItem('darkMode', isDark);
+                if (this.currentUser) {
+                    try {
+                        await setDoc(doc(db, "users", this.currentUser.uid), { settings: { darkMode: isDark } }, { merge: true });
+                    } catch(err) { console.error("Settings sync failed", err); }
+                }
+            },
+
+            showToast(message, isSuccess = true) {
+                const toast = document.getElementById('toast');
+                if (!toast) return;
+                const span = toast.querySelector('span');
+                const svg = toast.querySelector('svg');
+                if (span) span.innerText = message;
+                if (svg) {
+                    svg.innerHTML = isSuccess 
+                        ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>` 
+                        : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>`;
+                    svg.setAttribute('class', isSuccess ? 'w-4 h-4 text-emerald-400 shrink-0' : 'w-4 h-4 text-flame-orange shrink-0');
+                }
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+            },
+
+            async syncGrade(newGrade) {
+                if (!this.currentUser || !newGrade) return;
+                try {
+                    await setDoc(doc(db, "users", this.currentUser.uid), { grade: newGrade }, { merge: true });
+                    localStorage.setItem('cdna_grade', newGrade);
+                    this.showToast(`已切換為 ${newGrade} 標準，履歷健檢將自動更新！`);
+                } catch (err) { console.error("Grade sync failed", err); }
+            },
+
+            async loadUserData(user) {
+                const emailField = document.getElementById('email');
+                const displayEmail = document.getElementById('display-email');
+                if (emailField) emailField.value = user.email || '';
+                if (displayEmail) displayEmail.innerText = user.email || '...';
+                
+                try {
+                    const docSnap = await getDoc(doc(db, "users", user.uid));
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        const usernameField = document.getElementById('username');
+                        const schoolField = document.getElementById('school');
+                        const deptField = document.getElementById('department');
+                        const gradeField = document.getElementById('grade');
+                        const displayNameEl = document.getElementById('display-name');
+                        
+                        if (usernameField) usernameField.value = data.name || user.displayName || '';
+                        if (schoolField) schoolField.value = data.school || '';
+                        if (deptField) deptField.value = data.dept || data.department || '';
+                        if (gradeField) gradeField.value = data.grade || '';
+                        
+                        // Update academic info display panel
+                        this.updateAcademicDisplay(data);
+
+                        // Sync to localStorage for Lab Match & Resume integration
+                        if (data.school) localStorage.setItem('cdna_school', data.school);
+                        if (data.department) localStorage.setItem('cdna_department', data.department);
+                        if (data.grade) localStorage.setItem('cdna_grade', data.grade);
+                        
+                        if (data.name && displayNameEl) {
+                            displayNameEl.innerText = data.name;
+                        } else if (displayNameEl) {
+                            displayNameEl.innerText = user.displayName || "新朋友";
+                        }
+
+                        if (data.settings && data.settings.darkMode !== undefined) {
+                            this.toggleDarkMode(data.settings.darkMode);
+                            const darkModeToggle = document.getElementById('dark-mode-toggle');
+                            if (darkModeToggle) darkModeToggle.checked = data.settings.darkMode;
+                        }
+                    } else {
+                        const displayNameEl = document.getElementById('display-name');
+                        if (displayNameEl) displayNameEl.innerText = user.displayName || "新朋友";
+                    }
+                } catch (e) { console.error("Error loading profile:", e); }
+            },
+
+            async saveProfile() {
+                if (!this.currentUser) return;
+                const saveBtn = document.getElementById('save-btn');
+                if (saveBtn) {
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>儲存中...</span>`;
+                }
+
+                try {
+                    const username = document.getElementById('username')?.value || '';
+                    const school = document.getElementById('school')?.value || '';
+                    const department = document.getElementById('department')?.value || '';
+                    const grade = document.getElementById('grade')?.value || '';
+
+                    const updatedData = {
+                        name: username,
+                        school: school,
+                        dept: department,
+                        department: department,
+                        grade: grade,
+                        updatedAt: new Date()
+                    };
+                    
+                    await setDoc(doc(db, "users", this.currentUser.uid), updatedData, { merge: true });
+                    
+                    // Sync to localStorage for cross-page personalization
+                    localStorage.setItem('cdna_school', updatedData.school || '');
+                    localStorage.setItem('cdna_department', updatedData.department || '');
+                    localStorage.setItem('cdna_grade', updatedData.grade || '');
+                    this.updateAcademicDisplay(updatedData);
+                    
+                    await updateProfile(this.currentUser, { displayName: updatedData.name });
+                    
+                    const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
+                    if (savedUser.email) {
+                        savedUser.name = updatedData.name;
+                        localStorage.setItem('careerDNA_user', JSON.stringify(savedUser));
+                    }
+                    
+                    const displayNameEl = document.getElementById('display-name');
+                    if (displayNameEl) displayNameEl.innerText = updatedData.name || '新朋友';
+                    this.showToast("資料更新成功！");
+                } catch (error) {
+                    alert("更新失敗：" + error.message);
+                } finally {
+                    if (saveBtn) {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk text-xs"></i> <span>儲存變更</span>`;
+                    }
+                }
+            },
+            
+
+            updateAcademicDisplay(data) {
+                const container = document.getElementById('academic-info-display');
+                if (!container) return;
+                const school = data.school || '';
+                const deptMap = { 'CS': '資訊工程學系 (CS)', 'IM': '資訊管理學系 (IM)', 'AI': '人工智慧學系 (AI)' };
+                const dept = deptMap[data.department] || data.dept || data.department || '';
+                const grade = data.grade || '';
+                
+                const pills = [];
+                if (school) {
+                    pills.push(`
+                        <div class="flex items-center gap-2.5 px-3 py-2 border border-klein/10 bg-klein/[0.02]">
+                            <i class="fa-solid fa-graduation-cap text-klein/60 text-xs"></i>
+                            <span class="text-xs font-mono font-bold text-klein truncate">${school}</span>
+                        </div>
+                    `);
+                }
+                if (dept) {
+                    pills.push(`
+                        <div class="flex items-center gap-2.5 px-3 py-2 border border-klein/10 bg-klein/[0.02]">
+                            <i class="fa-solid fa-diagram-project text-klein/60 text-xs"></i>
+                            <span class="text-xs font-mono font-bold text-klein truncate">${dept}</span>
+                        </div>
+                    `);
+                }
+                if (grade) {
+                    pills.push(`
+                        <div class="flex items-center gap-2.5 px-3 py-2 border border-emerald-500/20 bg-emerald-500/5">
+                            <i class="fa-solid fa-layer-group text-emerald-600 text-xs"></i>
+                            <span class="text-xs font-mono font-bold text-emerald-700">${grade}</span>
+                        </div>
+                    `);
+                }
+                
+                if (pills.length === 0) {
+                    container.innerHTML = `<p class="text-xs font-mono text-klein/40 text-center py-3 border border-dashed border-klein/10">填寫右方欄位以顯示學籍資訊</p>`;
+                } else {
+                    container.innerHTML = pills.join('');
+                }
+            },
+        };
+
+        document.addEventListener('DOMContentLoaded', () => ProfileApp.init());
+    </script>
+
+    <!-- Scroll Animations (Intersection Observer) -->
+    <script>
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-up').forEach((el) => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "careerdna-multi-agent-resume",
+  "version": "2.0.0",
+  "description": "CareerDNA Multi-Agent Resume System - 5-Agent Pipeline with Golden Triangle ATS Audit and Providence University Academic Planning",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "server": "node src/index.js --server",
+    "cli": "node src/index.js --cli",
+    "test": "node test_orchestration.js",
+    "test:pipeline": "node test_orchestration.js",
+    "test:e2e": "node tests/e2e/run_e2e_tests.js"
+  },
+  "keywords": [
+    "multi-agent",
+    "resume-builder",
+    "ats-audit",
+    "providence-university",
+    "micro-star",
+    "google-xyz",
+    "golden-triangle",
+    "careerdna"
+  ],
+  "author": "CareerDNA Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
