@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth bg-white text-klein">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerDNA | 資訊科系適配探索與實驗室導航</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Syne, Inter, Noto Sans TC, Chakra Petch, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        klein: '#002fa7',
+                        'deep-klein': '#001a5e',
+                        cobalt: '#1a4ec4',
+                        'electric-blue': '#00e5ff',
+                        'flame-orange': '#ff4500'
+                    },
+                    fontFamily: {
+                        syne: ['"Syne"', 'sans-serif'],
+                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"Chakra Petch"', '"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #002fa7;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Stryde Spring Animations */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(30px) scale(0.99);
+            transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* Interactive Spring Lift */
+        .hover-spring {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+        .hover-spring:hover {
+            transform: translateY(-6px) scale(1.01) !important;
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.08) !important;
+            z-index: 50;
+        }
+
+        /* Brutalist Crosshairs */
+        .crosshair-corner {
+            position: relative;
+        }
+        .crosshair-corner::before, .crosshair-corner::after {
+            content: '+';
+            position: absolute;
+            color: rgba(0, 47, 167, 0.3);
+            font-family: monospace;
+            font-size: 1rem;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .crosshair-corner::before { top: -8px; left: -4px; }
+        .crosshair-corner::after { bottom: -8px; right: -4px; }
+
+        /* Outline Display Typography */        .outline-text {
+            color: #ffffff;
+            -webkit-text-stroke: 1.5px #002fa7;
+            paint-order: stroke fill;
+            transition: all 0.4s ease;
+        }
+        .outline-text:hover {
+            color: #002fa7;
+            -webkit-text-stroke: 1.5px transparent;
+        }
+
+        /* Brutalist Form Controls */
+        input, select, textarea {
+            background-color: #ffffff !important;
+            border: 1px solid rgba(0, 47, 167, 0.2) !important;
+            color: #002fa7 !important;
+            border-radius: 0 !important;
+            font-family: 'Chakra Petch', 'Noto Sans TC', sans-serif !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #002fa7 !important;
+            outline: none !important;
+            box-shadow: 0 0 0 1px #002fa7 !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #ffffff; }
+        ::-webkit-scrollbar-thumb { background: #a3bdf2; }
+        ::-webkit-scrollbar-thumb:hover { background: #002fa7; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
+    <script>
+        if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
+    </script>
+
+    <!-- Global Navigation Bar -->
+    <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-4 group">
+                <div class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
+                    <i class="fa-solid fa-microscope"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">LAB_NAVIGATOR // v2026</span>
+                </div>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">科系適配</a>
+                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+            </div>
+
+            <div>
+                <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="flex-grow pt-28 pb-20 px-4 md:px-12">
+        <div class="max-w-[1400px] mx-auto min-h-[75vh] border-x border-klein/10 px-6 md:px-16 lg:px-20 py-10 relative crosshair-corner">
+            
+            <!-- 1. Welcome / Intro Screen -->
+            <div id="intro-screen" class="reveal-up is-visible space-y-12">
+                
+                <!-- Status Telemetry & Disclaimer -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-klein/10 pb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="w-2.5 h-2.5 bg-emerald-500 animate-pulse"></span>
+                        <span class="font-mono uppercase text-xs font-bold tracking-[0.25em] text-klein/60">SYS // ACADEMIC_DISCOVERY_MODULE</span>
+                    </div>
+                    <div class="font-mono text-xs text-klein/60 flex items-center gap-2 bg-klein/5 px-3 py-1.5 border border-klein/10">
+                        <i class="fa-solid fa-circle-info text-klein"></i>
+                        <span>免責聲明：本測試為探索參考工具，非學校官方實驗室分發依據。</span>
+                    </div>
+                </div>
+
+                <!-- Hero Header -->
+                <div class="space-y-6 pt-2">
+                    
+                    <h1 class="font-syne font-black text-4xl md:text-6xl lg:text-7xl tracking-tight uppercase leading-[0.95] text-klein flex flex-col gap-2">
+                        <span>資訊科系</span>
+                        <span class="outline-text">適配探索</span>
+                    </h1>
+                    <p class="font-body text-base md:text-xl text-klein/70 max-w-3xl leading-relaxed">
+                        資工、資管還是人工智慧？透過 6 道高辨識度的思維情境測評，深度拆解你的工程邏輯、商業洞察與資料直覺，定位最能釋放你天賦潛能的學術戰場與實驗室方向。
+                    </p>
+                </div>
+
+                <!-- 3-Department Brutalist Preview Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-klein/10 border border-klein/10 bg-white">
+                    <!-- CS Card -->
+                    <div class="p-8 hover-spring bg-white hover:bg-klein hover:text-white group transition-all">
+                        <div class="w-12 h-12 border border-klein/20 group-hover:border-white/30 flex items-center justify-center mb-6 font-mono text-2xl text-klein group-hover:text-white">
+                            💻
+                        </div>
+                        <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 group-hover:text-white/70 uppercase mb-2">CS // TRACK</div>
+                        <h3 class="font-heading font-black text-2xl uppercase mb-3">資訊工程學系</h3>
+                        <p class="font-body text-sm text-klein/70 group-hover:text-white/80 leading-relaxed">
+                            探究計算機底層架構、Linux 核心、物聯網嵌入式系統、分散式運算與網路安全攻防。
+                        </p>
+                    </div>
+
+                    <!-- IM Card -->
+                    <div class="p-8 hover-spring bg-white hover:bg-klein hover:text-white group transition-all">
+                        <div class="w-12 h-12 border border-klein/20 group-hover:border-white/30 flex items-center justify-center mb-6 font-mono text-2xl text-klein group-hover:text-white">
+                            📊
+                        </div>
+                        <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 group-hover:text-white/70 uppercase mb-2">IM // TRACK</div>
+                        <h3 class="font-heading font-black text-2xl uppercase mb-3">資訊管理學系</h3>
+                        <p class="font-body text-sm text-klein/70 group-hover:text-white/80 leading-relaxed">
+                            貫穿技術與商業價值，專精智慧商務、社群運算、ERP 企業流程管理與金融科技 (FinTech)。
+                        </p>
+                    </div>
+
+                    <!-- AI Card -->
+                    <div class="p-8 hover-spring bg-white hover:bg-klein hover:text-white group transition-all">
+                        <div class="w-12 h-12 border border-klein/20 group-hover:border-white/30 flex items-center justify-center mb-6 font-mono text-2xl text-klein group-hover:text-white">
+                            🤖
+                        </div>
+                        <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 group-hover:text-white/70 uppercase mb-2">AI // TRACK</div>
+                        <h3 class="font-heading font-black text-2xl uppercase mb-3">人工智慧學系</h3>
+                        <p class="font-body text-sm text-klein/70 group-hover:text-white/80 leading-relaxed">
+                            鑽研機器學習演算法、深度學習、智慧互動、元宇宙 VR/AR 與多媒體遊戲技術實務。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Start CTA Button -->
+                <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-6">
+                    <button onclick="LabApp.start()" class="hover-spring bg-klein text-white font-heading font-black text-lg md:text-xl tracking-wider uppercase px-12 py-5 flex items-center justify-center gap-4 group cursor-pointer">
+                        <span>開始適配探索</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>
+                    </button>
+                    <div class="font-mono text-xs tracking-[0.2em] text-klein/50 uppercase flex items-center gap-3">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>ESTIMATED TIME: 2 MINUTES · 6 SCENARIOS</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 2. Quiz Screen -->
+            <div id="quiz-screen" class="hidden space-y-10">
+                
+                <!-- Progress HUD -->
+                <div class="border-b border-klein/10 pb-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-mono uppercase text-xs font-bold tracking-[0.25em] text-klein/60">ASSESSMENT PROGRESS</span>
+                        <span id="progress-text" class="font-mono text-sm font-bold text-klein tracking-widest px-3 py-1 bg-klein/5 border border-klein/10">1/6</span>
+                    </div>
+                    <div class="w-full bg-klein/10 h-2 overflow-hidden">
+                        <div id="progress-bar" class="bg-klein h-full transition-all duration-500 ease-out" style="width: 16.66%;"></div>
+                    </div>
+                </div>
+
+                <!-- Question Container (Dynamically Injected) -->
+                <div id="question-container" class="min-h-[420px] flex flex-col justify-center">
+                    <!-- Dynamic Question Injected Here -->
+                </div>
+
+            </div>
+
+            <!-- 3. Result Screen -->
+            <div id="result-screen" class="hidden reveal-up is-visible space-y-10">
+                
+                <!-- Result Report Box -->
+                <div class="border border-klein/20 p-8 md:p-14 bg-white crosshair-corner relative">
+                    
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-klein/10 pb-6 mb-8">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2.5 h-2.5 bg-emerald-500 animate-ping"></span>
+                            <span class="font-mono uppercase text-xs font-bold tracking-[0.25em] text-klein/60">SYS // MATCH_ANALYSIS_COMPLETED</span>
+                        </div>
+                        <span class="font-mono text-xs text-klein/40 uppercase tracking-[0.2em]">PROVIDENCE UNIVERSITY // CURRICULAR RADAR</span>
+                    </div>
+
+                    <div class="flex flex-col lg:flex-row items-start lg:items-center gap-8 mb-8">
+                        <!-- Icon Box -->
+                        <div id="result-icon" class="w-24 h-24 shrink-0 border-2 border-klein/20 bg-klein/5 flex items-center justify-center text-5xl font-mono text-klein">
+                            💻
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <div class="font-mono text-xs font-bold tracking-[0.3em] text-klein/50 uppercase">TOP COMPATIBILITY // 最佳適配推薦</div>
+                            <h1 id="result-title" class="font-syne font-black text-3xl md:text-5xl lg:text-6xl text-klein uppercase tracking-tight">
+                                分析中...
+                            </h1>
+                        </div>
+                    </div>
+
+                    <!-- Description Paragraph -->
+                    <p id="result-desc" class="font-body text-base md:text-xl text-klein/80 leading-relaxed border-l-2 border-klein pl-6 mb-10">
+                        ...
+                    </p>
+
+                    <!-- Score Spectrum / Compatibility Distribution -->
+                    <div class="border-t border-klein/10 pt-8 mb-10">
+                        <h3 class="font-mono uppercase text-xs font-bold tracking-[0.25em] text-klein/60 mb-4">
+                            COMPATIBILITY SPECTRUM // 各領域適配分佈
+                        </h3>
+                        <div id="score-spectrum-container" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Recommended Research Laboratories -->
+                    <div class="border border-klein/10 bg-klein/[0.02] p-8 crosshair-corner mb-10">
+                        <div class="flex items-center gap-3 mb-6">
+                            <i class="fa-solid fa-microchip text-klein text-xl"></i>
+                            <h3 class="font-heading font-black text-xl md:text-2xl uppercase tracking-tight text-klein">
+                                推薦實驗室與研究發展方向
+                            </h3>
+                        </div>
+                        <ul id="result-labs" class="space-y-4 font-body text-base text-klein/80">
+                            <!-- Populated by showResult() -->
+                        </ul>
+                    </div>
+
+                    <!-- Action Button Matrix -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-5 pt-4">
+                        <a id="btn-career-fit" href="career_fit_v2.html" class="hover-spring bg-klein text-white font-heading font-black text-base md:text-lg tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-3 group">
+                            <span>查看該系所必修課</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>
+                        </a>
+                        <button onclick="location.reload()" class="hover-spring border border-klein/20 hover:border-klein bg-transparent hover:bg-klein/5 text-klein font-heading font-bold text-base md:text-lg tracking-wider uppercase px-8 py-5 flex items-center justify-center gap-3 transition-all cursor-pointer">
+                            <i class="fa-solid fa-rotate-left text-klein/50"></i>
+                            <span>重新測驗</span>
+                        </button>
+                        <a href="brand_test.html" class="hover-spring border border-klein/20 hover:border-klein bg-transparent hover:bg-klein/5 text-klein font-heading font-bold text-base md:text-lg tracking-wider uppercase px-8 py-5 flex items-center justify-center gap-3 transition-all">
+                            <i class="fa-solid fa-compass text-klein/50"></i>
+                            <span>進行個人品牌測驗</span>
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
+        <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+            &copy; 2026 Providence University // CareerDNA Engine
+        </div>
+        <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
+            <span class="hidden sm:inline">LATENCY: &lt;12ms</span>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic & Firebase Synchronization -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
+            authDomain: "ai-resume-health-check.firebaseapp.com",
+            projectId: "ai-resume-health-check",
+            storageBucket: "ai-resume-health-check.firebasestorage.app",
+            messagingSenderId: "659646169112",
+            appId: "1:659646169112:web:d11eccae4f6abfa56a436d",
+            measurementId: "G-5E2C8FJWX5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let currentUser = null;
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                console.log("[CareerDNA Lab] User authenticated:", user.email);
+            } else {
+                console.log("[CareerDNA Lab] Guest exploration active");
+            }
+        });
+
+        const QUESTIONS = [
+            {
+                q: "遇到一個全新的技術問題時，你的直覺反應是？",
+                opts: [
+                    { t: "拆解它！我想了解底層運作原理與硬體架構。", type: "CS" },
+                    { t: "思考應用！我想知道這能解決什麼商業問題或改善流程。", type: "IM" },
+                    { t: "找數據！我想訓練模型來預測結果或自動化處理。", type: "AI" }
+                ]
+            },
+            {
+                q: "你比較喜歡哪種類型的課程作業？",
+                opts: [
+                    { t: "撰寫作業系統核心或組合語言，跟記憶體與 CPU 打交道。", type: "CS" },
+                    { t: "規劃一個電商網站的企劃書，包含介面設計與營運模式。", type: "IM" },
+                    { t: "收集大量圖片或文字，訓練一個神經網路來進行分類。", type: "AI" }
+                ]
+            },
+            {
+                q: "在團隊專案中，你通常擔任什麼角色？",
+                opts: [
+                    { t: "技術核心，負責解決最困難的 Bug 與系統架構。", type: "CS" },
+                    { t: "專案經理 (PM)，負責溝通協調、確認需求與進度。", type: "IM" },
+                    { t: "演算法工程師，負責優化模型的準確度與效能。", type: "AI" }
+                ]
+            },
+            {
+                q: "你對未來的職涯想像是？",
+                opts: [
+                    { t: "成為資安專家、系統架構師或嵌入式工程師。", type: "CS" },
+                    { t: "成為產品經理、系統分析師或數位轉型顧問。", type: "IM" },
+                    { t: "成為資料科學家、AI 研究員或電腦視覺工程師。", type: "AI" }
+                ]
+            },
+            {
+                q: "你覺得哪個關鍵字最吸引你？",
+                opts: [
+                    { t: "Linux Kernel / IoT / Cybersecurity", type: "CS" },
+                    { t: "Business Logic / UX / Management", type: "IM" },
+                    { t: "Deep Learning / GAN / Big Data", type: "AI" }
+                ]
+            },
+            {
+                q: "如果給你一筆預算，你會想買？",
+                opts: [
+                    { t: "樹莓派 (Raspberry Pi) 或開發板，想做硬體控制。", type: "CS" },
+                    { t: "雲端伺服器與網域，想架設一個服務平台。", type: "IM" },
+                    { t: "高階顯示卡 (GPU)，想跑深度學習模型。", type: "AI" }
+                ]
+            }
+        ];
+
+        const RESULTS = {
+            "CS": {
+                title: "資訊工程學系 (CS)",
+                icon: "💻",
+                desc: "你是天生的技術狂熱者！喜歡探究電腦底層原理，對於硬體控制、系統架構與資安攻防有著濃厚興趣。你適合在需要高度技術門檻的領域深耕。",
+                labs: [
+                    "<li class='p-4 border border-klein/10 bg-white flex items-start gap-4 hover-spring'><div class='w-2.5 h-2.5 bg-klein mt-2 shrink-0'></div><div><strong class='font-heading font-black text-klein text-lg'>嵌入式系統實驗室</strong><p class='font-body text-sm text-klein/70 mt-1'>研究物聯網 (IoT)、即時作業系統 (RTOS) 與微控制器硬體控制實務。</p></div></li>",
+                    "<li class='p-4 border border-klein/10 bg-white flex items-start gap-4 hover-spring'><div class='w-2.5 h-2.5 bg-klein mt-2 shrink-0'></div><div><strong class='font-heading font-black text-klein text-lg'>網路安全與密碼學實驗室</strong><p class='font-body text-sm text-klein/70 mt-1'>鑽研系統漏洞挖掘、加密技術、逆向工程與資訊安全防護體系。</p></div></li>",
+                    "<li class='p-4 border border-klein/10 bg-white flex items-start gap-4 hover-spring'><div class='w-2.5 h-2.5 bg-klein mt-2 shrink-0'></div><div><strong class='font-heading font-black text-klein text-lg'>分散式系統實驗室</strong><p class='font-body text-sm text-klein/70 mt-1'>研究高並發雲端運算架構、容器化調度與區塊鏈去中心化技術。</p></div></li>"
+                ]
+            },
+            "IM": {
+                title: "資訊管理學系 (IM)",
+                icon: "📊",
+                desc: "你是技術與商業的橋樑！你不只懂技術，更懂得如何將技術應用於解決實際問題。你具備宏觀的視野，適合擔任整合資源、規劃產品與優化流程的角色。",
+                labs: [
+                    "<li class='p-4 border border-klein/10 bg-white flex items-start gap-4 hover-spring'><div class='w-2.5 h-2.5 bg-klein mt-2 shrink-0'></div><div><strong class='font-heading font-black text-klein text-lg'>智慧商務與社群運算實驗室</strong><p class='font-body text-sm text-klein/70 mt-1'>分析使用者行為模式、電商轉換策略與社群媒體大數據行銷。</p></div></li>",
+                    "<li class='p-4 border border-klein/10 bg-white flex items-start gap-4 hover-spring'><div class='w-2.5 h-2.5 bg-klein mt-2 shrink-0'></div><div><strong class='font-heading font-black text-klein text-lg'>資訊系統開發與管理實驗室</strong><p class='font-body text-sm text-klein/70 mt-1'>研究現代軟體工程生命週期、敏捷專案管理與大型系統架構分析。</p></div></li>",
+                    "<li class='p-4 border border-klein/10 bg-white flex items-start gap-4 hover-spring'><div class='w-2.5 h-2.5 bg-klein mt-2 shrink-0'></div><div><strong class='font-heading font-black text-klein text-lg'>金融科技 (FinTech) 實驗室</strong><p class='font-body text-sm text-klein/70 mt-1'>結合資訊技術、演算法交易與財務金融創新產品開發。</p></div></li>"
+                ]
+            },
+            "AI": {
+                title: "人工智慧學系 (AI)",
+                icon: "🤖",
+                desc: "你是未來的創造者！本系不僅鑽研 AI 理論，更強調「智慧互動」與「元宇宙」的實務應用。如果你對遊戲技術、多媒體創作或創新 APP 開發感興趣，這裡提供豐富的算力資源與企業實習，讓你將創意轉化為接軌市場的即戰力。",
+                labs: [
+                    "<li class='p-4 border border-klein/10 bg-white flex items-start gap-4 hover-spring'><div class='w-2.5 h-2.5 bg-klein mt-2 shrink-0'></div><div><strong class='font-heading font-black text-klein text-lg'>智慧互動與元宇宙實驗室</strong><p class='font-body text-sm text-klein/70 mt-1'>研究 VR/AR 沉浸式體驗、體感互動運算與虛擬世界建構。</p></div></li>",
+                    "<li class='p-4 border border-klein/10 bg-white flex items-start gap-4 hover-spring'><div class='w-2.5 h-2.5 bg-klein mt-2 shrink-0'></div><div><strong class='font-heading font-black text-klein text-lg'>多媒體與遊戲技術實驗室</strong><p class='font-body text-sm text-klein/70 mt-1'>專注於 Unreal/Unity 遊戲引擎開發、3D 建模與互動數位內容創作。</p></div></li>",
+                    "<li class='p-4 border border-klein/10 bg-white flex items-start gap-4 hover-spring'><div class='w-2.5 h-2.5 bg-klein mt-2 shrink-0'></div><div><strong class='font-heading font-black text-klein text-lg'>人工智慧創新應用實驗室</strong><p class='font-body text-sm text-klein/70 mt-1'>結合深度學習與電腦視覺演算法，解決生活與產業自動化實際難題。</p></div></li>"
+                ]
+            }
+        };
+
+        window.LabApp = {
+            scores: { "CS": 0, "IM": 0, "AI": 0 },
+            currentQ: 0,
+
+            start() {
+                const introScreen = document.getElementById('intro-screen');
+                const quizScreen = document.getElementById('quiz-screen');
+                if (introScreen) introScreen.classList.add('hidden');
+                if (quizScreen) quizScreen.classList.remove('hidden');
+                this.renderQuestion();
+            },
+
+            renderQuestion() {
+                const q = QUESTIONS[this.currentQ];
+                const container = document.getElementById('question-container');
+                if (!q || !container) return;
+                
+                // Update Progress Bar & Counter
+                const pct = ((this.currentQ + 1) / QUESTIONS.length) * 100;
+                const progressBar = document.getElementById('progress-bar');
+                if (progressBar) progressBar.style.width = `${pct}%`;
+                
+                const progressText = document.getElementById('progress-text');
+                if (progressText) progressText.innerText = `${this.currentQ + 1}/${QUESTIONS.length}`;
+
+                const optionLabels = ['A', 'B', 'C'];
+
+                let html = `
+                    <div class="reveal-up is-visible space-y-8">
+                        <div class="space-y-3">
+                            <div class="inline-block px-3 py-1 border border-klein/20 bg-klein/5 font-mono text-xs font-bold tracking-[0.3em] text-klein uppercase">
+                                SCENARIO 0${this.currentQ + 1} // OF 06
+                            </div>
+                            <h2 class="font-heading font-black text-2xl md:text-4xl text-klein tracking-tight leading-snug">
+                                ${q.q}
+                            </h2>
+                        </div>
+                        
+                        <div class="space-y-4 pt-2">
+                `;
+                
+                q.opts.forEach((opt, idx) => {
+                    const label = optionLabels[idx] || (idx + 1);
+                    html += `
+                        <button onclick="LabApp.answer('${opt.type}')" class="hover-spring w-full text-left p-6 md:p-8 bg-white hover:bg-klein hover:text-white border border-klein/20 group transition-all flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center gap-6">
+                                <div class="w-10 h-10 shrink-0 border border-klein/20 group-hover:border-white/40 flex items-center justify-center font-mono font-bold text-sm text-klein group-hover:text-white group-hover:bg-white/10 transition-all">
+                                    ${label}
+                                </div>
+                                <span class="font-heading font-bold text-base md:text-lg text-klein/90 group-hover:text-white leading-relaxed">
+                                    ${opt.t}
+                                </span>
+                            </div>
+                            <div class="hidden sm:flex items-center gap-2 font-mono text-xs text-klein/40 group-hover:text-white/80 uppercase tracking-widest pl-4">
+                                <span>SELECT</span>
+                                <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                            </div>
+                        </button>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+            },
+
+            answer(type) {
+                this.scores[type]++;
+                if (this.currentQ < QUESTIONS.length - 1) {
+                    this.currentQ++;
+                    setTimeout(() => this.renderQuestion(), 150);
+                } else {
+                    this.showResult();
+                }
+            },
+
+            async showResult() {
+                const quizScreen = document.getElementById('quiz-screen');
+                const resultScreen = document.getElementById('result-screen');
+                if (quizScreen) quizScreen.classList.add('hidden');
+                if (resultScreen) resultScreen.classList.remove('hidden');
+
+                // Calculate Winner
+                const winner = Object.keys(this.scores).reduce((a, b) => this.scores[a] > this.scores[b] ? a : b);
+                const data = RESULTS[winner];
+
+                const titleEl = document.getElementById('result-title');
+                if (titleEl) titleEl.innerText = data.title;
+
+                const iconEl = document.getElementById('result-icon');
+                if (iconEl) iconEl.innerText = data.icon;
+
+                const descEl = document.getElementById('result-desc');
+                if (descEl) descEl.innerText = data.desc;
+
+                const labsEl = document.getElementById('result-labs');
+                if (labsEl) labsEl.innerHTML = data.labs.join('');
+
+                // Render Compatibility Spectrum Meters
+                const spectrumContainer = document.getElementById('score-spectrum-container');
+                if (spectrumContainer) {
+                    const totalQ = QUESTIONS.length;
+                    const depts = [
+                        { key: 'CS', name: '資訊工程 (CS)', score: this.scores['CS'] },
+                        { key: 'IM', name: '資訊管理 (IM)', score: this.scores['IM'] },
+                        { key: 'AI', name: '人工智慧 (AI)', score: this.scores['AI'] }
+                    ];
+
+                    spectrumContainer.innerHTML = depts.map(d => {
+                        const pct = Math.round((d.score / totalQ) * 100);
+                        const isWin = d.key === winner;
+                        return `
+                            <div class="border ${isWin ? 'border-klein bg-klein/5' : 'border-klein/10 bg-white'} p-5 crosshair-corner">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="font-heading font-black text-sm text-klein tracking-tight">${d.name}</span>
+                                    <span class="font-mono font-bold text-sm ${isWin ? 'text-klein' : 'text-klein/60'}">${pct}% (${d.score}題)</span>
+                                </div>
+                                <div class="w-full bg-klein/10 h-2 overflow-hidden">
+                                    <div class="${isWin ? 'bg-klein' : 'bg-klein/40'} h-full transition-all duration-700" style="width: ${pct}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                // Update Link to Career Fit
+                const btn = document.getElementById('btn-career-fit');
+                if (btn) {
+                    btn.href = `career_fit_v2.html?dept=${winner}`;
+                    btn.innerHTML = `<span>查看 ${winner} 必修課</span> <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>`;
+                }
+
+                // Persist Result to Firestore if Authenticated
+                if (currentUser) {
+                    try {
+                        const batch = writeBatch(db);
+                        const resultData = {
+                            dept: winner,
+                            deptName: data.title,
+                            date: new Date().toISOString(),
+                            scores: this.scores
+                        };
+                        
+                        // 1. Snapshot in user history
+                        const historyRef = doc(collection(db, "users", currentUser.uid, "history_lab"));
+                        batch.set(historyRef, resultData);
+
+                        // 2. Aggregate into summary cache
+                        const userRef = doc(db, "users", currentUser.uid);
+                        batch.set(userRef, {
+                            summary_cache: {
+                                lab: { dept: winner, deptName: data.title, date: resultData.date }
+                            }
+                        }, { merge: true });
+
+                        await batch.commit();
+                        console.log("✅ [CareerDNA Lab] 推薦結果已儲存 (歷史快照 + 聚合快取)");
+                    } catch (e) {
+                        console.error("[CareerDNA Lab] 儲存失敗", e);
+                    }
+                }
+            }
+        };
+
+        // Initialize Intersection Observer for Stryde Reveal Up
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal-up').forEach((el) => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

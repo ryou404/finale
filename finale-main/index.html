@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth bg-white text-klein">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerDNA | 高階履歷引擎</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Chakra Petch, Inter, Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@400;600;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        klein: '#002fa7',
+                    },
+                    fontFamily: {
+                        syne: ['"Syne"', 'sans-serif'],
+                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"Chakra Petch"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #002fa7;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Wodniack-inspired / Stryde Spring Animations */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px) scale(0.99);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+        }
+
+        /* Stryde Hover Spring */
+        .hover-spring {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+        .hover-spring:hover {
+            transform: translateY(-6px) scale(1.01) !important;
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.08) !important;
+            z-index: 50;
+        }
+
+        /* Brutalist Crosshairs */
+        .crosshair-corner {
+            position: relative;
+        }
+        .crosshair-corner::before, .crosshair-corner::after {
+            content: '+';
+            position: absolute;
+            color: rgba(0, 47, 167, 0.3);
+            font-family: monospace;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        .crosshair-corner::before { top: -8px; left: -4px; }
+        .crosshair-corner::after { bottom: -8px; right: -4px; }        .outline-text {
+            color: #ffffff;
+            -webkit-text-stroke: 1.5px #002fa7;
+            paint-order: stroke fill;
+            transition: all 0.4s ease;
+        }
+        .outline-text:hover {
+            color: #002fa7;
+            -webkit-text-stroke: 1.5px transparent;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-4 group">
+                <div class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">HIGH_PERFORMANCE // v2026</span>
+                </div>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
+                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+            </div>
+
+            <div>
+                <a href="career_fit_v2.html" class="hover-spring bg-klein text-white font-mono text-xs font-bold tracking-[0.2em] uppercase px-5 py-2.5 flex items-center gap-2">
+                    立即部署 <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="flex-grow pt-32 pb-24 px-6 md:px-12">
+        <section class="max-w-[1400px] mx-auto min-h-[70vh] flex flex-col justify-center relative border-x border-klein/10 px-8 md:px-16 lg:px-24 py-16 crosshair-corner">
+            
+            <div class="absolute top-0 left-0 w-full h-[1px] bg-klein/10"></div>
+            <div class="absolute bottom-0 left-0 w-full h-[1px] bg-klein/10"></div>
+
+            <div class="relative z-10 w-full flex flex-col gap-6 md:gap-8 pt-8">
+                <h1 class="font-syne font-extrabold text-[9.5vw] md:text-[6.5vw] lg:text-[6.2rem] leading-[0.95] tracking-tight uppercase reveal-up reveal-delay-1 flex flex-col gap-1 md:gap-2">
+                    <span class="text-klein block">High-Performance</span>
+                    <span class="outline-text block">Resume Engine.</span>
+                </h1>
+                
+                <div class="flex flex-col sm:flex-row gap-5 mt-10 md:mt-16 reveal-up reveal-delay-3 w-fit">
+                    <!-- Primary Button -->
+                    <a href="career_fit_v2.html" class="hover-spring bg-klein text-white font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 group">
+                        部署履歷
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-400"></i>
+                    </a>
+                    <!-- Secondary Button -->
+                    <a href="lab_recommendation.html" class="hover-spring border border-klein/20 hover:border-klein bg-transparent hover:bg-klein/5 text-klein font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 transition-all">
+                        <i class="fa-solid fa-microscope text-klein/50 group-hover:text-klein transition-colors duration-400"></i>
+                        職涯診斷
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Large abstract decoration (Subtle blue) -->
+            <div id="parallax-dna" class="absolute right-[-2%] top-1/2 -translate-y-1/2 text-[40vw] font-syne font-extrabold text-klein/[0.03] pointer-events-none select-none tracking-tighter leading-none hidden xl:block overflow-hidden transition-transform duration-75 ease-out">
+                DNA
+            </div>
+        </section>
+
+        <!-- Architecture Section -->
+        <section id="features" class="max-w-[1400px] mx-auto mt-32 border-t border-x border-klein/10 crosshair-corner">
+            
+            <div class="px-8 py-16 md:px-16 md:py-24 border-b border-klein/10 reveal-up">
+                <h2 class="font-heading font-black text-4xl md:text-6xl uppercase tracking-tighter text-klein">系統架構 <span class="text-klein/30 ml-3"><span class="font-syne">Architecture</span></span></h2>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-klein/10 bg-white">
+                
+                <!-- Feature 1 -->
+                <div class="p-8 md:p-14 hover-spring bg-white hover:bg-klein hover:text-white group transition-colors duration-500 flex flex-col justify-between reveal-up reveal-delay-1 min-h-[380px]">
+                    <div>
+                        <div class="w-14 h-14 border border-klein/15 group-hover:border-white/30 flex items-center justify-center mb-10 text-xl transition-colors duration-500 text-klein group-hover:text-white">
+                            <i class="fa-solid fa-file-signature"></i>
+                        </div>
+                        <h3 class="font-heading font-black text-2xl md:text-3xl uppercase mb-5 tracking-tight">AI 履歷健檢</h3>
+                        <p class="font-body font-normal text-klein/70 group-hover:text-white/90 text-base md:text-lg leading-[1.7] transition-colors duration-500">
+                            藉由實務課群判斷學生在校時基礎能力，並且允許使用者上傳自身履歷讓 AI 根據自身狀況修改更合適的履歷。
+                        </p>
+                    </div>
+                    <a href="career_fit_v2.html" class="mt-12 inline-flex items-center gap-3 font-mono font-bold uppercase tracking-[0.2em] text-sm text-klein/50 group-hover:text-white hover:opacity-100 transition-all duration-400">
+                        前往測驗 <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="p-8 md:p-14 hover-spring bg-white hover:bg-klein hover:text-white group transition-colors duration-500 flex flex-col justify-between reveal-up reveal-delay-2 min-h-[380px]">
+                    <div>
+                        <div class="w-14 h-14 border border-klein/15 group-hover:border-white/30 flex items-center justify-center mb-10 text-xl transition-colors duration-500 text-klein group-hover:text-white">
+                            <i class="fa-solid fa-fingerprint"></i>
+                        </div>
+                        <h3 class="font-heading font-black text-2xl md:text-3xl uppercase mb-5 tracking-tight">個人品牌</h3>
+                        <p class="font-body font-normal text-klein/70 group-hover:text-white/90 text-base md:text-lg leading-[1.7] transition-colors duration-500">
+                            整合 Holland 以及 Gallup 等心理與優勢測驗。使用者匯入資料後，系統會自動分析並產出專屬的視覺化報告。
+                        </p>
+                    </div>
+                    <a href="brand_test.html" class="mt-12 inline-flex items-center gap-3 font-mono font-bold uppercase tracking-[0.2em] text-sm text-klein/50 group-hover:text-white hover:opacity-100 transition-all duration-400">
+                        前往測驗 <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="p-8 md:p-14 hover-spring bg-white hover:bg-klein hover:text-white group transition-colors duration-500 flex flex-col justify-between reveal-up reveal-delay-3 min-h-[380px]">
+                    <div>
+                        <div class="w-14 h-14 border border-klein/15 group-hover:border-white/30 flex items-center justify-center mb-10 text-xl transition-colors duration-500 text-klein group-hover:text-white">
+                            <i class="fa-solid fa-compass"></i>
+                        </div>
+                        <h3 class="font-heading font-black text-2xl md:text-3xl uppercase mb-5 tracking-tight">科系適配</h3>
+                        <p class="font-body font-normal text-klein/70 group-hover:text-white/90 text-base md:text-lg leading-[1.7] transition-colors duration-500">
+                            利用 6 項專屬問題精準判斷使用者所適合靜宜大學資訊各系的分配，為您量身打造最佳職涯起點。
+                        </p>
+                    </div>
+                    <a href="lab_recommendation.html" class="mt-12 inline-flex items-center gap-3 font-mono font-bold uppercase tracking-[0.2em] text-sm text-klein/50 group-hover:text-white hover:opacity-100 transition-all duration-400">
+                        前往測驗 <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Global Footer -->
+            <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white w-full">
+                <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+                    &copy; 2026 Providence University // CareerDNA Engine
+                </div>
+                <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+                    <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
+                    <span class="hidden sm:inline">LATENCY: &lt;12ms</span>
+                </div>
+            </footer>
+        </section>
+    </main>
+
+
+    <script>
+        // Intersection Observer for scroll reveals
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-up').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Scroll-driven Parallax for DNA text
+        const dnaText = document.getElementById('parallax-dna');
+        if (dnaText) {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.scrollY;
+                // Move it down slowly as we scroll down
+                dnaText.style.transform = `translateY(calc(-50% + ${scrolled * 0.4}px))`;
+            });
+        }
+    </script>
+
+</body>
+</html>

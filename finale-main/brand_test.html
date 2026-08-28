@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth bg-white text-klein">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerDNA | 全方位個人品牌定位系統</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- html2pdf.js for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- FontAwesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Syne, Inter, Noto Sans TC, Chakra Petch, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        klein: '#002fa7',
+                        'deep-klein': '#001a5e',
+                        cobalt: '#1a4ec4',
+                        'electric-blue': '#00e5ff',
+                        'flame-orange': '#ff4500'
+                    },
+                    fontFamily: {
+                        syne: ['"Syne"', 'sans-serif'],
+                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"Chakra Petch"', '"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #002fa7;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Stryde Spring Animations */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(30px) scale(0.99);
+            transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* Interactive Spring Lift */
+        .hover-spring {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+        .hover-spring:hover {
+            transform: translateY(-6px) scale(1.01) !important;
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.08) !important;
+            z-index: 50;
+        }
+
+        /* Brutalist Crosshairs */
+        .crosshair-corner {
+            position: relative;
+        }
+        .crosshair-corner::before, .crosshair-corner::after {
+            content: '+';
+            position: absolute;
+            color: rgba(0, 47, 167, 0.3);
+            font-family: monospace;
+            font-size: 1rem;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .crosshair-corner::before { top: -8px; left: -4px; }
+        .crosshair-corner::after { bottom: -8px; right: -4px; }
+
+        /* Outline Display Typography */        .outline-text {
+            color: #ffffff;
+            -webkit-text-stroke: 1.5px #002fa7;
+            paint-order: stroke fill;
+            transition: all 0.4s ease;
+        }
+        .outline-text:hover {
+            color: #002fa7;
+            -webkit-text-stroke: 1.5px transparent;
+        }
+
+        /* Brutalist Form Controls */
+        input, select, textarea {
+            background-color: #ffffff !important;
+            border: 1px solid rgba(0, 47, 167, 0.2) !important;
+            color: #002fa7 !important;
+            border-radius: 0 !important;
+            font-family: 'Chakra Petch', 'Noto Sans TC', sans-serif !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #002fa7 !important;
+            outline: none !important;
+            box-shadow: 0 0 0 1px #002fa7 !important;
+        }
+
+        /* Likert Scale Radio Button State */
+        .likert-opt input:checked + div { 
+            background-color: #002fa7 !important; 
+            color: #ffffff !important; 
+            border-color: #002fa7 !important; 
+            box-shadow: 0 0 0 2px rgba(0,47,167,0.2) !important; 
+            font-weight: 700 !important; 
+            transform: scale(1.03) !important; 
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important; 
+        }
+
+        /* Circular Chart Rings */
+        .circle-bg { 
+            fill: none !important; 
+            stroke: rgba(0, 47, 167, 0.1) !important; 
+            stroke-width: 2.8 !important; 
+        }
+        .circle { 
+            fill: none !important; 
+            stroke: #002fa7 !important; 
+            stroke-width: 2.8 !important; 
+            stroke-linecap: square !important; 
+            transition: stroke-dasharray 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important; 
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #ffffff; }
+        ::-webkit-scrollbar-thumb { background: #a3bdf2; }
+        ::-webkit-scrollbar-thumb:hover { background: #002fa7; }
+
+        .hidden { display: none !important; }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
+
+    <!-- Landing View -->
+    <div id="view-landing" class="min-h-screen flex flex-col justify-between selection:bg-klein selection:text-white">
+
+        <!-- Global Cyber-Brutalist Navbar -->
+        <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
+            <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+                <a href="index.html" class="flex items-center gap-4 group">
+                    <div class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                        <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">BRAND_POSITIONING // v2026</span>
+                    </div>
+                </a>
+                
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                    <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                    <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">品牌測驗</a>
+                    <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
+                    <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button onclick="window.app.loadDemo()" class="hover-spring font-mono text-xs font-bold tracking-[0.2em] uppercase text-klein/70 hover:text-klein border border-klein/20 hover:border-klein px-4 py-2 hover:bg-klein/5 transition-all">
+                        DEMO MODE
+                    </button>
+                    <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Canvas -->
+        <main class="flex-grow pt-32 pb-20 px-6 md:px-12 flex items-center">
+            <section class="max-w-[1400px] w-full mx-auto min-h-[72vh] flex flex-col justify-center relative border-x border-klein/10 px-8 md:px-16 lg:px-24 py-16 crosshair-corner">
+                
+                <div class="absolute top-0 left-0 w-full h-[1px] bg-klein/10"></div>
+                <div class="absolute bottom-0 left-0 w-full h-[1px] bg-klein/10"></div>
+
+                <div class="relative z-10 w-full flex flex-col gap-6 md:gap-8 pt-4">
+                    
+                    <div class="reveal-up">
+                        <span class="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-[0.3em] uppercase text-klein/60 border border-klein/20 px-3 py-1 bg-white">
+                            <span class="w-2 h-2 bg-klein"></span>
+                            SYS // BRAND_POSITIONING_PROTOCOL
+                        </span>
+                    </div>
+
+                    <h1 class="font-syne font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-[5.8rem] leading-[0.95] tracking-tight uppercase reveal-up reveal-delay-1 flex flex-col gap-2">
+                        <span class="text-klein block">探索你的</span>
+                        <span class="outline-text block">職涯基因序列</span>
+                    </h1>
+                    
+                    <p class="font-body text-lg md:text-xl text-klein/70 max-w-2xl reveal-up reveal-delay-2 leading-relaxed">
+                        結合 Holland 興趣與 Gallup 優勢量表。<br>
+                        一鍵生成：角色定位、六維能力雷達、104 自傳亮點與 30/60/90 天成長計畫。
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-5 mt-6 md:mt-10 reveal-up reveal-delay-3 w-fit">
+                        <!-- Primary Action -->
+                        <button onclick="window.app.start()" class="hover-spring bg-klein text-white font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 group rounded-none">
+                            開始免費測評
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-400"></i>
+                        </button>
+                        
+                        <!-- UCAN Modal Trigger -->
+                        <button id="btn-import-ucan" onclick="window.app.promptUCAN()" class="hover-spring border border-klein/20 hover:border-klein bg-transparent hover:bg-klein/5 text-klein font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 transition-all rounded-none">
+                            <i class="fa-solid fa-file-import text-klein/50 group-hover:text-klein transition-colors duration-400"></i>
+                            匯入 UCAN 測驗
+                        </button>
+
+                        <!-- Authenticated History Trigger (Unhidden via JS) -->
+                        <button id="btn-load-last" onclick="window.app.loadLastReport()" class="hidden hover-spring border border-klein/20 hover:border-klein bg-white hover:bg-klein/5 text-klein font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 transition-all rounded-none">
+                            <i class="fa-solid fa-clock-rotate-left text-klein/50 group-hover:text-klein transition-colors duration-400"></i>
+                            查看上次結果
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Large abstract decoration -->
+                <div id="parallax-dna" class="absolute right-[-2%] top-1/2 -translate-y-1/2 text-[35vw] font-syne font-extrabold text-klein/[0.03] pointer-events-none select-none tracking-tighter leading-none hidden xl:block overflow-hidden">
+                    BRAND
+                </div>
+            </section>
+        </main>
+
+        <!-- Global Footer -->
+        <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
+            <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+                &copy; 2026 Providence University // CareerDNA Engine
+            </div>
+            <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+                <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
+                <span class="hidden sm:inline">LATENCY: &lt;12ms</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Quiz Assessment View -->
+    <div id="view-quiz" class="hidden min-h-screen bg-white text-klein selection:bg-klein selection:text-white flex flex-col">
+        
+        <!-- Sticky Brutalist Header -->
+        <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-klein/10 py-4">
+            <div class="max-w-4xl mx-auto px-6">
+                <div class="flex justify-between items-center font-mono text-xs font-bold tracking-[0.2em] text-klein/60 mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-klein"></span>
+                        <span>ASSESSMENT // 30 QUESTIONS</span>
+                    </div>
+                    <div>
+                        <span>PROGRESS: </span>
+                        <span id="progress-text" class="text-klein font-black">0%</span>
+                    </div>
+                </div>
+                <div class="w-full bg-klein/5 h-2 border border-klein/10 rounded-none overflow-hidden">
+                    <div id="progress-bar" class="bg-klein h-full transition-all duration-300 w-0"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Quiz Content Container (Injected by renderQuiz) -->
+        <main class="flex-grow max-w-4xl w-full mx-auto px-6 py-12 pb-36" id="quiz-container"></main>
+
+        <!-- Fixed Brutalist Control Bar -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-klein/10 p-4 z-40">
+            <div class="max-w-4xl mx-auto flex justify-between items-center gap-6">
+                <button onclick="window.app.prevPage()" id="btn-prev" class="hover-spring px-8 py-4 border border-klein/20 text-klein font-heading font-bold uppercase tracking-wider hover:bg-klein/5 transition disabled:opacity-30 disabled:pointer-events-none rounded-none text-sm md:text-base flex items-center gap-3" disabled>
+                    <i class="fa-solid fa-arrow-left"></i> 上一頁
+                </button>
+                <button onclick="window.app.nextPage()" id="btn-next" class="hover-spring flex-1 bg-klein text-white px-8 py-4 font-heading font-bold uppercase tracking-wider hover:bg-klein/90 transition shadow-sm rounded-none text-sm md:text-base flex items-center justify-center gap-3">
+                    下一頁 <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Brand Canvas Report View -->
+    <div id="view-result" class="hidden min-h-screen bg-white text-klein py-8 px-6 md:px-12 selection:bg-klein selection:text-white">
+        
+        <!-- Top Action Bar (no-print) -->
+        <div class="max-w-[1400px] mx-auto mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print border-b border-klein/10 pb-6">
+            <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/60 uppercase flex items-center gap-2">
+                <span class="w-2 h-2 bg-klein"></span>
+                SYS // BRAND_CANVAS_REPORT_GENERATED
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="hover-spring border border-klein/20 hover:border-klein text-klein bg-white hover:bg-klein/5 px-6 py-3 font-heading font-bold uppercase tracking-wider text-sm flex items-center gap-3 transition rounded-none">
+                    <i class="fa-solid fa-arrow-left"></i> 返回首頁
+                </a>
+                <button id="btn-export-pdf" onclick="window.app.downloadPDF()" class="hover-spring bg-klein text-white hover:bg-klein/90 px-6 py-3 font-heading font-bold uppercase tracking-wider text-sm flex items-center gap-3 transition rounded-none">
+                    <i class="fa-solid fa-file-pdf"></i> 下載完整報告 (PDF)
+                </button>
+            </div>
+        </div>
+
+        <!-- Master Report Container for PDF Export -->
+        <div id="report-container" class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- 1. Hero Brand Canvas Panel -->
+            <div class="lg:col-span-12 p-8 md:p-12 bg-white border border-klein/10 crosshair-corner relative overflow-hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-klein/10 pb-6 mb-8 gap-2">
+                    <div>
+                        <span class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 uppercase">ASSESSMENT PROTOCOL // CAREER_DNA_V2</span>
+                        <h2 class="font-heading font-black text-3xl md:text-4xl uppercase tracking-tight text-klein mt-1">My Brand Canvas 品牌定位報告</h2>
+                    </div>
+                    <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/60 border border-klein/20 px-3 py-1.5" id="report-date"></div>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center justify-start gap-10 md:gap-14">
+                    <!-- Circular Fit Score -->
+                    <div class="relative w-44 h-44 flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 36 36" class="circular-chart w-full h-full text-klein">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="score-display" class="font-syne font-extrabold text-5xl text-klein tracking-tighter">0</span>
+                            <span class="font-mono text-[10px] font-bold text-klein/50 uppercase tracking-[0.2em] mt-1">Fit Score</span>
+                        </div>
+                    </div>
+
+                    <!-- Career Recommendation Details -->
+                    <div class="text-left flex-1">
+                        <div class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 bg-klein"></span> 推薦職涯角色 (RECOMMENDED CAREER ROLES)
+                        </div>
+                        <div id="best-dept" class="font-heading font-black text-3xl md:text-5xl uppercase tracking-tight text-klein">分析中...</div>
+                        <div id="archetype-desc" class="font-body text-base md:text-lg text-klein/70 mt-3 max-w-3xl leading-relaxed"></div>
+                        <div class="mt-6 inline-flex items-center gap-3 font-mono text-sm font-bold text-klein bg-klein/5 px-4 py-2 border border-klein/20">
+                            <i class="fa-solid fa-circle-check text-klein"></i>
+                            與您的特質契合度高達 <span id="fit-score-text" class="font-syne font-black text-lg text-klein">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Left Column (5 Cols) -->
+            <div class="lg:col-span-5 space-y-8">
+                
+                <!-- Six-Axis Capability Radar -->
+                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
+                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> 六維能力雷達 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">RADAR</span>
+                    </h3>
+                    <div class="relative w-full aspect-square max-w-[320px] mx-auto">
+                        <svg id="radar-chart" viewBox="0 0 300 300" class="w-full h-full"></svg>
+                    </div>
+                </div>
+
+                <!-- Holland Spectrum -->
+                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
+                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> Holland 興趣光譜 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">SPECTRUM</span>
+                    </h3>
+                    <div class="flex items-baseline gap-4 mb-6 border-b border-klein/10 pb-4">
+                        <span class="font-mono text-xs text-klein/50 uppercase tracking-[0.2em]">PRIMARY CODE:</span>
+                        <span id="holland-code" class="font-syne font-extrabold text-4xl md:text-5xl text-klein tracking-widest">---</span>
+                    </div>
+                    <div id="holland-bars" class="space-y-4"></div>
+                </div>
+
+                <!-- Social Media Strategy -->
+                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
+                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> 社群經營策略 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">STRATEGY</span>
+                    </h3>
+                    <div id="platform-card" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- 3. Right Column (7 Cols) -->
+            <div class="lg:col-span-7 space-y-8">
+                
+                <!-- Dimension Quantitative Benchmarks -->
+                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
+                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> 能力維度量化分析 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">BENCHMARK</span>
+                    </h3>
+                    <div id="radar-details" class="space-y-5 divide-y divide-klein/10"></div>
+                </div>
+
+                <!-- Top 5 Talents -->
+                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
+                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> Top 5 天賦優勢 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">STRENGTHS</span>
+                    </h3>
+                    <div id="strength-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </div>
+
+                <!-- Brand Action Card -->
+                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
+                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> 品牌行動卡片 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">ACTION_CARD</span>
+                    </h3>
+                    <div id="action-card-content" class="space-y-4"></div>
+                </div>
+
+                <!-- 30/60/90 Day Roadmap -->
+                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
+                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> 30/60/90 天成長計畫 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">ROADMAP</span>
+                    </h3>
+                    <div id="action-plan-timeline" class="space-y-4 divide-y divide-klein/10"></div>
+                </div>
+
+                </div>
+        </div>
+
+        <!-- Retake Button -->
+        <div class="text-center pt-12 pb-16 no-print max-w-[1400px] mx-auto w-full">
+            <button id="btn-retake" onclick="location.reload()" class="font-mono text-sm font-bold uppercase tracking-[0.2em] text-klein/60 hover:text-klein hover:underline transition">
+                重新開始測驗 (RETAKE ASSESSMENT)
+            </button>
+        </div>
+    </div>
+
+    <!-- UCAN Import Modal -->
+    <div id="ucan-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-md" onclick="window.app.closeUCAN()"></div>
+        <div class="bg-white border border-klein/20 p-8 max-w-lg w-full relative z-10 shadow-2xl crosshair-corner reveal-up is-visible">
+            
+            <div class="flex items-center justify-between border-b border-klein/10 pb-4 mb-6">
+                <span class="font-mono text-xs font-bold tracking-[0.2em] text-klein/60 uppercase">SYS // UCAN_IMPORT_PROTOCOL</span>
+                <button onclick="window.app.closeUCAN()" class="text-klein/60 hover:text-klein font-mono text-xl leading-none">&times;</button>
+            </div>
+
+            <h3 class="font-heading font-black text-2xl uppercase tracking-tight text-klein mb-3">匯入 UCAN 測驗結果</h3>
+            <p class="font-body text-klein/70 text-sm mb-6 leading-relaxed">
+                如果你已經在學校做過 UCAN 測驗，請輸入你的主要職涯類型代碼（如：RIA、I、A 等），我們將直接為你進行職位配對與履歷生成。
+            </p>
+            
+            <div class="mb-6">
+                <label class="block font-mono text-xs font-bold uppercase tracking-[0.2em] text-klein mb-2">UCAN Holland Code 代碼 (1~3碼)</label>
+                <input type="text" id="ucan-input" placeholder="例如：RIA" class="w-full px-4 py-3 border border-klein/20 font-mono uppercase text-klein text-lg font-bold">
+            </div>
+
+            <div class="bg-klein/5 border border-klein/10 p-4 mb-6">
+                <p class="font-mono text-xs font-bold text-klein mb-3 uppercase tracking-[0.2em]">代碼對照表 (CODE MAPPING):</p>
+                <div class="grid grid-cols-2 gap-2 font-mono text-xs text-klein/80">
+                    <div><strong class="text-klein font-bold">R</strong> 實用型 (Hardware)</div>
+                    <div><strong class="text-klein font-bold">I</strong> 研究型 (Data/Algo)</div>
+                    <div><strong class="text-klein font-bold">A</strong> 藝術型 (UI/UX)</div>
+                    <div><strong class="text-klein font-bold">S</strong> 社會型 (DevRel)</div>
+                    <div><strong class="text-klein font-bold">E</strong> 企業型 (PM)</div>
+                    <div><strong class="text-klein font-bold">C</strong> 常規型 (QA/DevOps)</div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button id="btn-cancel-ucan" onclick="window.app.closeUCAN()" class="flex-1 py-4 border border-klein/20 text-klein font-heading font-bold uppercase tracking-wider text-sm hover:bg-klein/5 transition rounded-none">
+                    取消
+                </button>
+                <button id="btn-parse-ucan" onclick="window.app.submitUCAN()" class="flex-1 bg-klein text-white py-4 font-heading font-bold uppercase tracking-wider text-sm hover:bg-klein/90 transition shadow-sm rounded-none">
+                    確認匯入
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Script Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
+            authDomain: "ai-resume-health-check.firebaseapp.com",
+            projectId: "ai-resume-health-check",
+            storageBucket: "ai-resume-health-check.firebasestorage.app",
+            messagingSenderId: "659646169112",
+            appId: "1:659646169112:web:d11eccae4f6abfa56a436d",
+            measurementId: "G-5E2C8FJWX5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (!user) {
+                console.log("No authenticated user active. Local evaluation available.");
+                return;
+            }
+            console.log("User logged in:", user.email);
+            try {
+                const docSnap = await getDoc(doc(db, "users", user.uid, "brand_results", "latest"));
+                if (docSnap.exists()) {
+                    window.app.state.lastReport = docSnap.data();
+                    const btnLast = document.getElementById('btn-load-last');
+                    if (btnLast) btnLast.classList.remove('hidden');
+                }
+            } catch (e) { console.error("Error fetching last report:", e); }
+        });
+
+        const DATA = {
+            roles: {
+                'R': {
+                    title: '實作型人才 (Realistic)',
+                    jobs: ['網路維運助理', 'IoT 測試工程師'],
+                    stat: '依據 Collego 數據統計，約有 15% 具備實作特質的畢業生第一份工作選擇此領域。',
+                    plan: [
+                        { d: '30天 (短期)', t: '硬體與網路基礎', c: '學習網路七層協定，並練習使用 Wireshark 進行基礎封包分析，可考慮準備 CCNA 證照。' },
+                        { d: '60天 (中期)', t: '腳本與自動化', c: '學習 Python 或 Shell Script，撰寫一個自動化備份或監控腳本，並上傳至 GitHub。' },
+                        { d: '90天 (長期)', t: '實戰演練', c: '在家中建置一個小型網路環境 (例如使用 Raspberry Pi)，或參與 IoT 相關的開源專案。' }
+                    ],
+                    interviewQuestion: "情境題：公司內部網路突然大規模中斷，用戶回報無法連線。你的標準作業流程(SOP)是什麼？你會如何一步步排查問題並與團隊溝通？",
+                    resumeHighlight: "我是一位享受動手解決問題的實作型人才。我熱衷於透過實際操作來建構與維護穩定可靠的系統，並具備系統化解決硬體與網路問題的能力。在校期間，我透過 {請填寫相關專案或經驗}，成功 {請填寫量化成果，例如：將處理時間縮短 20%}。我相信我的特質能讓我在網路維運或 IoT 測試崗位上快速貢獻價值。"
+                },
+                'I': {
+                    title: '研究型人才 (Investigative)',
+                    jobs: ['後端工程師', '資料分析助理'],
+                    stat: '依據 104 人力銀行數據，後端工程師為資訊領域最大宗職缺，佔比超過 30%。',
+                    plan: [
+                        { d: '30天 (短期)', t: '程式與演算法', c: '精通一種後端語言 (如 Java/Python/Go)，並在 LeetCode 上完成 20 題 Easy/Medium 題目，理解時間/空間複雜度。' },
+                        { d: '60天 (中期)', t: '框架與資料庫', c: '學習一個主流後端框架 (如 Spring Boot/Django)，並完成一個包含 CRUD 功能的 API 專案，串接 SQL 或 NoSQL 資料庫。' },
+                        { d: '90天 (長期)', t: '系統設計與部署', c: '將專案打包成 Docker Image 並部署至雲端平台 (如 AWS/GCP)，並為你的 API 撰寫單元測試。' }
+                    ],
+                    interviewQuestion: "行為題：請描述一個你曾經遇過最複雜的技術問題。你是如何拆解它、尋找解決方案，最後又是如何解決的？從中你學到了什麼？",
+                    resumeHighlight: "我是一位具備深度思考與邏輯分析能力的研究型人才。我擅長拆解複雜問題，並透過數據與程式碼找出根本原因。在校期間，我專注於 {請填寫技術領域，如：後端開發}，並在 {請填寫相關專案或經驗} 中，負責 {請填寫擔任角色}，達成 {請填寫量化成果，例如：優化 API 效能 50%}。我對技術充滿熱情，相信能為後端或資料分析崗位帶來紮實的貢獻。"
+                },
+                'A': {
+                    title: '藝術型人才 (Artistic)',
+                    jobs: ['UI/UX 設計師', '前端工程師'],
+                    stat: '依據 104 人力銀行趨勢，前端與 UI/UX 職缺需求年增長率超過 15%，是市場熱門方向。',
+                    plan: [
+                        { d: '30天 (短期)', t: '設計與技術基礎', c: '精通 HTML/CSS/JavaScript，並學習使用 Figma 進行介面設計與 Prototype 製作。' },
+                        { d: '60天 (中期)', t: '框架與作品集', c: '學習一個前端框架 (如 React/Vue)，並將設計稿轉化為一個互動式的網頁作品，建置個人作品集網站。' },
+                        { d: '90天 (長期)', t: '使用者為中心', c: '學習使用者研究方法，為你的作品進行一次易用性測試，並根據回饋迭代設計，將過程記錄下來。' }
+                    ],
+                    interviewQuestion: "情境題：如果產品經理(PM)提出一個你認為不符合使用者體驗(UX)的設計需求，你會如何溝通？請描述你的思考過程與應對策略。",
+                    resumeHighlight: "我是一位兼具美感與技術實現能力的藝術型人才。我熱愛創造優雅且直觀的使用者介面，並能將設計理念轉化為高品質的前端程式碼。在 {請填寫相關專案或經驗} 中，我運用 {請填寫設計或前端技能}，成功 {請填寫量化成果，例如：提升使用者滿意度 10%}。我相信我對細節的追求與同理心，能為 UI/UX 設計或前端開發團隊創造獨特價值。"
+                },
+                'S': {
+                    title: '社交型人才 (Social)',
+                    jobs: ['IT 客服工程師', '軟體技術業務 (Pre-sales)'],
+                    stat: '根據調查，具備技術背景與溝通能力的 Pre-sales 人才，薪資成長潛力高於平均 20%。',
+                    plan: [
+                        { d: '30天 (短期)', t: '產品知識與溝通', c: '深入了解一項你感興趣的技術產品 (如雲端服務)，並練習用 3 分鐘向不懂技術的人說明其價值 (電梯簡報)。' },
+                        { d: '60天 (中期)', t: '簡報與問題解決', c: '製作一份該產品的介紹簡報，並模擬回答 10 個客戶可能會提出的尖銳問題。' },
+                        { d: '90天 (長期)', t: '建立人脈與實戰', c: '參加技術社群或研討會，主動與人交流。或嘗試在校內擔任助教，練習教學與解決他人問題的能力。' }
+                    ],
+                    interviewQuestion: "行為題：請描述一次你成功說服他人接受你想法的經驗。你當時的目標是什麼？你用了什麼方法？最後結果如何？",
+                    resumeHighlight: "我是一位善於溝通、樂於助人的社交型人才。我享受與人互動，並擅長將複雜的技術概念轉化為客戶能理解的語言，以解決他們的痛點。在 {請填寫社團或打工經驗} 中，我曾負責 {請填寫擔任角色}，成功 {請填寫量化成果，例如：提升客戶滿意度或活動參與人數}。我相信我的同理心與技術熱情，能在 IT 客戶服務或技術業務崗位上成為團隊與客戶間的關鍵橋樑。"
+                },
+                'E': {
+                    title: '企業型人才 (Enterprising)',
+                    jobs: ['專案管理助理 (PM)', '系統分析師 (SA)'],
+                    stat: '依據 PMI 報告，未來十年全球將需要近 2500 萬名新專案管理人才，是極具前景的職位。',
+                    plan: [
+                        { d: '30天 (短期)', t: '工具與方法論', c: '學習使用專案管理工具 (如 Trello/Jira)，並理解敏捷開發 (Agile/Scrum) 的基本流程。' },
+                        { d: '60天 (中期)', t: '規劃與文件', c: '為一個虛擬專案撰寫一份簡易的專案需求文件 (PRD)，包含目標、功能列表與時程規劃 (Gantt Chart)。' },
+                        { d: '90天 (長期)', t: '領導與溝通', c: '在分組報告或專題中主動擔任組長，練習任務分配、進度追蹤與跨組溝通，並記錄下遇到的困難與解法。' }
+                    ],
+                    interviewQuestion: "情境題：你的專案開發到一半，客戶突然提出一個全新的、不在原規劃內的功能需求，但時程(deadline)不變。你會如何處理？",
+                    resumeHighlight: "我是一位目標導向、具備商業思維的企業型人才。我擅長規劃與執行，能帶領團隊在時限內達成目標。在 {請填寫專案或社團經驗} 中，我擔任 {請填寫 PM 或組長角色}，透過 {請填寫你使用的方法}，最終達成 {請填寫量化成果，例如：提前一週完成專案或提升團隊效率 15%}。我享受從 0 到 1 打造產品的過程，並渴望在專案管理或系統分析領域持續成長。"
+                },
+                'C': {
+                    title: '常規型人才 (Conventional)',
+                    jobs: ['QA 測試工程師', '資料庫管理員 (DBA)'],
+                    stat: '軟體開發流程中，QA 測試是確保產品質量不可或缺的一環，職位穩定性高。',
+                    plan: [
+                        { d: '30天 (短期)', t: '細心與SOP', c: '學習軟體測試理論 (黑箱/白箱測試)，並為一個你常用的 APP 撰寫測試案例 (Test Case)。' },
+                        { d: '60天 (中期)', t: '工具與腳本', c: '學習使用自動化測試工具 (如 Selenium) 或 SQL 語法，撰寫一個簡單的自動化測試腳本或資料查詢指令。' },
+                        { d: '90天 (長期)', t: '實戰與回報', c: '參與開源專案的測試，或主動幫同學的專案找 Bug，並學習如何撰寫一份清晰、可重現的錯誤回報單 (Bug Report)。' }
+                    ],
+                    interviewQuestion: "行為題：請描述一個你發現的、別人沒注意到的細節或錯誤。你是如何發現的？你後續採取了什麼行動？",
+                    resumeHighlight: "我是一位注重細節、有條理的常規型人才。我享受在規範的流程中確保最高的品質與準確性。在 {請填寫相關課程或專案經驗} 中，我負責 {請填寫測試或資料整理任務}，透過細心檢查，成功 {請填寫量化成果，例如：找出 3 個潛在的嚴重 Bug 或將資料錯誤率降低 90%}。我相信我的耐心與責任感，能在 QA 測試或資料庫管理崗位上成為產品質量的堅實後盾。"
+                }
+            },
+            radarMap: [
+                { name: '邏輯分析', keys: ['Analytical', 'Focus', 'I'] }, 
+                { name: '專案執行', keys: ['Achiever', 'Responsibility', 'C'] },
+                { name: '策略思維', keys: ['Strategic', 'E', 'Learner'] }, 
+                { name: '人際溝通', keys: ['Communication', 'Relator', 'S'] },
+                { name: '創新創造', keys: ['Ideation', 'A'] }, 
+                { name: '技術實作', keys: ['R'] }
+            ],
+            radarBenchmarks: {
+                '邏輯分析': { low: '仰賴直覺決策', mid: '能進行基礎數據判讀', high: '具備拆解複雜系統與數據洞察的卓越能力' },
+                '專案執行': { low: '需要明確指令', mid: '能按時完成交付', high: '具備高度當責感，能優化流程並確保高品質產出' },
+                '策略思維': { low: '專注眼前執行', mid: '能規劃短期目標', high: '具備宏觀視野，能預判風險並制定長期佈局' },
+                '人際溝通': { low: '偏好獨立作業', mid: '能進行團隊協作', high: '擅長跨部門溝通與衝突協調，具影響力' },
+                '創新創造': { low: '偏好標準流程', mid: '能提出改良建議', high: '具備突破性思維，能從0到1建構解決方案' },
+                '技術實作': { low: '偏好理論研究', mid: '能操作基礎工具', high: '具備強烈動手實作能力，能將概念轉化為實體' }
+            },
+            strengthsInfo: {
+                'Strategic': '策略思維', 'Learner': '學習渴望', 'Analytical': '邏輯分析', 'Ideation': '創新思維', 'Communication': '溝通表達',
+                'Achiever': '成就導向', 'Focus': '專注目標', 'Responsibility': '責任紀律', 'Developer': '伯樂特質', 'Relator': '深度交往'
+            },
+            hollandInfo: {
+                'R': {n:'實做型 (Doer)', c:'#002fa7'}, 
+                'I': {n:'研究型 (Thinker)', c:'#1a4ec4'}, 
+                'A': {n:'藝術型 (Creator)', c:'#00e5ff'},
+                'S': {n:'社交型 (Helper)', c:'#ff4500'}, 
+                'E': {n:'企業型 (Persuader)', c:'#001a5e'}, 
+                'C': {n:'常規型 (Organizer)', c:'#4338ca'}
+            },
+            platforms: {
+                'R': { 
+                    name: 'GitHub / 技術部落格', 
+                    role: '技術實踐者 (Builder)',
+                    strategy: '「Show, Don\'t Tell」。你的代碼就是最好的履歷。專注於開源貢獻與技術難點的解決紀錄，讓獵頭直接看到你的實力。',
+                    bio: '👨‍💻 [語言] Developer | 熱愛造輪子與解決 [特定領域] 問題 | 正在研究 [新技術]',
+                    content: ['分享一個你最近解決的 Bug 及其底層原理', '重構一段舊代碼的前後對比 (Before/After)', '參與開源專案的 PR 紀錄或 Side Project 開發日誌']
+                },
+                'I': { 
+                    name: 'Medium / 技術專欄', 
+                    role: '知識領袖 (Thought Leader)',
+                    strategy: '建立「領域權威感」。將複雜的技術或趨勢拆解為易懂的分析文章，展現深度思考能力，吸引尋找高階人才的企業。',
+                    bio: '🔍 [領域] Researcher | 擅長數據分析與趨勢洞察 | 寫作是為了釐清思考',
+                    content: ['針對某個新技術趨勢的深度分析報告', '學習某個硬核知識的筆記與心智圖', '比較不同解決方案優缺點的評測文']
+                },
+                'A': { 
+                    name: 'Behance / Instagram', 
+                    role: '風格創作者 (Creator)',
+                    strategy: '「視覺化你的思考」。不只是放完成圖，更要展示草圖、發想過程與設計理念，讓業主看到你的美感與解決問題的創意。',
+                    bio: '🎨 Designer & Creator | 用視覺說故事 | [風格關鍵字] 愛好者',
+                    content: ['從草稿到完稿的縮時影片 (Reels)', '拆解一個設計作品背後的設計心理學', '分享你的靈感來源與素材庫']
+                },
+                'S': { 
+                    name: 'LinkedIn / Podcast', 
+                    role: '社群連結者 (Connector)',
+                    strategy: '「人脈即資產」。分享團隊合作經驗、訪談業界前輩，或舉辦讀書會。展現你的軟實力與影響力，這對 PM 或業務職位極有幫助。',
+                    bio: '🤝 Community Builder | 熱衷於 [領域] 交流與分享 | [社群名稱] 發起人',
+                    content: ['分享一次團隊衝突的解決經驗與反思', '訪談一位業界前輩的心得筆記', '舉辦線下/線上活動的幕後花絮']
+                },
+                'E': { 
+                    name: 'LinkedIn / 個人官網', 
+                    role: '商業推動者 (Driver)',
+                    strategy: '「打造專業形象」。關注產業動態，發表對商業模式的看法。展現你的領導潛力與商業嗅覺，吸引管理職或儲備幹部計畫的目光。',
+                    bio: '🚀 Aspiring PM/Entrepreneur | 專注於 [產業] 創新與成長 | 解決問題的人',
+                    content: ['分析一個你喜歡的產品的商業模式', '分享你設定目標並達成過程的復盤 (Review)', '對產業新聞的個人觀點與預測']
+                },
+                'C': { 
+                    name: 'Notion / Gumroad', 
+                    role: '流程優化師 (Optimizer)',
+                    strategy: '「結構化輸出」。分享你的筆記模板、SOP 或效率工具。展現條理分明與高執行力，這是所有高效率團隊都夢寐以求的特質。',
+                    bio: '⚡ Efficiency Enthusiast | 擅長流程優化與知識管理 | [工具] 重度使用者',
+                    content: ['分享你的專案管理模板或讀書筆記模板', '如何優化某個工作流程的 Before/After', '整理一份新手入門 [領域] 的資源包']
+                }
+            },
+            actionCards: {
+                'Strategic': { book: '《好策略壞策略》', skill: '心智圖繪製、SWOT分析', task: '每週挑選一則產業新聞，練習寫出 3 種可能的未來發展劇本。' },
+                'Learner': { book: '《刻意練習》', skill: '快速閱讀、知識管理系統(Obsidian)', task: '建立一個「學習收件匣」，每天記錄 3 個新學到的知識點。' },
+                'Analytical': { book: '《思考快與慢》', skill: 'Python 數據分析、Tableau 視覺化', task: '嘗試用數據來佐證你的一個日常決策 (例如：記帳分析)。' },
+                'Ideation': { book: '《創意自信帶來力量》', skill: '設計思考 (Design Thinking)、腦力激盪引導', task: '每天強迫自己寫下 10 個關於現有產品的改進點子 (Idea Quota)。' },
+                'Communication': { book: '《跟 TED 學表達》', skill: '簡報設計、故事行銷 (Storytelling)', task: '練習用「黃金圈法則 (Why-How-What)」來介紹你自己或一個專案。' },
+                'Achiever': { book: '《原子習慣》', skill: '專案管理 (Agile/Scrum)、時間管理 (Pomodoro)', task: '列出明天的 3 個最重要的待辦事項 (MIT)，並堅持完成。' },
+                'Focus': { book: '《深度工作力》', skill: '目標設定 (OKR)、心流觸發', task: '每天設定一段 90 分鐘的「無干擾工作時間」，手機開飛航。' },
+                'Responsibility': { book: '《當責》', skill: '風險管理、品質控管', task: '在小組作業中主動擔任「最後檢查者 (Gatekeeper)」，確保交付品質。' },
+                'Developer': { book: '《教練》', skill: '導師引導 (Coaching)、教育訓練設計', task: '教一位同學學會你擅長的一個小技能，直到他能教會別人。' },
+                'Relator': { book: '《人性的弱點》', skill: '同理心傾聽、衝突管理', task: '本週約一位很久沒見的朋友或前輩喝咖啡，只傾聽不評判。' }
+            }
+        };
+
+        const QUESTIONS = [
+            {t:'面對複雜且模糊的專案需求時，我能迅速找出潛在風險與多種應對路徑。(Strategic)', m:'Strategic', cat:'s'},
+            {t:'面對新技術或陌生領域，我會感到興奮並能快速掌握核心概念應用於工作中。(Learner)', m:'Learner', cat:'s'},
+            {t:'在會議中，我習慣要求以數據、邏輯推演或具體證據來佐證決策，而非憑感覺。(Analytical)', m:'Analytical', cat:'s'},
+            {t:'我常能跳脫現有框架，提出讓團隊耳目一新的非傳統解決方案。(Ideation)', m:'Ideation', cat:'s'},
+            {t:'我擅長將複雜的技術語言，轉化為非技術人員也能聽懂的商業價值或故事。(Communication)', m:'Communication', cat:'s'},
+            {t:'我將完成任務視為基本，並習慣主動設定更高的KPI或優化標準來挑戰自己。(Achiever)', m:'Achiever', cat:'s'},
+            {t:'即使在干擾眾多的環境下，我仍能鎖定關鍵目標，長時間維持高效率產出。(Focus)', m:'Focus', cat:'s'},
+            {t:'對於答應的交付期限(Deadline)，我視為絕對承諾，必要時會自主排除萬難完成。(Responsibility)', m:'Responsibility', cat:'s'},
+            {t:'我能敏銳察覺團隊成員的潛力，並樂於提供指導或資源協助他們突破瓶頸。(Developer)', m:'Developer', cat:'s'},
+            {t:'比起表面寒暄，我更擅長與利害關係人建立長期、深度且具信任感的合作關係。(Relator)', m:'Relator', cat:'s'},
+            {t:'當系統或流程出錯時，我本能地會去拆解底層邏輯，找出根本原因(Root Cause)。(Analytical)', m:'Analytical', cat:'s'},
+            {t:'我習慣將大目標拆解為可執行的步驟，並預先規劃時程表與資源配置。(Strategic)', m:'Strategic', cat:'s'},
+            {t:'我將「持續進修」視為職涯必需品，常在下班後主動學習產業新知。(Learner)', m:'Learner', cat:'s'},
+            {t:'我能夠區分任務的輕重緩急，確保資源集中在對組織最有價值的20%事務上。(Focus)', m:'Focus', cat:'s'},
+            {t:'我重視團隊的心理安全感，能在高壓環境下維繫成員間的和諧與士氣。(Relator)', m:'Relator', cat:'s'},
+            {t:'我喜歡操作精密儀器、編寫底層代碼或進行硬體設備的維護與組裝。(R)', m:'R', cat:'h'},
+            {t:'比起抽象的策略討論，我更享受看到自己親手打造的產品實際運作的成就感。(R)', m:'R', cat:'h'},
+            {t:'我喜歡鑽研演算法、數學模型或分析複雜的系統架構，找出最佳化解法。(I)', m:'I', cat:'h'},
+            {t:'遇到未知問題時，我習慣先進行廣泛的資料蒐集與文獻研究，再歸納出結論。(I)', m:'I', cat:'h'},
+            {t:'我對使用者介面(UI)、視覺排版或產品美學有高標準，無法忍受缺乏設計感的產出。(A)', m:'A', cat:'h'},
+            {t:'我不喜歡被既定的SOP綁死，需要能自由發揮創意與個人風格的工作環境。(A)', m:'A', cat:'h'},
+            {t:'我樂於處理「人」的問題，包括輔導他人、解決客戶抱怨或進行教育訓練。(S)', m:'S', cat:'h'},
+            {t:'在跨部門專案中，我常擔任協調者角色，確保各方意見能達成共識。(S)', m:'S', cat:'h'},
+            {t:'我喜歡擔任專案負責人(PM)，帶領團隊衝刺業績或達成專案目標，並對結果負責。(E)', m:'E', cat:'h'},
+            {t:'我具備說服力，樂於向客戶提案或在會議中推銷我的想法與產品價值。(E)', m:'E', cat:'h'},
+            {t:'我擅長建立檔案管理系統，確保資料分類邏輯清晰，方便後續檢索。(C)', m:'C', cat:'h'},
+            {t:'我重視細節與精確度，在執行任務時會嚴格遵守規範與品質標準。(C)', m:'C', cat:'h'},
+            {t:'我會主動參加技術研討會或閱讀論文，以保持在專業領域的領先地位。(I)', m:'I', cat:'h'},
+            {t:'我享受在公開場合演講或進行簡報，展現個人或團隊的成果。(E)', m:'E', cat:'h'},
+            {t:'我無法忍受流程混亂或效率低下的工作方式，會主動尋求優化與標準化。(C)', m:'C', cat:'h'}
+        ];
+
+        window.app = {
+            state: { answers: {}, currentPage: 0, pageSize: 5, lastReport: null },
+            isExporting: false,
+            
+            init() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('view') === 'report') {
+                    const localData = localStorage.getItem('career_dna_last_result');
+                    if (localData) {
+                        try {
+                            const parsed = JSON.parse(localData);
+                            if (parsed && typeof parsed === 'object') {
+                                this.state.lastReport = parsed;
+                                this.switchView('view-result');
+                                this.renderReportView(parsed);
+                                return;
+                            }
+                        } catch (e) {
+                            console.error("Error parsing career_dna_last_result in init:", e);
+                        }
+                    }
+                    if (this.state.lastReport) {
+                        this.loadLastReport();
+                    }
+                }
+            },
+
+            start() {
+                this.state = { answers: {}, currentPage: 0, pageSize: 5, lastReport: this.state.lastReport };
+                this.switchView('view-quiz');
+                this.renderQuiz();
+                window.scrollTo(0,0);
+            },
+            
+            loadDemo() {
+                QUESTIONS.forEach((q, i) => {
+                    this.state.answers[i] = Math.floor(Math.random() * 3) + 3;
+                });
+                this.calculateResults();
+            },
+            
+            switchView(id) {
+                ['view-landing', 'view-quiz', 'view-result'].forEach(v => {
+                    const el = document.getElementById(v);
+                    if (el) el.classList.add('hidden');
+                });
+                const target = document.getElementById(id);
+                if (target) target.classList.remove('hidden');
+            },
+            
+            loadLastReport() {
+                if (this.state.lastReport) {
+                    this.switchView('view-result');
+                    this.renderReportView(this.state.lastReport);
+                }
+            },
+            
+            renderQuiz() {
+                const { currentPage, pageSize } = this.state;
+                const start = currentPage * pageSize;
+                const end = start + pageSize;
+                const pageQs = QUESTIONS.slice(start, end);
+                const answeredCount = Object.keys(this.state.answers).length;
+                const progress = Math.min(100, Math.floor((answeredCount / QUESTIONS.length) * 100));
+                
+                const pBar = document.getElementById('progress-bar');
+                const pText = document.getElementById('progress-text');
+                if (pBar) pBar.style.width = `${progress}%`;
+                if (pText) pText.innerText = `${progress}%`;
+
+                let html = '';
+                pageQs.forEach((q, i) => {
+                    const idx = start + i;
+                    const val = this.state.answers[idx] || 0;
+                    html += `
+                        <div class="mb-8 p-8 bg-white border border-klein/10 crosshair-corner reveal-up is-visible">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="font-mono text-xs font-bold tracking-[0.2em] text-klein/40 uppercase">QUESTION ${idx + 1} / 30</span>
+                                <span class="font-mono text-xs font-bold px-2 py-0.5 border border-klein/20 text-klein/70 uppercase">${q.cat === 's' ? 'STRENGTHS' : 'HOLLAND'}</span>
+                            </div>
+                            <h3 class="font-heading font-black text-xl md:text-2xl text-klein mb-6 tracking-tight leading-snug">${idx + 1}. ${q.t}</h3>
+                            <div class="grid grid-cols-5 gap-3">
+                                ${[1, 2, 3, 4, 5].map(v => `
+                                    <label class="likert-opt cursor-pointer group">
+                                        <input type="radio" name="q${idx}" value="${v}" ${val == v ? 'checked' : ''} class="hidden" onchange="window.app.answer(${idx}, ${v})">
+                                        <div class="h-14 bg-white border border-klein/20 flex flex-col items-center justify-center text-klein font-mono font-bold hover:border-klein hover:bg-klein/5 transition-all text-lg rounded-none">
+                                            ${v}
+                                        </div>
+                                    </label>
+                                `).join('')}
+                            </div>
+                            <div class="flex justify-between font-mono text-xs font-semibold text-klein/50 mt-3 px-1 tracking-wider uppercase">
+                                <span>[1] 完全不符合</span>
+                                <span>[5] 非常符合</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                const qContainer = document.getElementById('quiz-container');
+                if (qContainer) qContainer.innerHTML = html;
+                
+                const btnPrev = document.getElementById('btn-prev');
+                if (btnPrev) btnPrev.disabled = currentPage === 0;
+                
+                const btnNext = document.getElementById('btn-next');
+                if (btnNext) {
+                    btnNext.innerHTML = (end >= QUESTIONS.length) 
+                        ? `查看報告 <i class="fa-solid fa-arrow-right"></i>` 
+                        : `下一頁 <i class="fa-solid fa-arrow-right"></i>`;
+                }
+            },
+
+            answer(idx, val) {
+                this.state.answers[idx] = val;
+                this.renderQuiz();
+            },
+
+            prevPage() {
+                if(this.state.currentPage > 0) {
+                    this.state.currentPage--;
+                    this.renderQuiz();
+                    window.scrollTo(0,0);
+                }
+            },
+
+            nextPage() {
+                const { currentPage, pageSize } = this.state;
+                const start = currentPage * pageSize;
+                const end = Math.min(start + pageSize, QUESTIONS.length);
+                for(let i = start; i < end; i++) {
+                    if(!this.state.answers[i]) {
+                        alert(`請完成第 ${i + 1} 題`);
+                        return;
+                    }
+                }
+                if(end >= QUESTIONS.length) {
+                    this.calculateResults();
+                } else {
+                    this.state.currentPage++;
+                    this.renderQuiz();
+                    window.scrollTo(0,0);
+                }
+            },
+
+            async calculateResults() {
+                this.switchView('view-result');
+
+                let sScores = {}, hScores = {};
+                QUESTIONS.forEach((q, i) => {
+                    const val = this.state.answers[i] || 3;
+                    if(q.cat === 's') sScores[q.m] = (sScores[q.m] || 0) + val; 
+                    else hScores[q.m] = (hScores[q.m] || 0) + val;
+                });
+
+                const topH = Object.entries(hScores).sort((a,b) => b[1] - a[1]);
+                const topHollandCode = topH[0][0];
+                const topHollandScore = topH[0][1];
+                const maxPossibleScore = QUESTIONS.filter(q => q.m === topHollandCode && q.cat === 'h').length * 5;
+                const fitScore = maxPossibleScore > 0 ? Math.round((topHollandScore / maxPossibleScore) * 100) : 0;
+
+                const hCode = topH.slice(0,3).map(x => x[0]).join('');
+                const topS = Object.entries(sScores).sort((a,b) => b[1] - a[1]).slice(0,5);
+
+                let radarData = DATA.radarMap.map(dim => {
+                    let sum = 0, count = 0;
+                    dim.keys.forEach(k => {
+                        sum += (k.length > 1 ? (sScores[k] || 0) : (hScores[k] || 0));
+                        count += QUESTIONS.filter(q => q.m === k).length;
+                    });
+                    return (count > 0) ? Math.round((sum / (count * 5)) * 100) : 0;
+                });
+                
+                const resultData = {
+                    date: new Date().toISOString(),
+                    topHollandCode: topHollandCode,
+                    fitScore: fitScore,
+                    hollandCode: hCode,
+                    topStrengths: topS.map(s => s[0]),
+                    radarData: radarData,
+                    hollandScores: topH
+                };
+
+                const primaryHolland = topHollandCode;
+                localStorage.setItem('career_dna_last_result', JSON.stringify(resultData));
+                localStorage.setItem('cdna_primary_holland', primaryHolland);
+
+                this.state.lastReport = resultData;
+
+                if (currentUser) {
+                    try {
+                        const user = currentUser;
+                        const batch = writeBatch(db);
+                        
+                        // 1. 保存歷史快照 (History Logging)
+                        const historyRef = doc(collection(db, "users", user.uid, "history_brand"));
+                        batch.set(historyRef, resultData);
+
+                        // 2. 更新聚合快取 (Summary Cache)
+                        const userRef = doc(db, "users", user.uid);
+                        batch.set(userRef, {
+                            summary_cache: {
+                                brand: {
+                                    date: resultData.date,
+                                    topHollandCode: resultData.topHollandCode,
+                                    fitScore: resultData.fitScore,
+                                    topStrengths: resultData.topStrengths
+                                }
+                            }
+                        }, { merge: true });
+
+                        // 3. 最新快照 (Latest Snapshot)
+                        const latestRef = doc(db, "users", user.uid, "brand_results", "latest");
+                        batch.set(latestRef, resultData);
+
+                        await batch.commit();
+                        await setDoc(doc(db, "users", user.uid, "brand_results", "latest"), resultData);
+                        console.log("✅ 測驗結果已同步至雲端 (歷史快照 + 聚合快取 + 最新報告)！");
+                    } catch (e) {
+                        console.error("❌ 儲存失敗", e);
+                    }
+                } else {
+                    console.log("⚠️ 訪客模式，僅在本地顯示結果");
+                }
+                
+                this.renderReportView(resultData);
+            },
+
+            renderReportView(data) {
+                window.scrollTo(0,0);
+                const { topHollandCode, fitScore, hollandCode, topStrengths, radarData, hollandScores, date } = data;
+                
+                // 1. Report Date
+                const dateEl = document.getElementById('report-date');
+                if (dateEl) {
+                    dateEl.innerText = date ? new Date(date).toLocaleDateString('zh-TW') : new Date().toLocaleDateString('zh-TW');
+                }
+
+                // 2. Career Roles & Description
+                const roleInfo = DATA.roles[topHollandCode] || DATA.roles['R'];
+                const deptEl = document.getElementById('best-dept');
+                if (deptEl) deptEl.innerText = roleInfo.jobs.join(' / ');
+                
+                const descEl = document.getElementById('archetype-desc');
+                if (descEl) descEl.innerText = roleInfo.stat;
+                
+                const fitTextEl = document.getElementById('fit-score-text');
+                if (fitTextEl) fitTextEl.innerText = fitScore + '%';
+
+                // 3. Circular Fit Score Counter Animation
+                const circle = document.querySelector('.circle');
+                if (circle) {
+                    circle.style.stroke = fitScore >= 80 ? '#002fa7' : (fitScore >= 60 ? '#1a4ec4' : '#001a5e');
+                    setTimeout(() => {
+                        circle.style.strokeDasharray = `${fitScore || 0}, 100`;
+                        let start = 0;
+                        const scoreEl = document.getElementById('score-display');
+                        const timer = setInterval(() => {
+                            start++;
+                            if (scoreEl) scoreEl.innerText = start;
+                            if(start >= fitScore) {
+                                clearInterval(timer);
+                                if (scoreEl) scoreEl.innerText = fitScore;
+                            }
+                        }, 10);
+                    }, 100);
+                }
+
+                // 4. Six-Axis Capability Radar
+                this.drawRadar(radarData);
+
+                // 5. Holland Primary Code & Bars
+                const hCodeEl = document.getElementById('holland-code');
+                if (hCodeEl) hCodeEl.innerText = hollandCode;
+                
+                const hScoresToRender = hollandScores || hollandCode.split('').map(c => [c, 10]);
+                const maxHScore = hScoresToRender[0] ? hScoresToRender[0][1] : 1;
+                const hBarsEl = document.getElementById('holland-bars');
+                if (hBarsEl) {
+                    hBarsEl.innerHTML = hScoresToRender.map(h => {
+                        const info = DATA.hollandInfo[h[0]] || { n: h[0], c: '#002fa7' };
+                        const pct = Math.max(0, (h[1] / maxHScore) * 100);
+                        return `
+                            <div class="flex items-center text-sm font-mono">
+                                <span class="w-10 font-bold text-base text-klein">${h[0]}</span>
+                                <div class="flex-1 h-3 bg-klein/5 border border-klein/10 mx-3 overflow-hidden rounded-none">
+                                    <div class="h-full bg-klein" style="width:${pct}%"></div>
+                                </div>
+                                <span class="w-8 text-right text-klein/60 font-bold">${h[1]}</span>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                // 6. Top 5 Talent Cards
+                const strengthsEl = document.getElementById('strength-cards');
+                if (strengthsEl) {
+                    strengthsEl.innerHTML = topStrengths.map((s, i) => `
+                        <div class="p-4 bg-white border border-klein/15 flex items-center justify-between hover-spring rounded-none">
+                            <span class="font-heading font-bold text-klein text-sm md:text-base">#${i + 1} ${DATA.strengthsInfo[s] || s}</span>
+                            <span class="font-mono text-xs bg-klein/5 border border-klein/20 px-2 py-1 text-klein font-bold">${s}</span>
+                        </div>
+                    `).join('');
+                }
+
+                // 7. Radar Quantitative Details
+                let radarDetailsHTML = '';
+                radarData.forEach((score, i) => {
+                    const dim = DATA.radarMap[i];
+                    let meaning = score < 50 ? DATA.radarBenchmarks[dim.name].low : (score < 75 ? DATA.radarBenchmarks[dim.name].mid : DATA.radarBenchmarks[dim.name].high);
+                    let scoreColor = score >= 75 ? 'text-klein' : (score >= 50 ? 'text-klein/80' : 'text-klein/50');
+                    radarDetailsHTML += `
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between py-4 first:pt-0 last:pb-0 gap-2">
+                            <div class="w-full sm:w-1/3 flex sm:flex-col justify-between items-baseline">
+                                <span class="font-heading font-bold text-klein text-sm md:text-base">${dim.name}</span>
+                                <div class="flex items-baseline gap-1 mt-1">
+                                    <span class="font-syne font-extrabold text-2xl md:text-3xl ${scoreColor}">${score}</span>
+                                    <span class="font-mono text-xs text-klein/40">/100</span>
+                                </div>
+                            </div>
+                            <div class="w-full sm:w-2/3 sm:pl-6 sm:border-l border-klein/10">
+                                <p class="font-body text-xs md:text-sm text-klein/70 leading-relaxed">${meaning}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                const radarDetailsEl = document.getElementById('radar-details');
+                if (radarDetailsEl) radarDetailsEl.innerHTML = radarDetailsHTML;
+
+                // 8. Social Media Strategy
+                const platformInfo = DATA.platforms[hollandCode[0]] || DATA.platforms['R'];
+                const platformEl = document.getElementById('platform-card');
+                if (platformEl) {
+                    platformEl.innerHTML = `
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-heading font-black text-klein text-lg md:text-xl">${platformInfo.name}</h4>
+                                <span class="font-mono text-xs font-bold border border-klein/20 px-2.5 py-1 text-klein bg-klein/5 uppercase">${platformInfo.role}</span>
+                            </div>
+                            <p class="font-body text-sm text-klein/70 leading-relaxed">${platformInfo.strategy}</p>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="p-4 bg-white border border-klein/15">
+                                <div class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] mb-2 flex items-center justify-between">
+                                    <span>Bio 範本 (個人簡介)</span>
+                                    <span class="text-[10px] text-klein/40">點擊快速複製</span>
+                                </div>
+                                <p class="font-mono text-xs md:text-sm text-klein bg-klein/5 p-3 border border-klein/10 select-all cursor-pointer hover:bg-klein/10 transition" title="點擊複製" onclick="navigator.clipboard.writeText(this.innerText);alert('已複製 Bio！')">${platformInfo.bio}</p>
+                            </div>
+                            
+                            <div class="p-4 bg-white border border-klein/15">
+                                <div class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] mb-2">Content Ideas (貼文靈感)</div>
+                                <ul class="font-body text-xs md:text-sm text-klein/80 space-y-1.5 list-disc list-inside">
+                                    ${platformInfo.content.map(c => `<li>${c}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 9. Brand Action Card
+                const actionInfo = DATA.actionCards[topStrengths[0]] || DATA.actionCards['Strategic'];
+                const actionEl = document.getElementById('action-card-content');
+                if (actionEl) {
+                    actionEl.innerHTML = `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                            <div class="p-3 bg-white border border-klein/15">
+                                <span class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] block mb-1">📚 推薦書籍</span>
+                                <span class="font-heading font-bold text-klein text-sm">${actionInfo.book}</span>
+                            </div>
+                            <div class="p-3 bg-white border border-klein/15">
+                                <span class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] block mb-1">🛠️ 必修技能</span>
+                                <span class="font-heading font-bold text-klein text-sm">${actionInfo.skill}</span>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-klein/5 border border-klein/20">
+                            <span class="font-mono text-xs font-bold text-klein block mb-1 uppercase tracking-[0.2em]">⚡ 今日微行動 (MICRO-ACTION)</span>
+                            <span class="font-heading font-bold text-klein text-sm md:text-base">${actionInfo.task}</span>
+                        </div>
+                    `;
+                }
+
+                // 10. 30/60/90 Day Roadmap
+                const planData = roleInfo.plan;
+                const timelineEl = document.getElementById('action-plan-timeline');
+                if (timelineEl) {
+                    timelineEl.innerHTML = planData.map(p => `
+                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 py-4 first:pt-0 last:pb-0 items-start">
+                            <div class="font-mono text-xs font-bold text-klein bg-klein/5 px-3 py-1.5 border border-klein/20 uppercase tracking-wider flex-shrink-0">${p.d}</div>
+                            <div class="flex-1">
+                                <h5 class="font-heading font-bold text-klein text-base mb-1">${p.t}</h5>
+                                <p class="font-body text-xs md:text-sm text-klein/70 leading-relaxed">${p.c}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                
+
+            drawRadar(data) {
+                const svg = document.getElementById('radar-chart');
+                if (!svg) return;
+                const center = 150, radius = 100, angles = [0, 60, 120, 180, 240, 300].map(a => (a-90) * Math.PI / 180);
+                
+                const gridColor = 'rgba(0, 47, 167, 0.12)';
+                const textColor = '#002fa7';
+                const areaFillColor = 'rgba(0, 47, 167, 0.2)';
+                const strokeColor = '#002fa7';
+
+                let gridHTML = '';
+                [0.2, 0.4, 0.6, 0.8, 1].forEach(scale => {
+                    const points = angles.map(a => `${center + radius * scale * Math.cos(a)},${center + radius * scale * Math.sin(a)}`).join(' ');
+                    gridHTML += `<polygon points="${points}" fill="none" stroke="${gridColor}" stroke-width="1"/>`;
+                });
+                angles.forEach((a, i) => {
+                    const x = center + radius * 1.25 * Math.cos(a), y = center + radius * 1.25 * Math.sin(a);
+                    gridHTML += `<line x1="${center}" y1="${center}" x2="${center + radius * Math.cos(a)}" y2="${center + radius * Math.sin(a)}" stroke="${gridColor}" /><text x="${x}" y="${y}" fill="${textColor}" font-family="'Chakra Petch', 'Noto Sans TC', sans-serif" font-size="11" font-weight="600" text-anchor="${Math.cos(a)>0.1?'start':(Math.cos(a)<-0.1?'end':'middle')}" dominant-baseline="middle">${DATA.radarMap[i].name}</text>`;
+                });
+                const dataPoints = angles.map((a, i) => `${center + radius * (data[i]/100) * Math.cos(a)},${center + radius * (data[i]/100) * Math.sin(a)}`).join(' ');
+                svg.innerHTML = gridHTML + `<polygon points="${dataPoints}" fill="${areaFillColor}" stroke="${strokeColor}" stroke-width="2.5" />` + angles.map((a, i) => `<circle cx="${center + radius * (data[i]/100) * Math.cos(a)}" cy="${center + radius * (data[i]/100) * Math.sin(a)}" r="3.5" fill="${strokeColor}"/>`).join('');
+            },
+
+            downloadPDF() {
+                if (this.isExporting) return;
+                const element = document.getElementById('report-container');
+                if (!element) return;
+
+                this.isExporting = true;
+                const btn = document.getElementById('btn-export-pdf');
+                if (btn) btn.disabled = true;
+
+                const opt = { 
+                    margin: 10, 
+                    filename: 'CareerDNA_Brand_Report.pdf', 
+                    image: { type: 'jpeg', quality: 0.98 }, 
+                    html2canvas: { scale: 2 }, 
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+                };
+                
+                try {
+                    if (typeof html2pdf !== 'undefined') {
+                        html2pdf().set(opt).from(element).save();
+                    }
+                } finally {
+                    this.isExporting = false;
+                    if (btn) btn.disabled = false;
+                }
+            },
+
+            toggleAISection(section) {
+                const el = document.getElementById(`ai-section-${section}`);
+                if (!el) return;
+                const btn = el.previousElementSibling;
+                const icon = btn ? btn.querySelector('i, svg') : null;
+                const isHidden = el.classList.contains('hidden');
+                
+                // Close all sections first
+                const resumeEl = document.getElementById('ai-section-resume');
+                const interviewEl = document.getElementById('ai-section-interview');
+                if (resumeEl) {
+                    resumeEl.classList.add('hidden');
+                    const rBtn = resumeEl.previousElementSibling;
+                    const rIcon = rBtn ? rBtn.querySelector('i, svg') : null;
+                    if (rIcon) rIcon.classList.remove('rotate-180');
+                }
+                if (interviewEl) {
+                    interviewEl.classList.add('hidden');
+                    const iBtn = interviewEl.previousElementSibling;
+                    const iIcon = iBtn ? iBtn.querySelector('i, svg') : null;
+                    if (iIcon) iIcon.classList.remove('rotate-180');
+                }
+
+                if (isHidden) {
+                    el.classList.remove('hidden');
+                    if (icon) icon.classList.add('rotate-180');
+                }
+            },
+
+            copyText(id, isP = false) {
+                const target = document.getElementById(id);
+                if (!target) return;
+                const text = target[isP ? 'innerText' : 'textContent'];
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('已複製內容！');
+                }).catch(err => {
+                    console.error('Copy failed', err);
+                });
+            },
+
+            promptUCAN() {
+                const modal = document.getElementById('ucan-modal');
+                if (modal) modal.classList.remove('hidden');
+            },
+
+            closeUCAN() {
+                const modal = document.getElementById('ucan-modal');
+                if (modal) modal.classList.add('hidden');
+            },
+
+            submitUCAN() {
+                const input = document.getElementById('ucan-input');
+                const ucanInput = input ? input.value.trim() : '';
+                if (!ucanInput) return alert('請輸入您的 UCAN 代碼 (例如：RIA)');
+                
+                const match = ucanInput.match(/[RIACSE]/i);
+                if (!match) return alert('請輸入包含有效 Holland 代碼 (R, I, A, S, E, C) 的文字 (例如：RIA)');
+                
+                const primaryType = match[0].toUpperCase();
+                
+                localStorage.setItem('career_dna_last_result', JSON.stringify({
+                    date: new Date().toLocaleDateString(),
+                    ucan: ucanInput,
+                    primaryHolland: primaryType
+                }));
+                localStorage.setItem('cdna_primary_holland', primaryType);
+                
+                window.location.href = 'career_fit_v2.html';
+            }
+        };
+
+        window.app.init();
+    </script>
+
+    <!-- Scroll Animations & Parallax Watermark Script -->
+    <script>
+        // Intersection Observer for scroll reveals
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-up').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Scroll-driven Parallax for Brand text
+        const brandText = document.getElementById('parallax-dna');
+        if (brandText) {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.scrollY;
+                brandText.style.transform = `translateY(calc(-50% + ${scrolled * 0.3}px))`;
+            });
+        }
+    </script>
+</body>
+</html>

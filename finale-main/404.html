@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth bg-white text-klein">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Page Not Found | CareerDNA</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        klein: '#002fa7',
+                        'deep-klein': '#001a5e',
+                        cobalt: '#1a4ec4',
+                        'electric-blue': '#00e5ff',
+                        'flame-orange': '#ff4500'
+                    },
+                    fontFamily: {
+                        syne: ['"Syne"', 'sans-serif'],
+                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"Chakra Petch"', '"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #002fa7;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .hover-spring {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+        .hover-spring:hover {
+            transform: translateY(-6px) scale(1.01) !important;
+            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.08) !important;
+            z-index: 50;
+        }
+
+        .crosshair-corner {
+            position: relative;
+        }
+        .crosshair-corner::before, .crosshair-corner::after {
+            content: '+';
+            position: absolute;
+            color: rgba(0, 47, 167, 0.3);
+            font-family: monospace;
+            font-size: 1rem;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .crosshair-corner::before { top: -8px; left: -4px; }
+        .crosshair-corner::after { bottom: -8px; right: -4px; }        .outline-text {
+            color: #ffffff;
+            -webkit-text-stroke: 1.5px #002fa7;
+            paint-order: stroke fill;
+            transition: all 0.4s ease;
+        }
+        .outline-text:hover {
+            color: #002fa7;
+            -webkit-text-stroke: 1.5px transparent;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col justify-between bg-white">
+
+    <!-- Global Navigation Bar -->
+    <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-4 group">
+                <div class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">SYS // ERROR_ROUTING</span>
+                </div>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
+                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+            </div>
+
+            <div>
+                <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> 返回首頁
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Error HUD Main Section -->
+    <main class="flex-grow pt-32 pb-20 px-6 md:px-12 flex items-center justify-center">
+        <div class="max-w-[1000px] w-full mx-auto border-x border-klein/10 px-8 md:px-16 py-16 text-center relative crosshair-corner">
+            <div class="absolute top-0 left-0 w-full h-[1px] bg-klein/10"></div>
+            <div class="absolute bottom-0 left-0 w-full h-[1px] bg-klein/10"></div>
+            
+            <div id="message" class="flex flex-col items-center gap-6">
+                <div class="font-mono text-xs font-bold tracking-[0.3em] uppercase text-flame-orange border border-flame-orange/30 px-3 py-1 bg-flame-orange/5 flex items-center gap-2">
+                    <span class="w-2 h-2 bg-flame-orange animate-ping"></span>
+                    SYS // HTTP_404_PAGE_NOT_FOUND
+                </div>
+                
+                <h1 class="font-syne font-extrabold text-[15vw] md:text-[11rem] text-klein leading-[0.9] tracking-tight uppercase select-none">
+                    4<span class="outline-text">0</span>4
+                </h1>
+                
+                <h2 class="font-heading font-black text-2xl md:text-4xl text-klein uppercase tracking-tight">
+                    TARGET NODE UNRESOLVED // 頁面未配置
+                </h2>
+                
+                <p class="font-body text-klein/70 text-base md:text-lg max-w-xl leading-relaxed">
+                    您所請求的資源節點不存在或已被系統重新編組。請確認目標路徑，或返回 CareerDNA 核心控制台。
+                </p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-xl mt-6">
+                    <a href="index.html" class="hover-spring bg-klein text-white font-heading font-bold text-base uppercase py-4 px-6 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-house"></i> 系統首頁
+                    </a>
+                    <a href="career_fit_v2.html" class="hover-spring border border-klein/20 hover:border-klein text-klein hover:bg-klein hover:text-white font-heading font-bold text-base uppercase py-4 px-6 flex items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-signature"></i> 履歷健檢
+                    </a>
+                    <a href="resource_library.html" class="hover-spring border border-klein/20 hover:border-klein text-klein hover:bg-klein hover:text-white font-heading font-bold text-base uppercase py-4 px-6 flex items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-book-bookmark"></i> 學習資源
+                    </a>
+                </div>
+                
+                <div class="mt-8 border border-klein/10 p-5 w-full max-w-xl text-left bg-klein/[0.02] crosshair-corner">
+                    <h3 class="font-mono text-xs font-bold text-klein uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-terminal"></i> DIAGNOSTIC_READOUT:
+                    </h3>
+                    <p class="font-mono text-[11px] text-klein/70 leading-relaxed">
+                        HTTP_STATUS: 404 Not Found<br>
+                        CLIENT_IP: RESOLVED<br>
+                        GATEWAY: CareerDNA Edge Router v2026<br>
+                        TIMESTAMP: <span id="log-time"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
+        <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+            &copy; 2026 Providence University // CareerDNA Engine
+        </div>
+        <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
+            <span class="hidden sm:inline">LATENCY: &lt;12ms</span>
+        </div>
+    </footer>
+
+    <script>
+        const logTime = document.getElementById('log-time');
+        if (logTime) logTime.textContent = new Date().toISOString();
+    </script>
+</body>
+</html>
