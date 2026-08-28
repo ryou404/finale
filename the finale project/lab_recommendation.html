@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系別推薦實驗室 | CareerDNA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .hero-bg {
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(37, 99, 235, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+            background-size: 120% 120%;
+            animation: breathe 15s ease-in-out infinite alternate;
+        }
+        @keyframes breathe { from { background-position: 0% 0%; } to { background-position: 100% 100%; } }
+        
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 20px 40px -10px rgba(124, 58, 237, 0.15); }
+        .option-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .option-card:hover { transform: translateY(-4px) scale(1.01); border-color: #8b5cf6; box-shadow: 0 15px 30px -10px rgba(139, 92, 246, 0.25); background: rgba(255, 255, 255, 0.95); }
+        .option-card.selected { background-color: #f5f3ff; border-color: #7c3aed; ring: 2px solid #7c3aed; }
+        
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; transform: translateY(10px); }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+        .progress-bar { transition: width 0.5s ease-out; }
+
+        /* --- Global Dark Mode --- */
+        body.dark-mode { background-color: #0f172a; color: #f1f5f9; }
+        /* Typography */
+        body.dark-mode .text-slate-900,
+        body.dark-mode .text-slate-800,
+        body.dark-mode .text-slate-700 { color: #f1f5f9; }
+        body.dark-mode .text-slate-600 { color: #cbd5e1; }
+        body.dark-mode .text-slate-500 { color: #94a3b8; }
+        /* Backgrounds */
+        body.dark-mode .bg-white { background-color: #1e293b; }
+        body.dark-mode .bg-slate-100 { background-color: #1e293b; }
+        /* Special Backgrounds */
+        body.dark-mode .hero-bg { background-color: #0f172a; background-image: none; }
+        body.dark-mode nav[class*="bg-white"] { background-color: rgba(30, 41, 59, 0.8) !important; border-color: #334155; }
+        /* Components */
+        body.dark-mode .glass-card { background: rgba(30, 41, 59, 0.9); border-color: rgba(255,255,255,0.1); }
+        body.dark-mode .option-card { background-color: #1e293b; border-color: #475569; }
+        body.dark-mode .option-card:hover { background-color: #334155; }
+        body.dark-mode .bg-slate-50 { background-color: #334155; }
+        body.dark-mode .border-slate-100 { border-color: #334155; }
+    </style>
+</head>
+<body class="min-h-screen hero-bg flex flex-col">
+    <script>
+      // Apply dark mode instantly to prevent FOUC (Flash of Unstyled Content)
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+      }
+    </script>
+
+    <!-- 導覽列 -->
+    <nav class="w-full fixed top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-purple-500/30 group-hover:scale-105 transition">L</div>
+                <span class="text-xl font-bold text-slate-800 tracking-tight">Career<span class="text-purple-600">Lab</span></span>
+            </a>
+            <a href="index.html" class="text-sm font-medium text-slate-500 hover:text-purple-600 transition flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                返回首頁
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-32 pb-12 px-4 sm:px-6">
+        <div class="max-w-3xl mx-auto">
+            
+            <!-- 歡迎畫面 -->
+            <div id="intro-screen" class="text-center space-y-8 py-10 fade-in">
+                <span class="inline-block py-1 px-4 rounded-full bg-purple-50 text-purple-600 text-xs font-bold tracking-wider mb-2 border border-purple-100">DEPARTMENT MATCHING</span>
+                <h1 class="text-4xl md:text-5xl font-black text-slate-900 leading-tight">
+                    尋找你的<span class="text-purple-600">命定實驗室</span>
+                </h1>
+                <p class="text-lg text-slate-600 max-w-xl mx-auto leading-relaxed font-medium">
+                    資工、資管還是人工智慧？<br>透過 6 個情境題，分析你的思維模式，找到最適合發揮天賦的學術戰場。
+                </p>
+                <button onclick="LabApp.start()" class="bg-slate-900 text-white px-8 py-4 rounded-full font-bold hover:bg-slate-800 transition shadow-lg shadow-purple-500/20 transform hover:scale-105 duration-200">
+                    開始探索
+                </button>
+            </div>
+
+            <!-- 測驗畫面 -->
+            <div id="quiz-screen" class="hidden">
+                <div class="mb-8">
+                    <div class="flex justify-between text-xs font-bold text-slate-400 mb-2">
+                        <span>PROGRESS</span>
+                        <span id="progress-text">1/6</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full progress-bar w-[16%] shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
+                    </div>
+                </div>
+
+                <div id="question-container" class="glass-card rounded-3xl p-8 md:p-10 shadow-xl relative overflow-hidden min-h-[400px] flex flex-col justify-center">
+                    <!-- Question Content Injected Here -->
+                </div>
+            </div>
+
+            <!-- 結果畫面 -->
+            <div id="result-screen" class="hidden fade-in">
+                <div class="glass-card rounded-3xl p-8 md:p-12 text-center border-t-4 border-purple-500 shadow-2xl shadow-purple-500/20">
+                    <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner" id="result-icon">
+                        🎯
+                    </div>
+                    <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">最佳適配推薦</h2>
+                    <h1 class="text-4xl font-black text-slate-900 mb-6" id="result-title">分析中...</h1>
+                    
+                    <p class="text-slate-600 leading-relaxed mb-8 text-lg" id="result-desc">...</p>
+
+                    <div class="bg-slate-50 rounded-2xl p-6 text-left mb-8 border border-slate-100">
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                            推薦實驗室方向
+                        </h3>
+                        <ul class="space-y-3" id="result-labs">
+                            <!-- Labs -->
+                        </ul>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a id="btn-career-fit" href="career_fit.html" class="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-purple-700 transition shadow-lg flex items-center justify-center gap-2">
+                            查看該系所必修課 &rarr;
+                        </a>
+                        <button onclick="location.reload()" class="px-8 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition">
+                            重新測驗
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
+            authDomain: "ai-resume-health-check.firebaseapp.com",
+            projectId: "ai-resume-health-check",
+            storageBucket: "ai-resume-health-check.firebasestorage.app",
+            messagingSenderId: "659646169112",
+            appId: "1:659646169112:web:d11eccae4f6abfa56a436d",
+            measurementId: "G-5E2C8FJWX5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let currentUser = null;
+        onAuthStateChanged(auth, (user) => {
+            if (user) currentUser = user;
+            else {
+                alert('請先登入系統，以啟用 AI 職涯導航與專屬數據儲存功能！');
+                window.location.href = 'index.html';
+            }
+        });
+
+        const QUESTIONS = [
+            {
+                q: "遇到一個全新的技術問題時，你的直覺反應是？",
+                opts: [
+                    { t: "拆解它！我想了解底層運作原理與硬體架構。", type: "CS" },
+                    { t: "思考應用！我想知道這能解決什麼商業問題或改善流程。", type: "IM" },
+                    { t: "找數據！我想訓練模型來預測結果或自動化處理。", type: "AI" }
+                ]
+            },
+            {
+                q: "你比較喜歡哪種類型的課程作業？",
+                opts: [
+                    { t: "撰寫作業系統核心或組合語言，跟記憶體與 CPU 打交道。", type: "CS" },
+                    { t: "規劃一個電商網站的企劃書，包含介面設計與營運模式。", type: "IM" },
+                    { t: "收集大量圖片或文字，訓練一個神經網路來進行分類。", type: "AI" }
+                ]
+            },
+            {
+                q: "在團隊專案中，你通常擔任什麼角色？",
+                opts: [
+                    { t: "技術核心，負責解決最困難的 Bug 與系統架構。", type: "CS" },
+                    { t: "專案經理 (PM)，負責溝通協調、確認需求與進度。", type: "IM" },
+                    { t: "演算法工程師，負責優化模型的準確度與效能。", type: "AI" }
+                ]
+            },
+            {
+                q: "你對未來的職涯想像是？",
+                opts: [
+                    { t: "成為資安專家、系統架構師或嵌入式工程師。", type: "CS" },
+                    { t: "成為產品經理、系統分析師或數位轉型顧問。", type: "IM" },
+                    { t: "成為資料科學家、AI 研究員或電腦視覺工程師。", type: "AI" }
+                ]
+            },
+            {
+                q: "你覺得哪個關鍵字最吸引你？",
+                opts: [
+                    { t: "Linux Kernel / IoT / Cybersecurity", type: "CS" },
+                    { t: "Business Logic / UX / Management", type: "IM" },
+                    { t: "Deep Learning / GAN / Big Data", type: "AI" }
+                ]
+            },
+            {
+                q: "如果給你一筆預算，你會想買？",
+                opts: [
+                    { t: "樹莓派 (Raspberry Pi) 或開發板，想做硬體控制。", type: "CS" },
+                    { t: "雲端伺服器與網域，想架設一個服務平台。", type: "IM" },
+                    { t: "高階顯示卡 (GPU)，想跑深度學習模型。", type: "AI" }
+                ]
+            }
+        ];
+
+        const RESULTS = {
+            "CS": {
+                title: "資訊工程學系 (CS)",
+                icon: "💻",
+                desc: "你是天生的技術狂熱者！喜歡探究電腦底層原理，對於硬體控制、系統架構與資安攻防有著濃厚興趣。你適合在需要高度技術門檻的領域深耕。",
+                labs: [
+                    "<li class='flex items-start gap-2'><span class='text-purple-500 font-bold'>•</span><span><strong>嵌入式系統實驗室：</strong>研究物聯網、即時作業系統與硬體控制。</span></li>",
+                    "<li class='flex items-start gap-2'><span class='text-purple-500 font-bold'>•</span><span><strong>網路安全與密碼學實驗室：</strong>鑽研系統漏洞、加密技術與資訊安全防護。</span></li>",
+                    "<li class='flex items-start gap-2'><span class='text-purple-500 font-bold'>•</span><span><strong>分散式系統實驗室：</strong>研究雲端運算架構與區塊鏈技術。</span></li>"
+                ]
+            },
+            "IM": {
+                title: "資訊管理學系 (IM)",
+                icon: "📊",
+                desc: "你是技術與商業的橋樑！你不只懂技術，更懂得如何將技術應用於解決實際問題。你具備宏觀的視野，適合擔任整合資源、規劃產品與優化流程的角色。",
+                labs: [
+                    "<li class='flex items-start gap-2'><span class='text-purple-500 font-bold'>•</span><span><strong>智慧商務與社群運算實驗室：</strong>分析使用者行為、電商策略與社群行銷。</span></li>",
+                    "<li class='flex items-start gap-2'><span class='text-purple-500 font-bold'>•</span><span><strong>資訊系統開發與管理實驗室：</strong>研究軟體工程流程、專案管理與系統分析。</span></li>",
+                    "<li class='flex items-start gap-2'><span class='text-purple-500 font-bold'>•</span><span><strong>金融科技 (FinTech) 實驗室：</strong>結合資訊技術與財務金融創新。</span></li>"
+                ]
+            },
+            "AI": {
+                title: "人工智慧學系 (AI)",
+                icon: "🤖",
+                desc: "你是未來的創造者！本系不僅鑽研 AI 理論，更強調「智慧互動」與「元宇宙」的實務應用。如果你對遊戲技術、多媒體創作或創新 APP 開發感興趣，這裡提供豐富的算力資源與企業實習，讓你將創意轉化為接軌市場的即戰力。",
+                labs: [
+                    "<li class='flex items-start gap-2'><span class='text-purple-500 font-bold'>•</span><span><strong>智慧互動與元宇宙實驗室：</strong>研究 VR/AR、體感互動與虛擬世界建構。</span></li>",
+                    "<li class='flex items-start gap-2'><span class='text-purple-500 font-bold'>•</span><span><strong>多媒體與遊戲技術實驗室：</strong>專注於遊戲開發、3D 建模與數位內容創作。</span></li>",
+                    "<li class='flex items-start gap-2'><span class='text-purple-500 font-bold'>•</span><span><strong>人工智慧創新應用實驗室：</strong>結合 AI 演算法解決生活與產業的實際問題。</span></li>"
+                ]
+            }
+        };
+
+        window.LabApp = {
+            scores: { "CS": 0, "IM": 0, "AI": 0 },
+            currentQ: 0,
+
+            start() {
+                document.getElementById('intro-screen').classList.add('hidden');
+                document.getElementById('quiz-screen').classList.remove('hidden');
+                this.renderQuestion();
+            },
+
+            renderQuestion() {
+                const q = QUESTIONS[this.currentQ];
+                const container = document.getElementById('question-container');
+                
+                // Update Progress
+                const pct = ((this.currentQ + 1) / QUESTIONS.length) * 100;
+                document.getElementById('progress-bar').style.width = `${pct}%`;
+                document.getElementById('progress-text').innerText = `${this.currentQ + 1}/${QUESTIONS.length}`;
+
+                // Render
+                let html = `
+                    <h2 class="text-2xl font-bold text-slate-800 mb-8 fade-in">${q.q}</h2>
+                    <div class="space-y-4 fade-in" style="animation-delay: 0.1s">
+                `;
+                
+                q.opts.forEach((opt, idx) => {
+                    html += `
+                        <button onclick="LabApp.answer('${opt.type}')" class="option-card w-full text-left p-5 rounded-xl border border-slate-200 bg-white hover:bg-purple-50 group">
+                            <div class="flex items-center justify-between">
+                                <span class="font-medium text-slate-700 group-hover:text-purple-700 transition">${opt.t}</span>
+                                <div class="w-5 h-5 rounded-full border-2 border-slate-200 group-hover:border-purple-500"></div>
+                            </div>
+                        </button>
+                    `;
+                });
+                html += `</div>`;
+                container.innerHTML = html;
+            },
+
+            answer(type) {
+                this.scores[type]++;
+                if (this.currentQ < QUESTIONS.length - 1) {
+                    this.currentQ++;
+                    // Small delay for better UX
+                    setTimeout(() => this.renderQuestion(), 200);
+                } else {
+                    this.showResult();
+                }
+            },
+
+            async showResult() {
+                document.getElementById('quiz-screen').classList.add('hidden');
+                document.getElementById('result-screen').classList.remove('hidden');
+
+                // Calculate Winner
+                const winner = Object.keys(this.scores).reduce((a, b) => this.scores[a] > this.scores[b] ? a : b);
+                const data = RESULTS[winner];
+
+                document.getElementById('result-title').innerText = data.title;
+                document.getElementById('result-icon').innerText = data.icon;
+                document.getElementById('result-desc').innerText = data.desc;
+                document.getElementById('result-labs').innerHTML = data.labs.join('');
+
+                // Update Link to Career Fit
+                const btn = document.getElementById('btn-career-fit');
+                btn.href = `career_fit.html?dept=${winner}`;
+                btn.innerHTML = `查看 ${winner} 必修課 &rarr;`;
+
+                // [NEW] 儲存結果到 Firebase
+                if (currentUser) {
+                    try {
+                        const batch = writeBatch(db);
+                        const resultData = {
+                            dept: winner,
+                            deptName: data.title,
+                            date: new Date().toISOString(),
+                            scores: this.scores
+                        };
+                        
+                        // 1. 保存歷史快照
+                        const historyRef = doc(collection(db, "users", currentUser.uid, "history_lab"));
+                        batch.set(historyRef, resultData);
+
+                        // 2. 更新聚合快取
+                        const userRef = doc(db, "users", currentUser.uid);
+                        batch.set(userRef, {
+                            summary_cache: {
+                                lab: { dept: winner, deptName: data.title, date: resultData.date }
+                            }
+                        }, { merge: true });
+
+                        await batch.commit();
+                        console.log("✅ 推薦結果已儲存 (歷史快照 + 聚合快取)");
+                    } catch (e) {
+                        console.error("儲存失敗", e);
+                    }
+                }
+            }
+        };
+    </script>
+</body>
+</html>
+```
+
+<!--
+[PROMPT_SUGGESTION]在 carrer fit.html 裡面，如果使用者是從推薦實驗室過來的，顯示一個歡迎提示框：「根據測驗結果，已為您切換至 XX 系」[/PROMPT_SUGGESTION]
+[PROMPT_SUGGESTION]幫我把 lab_recommendation.html 的測驗結果也儲存到 Firebase，這樣之後可以在個人檔案看到[/PROMPT_SUGGESTION]

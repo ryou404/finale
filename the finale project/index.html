@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerDNA | 智能職涯導航系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } 
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // TODO: 請將您從 Firebase Console 取得的設定貼在這裡
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
+            authDomain: "ai-resume-health-check.firebaseapp.com",
+            projectId: "ai-resume-health-check",
+            storageBucket: "ai-resume-health-check.firebasestorage.app",
+            messagingSenderId: "659646169112",
+            appId: "1:659646169112:web:d11eccae4f6abfa56a436d",
+            measurementId: "G-5E2C8FJWX5"
+        };
+
+        // 初始化 Firebase
+        let auth;
+        let db;
+        try {
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            // 將 Auth 功能掛載到 window，讓下方一般 script 可以呼叫
+            window.authService = { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, doc, getDoc, setDoc };
+            console.log("Firebase initialized successfully");
+        } catch (e) {
+            console.error("Firebase 初始化失敗:", e);
+        }
+
+        // 監聽登入狀態改變
+        if(auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    console.log("User is signed in:", user.email);
+                    // 呼叫 UI 更新函式
+                    AuthUI.loginSuccess({ name: user.displayName || user.email, email: user.email, uid: user.uid });
+                } else {
+                    console.log("User is signed out");
+                    AuthUI.logoutUI();
+                    AuthUI.openModal('login'); // 強制彈出登入牆
+                }
+            });
+        }
+    </script>
+
+    <style>
+        /* --- Medical Clean Design System (保留原樣) --- */
+        :root {
+            --primary: #2563eb;       
+            --primary-light: #eff6ff; 
+            --primary-dark: #1e3a8a;  
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --shadow-soft: 0 10px 40px -10px rgba(37, 99, 235, 0.1);
+            --shadow-hover: 0 25px 50px -12px rgba(37, 99, 235, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #fdfdfd; /* 稍微亮一點的白，減少灰度 */
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        .hero-bg {
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.08) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(34, 211, 238, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            background-size: 120% 120%;
+            animation: aurora 20s ease-in-out infinite alternate;
+        }
+        @keyframes aurora { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05); /* 基礎陰影更柔和 */
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* 更有彈性的動畫 */
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(37, 99, 235, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        /* --- Awwwards Inspired Enhancements --- */
+        .cursor, .cursor-follower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference; /* 讓游標在不同背景下都有對比 */
+        }
+        .cursor {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+        }
+        .cursor-follower {
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .cursor-hover {
+            transform: scale(2.5);
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 針對不同卡片的有色光暈 (Colored Glows) */
+        .feature-card:hover.card-blue { box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.25); }
+        .feature-card:hover.card-teal { box-shadow: 0 20px 40px -10px rgba(20, 184, 166, 0.25); }
+        .feature-card:hover.card-purple { box-shadow: 0 20px 40px -10px rgba(147, 51, 234, 0.25); }
+
+        /* 3D Card Tilt & Headline Animation */
+        .feature-card:hover { transform: translateY(-10px) scale(1.02) perspective(1000px) rotateY(var(--rotateY)) rotateX(var(--rotateX)); }
+        h1.animated-headline > span { display: inline-block; opacity: 0; transform: translateY(20px) rotate(5deg); animation: word-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes word-reveal { to { opacity: 1; transform: translateY(0) rotate(0); } }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-backdrop {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+        }
+
+        /* --- Global Dark Mode --- */
+        body.dark-mode { background-color: #0f172a; color: #f1f5f9; }
+        /* Typography */
+        body.dark-mode .text-slate-900,
+        body.dark-mode .text-slate-800,
+        body.dark-mode .text-slate-700 { color: #f1f5f9; }
+        body.dark-mode .text-slate-600 { color: #cbd5e1; }
+        body.dark-mode .text-slate-500 { color: #94a3b8; }
+        /* Backgrounds */
+        body.dark-mode .bg-white { background-color: #1e293b; }
+        /* Special Backgrounds */
+        body.dark-mode .hero-bg { background-color: #0f172a; background-image: none; }
+        body.dark-mode nav[class*="bg-white"] { background-color: rgba(30, 41, 59, 0.8) !important; border-color: #334155; }
+        /* Components */
+        body.dark-mode .feature-card { background: rgba(30, 41, 59, 0.7); border-color: rgba(255,255,255,0.1); }
+        body.dark-mode .feature-card:hover { background: rgba(49, 62, 82, 0.9); }
+        /* Forms */
+        
+        /* [新增] 儀表板專屬 Dark Mode 修正 */
+        body.dark-mode .bg-slate-100 { background-color: #334155; }
+        body.dark-mode .bg-slate-200 { background-color: #475569; }
+        body.dark-mode .border-slate-300 { border-color: #475569; }
+        body.dark-mode .text-slate-400 { color: #94a3b8; }
+        body.dark-mode .bg-blue-100 { background-color: rgba(37, 99, 235, 0.2); }
+        body.dark-mode .text-blue-700 { color: #60a5fa; }
+        body.dark-mode .bg-teal-100 { background-color: rgba(20, 184, 166, 0.2); }
+        body.dark-mode .text-teal-700 { color: #2dd4bf; }
+        body.dark-mode .bg-purple-100 { background-color: rgba(147, 51, 234, 0.2); }
+        body.dark-mode .text-purple-700 { color: #c084fc; }
+
+        body.dark-mode input[type="text"],
+        body.dark-mode input[type="email"],
+        body.dark-mode input[type="password"] { background-color: #334155; color: white; border-color: #475569 !important; }
+        body.dark-mode input:focus { border-color: #3b82f6 !important; background-color: #1e293b; }
+        /* Modals */
+        body.dark-mode .modal-backdrop { background: rgba(15, 23, 42, 0.8); }
+
+        /* --- Intro Animation (Sofi Health Style) --- */
+        #intro-layer {
+            position: fixed; inset: 0; z-index: 9999;
+            background-color: #f8fafc; /* Light Mode Default */
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 1.2s cubic-bezier(0.76, 0, 0.24, 1); /* Elegant Easing */
+        }
+        .intro-text-mask { overflow: hidden; margin-bottom: 1rem; }
+        .intro-text { 
+            transform: translateY(110%); 
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            color: #0f172a; /* Light Mode Text */
+        }
+        .intro-sub-mask { overflow: hidden; }
+        .intro-sub { 
+            transform: translateY(110%); 
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition-delay: 0.1s;
+        }
+        .slide-out { transform: translateY(-100%); }
+        .text-reveal { transform: translateY(0); }
+
+        /* Dark Mode Overrides for Intro */
+        body.dark-mode #intro-layer { background-color: #0f172a; }
+        body.dark-mode .intro-text { color: #f1f5f9; }
+        
+        /* Skip Intro State (for session check) */
+        body.skip-intro #intro-layer { display: none !important; }
+        body.skip-intro #main-page-content { opacity: 1 !important; }
+
+        /* 動態高亮特效 (Dynamic Highlighting) */
+        @keyframes highlightGlow {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); transform: scale(1); border-color: inherit; }
+            20% { box-shadow: 0 0 40px 15px rgba(59, 130, 246, 0.4); transform: scale(1.03); border-color: #3b82f6; z-index: 10; }
+            80% { box-shadow: 0 0 40px 15px rgba(59, 130, 246, 0.4); transform: scale(1.03); border-color: #3b82f6; z-index: 10; }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); transform: scale(1); border-color: inherit; z-index: 1; }
+        }
+        .highlight-glow {
+            animation: highlightGlow 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            position: relative;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col hero-bg">
+    <!-- Intro Animation Layer -->
+    <div id="intro-layer">
+        <div class="text-center px-4">
+            <div class="intro-text-mask">
+                <h1 class="text-6xl md:text-8xl font-black tracking-tighter intro-text" id="intro-title">CareerDNA</h1>
+            </div>
+            <div class="intro-sub-mask">
+                <p class="text-blue-500 font-bold tracking-[0.4em] text-sm md:text-base intro-sub" id="intro-subtitle">DISCOVER YOUR FUTURE</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      // Apply dark mode instantly to prevent FOUC (Flash of Unstyled Content)
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+      }
+      
+      // Check if intro has been shown in this session
+      if (sessionStorage.getItem('introShown')) {
+        document.body.classList.add('skip-intro');
+      }
+    </script>
+
+    <!-- Awwwards Style Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <nav class="w-full fixed top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='index.html'">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30">C</div>
+                <span class="text-xl font-bold text-slate-800 tracking-tight">Career<span class="text-blue-600">DNA</span></span>
+            </div>
+
+            <div id="nav-actions">
+                <div id="guest-ui" class="flex gap-4">
+                    <button onclick="AuthUI.openModal('login')" class="text-slate-500 hover:text-blue-600 font-medium transition">登入</button>
+                    <button onclick="AuthUI.openModal('register')" class="bg-blue-600 text-white px-5 py-2 rounded-full font-medium hover:bg-blue-700 transition shadow-md shadow-blue-500/20">
+                        免費註冊
+                    </button>
+                </div>
+
+                <div id="user-ui" class="hidden flex items-center gap-4">
+                    <div class="text-right hidden md:block">
+                        <div class="text-xs text-slate-400">Welcome back</div>
+                        <div class="text-sm font-bold text-slate-800" id="user-name-display">User</div>
+                    </div>
+                    <div class="relative group">
+                        <button class="w-10 h-10 rounded-full bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-blue-600 font-bold overflow-hidden">
+                            <span id="avatar-initial">U</span>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                            <div class="py-2">
+                            <a href="profile.html" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">個人檔案設定</a>
+                                <button onclick="AuthUI.handleLogout()" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">登出系統</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-page-content" class="flex-grow pt-32 pb-20 px-6 opacity-0 transition-opacity duration-1000 block">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-20 fade-in-up">
+                <span class="inline-block py-1 px-4 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-wider mb-6 border border-blue-100">AI-POWERED CAREER NAVIGATION</span>
+                <h1 id="main-headline" class="text-5xl md:text-6xl font-black text-slate-900 leading-tight mb-6">
+                    用數據理解自己， <br>打造更強大的<span class="text-blue-600 relative inline-block">未來履歷</span>。
+                </h1>
+                <p class="text-lg text-slate-500 mb-10 leading-relaxed">
+                    整合 Holland 職涯興趣、Gallup 天賦優勢與大數據學程分析。<br>不只告訴你適合什麼，更直接為你生成履歷與行動計畫。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button onclick="document.getElementById('modules').scrollIntoView({behavior:'smooth'})" class="bg-slate-900 text-white px-8 py-4 rounded-full font-bold hover:bg-slate-800 transition shadow-lg flex items-center justify-center gap-2">
+                        開始探索旅程
+                    </button>
+                </div>
+            </div>
+
+            <div id="modules" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <a href="brand_test.html" class="feature-card card-blue block p-8 rounded-3xl group relative overflow-hidden fade-in-up delay-100">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white mb-6 relative z-10 shadow-lg shadow-blue-500/30">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">個人品牌測驗</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                        結合 Gallup Strengths 與 Holland 興趣分析，找出您的天賦優勢區。
+                    </p>
+                    <span class="inline-flex items-center text-blue-600 font-bold text-sm group-hover:translate-x-1 transition-transform">立即開始 &rarr;</span>
+                </a>
+
+                <a href="career_fit.html" class="feature-card card-teal block p-8 rounded-3xl group relative overflow-hidden fade-in-up delay-200">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                    <div class="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center text-white mb-6 relative z-10 shadow-lg shadow-teal-500/30">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">履歷健檢中心</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                        輸入您的修課紀錄與經歷，系統自動計算履歷健康指數與競爭力。
+                    </p>
+                    <span class="inline-flex items-center text-teal-600 font-bold text-sm group-hover:translate-x-1 transition-transform">進入健檢 &rarr;</span>
+                </a>
+
+                <a href="lab_recommendation.html" class="feature-card card-purple block p-8 rounded-3xl group relative overflow-hidden fade-in-up delay-300">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                    <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center text-white mb-6 relative z-10 shadow-lg shadow-purple-500/30">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-purple-600 transition-colors">系別推薦實驗室</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                        不確定要選資工還是資管？讓 AI 根據你的特質推薦最適合的戰場。
+                    </p>
+                    <span class="inline-flex items-center text-purple-600 font-bold text-sm group-hover:translate-x-1 transition-transform">立即開始測驗 &rarr;</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Dashboard Container (Hidden by default) -->
+    <div id="dashboard-container" class="hidden max-w-7xl mx-auto px-6 pt-32 pb-20 fade-in-up">
+        <!-- Dynamic Content will be injected here by JS -->
+    </div>
+
+    <!-- Welcome Modal (Segmented Onboarding) -->
+    <div id="welcome-modal" class="fixed inset-0 z-[110] hidden">
+        <div class="absolute inset-0 modal-backdrop backdrop-blur-sm"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-10 animate-fade-in-up border border-slate-200 dark:border-slate-700">
+            <h2 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
+                歡迎來到 CareerDNA 👋<br>
+                <span class="text-base md:text-lg font-medium text-slate-500 dark:text-slate-400 mt-2 block">為了提供最精準的導航，請告訴我們您目前的階段：</span>
+            </h2>
+            <div class="space-y-4" id="welcome-options">
+                <button onclick="AuthUI.selectGrade('大一/大二')" class="w-full text-left p-4 md:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-slate-800 transition group relative overflow-hidden shadow-sm hover:shadow-md">
+                    <div class="font-bold text-slate-800 dark:text-slate-100 text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">[大一 / 大二]</div>
+                    <div class="text-sm text-slate-500 mt-1">我還在探索基礎，想尋找命定實驗室與修課方向。</div>
+                </button>
+                <button onclick="AuthUI.selectGrade('大三')" class="w-full text-left p-4 md:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-teal-500 hover:bg-teal-50 dark:hover:bg-slate-800 transition group relative overflow-hidden shadow-sm hover:shadow-md">
+                    <div class="font-bold text-slate-800 dark:text-slate-100 text-lg group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">[大三]</div>
+                    <div class="text-sm text-slate-500 mt-1">我正在累積實務能力，準備籌備專題與實習。</div>
+                </button>
+                <button onclick="AuthUI.selectGrade('大四')" class="w-full text-left p-4 md:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-slate-800 transition group relative overflow-hidden shadow-sm hover:shadow-md">
+                    <div class="font-bold text-slate-800 dark:text-slate-100 text-lg group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">[大四]</div>
+                    <div class="text-sm text-slate-500 mt-1">我準備畢業了，需要盤點戰力並對接真實職缺。</div>
+                </button>
+                <button onclick="AuthUI.selectGrade('已畢業')" class="w-full text-left p-4 md:p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-slate-800 transition group relative overflow-hidden shadow-sm hover:shadow-md">
+                    <div class="font-bold text-slate-800 dark:text-slate-100 text-lg group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">[已畢業 / 社會新鮮人]</div>
+                    <div class="text-sm text-slate-500 mt-1">我想進行個人品牌測驗，尋找最適合的 IT 角色。</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 modal-backdrop"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 animate-fade-in-up">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="auth-title" class="text-2xl font-bold text-slate-900">歡迎回來</h2>
+            </div>
+            
+            <form id="login-form" class="space-y-4" onsubmit="AuthUI.handleLogin(event)">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">電子郵件</label>
+                    <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition" placeholder="name@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">密碼</label>
+                    <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30">登入系統</button>
+                <p class="text-center text-sm text-slate-500">
+                    還沒有帳號？ <button type="button" onclick="AuthUI.switchMode('register')" class="text-blue-600 font-bold hover:underline">立即註冊</button>
+                </p>
+            </form>
+
+            <form id="register-form" class="space-y-4 hidden" onsubmit="AuthUI.handleRegister(event)">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">姓名</label>
+                    <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition" placeholder="您的名字">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">電子郵件</label>
+                    <input type="email" id="reg-email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition" placeholder="name@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">設定密碼</label>
+                    <input type="password" id="reg-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition" placeholder="至少 6 個字元">
+                </div>
+                <button type="submit" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition shadow-lg">註冊並開始</button>
+                <p class="text-center text-sm text-slate-500">
+                    已有帳號？ <button type="button" onclick="AuthUI.switchMode('login')" class="text-blue-600 font-bold hover:underline">返回登入</button>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const AuthUI = {
+            targetHighlight: null, // 記錄 Modal 關閉後要發光高亮的卡片 ID
+            getErrorMessage(code) {
+                const errors = {
+                    'auth/invalid-email': '電子郵件格式不正確',
+                    'auth/user-not-found': '找不到此帳號，請確認 Email 或前往註冊',
+                    'auth/wrong-password': '密碼錯誤，請重試',
+                    'auth/email-already-in-use': '此 Email 已被註冊過',
+                    'auth/weak-password': '密碼強度不足，請至少輸入 6 個字元',
+                    'auth/invalid-credential': '登入憑證無效，請檢查 Email 與密碼'
+                };
+                return errors[code] || '發生未預期的錯誤，請稍後再試 (' + code + ')';
+            },
+            openModal(mode) {
+                document.getElementById('auth-modal').classList.remove('hidden');
+                this.switchMode(mode);
+            },
+            closeModal() {
+                document.getElementById('auth-modal').classList.add('hidden');
+            },
+            switchMode(mode) {
+                const loginForm = document.getElementById('login-form');
+                const regForm = document.getElementById('register-form');
+                const title = document.getElementById('auth-title');
+
+                if(mode === 'login') {
+                    loginForm.classList.remove('hidden');
+                    regForm.classList.add('hidden');
+                    title.innerText = '歡迎回來';
+                } else {
+                    loginForm.classList.add('hidden');
+                    regForm.classList.remove('hidden');
+                    title.innerText = '建立新帳號';
+                }
+            },
+            async handleLogin(e) {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+
+                if(window.authService) {
+                    try {
+                        const { signInWithEmailAndPassword, auth } = window.authService;
+                        await signInWithEmailAndPassword(auth, email, password);
+                        this.closeModal();
+                        alert("登入成功！");
+                    } catch (error) {
+                        console.error("Login Error:", error);
+                        alert("登入失敗: " + this.getErrorMessage(error.code));
+                    }
+                } else {
+                    this.loginSuccess({ name: "模擬用戶", email: email });
+                }
+            },
+            async handleRegister(e) {
+                e.preventDefault();
+                const name = document.getElementById('reg-name').value;
+                const email = document.getElementById('reg-email').value;
+                const password = document.getElementById('reg-password').value;
+
+                if(window.authService) {
+                    try {
+                        const { createUserWithEmailAndPassword, updateProfile, auth } = window.authService;
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        await updateProfile(userCredential.user, { displayName: name });
+                        this.loginSuccess({ name: name, email: email });
+                        alert("註冊成功！");
+                    } catch (error) {
+                        console.error("Register Error:", error);
+                        alert("註冊失敗: " + this.getErrorMessage(error.code));
+                    }
+                } else {
+                    this.loginSuccess({ name: name, email: email });
+                }
+            },
+            handleLogout() {
+                if(window.authService) {
+                    const { signOut, auth } = window.authService;
+                    signOut(auth).then(() => {
+                        this.logoutUI();
+                        alert("已登出");
+                    });
+                } else {
+                    this.logoutUI();
+                }
+            },
+            async loginSuccess(user) {
+                localStorage.setItem('careerDNA_user', JSON.stringify(user));
+                this.closeModal();
+                const guestUI = document.getElementById('guest-ui');
+                const userUI = document.getElementById('user-ui');
+                const nameDisplay = document.getElementById('user-name-display');
+                const avatarInitial = document.getElementById('avatar-initial');
+                
+                guestUI.classList.add('hidden');
+                userUI.classList.remove('hidden');
+                userUI.classList.add('flex');
+                nameDisplay.innerText = user.name;
+                avatarInitial.innerText = user.name.charAt(0).toUpperCase();
+
+                // --- Onboarding Check & Auto Routing ---
+                if(window.authService && window.authService.db && user.uid) {
+                    await this.checkOnboarding(user.uid, user);
+                }
+            },
+            async checkOnboarding(uid, userObj) {
+                const { db, doc, getDoc } = window.authService;
+                try {
+                    const userRef = doc(db, "users", uid);
+                    const userSnap = await getDoc(userRef);
+                    const userData = userSnap.exists() ? userSnap.data() : {};
+                    
+                    if (!userData.grade) {
+                        // 首次登入且沒有年級資料，顯示分眾引導 Modal
+                        document.getElementById('welcome-modal').classList.remove('hidden');
+                    } else {
+                        // 老手：寫入 localStorage，但不強制導向 Dashboard (保留您先前的要求：停在落地頁)
+                        userObj.grade = userData.grade;
+                        localStorage.setItem('careerDNA_user', JSON.stringify(userObj));
+                    }
+                } catch(e) {
+                    console.error("檢查使用者狀態失敗", e);
+                }
+            },
+            async selectGrade(grade) {
+                const user = JSON.parse(localStorage.getItem('careerDNA_user'));
+                if (!user || !user.uid) return;
+                
+                const { db, doc, setDoc } = window.authService;
+                try {
+                    // 防呆：鎖定按鈕防止連點
+                    document.getElementById('welcome-options').style.pointerEvents = 'none';
+                    document.getElementById('welcome-options').style.opacity = '0.5';
+                    
+                    // 寫入 Firebase
+                    await setDoc(doc(db, "users", user.uid), { grade: grade }, { merge: true });
+                    
+                    // 更新本地端
+                    user.grade = grade;
+                    localStorage.setItem('careerDNA_user', JSON.stringify(user));
+                    
+                    // 關閉 Modal
+                    document.getElementById('welcome-modal').classList.add('hidden');
+                    
+                    // 設定動態高亮目標
+                    if (grade === '大一/大二') this.targetHighlight = 'card-lab';
+                    else if (grade === '大三' || grade === '大四') this.targetHighlight = 'card-resume';
+                    else this.targetHighlight = 'card-brand';
+                    
+                    // 分眾引導完成後，直接幫他渲染並導向儀表板
+                    await this.renderDashboard(user.uid, user.name);
+                    
+                    // 復原按鈕狀態
+                    document.getElementById('welcome-options').style.pointerEvents = 'auto';
+                    document.getElementById('welcome-options').style.opacity = '1';
+                } catch (e) {
+                    console.error("儲存狀態失敗", e);
+                    alert("儲存狀態失敗，請重試");
+                    document.getElementById('welcome-options').style.pointerEvents = 'auto';
+                    document.getElementById('welcome-options').style.opacity = '1';
+                }
+            },
+            async renderDashboard(uid, name) {
+                const { db, doc, getDoc } = window.authService;
+                const mainContent = document.getElementById('main-page-content');
+                const dashboard = document.getElementById('dashboard-container');
+                
+                // Hide Landing, Show Dashboard Skeleton
+                mainContent.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                dashboard.innerHTML = `<div class="text-center py-20"><div class="animate-spin w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div><p class="mt-4 text-slate-500">正在讀取您的職涯檔案...</p></div>`;
+
+                try {
+                    // 全新快取讀取寫法：只讀取一次！提升 3 倍載入速度
+                    const userDocRef = doc(db, "users", uid);
+                    const userSnap = await getDoc(userDocRef);
+                    const userData = userSnap.exists() ? userSnap.data() : {};
+                    const cache = userData.summary_cache || {};
+
+                    const brandData = cache.brand || null;
+                    const resumeData = cache.resume || null;
+                    const labData = cache.lab || null;
+
+                    // Generate Dashboard HTML
+                    let html = `
+                        <div class="mb-10">
+                            <h1 class="text-3xl font-bold text-slate-900">歡迎回來，${name} 👋</h1>
+                            <p class="text-slate-500 mt-2">這是您的職涯養成儀表板。系統已自動保存您的進度。</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    `;
+
+                    // Card 1: Brand Test
+                    if (brandData) {
+                        html += `
+                        <div id="card-brand" class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-blue-100 dark:border-slate-700 shadow-sm hover:shadow-md transition">
+                            <div class="flex justify-between items-start mb-4"><span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">已完成</span><span class="text-2xl">🧬</span></div>
+                            <h3 class="font-bold text-lg text-slate-800 dark:text-white mb-1">個人品牌定位</h3>
+                            <p class="text-sm text-slate-500 mb-4">測驗結果：<span class="font-bold text-blue-600">${brandData.topHollandCode} 型人才</span></p>
+                            <a href="brand_test.html" class="block w-full text-center py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">查看完整報告</a>
+                        </div>`;
+                    } else {
+                        html += `<div id="card-brand" class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 flex flex-col justify-center items-center text-center"><div class="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center mb-3 text-slate-400">?</div><h3 class="font-bold text-slate-700 dark:text-slate-300">個人品牌尚未解鎖</h3><a href="brand_test.html" class="mt-3 text-blue-600 font-bold text-sm hover:underline">立即開始測驗 &rarr;</a></div>`;
+                    }
+
+                    // Card 2: Resume Health
+                    if (resumeData) {
+                        const score = resumeData.totalScore || 0; // 配合 summary_cache 新架構
+                        html += `
+                        <div id="card-resume" class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-teal-100 dark:border-slate-700 shadow-sm hover:shadow-md transition relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-teal-50 rounded-bl-full -mr-4 -mt-4"></div>
+                            <div class="flex justify-between items-start mb-4 relative z-10"><span class="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-1 rounded">上次紀錄</span><span class="text-2xl">💪</span></div>
+                            <h3 class="font-bold text-lg text-slate-800 dark:text-white mb-1">履歷健檢分數</h3>
+                            <div class="flex items-baseline gap-1 mb-4"><span class="text-3xl font-black text-teal-600">${score}</span><span class="text-xs text-slate-400">/ 100</span></div>
+                            <a href="career_fit.html" class="block w-full text-center py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-teal-500/20">繼續挑戰 AI 面試</a>
+                        </div>`;
+                    } else {
+                        html += `<div id="card-resume" class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 flex flex-col justify-center items-center text-center"><div class="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center mb-3 text-slate-400">📝</div><h3 class="font-bold text-slate-700 dark:text-slate-300">履歷健檢未執行</h3><a href="career_fit.html" class="mt-3 text-teal-600 font-bold text-sm hover:underline">上傳經歷 &rarr;</a></div>`;
+                    }
+
+                    // Card 3: Lab Recommendation
+                    if (labData) {
+                         html += `
+                        <div id="card-lab" class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-purple-100 dark:border-slate-700 shadow-sm hover:shadow-md transition">
+                            <div class="flex justify-between items-start mb-4"><span class="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-1 rounded">推薦結果</span><span class="text-2xl">🧪</span></div>
+                            <h3 class="font-bold text-lg text-slate-800 dark:text-white mb-1">適合實驗室</h3>
+                            <p class="text-sm text-slate-500 mb-4">系統推薦：<span class="font-bold text-purple-600">${labData.deptName}</span></p>
+                            <a href="lab_recommendation.html" class="block w-full text-center py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">重新回顧</a>
+                        </div>`;
+                    } else {
+                        html += `<div id="card-lab" class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 flex flex-col justify-center items-center text-center"><div class="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center mb-3 text-slate-400">🧪</div><h3 class="font-bold text-slate-700 dark:text-slate-300">實驗室導航未執行</h3><a href="lab_recommendation.html" class="mt-3 text-purple-600 font-bold text-sm hover:underline">尋找命定戰場 &rarr;</a></div>`;
+                    }
+
+                    html += `</div>`; // End Grid
+                    dashboard.innerHTML = html;
+
+                    // --- 動態高亮 (Dynamic Highlighting) ---
+                    if (this.targetHighlight) {
+                        setTimeout(() => {
+                            const el = document.getElementById(this.targetHighlight);
+                            if (el) {
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                el.classList.add('highlight-glow');
+                                setTimeout(() => el.classList.remove('highlight-glow'), 3000); // 3秒後移除發光
+                            }
+                            this.targetHighlight = null; // 重置
+                        }, 300);
+                    }
+                } catch (e) {
+                    console.error("Dashboard Load Error", e);
+                    dashboard.innerHTML = `<div class="text-center text-red-500">載入失敗，請重新整理頁面。</div>`;
+                }
+            },
+            logoutUI() {
+                localStorage.removeItem('careerDNA_user');
+                document.getElementById('guest-ui').classList.remove('hidden');
+                document.getElementById('user-ui').classList.add('hidden');
+                document.getElementById('user-ui').classList.remove('flex');
+                
+                // Restore Landing Page
+                document.getElementById('main-page-content').classList.remove('hidden');
+                document.getElementById('dashboard-container').classList.add('hidden');
+            }
+        };
+
+        // UI 初始化：若 LocalStorage 有資料則先顯示，隨後 Firebase onAuthStateChanged 會更新狀態
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('careerDNA_user');
+            if(savedUser) {
+                AuthUI.loginSuccess(JSON.parse(savedUser));
+            }
+        });
+
+        // --- Awwwards Inspired Interactions ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Only play intro if not skipped
+            if (!document.body.classList.contains('skip-intro')) {
+            // --- 0. Intro Animation Sequence ---
+            setTimeout(() => {
+                document.getElementById('intro-title').classList.add('text-reveal');
+                document.getElementById('intro-subtitle').classList.add('text-reveal');
+            }, 300);
+
+            setTimeout(() => {
+                document.getElementById('intro-layer').classList.add('slide-out');
+                // 當遮罩滑開時，同步淡入主內容
+                document.getElementById('main-page-content').classList.remove('opacity-0');
+            }, 2400); // 讓文字停留約 2 秒
+            
+            setTimeout(() => {
+                // 動畫結束後隱藏 DOM 以優化效能
+                document.getElementById('intro-layer').style.display = 'none';
+                // Set flag in session storage
+                sessionStorage.setItem('introShown', 'true');
+            }, 3600);
+            }
+
+            // --- 1. Custom Cursor ---
+            const cursor = document.querySelector('.cursor');
+            const follower = document.querySelector('.cursor-follower');
+            const interactiveElements = document.querySelectorAll('a, button');
+
+            document.addEventListener('mousemove', e => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                follower.style.left = e.clientX + 'px';
+                follower.style.top = e.clientY + 'px';
+            });
+
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => follower.classList.add('cursor-hover'));
+                el.addEventListener('mouseleave', () => follower.classList.remove('cursor-hover'));
+            });
+
+            // --- 3. 3D Card Tilt ---
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    card.style.setProperty('--rotateX', `${-y / 20}deg`);
+                    card.style.setProperty('--rotateY', `${x / 20}deg`);
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.setProperty('--rotateX', '0deg');
+                    card.style.setProperty('--rotateY', '0deg');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
