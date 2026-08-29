@@ -132,7 +132,7 @@
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col">
+<body class="overflow-x-hidden pb-16 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col">
     <script>
         if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
     </script>
@@ -151,23 +151,23 @@
                 </div>
             </a>
             
-            <div class="hidden md:flex items-center gap-8">
-                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
-                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
-                <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
-                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+            <div class="fixed md:static bottom-0 left-0 w-full md:w-auto bg-white/95 md:bg-transparent backdrop-blur-xl border-t md:border-t-0 border-klein/10 p-3 md:p-0 flex justify-evenly md:justify-start items-center md:gap-8 z-50 overflow-x-auto shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:shadow-none pb-[calc(12px+env(safe-area-inset-bottom))] md:pb-0">
+                <a href="career_fit_v2.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="profile.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                <a href="brand_test.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
+                <a href="resource_library.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
             </div>
 
             <div class="flex items-center gap-4">
-                <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
+                <a href="index.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> 返回首頁
                 </a>
                 <div id="nav-auth-section" class="flex items-center gap-4 border-l border-klein/10 pl-4">
-                    <button id="nav-login-btn" onclick="window.App.login()" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入 / 註冊</button>
+                    <button id="nav-login-btn" onclick="window.App.login()" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入 / 註冊</button>
                     <div id="nav-user-info" class="hidden flex items-center gap-3">
                         <div class="flex flex-col text-right">
-                            <span id="nav-user-name" class="text-xs font-bold text-klein"></span>
+                            <span id="nav-user-name" class="text-[11px] md:text-xs font-bold text-klein"></span>
                             <button onclick="window.App.logout()" class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
                         </div>
                         <div id="nav-user-avatar" class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm"></div>
@@ -193,15 +193,15 @@
             
             <!-- Grade Switcher Dropdown -->
             <div class="relative min-w-[240px] shrink-0">
-                <label class="block font-bold text-klein/60 mb-1.5 text-xs">年級視角</label>
+                <label class="block font-bold text-klein/60 mb-1.5 text-[11px] md:text-xs">年級視角</label>
                 <div class="relative">
-                    <select id="grade-selector" onchange="window.App.changeGrade(this.value)" class="w-full px-4 py-3 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-xs font-bold uppercase tracking-wider appearance-none cursor-pointer">
+                    <select id="grade-selector" onchange="window.App.changeGrade(this.value)" class="w-full px-4 py-3 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider appearance-none cursor-pointer">
                         <option value="大一">大一 / 大二 (基礎打底期)</option>
                         <option value="大三" selected>大三 (實務應用期)</option>
                         <option value="大四">大四 / 畢業 (就業收割期)</option>
                     </select>
                     <div class="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-klein/40">
-                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                        <i class="fa-solid fa-chevron-down text-[11px] md:text-xs"></i>
                     </div>
                 </div>
             </div>
@@ -221,11 +221,11 @@
                         <div>
                             <div class="h-2"></div>
                             <h2 id="course-section-title" class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
-                                <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">01</span>
+                                <span class="w-6 h-6 bg-klein text-white text-[11px] md:text-xs font-mono font-bold flex items-center justify-center">01</span>
                                 修課檢測雷達
                             </h2>
                         </div>
-                        <span id="course-goal" class="font-mono text-xs font-bold px-3 py-1 bg-klein/5 border border-klein/20 text-klein">目標: -- 學分</span>
+                        <span id="course-goal" class="font-mono text-[11px] md:text-xs font-bold px-3 py-1 bg-klein/5 border border-klein/20 text-klein">目標: -- 學分</span>
                     </div>
                     
                     <!-- Quick Track Switcher Tabs -->
@@ -241,7 +241,7 @@
                         </button>
                     </div>
 
-                    <p class="font-mono text-xs text-klein/50 mb-4">* 請勾選歷年已修畢且成績及格之專業課程，系統將即時換算戰力。</p>
+                    <p class="font-mono text-[11px] md:text-xs text-klein/50 mb-4">* 請勾選歷年已修畢且成績及格之專業課程，系統將即時換算戰力。</p>
                     
                     <!-- Senior Dept Picker -->
                     <div id="dept-picker-container"></div>
@@ -257,7 +257,7 @@
                     <div class="border-b border-klein/10 pb-4 mb-4">
                         <div class="h-2"></div>
                         <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
-                            <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">02</span>
+                            <span class="w-6 h-6 bg-klein text-white text-[11px] md:text-xs font-mono font-bold flex items-center justify-center">02</span>
                             實務與課外經歷
                         </h2>
                     </div>
@@ -272,15 +272,15 @@
                         <div>
                             <div class="h-2"></div>
                             <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
-                                <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">03</span>
+                                <span class="w-6 h-6 bg-klein text-white text-[11px] md:text-xs font-mono font-bold flex items-center justify-center">03</span>
                                 專業技能與擅長工具 (Professional Skills & Tools)
                             </h2>
                         </div>
-                        <a href="profile.html" class="hover-spring font-mono text-xs font-bold text-klein bg-klein/5 hover:bg-klein hover:text-white border border-klein/20 px-3 py-1.5 transition-all">
+                        <a href="profile.html" class="hover-spring font-mono text-[11px] md:text-xs font-bold text-klein bg-klein/5 hover:bg-klein hover:text-white border border-klein/20 px-3 py-1.5 transition-all">
                             前往設定技能 ➔
                         </a>
                     </div>
-                    <p class="font-mono text-xs text-klein/50 mb-3">* 系統已從個人檔案同步您自訂建立的專業技能標籤，作為 AI 履歷生成與 ATS 診斷依據。</p>
+                    <p class="font-mono text-[11px] md:text-xs text-klein/50 mb-3">* 系統已從個人檔案同步您自訂建立的專業技能標籤，作為 AI 履歷生成與 ATS 診斷依據。</p>
                     <div id="skills-display-container" class="flex flex-wrap gap-2 min-h-[36px] items-center">
                         <!-- Populated by renderSkills() -->
                     </div>
@@ -291,30 +291,30 @@
                     <div class="border-b border-klein/10 pb-4 mb-4">
                         <div class="h-2"></div>
                         <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
-                            <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">04</span>
+                            <span class="w-6 h-6 bg-klein text-white text-[11px] md:text-xs font-mono font-bold flex items-center justify-center">04</span>
                             履歷生成素材
                         </h2>
                     </div>
-                    <p class="font-body text-xs text-klein/70 mb-4">請提供自我介紹草稿或上傳現有履歷 PDF，AI 顧問將重構為 STAR / XYZ 高維度履歷。</p>
+                    <p class="font-body text-[11px] md:text-xs text-klein/70 mb-4">請提供自我介紹草稿或上傳現有履歷 PDF，AI 顧問將重構為 STAR / XYZ 高維度履歷。</p>
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="block font-mono text-xs font-bold uppercase tracking-wider text-klein mb-2">
+                            <label class="block font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider text-klein mb-2">
                                 求職目標與簡介草稿 (Career Goals / Bio)
                             </label>
-                            <textarea id="resume-draft-input" class="w-full h-28 p-3 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-xs" placeholder="例如：我想應徵後端工程師實習，在校期間使用 Node.js 與 MySQL 完成期末電商專題..."></textarea>
+                            <textarea id="resume-draft-input" class="w-full h-28 p-3 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-[11px] md:text-xs" placeholder="例如：我想應徵後端工程師實習，在校期間使用 Node.js 與 MySQL 完成期末電商專題..."></textarea>
                         </div>
 
                         <div>
-                            <label class="block font-mono text-xs font-bold uppercase tracking-wider text-klein mb-2">
+                            <label class="block font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider text-klein mb-2">
                                 或上傳現有履歷 PDF (選填)
                             </label>
                             <div class="flex items-center gap-3">
-                                <label class="hover-spring cursor-pointer bg-klein/5 hover:bg-klein hover:text-white text-klein border border-klein/20 px-4 py-2 font-mono text-xs font-bold tracking-wider transition-all">
+                                <label class="hover-spring cursor-pointer bg-klein/5 hover:bg-klein hover:text-white text-klein border border-klein/20 px-4 py-2 font-mono text-[11px] md:text-xs font-bold tracking-wider transition-all">
                                     <i class="fa-solid fa-file-pdf mr-1"></i> 上傳 PDF
                                     <input type="file" id="resume-pdf-upload" accept="application/pdf" class="hidden" onchange="window.App.handlePdfUpload(event)">
                                 </label>
-                                <span id="pdf-upload-status" class="font-mono text-xs text-klein/60">尚未上傳檔案</span>
+                                <span id="pdf-upload-status" class="font-mono text-[11px] md:text-xs text-klein/60">尚未上傳檔案</span>
                             </div>
                         </div>
                     </div>
@@ -353,7 +353,7 @@
                         <!-- 3 Horizontal Telemetry Meters -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div class="border border-klein/10 p-3 bg-klein/[0.02]">
-                                <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
+                                <div class="flex justify-between font-mono text-[11px] md:text-xs font-bold text-klein mb-1">
                                     <span>專業學分 (Prog)</span>
                                     <span><span id="live-prog-score">0</span> / 40</span>
                                 </div>
@@ -363,7 +363,7 @@
                             </div>
 
                             <div class="border border-klein/10 p-3 bg-klein/[0.02]">
-                                <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
+                                <div class="flex justify-between font-mono text-[11px] md:text-xs font-bold text-klein mb-1">
                                     <span>實務經歷 (Exp)</span>
                                     <span><span id="live-exp-score">0</span> / 40</span>
                                 </div>
@@ -373,7 +373,7 @@
                             </div>
 
                             <div class="border border-klein/10 p-3 bg-klein/[0.02]">
-                                <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
+                                <div class="flex justify-between font-mono text-[11px] md:text-xs font-bold text-klein mb-1">
                                     <span>技能標籤 (Skill)</span>
                                     <span><span id="live-skill-score">0</span> / 20</span>
                                 </div>
@@ -384,7 +384,7 @@
                         </div>
 
                         <!-- Live Advice Feedback Note -->
-                        <div id="live-recommendation" class="font-mono text-xs text-klein/70 bg-klein/5 border border-klein/10 p-3">
+                        <div id="live-recommendation" class="font-mono text-[11px] md:text-xs text-klein/70 bg-klein/5 border border-klein/10 p-3">
                             請勾選左側修課紀錄、經歷與技能，系統將即時試算您的就業競爭力！
                         </div>
                     </div>
@@ -396,7 +396,7 @@
                         <div class="space-y-6">
                             <!-- Dimension 1: Execution -->
                             <div>
-                                <div class="flex justify-between font-mono text-xs font-bold mb-1.5">
+                                <div class="flex justify-between font-mono text-[11px] md:text-xs font-bold mb-1.5">
                                     <span class="text-klein">專案具體度 (Execution / XYZ Metric)</span>
                                     <span id="score-quant" class="text-klein">0%</span>
                                 </div>
@@ -408,7 +408,7 @@
 
                             <!-- Dimension 2: Contribution -->
                             <div>
-                                <div class="flex justify-between font-mono text-xs font-bold mb-1.5">
+                                <div class="flex justify-between font-mono text-[11px] md:text-xs font-bold mb-1.5">
                                     <span class="text-cobalt">角色貢獻度 (Contribution / STAR Role)</span>
                                     <span id="score-comp" class="text-cobalt">0%</span>
                                 </div>
@@ -420,7 +420,7 @@
 
                             <!-- Dimension 3: Fundamentals -->
                             <div>
-                                <div class="flex justify-between font-mono text-xs font-bold mb-1.5">
+                                <div class="flex justify-between font-mono text-[11px] md:text-xs font-bold mb-1.5">
                                     <span class="text-emerald-700">基礎潛力值 (Fundamentals / ATS Keywords)</span>
                                     <span id="score-kw" class="text-emerald-700">0%</span>
                                 </div>
@@ -462,17 +462,22 @@
                             </div>
                             
                             <div class="flex items-center justify-between mb-4">
-                                <span class="font-mono text-xs font-bold text-klein uppercase tracking-wider flex items-center gap-2">
+                                <span class="font-mono text-[11px] md:text-xs font-bold text-klein uppercase tracking-wider flex items-center gap-2">
                                     <i class="fa-solid fa-file-lines"></i> AI 智能履歷預覽 (A4 Standard)
                                 </span>
                                 <div class="flex items-center gap-2">
-                                    <button onclick="window.App.printCv()" class="hover-spring bg-white text-klein border-2 border-klein font-mono text-xs font-bold uppercase tracking-wider py-2 px-3 flex items-center gap-1.5 hover:bg-klein/5" title="使用瀏覽器原生列印 / 另存為超高畫質向量 PDF">
+                                    <button onclick="window.App.printCv()" class="hover-spring bg-white text-klein border-2 border-klein font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider py-2 px-3 flex items-center gap-1.5 hover:bg-klein/5" title="使用瀏覽器原生列印 / 另存為超高畫質向量 PDF">
                                         <i class="fa-solid fa-print"></i> 列印 / 向量 PDF
                                     </button>
-                                    <button onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2" id="btn-export-pdf">
+                                    <button onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2" id="btn-export-pdf">
                                         <i class="fa-solid fa-download"></i> 匯出 PDF
                                     </button>
                                 </div>
+=======
+                                <button onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-download"></i> 匯出 PDF
+                                </button>
+>>>>>>> origin/main
                             </div>
 
                             <!-- A4 Preview Paper Sheet -->
@@ -504,7 +509,7 @@
                 </button>
             </div>
 
-            <p class="font-body text-xs text-klein/70 mb-6">
+            <p class="font-body text-[11px] md:text-xs text-klein/70 mb-6">
                 當前 API 回應逾時或達免費額度上限。您可一鍵複製系統生成的結構化 Prompt 至 ChatGPT / Claude / DeepSeek 執行，並將回傳的 JSON 貼回下方解析。
             </p>
 
@@ -512,8 +517,8 @@
                 <!-- Step 1 -->
                 <div class="border border-klein/10 p-4 bg-klein/[0.02]">
                     <div class="flex justify-between items-center mb-2">
-                        <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-klein">第一步：複製專屬 Prompt 指令</h4>
-                        <button onclick="window.App.copyManualPrompt()" id="fallback-copy-prompt" class="hover-spring bg-klein text-white font-mono text-xs font-bold px-3 py-1.5 flex items-center gap-1.5">
+                        <h4 class="font-heading font-bold text-[11px] md:text-xs uppercase tracking-wider text-klein">第一步：複製專屬 Prompt 指令</h4>
+                        <button onclick="window.App.copyManualPrompt()" id="fallback-copy-prompt" class="hover-spring bg-klein text-white font-mono text-[11px] md:text-xs font-bold px-3 py-1.5 flex items-center gap-1.5">
                             <i class="fa-solid fa-copy"></i> 一鍵複製指令
                         </button>
                     </div>
@@ -522,17 +527,17 @@
 
                 <!-- Step 2 -->
                 <div class="border border-emerald-500/20 p-4 bg-emerald-500/[0.02]">
-                    <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-emerald-800 mb-1">第二步：貼回 AI 生成之 JSON</h4>
+                    <h4 class="font-heading font-bold text-[11px] md:text-xs uppercase tracking-wider text-emerald-800 mb-1">第二步：貼回 AI 生成之 JSON</h4>
                     <p class="font-mono text-[11px] text-emerald-700/80 mb-2">將外部 LLM 回傳之完整結果貼入，系統將自動解析為圖表與 A4 履歷：</p>
-                    <textarea id="manual-json-input" placeholder="請將 ChatGPT 回傳之 JSON 結果貼於此處..." class="w-full h-32 p-2.5 bg-white border border-emerald-500/30 text-emerald-900 font-mono text-xs focus:border-emerald-600"></textarea>
+                    <textarea id="manual-json-input" placeholder="請將 ChatGPT 回傳之 JSON 結果貼於此處..." class="w-full h-32 p-2.5 bg-white border border-emerald-500/30 text-emerald-900 font-mono text-[11px] md:text-xs focus:border-emerald-600"></textarea>
                 </div>
             </div>
 
             <div class="border-t border-klein/10 pt-4 mt-6 flex justify-end gap-3">
-                <button onclick="document.getElementById('manual-ai-modal').classList.add('hidden')" class="hover-spring border border-klein/20 text-klein font-mono text-xs font-bold px-4 py-2 uppercase">
+                <button onclick="document.getElementById('manual-ai-modal').classList.add('hidden')" class="hover-spring border border-klein/20 text-klein font-mono text-[11px] md:text-xs font-bold px-4 py-2 uppercase">
                     關閉
                 </button>
-                <button onclick="window.App.processManualJson()" id="fallback-apply-json" class="hover-spring bg-klein text-white font-heading font-bold text-xs uppercase tracking-wider px-6 py-2 flex items-center gap-2">
+                <button onclick="window.App.processManualJson()" id="fallback-apply-json" class="hover-spring bg-klein text-white font-heading font-bold text-[11px] md:text-xs uppercase tracking-wider px-6 py-2 flex items-center gap-2">
                     <i class="fa-solid fa-check"></i> 解析並渲染報告
                 </button>
             </div>
@@ -540,16 +545,7 @@
         </div>
     </div>
 
-    <!-- Global Footer -->
-    <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
-        <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-            
-        </div>
-        <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-            
-            
-        </div>
-    </footer>
+    
 
     <!-- Application Script Module -->
     <script>
@@ -742,7 +738,7 @@
             
             showToast(msg) {
                 const toast = document.createElement('div');
-                toast.className = "fixed bottom-6 right-6 bg-klein text-white border border-white/20 px-6 py-3 font-mono text-xs font-bold uppercase tracking-wider z-50 shadow-2xl flex items-center gap-3";
+                toast.className = "fixed bottom-6 right-6 bg-klein text-white border border-white/20 px-6 py-3 font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider z-50 shadow-2xl flex items-center gap-3";
                 toast.innerHTML = `<i class="fa-solid fa-circle-info text-electric-blue"></i> <span>${msg}</span>`;
                 document.body.appendChild(toast);
                 setTimeout(() => {
@@ -903,15 +899,15 @@
                     trackData = ACADEMIC_DATA[trackKey];
                 }
 
-                document.getElementById('course-section-title').innerHTML = `<span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">01</span> ${trackData.title}`;
+                document.getElementById('course-section-title').innerHTML = `<span class="w-6 h-6 bg-klein text-white text-[11px] md:text-xs font-mono font-bold flex items-center justify-center">01</span> ${trackData.title}`;
                 document.getElementById('course-goal').innerText = `目標: ${trackData.goal} 學分`;
 
                 const pickerContainer = document.getElementById('dept-picker-container');
                 if (trackKey === 'program') {
                     pickerContainer.innerHTML = `
                         <div class="mb-4 p-3 border border-klein/20 bg-klein/[0.02]">
-                            <label class="block font-mono text-xs font-bold uppercase tracking-wider text-klein mb-1.5">選擇就讀系所 (靜宜大學)</label>
-                            <select onchange="if(this.value) window.App.changeDept(this.value)" class="w-full bg-white border border-klein/20 text-klein text-xs font-mono font-bold p-2 focus:border-klein transition-all cursor-pointer">
+                            <label class="block font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider text-klein mb-1.5">選擇就讀系所 (靜宜大學)</label>
+                            <select onchange="if(this.value) window.App.changeDept(this.value)" class="w-full bg-white border border-klein/20 text-klein text-[11px] md:text-xs font-mono font-bold p-2 focus:border-klein transition-all cursor-pointer">
                                 <option value="" ${!this.state.dept ? 'selected' : ''} disabled>-- 請選擇系所 --</option>
                                 <option value="IM" ${this.state.dept === 'IM' ? 'selected' : ''}>資訊管理學系 (IM)</option>
                                 <option value="CS" ${this.state.dept === 'CS' ? 'selected' : ''}>資訊工程學系 (CS)</option>
@@ -971,13 +967,13 @@ setupTrackUI(grade) {
                     <div class="border border-klein/10 p-4 bg-white crosshair-corner">
                         <div class="flex justify-between items-center mb-3">
                             <h3 class="font-heading font-black text-klein text-sm uppercase">${prog.name}</h3>
-                            <span id="badge-${prog.id}" class="text-xs font-mono font-bold px-2.5 py-1 bg-klein/5 text-klein border border-klein/15" data-goal="${requiredCourses}">0 / ${requiredCourses} 門</span>
+                            <span id="badge-${prog.id}" class="text-[11px] md:text-xs font-mono font-bold px-2.5 py-1 bg-klein/5 text-klein border border-klein/15" data-goal="${requiredCourses}">0 / ${requiredCourses} 門</span>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             ${prog.courses.map(course => `
                                 <label class="cursor-pointer">
                                     <input type="checkbox" class="peer sr-only" value="${course}" data-prog="${prog.id}" onchange="window.App.toggleCourse(this)">
-                                    <div class="px-3 py-1.5 text-xs font-mono font-semibold border border-klein/20 text-klein/80 peer-checked:bg-klein peer-checked:text-white peer-checked:border-klein hover:border-klein transition-all">
+                                    <div class="px-3 py-1.5 text-[11px] md:text-xs font-mono font-semibold border border-klein/20 text-klein/80 peer-checked:bg-klein peer-checked:text-white peer-checked:border-klein hover:border-klein transition-all">
                                         ${course}
                                     </div>
                                 </label>
@@ -994,7 +990,7 @@ setupTrackUI(grade) {
                           <div class="flex items-center gap-3 p-3.5 border border-klein/10 bg-white hover-spring peer-checked:bg-klein peer-checked:text-white text-klein transition-all">
                               <span class="text-xl shrink-0">${exp.icon}</span>
                               <div class="flex-1 min-w-0">
-                                  <div class="font-heading font-bold text-xs uppercase truncate">${exp.name}</div>
+                                  <div class="font-heading font-bold text-[11px] md:text-xs uppercase truncate">${exp.name}</div>
                                   <div class="text-[10px] font-mono opacity-70">戰力點數 +${exp.score}</div>
                               </div>
                               <div class="w-4 h-4 border border-klein/30 flex items-center justify-center shrink-0 [.peer:checked~div_&]:border-white [.peer:checked~div_&]:bg-white">
@@ -1014,7 +1010,7 @@ setupTrackUI(grade) {
                 if (!Array.isArray(skills) || skills.length === 0) {
                     container.innerHTML = `
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 w-full p-3 bg-klein/[0.02] border border-dashed border-klein/20">
-                            <span class="text-xs font-mono text-klein/60 italic">尚未裝備任何武器，建議前往「個人檔案」挑選，可大幅提升綜合戰力！</span>
+                            <span class="text-[11px] md:text-xs font-mono text-klein/60 italic">尚未裝備任何武器，建議前往「個人檔案」挑選，可大幅提升綜合戰力！</span>
                             <a href="profile.html" class="px-2.5 py-1 bg-klein text-white text-xs font-mono font-bold hover:bg-blue-800 transition-all flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-sm">
                                 <i class="fa-solid fa-plus text-[10px]"></i> 挑選技能
                             </a>
@@ -1063,10 +1059,10 @@ setupTrackUI(grade) {
                 const goal = parseInt(badge.dataset.goal);
                 
                 if (checkedInProg >= goal) {
-                    badge.className = "text-xs font-mono font-bold px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-300 transition-colors";
+                    badge.className = "text-[11px] md:text-xs font-mono font-bold px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-300 transition-colors";
                     badge.innerText = "🏆 達成門檻";
                 } else {
-                    badge.className = "text-xs font-mono font-bold px-2.5 py-1 bg-klein/5 text-klein border border-klein/15 transition-colors";
+                    badge.className = "text-[11px] md:text-xs font-mono font-bold px-2.5 py-1 bg-klein/5 text-klein border border-klein/15 transition-colors";
                     badge.innerText = `${checkedInProg} / ${goal} 門`;
                 }
             },
@@ -1542,14 +1538,14 @@ ${localContext}
                 if (Array.isArray(actionItems) && actionItems.length > 0) {
                     html += `<div class="border border-klein/20 p-4 bg-white crosshair-corner">
                         <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-xs"></i> Action Items (下一步行動建議)
+                            <i class="fa-solid fa-list-check text-[11px] md:text-xs"></i> Action Items (下一步行動建議)
                         </h4>
                         <ul class="space-y-2.5">`;
                     actionItems.forEach(item => {
                         const itemText = typeof item === 'string' ? item : (item.text || item.title || JSON.stringify(item));
                         const isCourseRec = itemText.includes('修') || itemText.includes('課') || itemText.includes('學程');
                         if (isCourseRec) {
-                            html += `<li class="text-xs text-klein flex items-start gap-2.5 bg-klein/5 p-3 border border-klein/15">
+                            html += `<li class="text-[11px] md:text-xs text-klein flex items-start gap-2.5 bg-klein/5 p-3 border border-klein/15">
                                 <span class="text-base shrink-0">📚</span>
                                 <div>
                                     <span class="text-klein font-mono font-bold text-[10px] uppercase tracking-wider mb-0.5 block">三軌制修課導航建議</span>
@@ -1557,7 +1553,7 @@ ${localContext}
                                 </div>
                             </li>`;
                         } else {
-                            html += `<li class="text-xs text-klein/80 flex items-start gap-2"><span class="text-klein font-bold font-mono">▪</span> ${itemText}</li>`;
+                            html += `<li class="text-[11px] md:text-xs text-klein/80 flex items-start gap-2"><span class="text-klein font-bold font-mono">▪</span> ${itemText}</li>`;
                         }
                     });
                     html += `</ul></div>`;
@@ -1678,7 +1674,7 @@ ${localContext}
                     return;
                 }
 
-                document.getElementById('pdf-upload-status').innerHTML = `<span class="text-klein font-mono font-bold text-xs"><i class="fa-solid fa-file-circle-check text-emerald-600 mr-1"></i> 已選擇：${file.name}</span>`;
+                document.getElementById('pdf-upload-status').innerHTML = `<span class="text-klein font-mono font-bold text-[11px] md:text-xs"><i class="fa-solid fa-file-circle-check text-emerald-600 mr-1"></i> 已選擇：${file.name}</span>`;
 
                 const reader = new FileReader();
                 reader.onload = (e) => {
