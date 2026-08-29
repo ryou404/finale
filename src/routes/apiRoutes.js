@@ -605,15 +605,19 @@ router.post('/users/:uid/resume', async (req, res) => {
     const updatedAtStr = resumeData.updatedAt || new Date().toISOString();
 
     const snapshot = {
+      title: resumeData.title || (resumeData.targetRole ? `${resumeData.targetRole} 履歷` : 'AI 智能履歷'),
+      templateId: resumeData.templateId || 'modern',
       selectedCourses: Array.isArray(resumeData.selectedCourses) ? resumeData.selectedCourses : [],
       selectedExps: Array.isArray(resumeData.selectedExps) ? resumeData.selectedExps : [],
+      skills: resumeData.skills || [],
       scores: resumeData.scores || { total: 0, program: 0, exp: 0, skill: 0 },
-      metrics: resumeData.metrics || { quantifiability: 0, completeness: 0, keywordRelevance: 0 },
+      metrics: resumeData.metrics || { quantifiability: 75, completeness: 80, keywordRelevance: 70 },
       targetRole: resumeData.targetRole || '',
       rawDraft: resumeData.rawDraft || '',
       analysis: resumeData.analysis || '',
       actionItems: Array.isArray(resumeData.actionItems) ? resumeData.actionItems : [],
       formattedResumeMarkdown: resumeData.formattedResumeMarkdown || resumeData.resumeMarkdown || '',
+      cvData: resumeData.cvData || {},
       updatedAt: updatedAtStr
     };
 
@@ -631,26 +635,86 @@ router.post('/users/:uid/resume', async (req, res) => {
       }
     });
 
-    // 2. Update user document
-    const user = await User.findOneAndUpdate(
-      { $or: [{ uid }, { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null }] },
-      {
-        $set: {
-          careerFitResult: careerFitDoc._id,
-          'resume_data.latest': snapshot,
-          'summary_cache.resume': {
-            updatedAt: updatedAtStr,
-            totalScore: snapshot.scores.total || 0
-          }
-        },
-        $push: { history_resume: snapshot }
-      },
-      { new: true, upsert: true }
-    );
+    // 2. Fetch user to check for rapid duplicate submissions (< 15 seconds)
+    let user = await findUserFlexible(uid);
+    if (!user) {
+      user = await User.create({ uid, name: '用戶' });
+    }
+
+    user.careerFitResult = careerFitDoc._id;
+    user.resume_data = user.resume_data || {};
+    user.resume_data.latest = snapshot;
+    user.summary_cache = user.summary_cache || {};
+    user.summary_cache.resume = {
+      updatedAt: updatedAtStr,
+      totalScore: snapshot.scores.total || snapshot.metrics.quantifiability || 0
+    };
+
+    user.history_resume = user.history_resume || [];
+    const lastHistoryItem = user.history_resume.length > 0 ? user.history_resume[user.history_resume.length - 1] : null;
+    const nowTime = new Date(updatedAtStr).getTime();
+    const lastTime = lastHistoryItem?.updatedAt ? new Date(lastHistoryItem.updatedAt).getTime() : 0;
+    
+    // If last history entry was added within 15 seconds, replace it to prevent duplicates
+    if (lastHistoryItem && Math.abs(nowTime - lastTime) < 15000) {
+      user.history_resume[user.history_resume.length - 1] = snapshot;
+    } else {
+      user.history_resume.push(snapshot);
+    }
+
+    await user.save();
 
     res.json({ status: 'ok', resume: snapshot, careerFitDocId: careerFitDoc._id, user });
   } catch (err) {
     console.error('[API /users/:uid/resume error]:', err);
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
+/**
+ * 7.1 Get Latest Resume & All Saved Resume History
+ */
+router.get('/users/:uid/resume', async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const user = await findUserFlexible(uid);
+    const latest = user?.resume_data?.latest || null;
+    const history = user?.history_resume || [];
+    res.json({ status: 'ok', resume: latest, history });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
+router.get('/users/:uid/resumes', async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const user = await findUserFlexible(uid);
+    const history = user?.history_resume || [];
+    res.json({ status: 'ok', resumes: history.slice().reverse() });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
+/**
+ * 7.2 Delete a Saved Resume from History
+ */
+router.delete('/users/:uid/resumes/:resumeId', async (req, res) => {
+  try {
+    const { uid, resumeId } = req.params;
+    const user = await findUserFlexible(uid);
+    if (!user) return res.status(404).json({ status: 'error', message: 'User not found' });
+
+    user.history_resume = user.history_resume.filter(r => {
+      if (r._id && String(r._id) === resumeId) return false;
+      if (r.updatedAt && r.updatedAt === resumeId) return false;
+      return true;
+    });
+
+    await user.save();
+    res.json({ status: 'ok', message: '履歷紀錄已成功刪除', resumes: user.history_resume.slice().reverse() });
+  } catch (err) {
     res.status(500).json({ status: 'error', message: err.message });
   }
 });
@@ -1051,11 +1115,15 @@ router.post('/ai/diagnose', async (req, res) => {
   const baseUrl = CONFIG.api.deepseekBaseUrl || process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com';
   const modelName = CONFIG.llm.model || process.env.DEEPSEEK_MODEL || 'deepseek-chat';
 
-  const { prompt, pdfBase64, department, grade, draftText, courses, experiences, skills } = req.body || {};
+  const { prompt, pdfBase64, department, grade, draftText, courses, experiences, skills, userInfo } = req.body || {};
 
   if (!prompt && !draftText) {
     return res.status(400).json({ status: 'error', message: '缺少提示詞或履歷內容' });
   }
+
+  // Build user info context for system prompt
+  const userName = userInfo?.name || '未提供';
+  const userInfoContext = userInfo ? `\n\n【重要：學生真實個人資料】\n姓名：${userInfo.name || '未提供'}，Email：${userInfo.email || '未提供'}，學校：${userInfo.school || '靜宜大學'}，科系：${userInfo.deptFullName || userInfo.department || '未知'}，年級：${userInfo.grade || '未知'}\n你必須在生成的履歷中使用上述真實資料。如果某項資料為「未提供」，請在履歷中省略該欄位，絕對不可以自行編造假資料。` : '';
 
   if (apiKey) {
     try {
@@ -1064,7 +1132,7 @@ router.post('/ai/diagnose', async (req, res) => {
       const messages = [
         {
           role: 'system',
-          content: '你是靜宜大學資訊學院專屬的資深人資與 AI 職涯顧問。請客觀且嚴謹地進行履歷 Golden Triangle 三維度檢核，給出具體且誠懇的建議，並只輸出符合格式規範的純 JSON 物件 (不要包含 markdown code block 標記)。格式務必包含: quantifiability (0-100), completeness (0-100), keywordRelevance (0-100), analysis (HTML格式), actionItems (字串陣列), resumeMarkdown (Markdown格式字串)。'
+          content: '你是靜宜大學資訊學院專屬的資深人資與 AI 職涯顧問。請客觀且嚴謹地進行履歷 Golden Triangle 三維度檢核，給出具體且誠懇的建議，並只輸出符合格式規範的純 JSON 物件 (不要包含 markdown code block 標記)。格式務必包含: quantifiability (0-100), completeness (0-100), keywordRelevance (0-100), analysis (HTML格式), actionItems (字串陣列), resumeMarkdown (Markdown格式字串)。\n\n【最重要的規則】：你絕對不可以自行編造或虛構學生的姓名、電話、Email、學校等個人資訊。所有個人資料必須使用 Prompt 中提供的真實數據。如果某項個人資料標示為「未提供」，請在履歷中省略該欄位。' + userInfoContext
         },
         {
           role: 'user',

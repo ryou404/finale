@@ -12,8 +12,11 @@ const BrandSnapshotSchema = new mongoose.Schema({
 }, { _id: false, timestamps: true });
 
 const ResumeSnapshotSchema = new mongoose.Schema({
+  title: { type: String, default: 'AI 智能履歷' },
+  templateId: { type: String, default: 'modern' },
   selectedCourses: [{ type: String }],
   selectedExps: [{ type: String }],
+  skills: { type: mongoose.Schema.Types.Mixed, default: [] },
   scores: {
     total: { type: Number, default: 0 },
     program: { type: Number, default: 0 },
@@ -30,8 +33,9 @@ const ResumeSnapshotSchema = new mongoose.Schema({
   analysis: { type: String, default: '' },
   actionItems: [{ type: String }],
   formattedResumeMarkdown: { type: String, default: '' },
+  cvData: { type: mongoose.Schema.Types.Mixed, default: {} },
   updatedAt: { type: String, default: () => new Date().toISOString() }
-}, { _id: false, timestamps: true });
+}, { _id: true, timestamps: true });
 
 const LabSnapshotSchema = new mongoose.Schema({
   dept: { type: String, default: '' },

@@ -8,8 +8,15 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <!-- CareerDNA MongoDB Atlas Client -->
     <script src="static/db-client.js"></script>
+    
+    <!-- CareerDNA CV Template System -->
+    <script src="static/cv-templates.js"></script>
     
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -424,9 +431,88 @@
                     </form>
                 </div>
 
+                <!-- ================= AI RESUME ARCHIVE & HISTORY CARD ================= -->
+                <div class="p-8 md:p-12 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-klein/10 pb-6 mb-8">
+                        <div>
+                            <div class="h-2"></div>
+                            <h2 class="font-heading font-black text-2xl uppercase tracking-tight text-klein flex items-center gap-2.5">
+                                <i class="fa-solid fa-folder-open text-klein"></i>
+                                AI 履歷典藏庫 (Resume Archive)
+                            </h2>
+                            <p class="font-mono text-xs text-klein/60 mt-1">
+                                查看您過去由 AI 深度健檢所生成的所有履歷版本，支援即時預覽、切換模板與匯出 PDF。
+                            </p>
+                        </div>
+                        <div id="saved-resumes-count-badge" class="font-mono text-xs font-bold bg-klein text-white px-3.5 py-2 shrink-0 shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span id="saved-resumes-count-text">已典藏 0 份</span>
+                        </div>
+                    </div>
+
+                    <!-- Resume Cards Container -->
+                    <div id="saved-resumes-list" class="space-y-4">
+                        <div class="p-8 border-2 border-dashed border-klein/20 text-center space-y-3 bg-klein/[0.01]">
+                            <div class="w-12 h-12 bg-klein/5 border border-klein/20 flex items-center justify-center mx-auto text-klein text-xl">
+                                <i class="fa-solid fa-file-circle-plus"></i>
+                            </div>
+                            <h4 class="font-heading font-bold text-sm text-klein uppercase">尚無已生成的履歷紀錄</h4>
+                            <p class="font-mono text-xs text-klein/50 max-w-md mx-auto">
+                                前往「AI 履歷健檢」結合您的專屬技能武器庫與修課紀錄，立即生成第一份高競爭力 A4 履歷！
+                            </p>
+                            <a href="career_fit_v2.html" class="inline-flex items-center gap-2 px-6 py-2.5 bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider hover-spring mt-2">
+                                <span>前往生成履歷</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
+
+            </div>
         </div>
     </main>
+
+    <!-- CV Fullscreen Preview Modal -->
+    <div id="cv-preview-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white border-2 border-klein w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-klein text-white flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-file-lines text-lg"></i>
+                    <div>
+                        <h3 id="modal-cv-title" class="font-heading font-black text-sm uppercase tracking-wider">履歷預覽</h3>
+                        <p id="modal-cv-subtitle" class="font-mono text-[10px] text-white/70">A4 Standard Format</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.ProfileApp.printModalCv()" class="px-3 py-1.5 bg-white text-klein font-mono text-xs font-bold uppercase tracking-wider hover:bg-white/90 flex items-center gap-1.5 hover-spring">
+                        <i class="fa-solid fa-print"></i> 列印 / 向量 PDF
+                    </button>
+                    <button onclick="window.ProfileApp.exportModalCvPdf()" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 hover-spring" id="modal-btn-export-pdf">
+                        <i class="fa-solid fa-download"></i> 匯出 PDF
+                    </button>
+                    <button onclick="window.ProfileApp.closeCvModal()" class="w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 text-lg transition-colors ml-2">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Template Switcher in Modal -->
+            <div class="px-6 py-2.5 bg-klein/5 border-b border-klein/10 flex items-center gap-3 shrink-0">
+                <span class="font-mono text-xs font-bold text-klein shrink-0">切換版型：</span>
+                <div id="modal-template-selector" class="flex gap-2">
+                    <!-- Template buttons injected by renderModalTemplateSelector() -->
+                </div>
+            </div>
+
+            <!-- Modal Body: A4 Paper Preview Container -->
+            <div class="flex-1 overflow-y-auto p-6 bg-slate-100 flex justify-center" id="modal-cv-container">
+                <div id="modal-cv-paper" class="bg-white shadow-lg w-full max-w-[210mm] border border-klein/10">
+                    <!-- Rendered template HTML -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Global Footer -->
     <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
@@ -808,6 +894,8 @@
                             }
                         }
                     }
+                    // Load saved AI resumes history
+                    await this.loadSavedResumes(effectiveUid);
                 } catch (e) {
                     console.error("Error fetching latest profile from Atlas:", e);
                 }
@@ -919,6 +1007,339 @@
                     container.innerHTML = `<p class="text-xs font-mono text-klein/40 text-center py-3 border border-dashed border-klein/10">填寫右方欄位以顯示學籍資訊</p>`;
                 } else {
                     container.innerHTML = pills.join('');
+                }
+            },
+
+            // ==========================================
+            // AI RESUME ARCHIVE & HISTORY LOGIC
+            // ==========================================
+            savedResumes: [],
+            currentModalResume: null,
+            currentModalTemplate: 'modern',
+
+            async loadSavedResumes(uid) {
+                const targetUid = uid || (window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid));
+                if (!window.CareerDNA_DB || !targetUid) return;
+
+                try {
+                    const res = await window.CareerDNA_DB.getResumesList(targetUid);
+                    if (res && res.status === 'ok') {
+                        this.savedResumes = res.resumes || [];
+                    } else {
+                        // Fallback: check getUser history
+                        const userRes = await window.CareerDNA_DB.getUser(targetUid);
+                        this.savedResumes = (userRes?.user?.history_resume || []).slice().reverse();
+                    }
+                    this.renderSavedResumesList();
+                } catch (err) {
+                    console.error('[loadSavedResumes error]:', err);
+                }
+            },
+
+            renderSavedResumesList() {
+                const container = document.getElementById('saved-resumes-list');
+                const badgeText = document.getElementById('saved-resumes-count-text');
+                if (badgeText) badgeText.innerText = `已典藏 ${this.savedResumes.length} 份`;
+
+                if (!container) return;
+
+                if (!this.savedResumes || this.savedResumes.length === 0) {
+                    container.innerHTML = `
+                        <div class="p-8 border-2 border-dashed border-klein/20 text-center space-y-3 bg-klein/[0.01]">
+                            <div class="w-12 h-12 bg-klein/5 border border-klein/20 flex items-center justify-center mx-auto text-klein text-xl">
+                                <i class="fa-solid fa-file-circle-plus"></i>
+                            </div>
+                            <h4 class="font-heading font-bold text-sm text-klein uppercase">尚無已生成的履歷紀錄</h4>
+                            <p class="font-mono text-xs text-klein/50 max-w-md mx-auto">
+                                前往「AI 履歷健檢」結合您的專屬技能武器庫與修課紀錄，立即生成第一份高競爭力 A4 履歷！
+                            </p>
+                            <a href="career_fit_v2.html" class="inline-flex items-center gap-2 px-6 py-2.5 bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider hover-spring mt-2">
+                                <span>前往生成履歷</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.savedResumes.map((resume, idx) => {
+                    const dateStr = resume.updatedAt ? new Date(resume.updatedAt).toLocaleString('zh-TW', {
+                        year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+                    }) : '未標記時間';
+
+                    const title = resume.title || (resume.targetRole ? `${resume.targetRole} 智能履歷` : 'AI 智能履歷');
+                    const tplId = resume.templateId || 'modern';
+                    const tplName = (window.CVTemplates && window.CVTemplates.templates[tplId]?.name) || '現代雙欄';
+                    
+                    const quant = resume.metrics?.quantifiability ?? 75;
+                    const comp = resume.metrics?.completeness ?? 80;
+                    const kw = resume.metrics?.keywordRelevance ?? 70;
+                    const resumeId = resume._id || resume.updatedAt || idx;
+
+                    return `
+                        <div class="p-5 border-2 border-klein/15 hover:border-klein bg-white hover:bg-klein/[0.01] transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 crosshair-corner">
+                            <!-- Left: Info & Scores -->
+                            <div class="space-y-2 flex-1 min-w-0">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="px-2.5 py-0.5 bg-klein text-white font-mono text-[10px] font-bold uppercase tracking-wider">
+                                        ${tplName}
+                                    </span>
+                                    <h4 class="font-heading font-black text-base text-klein truncate">
+                                        ${title}
+                                    </h4>
+                                    <span class="font-mono text-[11px] text-klein/50">
+                                        <i class="fa-regular fa-clock text-[10px] mr-1"></i>${dateStr}
+                                    </span>
+                                </div>
+
+                                <!-- Dimension Score Badges -->
+                                <div class="flex flex-wrap items-center gap-3 font-mono text-[11px] pt-1">
+                                    <span class="flex items-center gap-1.5 text-klein/80">
+                                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                        量化數據：<strong class="text-klein">${quant}%</strong>
+                                    </span>
+                                    <span class="flex items-center gap-1.5 text-klein/80">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                        完整度：<strong class="text-klein">${comp}%</strong>
+                                    </span>
+                                    <span class="flex items-center gap-1.5 text-klein/80">
+                                        <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                                        關鍵字匹配：<strong class="text-klein">${kw}%</strong>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Right: Action Buttons -->
+                            <div class="flex items-center gap-2 shrink-0 self-end md:self-auto">
+                                <button onclick="window.ProfileApp.openCvModal(${idx})" class="px-3.5 py-2 bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider hover-spring flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-eye"></i> <span>預覽 / 匯出</span>
+                                </button>
+                                <button onclick="window.ProfileApp.directExportPdf(${idx})" class="px-3 py-2 bg-white text-klein border border-klein/30 hover:border-klein font-mono text-xs font-bold uppercase tracking-wider hover:bg-klein/5 flex items-center gap-1.5" title="快速下載 PDF">
+                                    <i class="fa-solid fa-file-pdf text-rose-600"></i> <span>PDF</span>
+                                </button>
+                                <button onclick="window.ProfileApp.deleteSavedResume('${resumeId}')" class="w-8 h-8 flex items-center justify-center text-klein/40 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors" title="刪除此紀錄">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            openCvModal(idx) {
+                const resume = this.savedResumes[idx];
+                if (!resume) return;
+
+                this.currentModalResume = resume;
+                this.currentModalTemplate = resume.templateId || 'modern';
+
+                // Set Modal Headers
+                const titleEl = document.getElementById('modal-cv-title');
+                const subtitleEl = document.getElementById('modal-cv-subtitle');
+                const dateStr = resume.updatedAt ? new Date(resume.updatedAt).toLocaleDateString('zh-TW') : '';
+                if (titleEl) titleEl.innerText = resume.title || 'AI 智能履歷';
+                if (subtitleEl) subtitleEl.innerText = `生成日期：${dateStr} · A4 Standard`;
+
+                // Render Template Selector in Modal
+                const selectorContainer = document.getElementById('modal-template-selector');
+                if (selectorContainer && window.CVTemplates) {
+                    const templates = window.CVTemplates.getTemplateList();
+                    selectorContainer.innerHTML = templates.map(tpl => `
+                        <button onclick="window.ProfileApp.switchModalTemplate('${tpl.id}')" 
+                            id="modal-tpl-btn-${tpl.id}"
+                            class="px-3 py-1 font-mono text-xs font-bold border ${this.currentModalTemplate === tpl.id ? 'bg-klein text-white border-klein' : 'bg-white text-klein border-klein/20 hover:border-klein/60'} transition-all">
+                            ${tpl.name}
+                        </button>
+                    `).join('');
+                }
+
+                // Render Content
+                this.renderModalCv();
+
+                // Show Modal
+                const modal = document.getElementById('cv-preview-modal');
+                if (modal) modal.classList.remove('hidden');
+            },
+
+            closeCvModal() {
+                const modal = document.getElementById('cv-preview-modal');
+                if (modal) modal.classList.add('hidden');
+            },
+
+            switchModalTemplate(tplId) {
+                this.currentModalTemplate = tplId;
+                if (window.CVTemplates) {
+                    const templates = window.CVTemplates.getTemplateList();
+                    templates.forEach(tpl => {
+                        const btn = document.getElementById(`modal-tpl-btn-${tpl.id}`);
+                        if (btn) {
+                            if (tpl.id === tplId) {
+                                btn.className = 'px-3 py-1 font-mono text-xs font-bold border bg-klein text-white border-klein transition-all';
+                            } else {
+                                btn.className = 'px-3 py-1 font-mono text-xs font-bold border bg-white text-klein border-klein/20 hover:border-klein/60 transition-all';
+                            }
+                        }
+                    });
+                }
+                this.renderModalCv();
+            },
+
+            renderModalCv() {
+                const paper = document.getElementById('modal-cv-paper');
+                if (!paper || !this.currentModalResume) return;
+
+                const resume = this.currentModalResume;
+                
+                // Re-build cvData from formattedResumeMarkdown using our upgraded parser
+                let cvData = resume.cvData;
+                if (!cvData || !cvData.experienceHtml || !cvData.summary || Object.keys(cvData).length === 0) {
+                    if (window.CVTemplates) {
+                        cvData = window.CVTemplates.buildCvData(
+                            { 
+                                resumeMarkdown: resume.formattedResumeMarkdown || resume.resumeMarkdown, 
+                                analysis: resume.analysis 
+                            },
+                            { 
+                                selectedCourses: resume.selectedCourses || [], 
+                                selectedExps: resume.selectedExps || [], 
+                                skills: resume.skills || [],
+                                targetRole: resume.targetRole || ''
+                            }
+                        );
+                    }
+                }
+
+                if (window.CVTemplates && cvData) {
+                    const html = window.CVTemplates.render(this.currentModalTemplate, cvData);
+                    paper.innerHTML = `<div id="profile-pdf-render-target">${html}</div>`;
+                } else {
+                    // Fallback to markdown parse
+                    const md = resume.formattedResumeMarkdown || resume.resumeMarkdown || '無履歷內容';
+                    const html = typeof marked !== 'undefined' ? marked.parse(md) : md;
+                    paper.innerHTML = `<div id="profile-pdf-render-target" class="p-8 text-klein">${html}</div>`;
+                }
+            },
+
+            async exportModalCvPdf() {
+                const element = document.getElementById('profile-pdf-render-target');
+                if (!element) return;
+
+                const exportBtn = document.getElementById('modal-btn-export-pdf');
+                if (exportBtn) {
+                    exportBtn.disabled = true;
+                    exportBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>匯出中...</span>';
+                }
+
+                const userName = this.currentUser?.name || this.currentUser?.displayName || 'CareerDNA';
+                const filename = `${userName}_Resume_Archived.pdf`;
+
+                const opt = {
+                    margin:       [0, 0, 0, 0],
+                    filename:     filename,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { 
+                        scale: 2, 
+                        useCORS: true, 
+                        letterRendering: true,
+                        scrollY: 0,
+                        scrollX: 0
+                    },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                try {
+                    await html2pdf().set(opt).from(element).save();
+                    this.showToast(`PDF 已成功匯出：${filename}`);
+                } catch (err) {
+                    console.error('[PDF Export Error]:', err);
+                    this.showToast('PDF 匯出異常，正在開啟原生列印視窗...');
+                    this.printModalCv();
+                } finally {
+                    if (exportBtn) {
+                        exportBtn.disabled = false;
+                        exportBtn.innerHTML = '<i class="fa-solid fa-download"></i> 匯出 PDF';
+                    }
+                }
+            },
+
+            printModalCv() {
+                const element = document.getElementById('profile-pdf-render-target');
+                if (!element) return;
+
+                const userName = this.currentUser?.name || this.currentUser?.displayName || 'CareerDNA';
+
+                const printWindow = window.open('', '_blank');
+                if (!printWindow) {
+                    alert('請允許瀏覽器開啟彈出式視窗以進行列印 / 匯出！');
+                    return;
+                }
+
+                printWindow.document.write(`
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>${userName} - 典藏履歷表 (CareerDNA)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        @page { size: A4 portrait; margin: 0; }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    ${element.innerHTML}
+    <script>
+        window.onload = function() {
+            setTimeout(function() { window.print(); }, 300);
+        };
+    <\/script>
+</body>
+</html>
+                `);
+                printWindow.document.close();
+            },
+
+            async directExportPdf(idx) {
+                this.openCvModal(idx);
+                setTimeout(() => {
+                    this.exportModalCvPdf();
+                }, 300);
+            },
+
+            async deleteSavedResume(resumeId) {
+                if (!confirm('確定要從個人檔案中刪除此份履歷紀錄嗎？')) return;
+
+                const targetUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid);
+                if (!window.CareerDNA_DB || !targetUid) return;
+
+                try {
+                    const res = await window.CareerDNA_DB.deleteResume(targetUid, resumeId);
+                    if (res && res.status === 'ok') {
+                        this.savedResumes = res.resumes || [];
+                        this.renderSavedResumesList();
+                        this.showToast('履歷紀錄已成功刪除！');
+                    } else {
+                        alert(res.message || '刪除失敗');
+                    }
+                } catch (err) {
+                    alert('刪除失敗：' + err.message);
                 }
             }
         };

@@ -939,10 +939,22 @@
       });
     },
 
-    // 7. Get Latest Resume Data
+    // 7. Get Latest Resume Data & History
     async getResumeData(uid) {
       const targetUid = uid || getEffectiveUid();
       return await apiCall(`/api/users/${encodeURIComponent(targetUid)}/resume`);
+    },
+
+    async getResumesList(uid) {
+      const targetUid = uid || getEffectiveUid();
+      return await apiCall(`/api/users/${encodeURIComponent(targetUid)}/resumes`);
+    },
+
+    async deleteResume(uid, resumeId) {
+      const targetUid = uid || getEffectiveUid();
+      return await apiCall(`/api/users/${encodeURIComponent(targetUid)}/resumes/${encodeURIComponent(resumeId)}`, {
+        method: 'DELETE'
+      });
     },
 
     // 8. Save Lab Recommendation Result
