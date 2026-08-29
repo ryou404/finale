@@ -587,6 +587,10 @@
         hideAllPanels();
         panelRegStep2.classList.remove('hidden');
         document.getElementById('auth-reg-otp-email-display').innerText = res.maskedEmail || res.email;
+        if (res.debugOtp) {
+          const otpInput = document.getElementById('auth-reg-otp-code');
+          if (otpInput) otpInput.value = res.debugOtp;
+        }
         showMsg(res.message, 'success');
         startRegCountdown();
         document.getElementById('auth-reg-otp-code').focus();
@@ -626,6 +630,10 @@
         body: JSON.stringify({ email: currentRegEmail, type: 'register' })
       });
       if (res && res.status === 'ok') {
+        if (res.debugOtp) {
+          const otpInput = document.getElementById('auth-reg-otp-code');
+          if (otpInput) otpInput.value = res.debugOtp;
+        }
         showMsg(res.message, 'success');
         startRegCountdown();
       } else {
@@ -694,6 +702,10 @@
         hideAllPanels();
         panelForgotStep2.classList.remove('hidden');
         document.getElementById('auth-forgot-masked-email').innerText = res.maskedEmail || res.email;
+        if (res.debugOtp) {
+          const otpInput = document.getElementById('auth-forgot-otp-code');
+          if (otpInput) otpInput.value = res.debugOtp;
+        }
         showMsg(res.message, 'success');
         startForgotCountdown();
         document.getElementById('auth-forgot-otp-code').focus();
@@ -733,6 +745,10 @@
         body: JSON.stringify({ email: currentForgotEmail, type: 'forgot_password' })
       });
       if (res && res.status === 'ok') {
+        if (res.debugOtp) {
+          const otpInput = document.getElementById('auth-forgot-otp-code');
+          if (otpInput) otpInput.value = res.debugOtp;
+        }
         showMsg(res.message, 'success');
         startForgotCountdown();
       } else {

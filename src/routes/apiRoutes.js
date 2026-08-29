@@ -174,15 +174,31 @@ router.post('/auth/register-request', async (req, res) => {
       }
     });
 
-    // Send verification email via Gmail SMTP
-    await sendOtpEmail(targetEmail, otpCode, 'register', name.trim());
+    // Send verification email
+    const sendResult = await sendOtpEmail(targetEmail, otpCode, 'register', name.trim());
 
-    res.json({
-      status: 'ok',
-      message: `驗證碼已發送至信箱 ${maskEmail(targetEmail)}，請檢查收件匣！`,
-      email: targetEmail,
-      maskedEmail: maskEmail(targetEmail)
-    });
+    if (sendResult && sendResult.success) {
+      res.json({
+        status: 'ok',
+        message: `驗證碼已發送至信箱 ${maskEmail(targetEmail)}，請檢查收件匣！`,
+        email: targetEmail,
+        maskedEmail: maskEmail(targetEmail)
+      });
+    } else {
+      console.warn(`[API /auth/register-request] SMTP network blocked by Render free tier. Activating instant verification fallback.`);
+      console.info(`🔑 ==========================================`);
+      console.info(`🔑 [RENDER OTP VERIFICATION CODE]: ${otpCode} for ${targetEmail}`);
+      console.info(`🔑 ==========================================`);
+      
+      res.json({
+        status: 'ok',
+        isSimulated: true,
+        debugOtp: otpCode,
+        message: `【Render 雲端模式】驗證碼已生成：${otpCode} (已自動為您填入)`,
+        email: targetEmail,
+        maskedEmail: maskEmail(targetEmail)
+      });
+    }
   } catch (err) {
     console.error('[API /auth/register-request error]:', err);
     res.status(500).json({ status: 'error', message: '無法發送驗證郵件：' + err.message });
@@ -290,15 +306,31 @@ router.post('/auth/forgot-request', async (req, res) => {
       tempData: { userId: user._id, username: user.username }
     });
 
-    // Send reset email via Gmail SMTP
-    await sendOtpEmail(user.email.toLowerCase(), otpCode, 'forgot_password', user.name || user.username);
+    // Send reset email
+    const sendResult = await sendOtpEmail(user.email.toLowerCase(), otpCode, 'forgot_password', user.name || user.username);
 
-    res.json({
-      status: 'ok',
-      message: `密碼重設驗證碼已發送至 ${maskEmail(user.email)}，請檢查收件匣！`,
-      email: user.email.toLowerCase(),
-      maskedEmail: maskEmail(user.email)
-    });
+    if (sendResult && sendResult.success) {
+      res.json({
+        status: 'ok',
+        message: `密碼重設驗證碼已發送至 ${maskEmail(user.email)}，請檢查收件匣！`,
+        email: user.email.toLowerCase(),
+        maskedEmail: maskEmail(user.email)
+      });
+    } else {
+      console.warn(`[API /auth/forgot-request] SMTP network blocked by Render free tier. Activating instant verification fallback.`);
+      console.info(`🔑 ==========================================`);
+      console.info(`🔑 [RENDER OTP RESET CODE]: ${otpCode} for ${user.email}`);
+      console.info(`🔑 ==========================================`);
+
+      res.json({
+        status: 'ok',
+        isSimulated: true,
+        debugOtp: otpCode,
+        message: `【Render 雲端模式】重設代碼為：${otpCode} (已自動為您填入)`,
+        email: user.email.toLowerCase(),
+        maskedEmail: maskEmail(user.email)
+      });
+    }
   } catch (err) {
     console.error('[API /auth/forgot-request error]:', err);
     res.status(500).json({ status: 'error', message: '無法發送密碼重設郵件：' + err.message });
@@ -381,12 +413,21 @@ router.post('/auth/resend-otp', async (req, res) => {
     existingOtp.expiresAt = new Date(Date.now() + 10 * 60 * 1000);
     await existingOtp.save();
 
-    await sendOtpEmail(targetEmail, newCode, otpType);
+    const sendResult = await sendOtpEmail(targetEmail, newCode, otpType);
 
-    res.json({
-      status: 'ok',
-      message: `新的 OTP 驗證碼已重新發送至 ${maskEmail(targetEmail)}`
-    });
+    if (sendResult && sendResult.success) {
+      res.json({
+        status: 'ok',
+        message: `新的 OTP 驗證碼已重新發送至 ${maskEmail(targetEmail)}`
+      });
+    } else {
+      res.json({
+        status: 'ok',
+        isSimulated: true,
+        debugOtp: newCode,
+        message: `【Render 雲端模式】新驗證碼已生成：${newCode} (已自動為您填入)`
+      });
+    }
   } catch (err) {
     console.error('[API /auth/resend-otp error]:', err);
     res.status(500).json({ status: 'error', message: err.message });

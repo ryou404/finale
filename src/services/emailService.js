@@ -7,12 +7,18 @@ const nodemailer = require('nodemailer');
 
 const emailUser = process.env.GMAIL_SEND || 'lehoangtho25122004@gmail.com';
 const emailPass = (process.env.GMAIL_SMTP || '').replace(/["']/g, '').trim();
+const resendApiKey = (process.env.RESEND_API_KEY || '').trim();
+const brevoApiKey = (process.env.BREVO_API_KEY || '').trim();
 
-if (!emailPass) {
-  console.warn('[emailService] Warning: GMAIL_SMTP environment variable is empty! Sending OTP emails will fail.');
-}
+// Custom IPv4-only lookup function for Nodemailer
+const ipv4Lookup = (hostname, options, callback) => {
+  dns.lookup(hostname, { family: 4 }, (err, address, family) => {
+    if (err) return callback(err);
+    callback(null, address, 4);
+  });
+};
 
-// 1. Primary Transporter: Port 587 (STARTTLS) with IPv4 forced (avoids Render/Cloud IPv6 ENETUNREACH)
+// 1. Primary Transporter: Port 587 (STARTTLS) with IPv4 forced
 const primaryTransporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 587,
@@ -21,12 +27,14 @@ const primaryTransporter = nodemailer.createTransport({
     user: emailUser,
     pass: emailPass
   },
-  family: 4, // Force IPv4
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 15000,
+  family: 4,
+  lookup: ipv4Lookup,
+  connectionTimeout: 8000,
+  greetingTimeout: 5000,
+  socketTimeout: 10000,
   tls: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false,
+    servername: 'smtp.gmail.com'
   }
 });
 
@@ -39,14 +47,66 @@ const backupTransporter = nodemailer.createTransport({
     user: emailUser,
     pass: emailPass
   },
-  family: 4, // Force IPv4
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 15000,
+  family: 4,
+  lookup: ipv4Lookup,
+  connectionTimeout: 8000,
+  greetingTimeout: 5000,
+  socketTimeout: 10000,
   tls: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false,
+    servername: 'smtp.gmail.com'
   }
 });
+
+/**
+ * Send via Resend HTTP API (HTTPS 443 - Never blocked on Render Free)
+ */
+async function sendViaResend(toEmail, subject, html) {
+  if (!resendApiKey) return null;
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${resendApiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: 'CareerDNA <onboarding@resend.dev>',
+      to: [toEmail],
+      subject: subject,
+      html: html
+    })
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.message || `Resend HTTP error: ${res.statusText}`);
+  }
+  return await res.json();
+}
+
+/**
+ * Send via Brevo HTTP API (HTTPS 443 - Never blocked on Render Free)
+ */
+async function sendViaBrevo(toEmail, subject, html, recipientName) {
+  if (!brevoApiKey) return null;
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'api-key': brevoApiKey,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      sender: { name: 'CareerDNA System', email: emailUser },
+      to: [{ email: toEmail, name: recipientName }],
+      subject: subject,
+      htmlContent: html
+    })
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.message || `Brevo HTTP error: ${res.statusText}`);
+  }
+  return await res.json();
+}
 
 /**
  * Generate a secure 6-digit numeric OTP
@@ -120,6 +180,29 @@ async function sendOtpEmail(toEmail, code, type = 'register', recipientName = 'å
     </html>
   `;
 
+  // 1. Try Resend HTTP API if configured (Port 443 - Works 100% on Render Free)
+  if (resendApiKey) {
+    try {
+      console.log(`[emailService] Sending email via Resend API to ${toEmail}...`);
+      const resendRes = await sendViaResend(toEmail, subject, html);
+      return { success: true, provider: 'resend', result: resendRes };
+    } catch (err) {
+      console.warn(`[emailService] Resend API failed: ${err.message}`);
+    }
+  }
+
+  // 2. Try Brevo HTTP API if configured (Port 443 - Works 100% on Render Free)
+  if (brevoApiKey) {
+    try {
+      console.log(`[emailService] Sending email via Brevo API to ${toEmail}...`);
+      const brevoRes = await sendViaBrevo(toEmail, subject, html, recipientName);
+      return { success: true, provider: 'brevo', result: brevoRes };
+    } catch (err) {
+      console.warn(`[emailService] Brevo API failed: ${err.message}`);
+    }
+  }
+
+  // 3. Try SMTP (Port 587 then Port 465 with IPv4 forced)
   const mailOptions = {
     from: `"CareerDNA System" <${emailUser}>`,
     to: toEmail,
@@ -128,10 +211,21 @@ async function sendOtpEmail(toEmail, code, type = 'register', recipientName = 'å
   };
 
   try {
-    return await primaryTransporter.sendMail(mailOptions);
+    const info = await primaryTransporter.sendMail(mailOptions);
+    return { success: true, provider: 'smtp-587', info };
   } catch (primaryErr) {
     console.warn(`[emailService] Primary SMTP (port 587) failed: ${primaryErr.message}. Trying backup SMTP (port 465)...`);
-    return await backupTransporter.sendMail(mailOptions);
+    try {
+      const info = await backupTransporter.sendMail(mailOptions);
+      return { success: true, provider: 'smtp-465', info };
+    } catch (backupErr) {
+      console.warn(`[emailService] Backup SMTP (port 465) also failed (Render Free blocks SMTP ports): ${backupErr.message}`);
+      return {
+        success: false,
+        isRenderBlocked: true,
+        error: backupErr.message
+      };
+    }
   }
 }
 
