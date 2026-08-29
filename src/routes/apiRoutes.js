@@ -1206,5 +1206,125 @@ router.post('/ai/diagnose', async (req, res) => {
   });
 });
 
+/**
+ * =========================================================================
+ * AI CHAT ASSISTANT API (/api/ai/chat)
+ * Interactive Assistant for CareerDNA Project Guidance, Web App Q&A & Support
+ * =========================================================================
+ */
+router.post('/ai/chat', async (req, res) => {
+  const { CONFIG } = require('../config');
+  const apiKey = CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY;
+  const baseUrl = CONFIG.api.deepseekBaseUrl || process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com';
+  const modelName = CONFIG.llm.model || process.env.DEEPSEEK_MODEL || 'deepseek-chat';
+
+  const { messages = [], currentPage = '', userInfo = {} } = req.body || {};
+
+  const systemPrompt = `
+你是「CareerDNA AI 智能助手」- 靜宜大學（Providence University）資訊學院 CareerDNA 平台的專屬智能助理。
+
+【核心定位與原則】：
+- 請以專業、親切、清晰的語氣回答使用者的所有問題。
+- 預設語言為「繁體中文（台灣）」。若使用者以越南文或英文提問，請以該語言親切回覆。
+- 請避免使用「畢業專題」、「畢業設計」、「論文」等詞彙；請直接定位為「CareerDNA AI 職涯導航與履歷優化平台」。
+
+【平台核心功能與架構】：
+1. **AI 履歷健檢 (career_fit_v2.html)**：
+   - 根據 Golden Triangle ATS 國際人資標準（經驗適配度、硬技能密度、Google XYZ 量化成果公式）進行履歷深度診斷。
+   - 使用 Micro-STAR (STAR-L) 原則改寫經歷與專案。
+   - 提供 3 款 A4 履歷範本切換：經典專業 (Classic)、現代雙欄 (Modern)、極簡科技 (Minimal)。
+   - 支援直接匯出 PDF 與高解析度向量列印，並自動典藏至個人檔案。
+2. **品牌測驗 (brand_test.html)**：
+   - Holland RIASEC 六大職涯性格模型（R 實用、I 研究、A 藝術、S 社交、E 企業、C 常規）與蓋洛普優勢分析，生成六角雷達圖。
+3. **科系適配 (lab_recommendation.html)**：
+   - 診斷適合靜宜大學資訊學院的三大系所（資訊工程學系 CS、資訊管理學系 IM、人工智慧學系 AI），並提供實驗室與教授研究方向導覽。
+4. **個人檔案 (profile.html)**：
+   - 管理學歷、專業技能武器庫、上傳 Cloudflare R2 大頭貼。
+   - 「AI 履歷典藏庫」：隨時預覽、切換樣式及重新下載歷史生成的 AI 履歷。
+5. **學習資源 (resource_library.html)**：
+   - 資訊技術學習 Roadmap、精選教材與國際認證資源。
+
+【技術架構】：
+- 採用 Multi-Agent 多智能體架構（ProfileAgent、AcademicGapFillerAgent、ResumeBuilderAgent、AtsAuditorAgent、MasterOrchestrator），結合 MongoDB Atlas 資料庫與 Cloudflare R2 高速 CDN。
+
+【目前上下文】：
+- 使用者目前瀏覽頁面：${currentPage || 'CareerDNA 平台'}
+${userInfo?.name ? `- 當前使用者：${userInfo.name}（${userInfo.school || '靜宜大學'} ${userInfo.department || '資訊學院'} ${userInfo.grade || ''}）` : ''}
+`;
+
+  if (apiKey) {
+    try {
+      const chatMessages = [
+        { role: 'system', content: systemPrompt },
+        ...messages.map(m => ({
+          role: m.role === 'user' ? 'user' : 'assistant',
+          content: m.content || ''
+        }))
+      ];
+
+      const response = await fetch(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages: chatMessages,
+          temperature: 0.3,
+          max_tokens: 2048
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`DeepSeek API error ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+      const reply = data.choices?.[0]?.message?.content || '抱歉，我目前無法處理此問題，請稍後再試。';
+
+      return res.json({
+        status: 'ok',
+        reply: reply,
+        model: modelName
+      });
+    } catch (err) {
+      console.error('[API /ai/chat error]:', err);
+    }
+  }
+
+  // Fallback offline responses in Traditional Chinese
+  const lastUserMsg = (messages[messages.length - 1]?.content || '').toLowerCase();
+  let fallbackReply = '您好！我是 **CareerDNA AI 智能助手**，很高興為您服務！😊\n\n我可以協助您：\n' +
+    '1. **AI 履歷健檢與生成**：前往 [AI 履歷健檢](career_fit_v2.html)，勾選修課與經歷，一鍵生成並匯出標準 A4 PDF。\n' +
+    '2. **查看歷史履歷**：前往 [個人檔案](profile.html) 的「AI 履歷典藏庫」，隨時預覽與切換 3 款樣式。\n' +
+    '3. **Holland 職涯測驗**：於 [品牌測驗](brand_test.html) 探索 RIASEC 六大職業性格與蓋洛普優勢。\n' +
+    '4. **科系與實驗室導覽**：於 [科系適配](lab_recommendation.html) 探索靜宜資工、資管、AI 三大系所與教授實驗室。\n\n' +
+    '請告訴我您想了解哪一項功能？';
+
+  if (lastUserMsg.includes('履歷') || lastUserMsg.includes('cv') || lastUserMsg.includes('pdf') || lastUserMsg.includes('匯出') || lastUserMsg.includes('生成')) {
+    fallbackReply = '📄 **CareerDNA AI 履歷生成與匯出指引：**\n\n' +
+      '1. **第一步**：點選頂部導覽列的 **AI 履歷健檢** (`career_fit_v2.html`)。\n' +
+      '2. **第二步**：選擇您的目標職位，勾選已修習的專業課程與實務經歷。\n' +
+      '3. **第三步**：點擊 **✨ AI 深度健檢與生成 (DEEPSEEK AI)**。\n' +
+      '4. **第四步**：生成完成後，可在下方切換 **經典專業 (Classic)**、**現代雙欄 (Modern)** 或 **極簡科技 (Minimal)** 樣式。\n' +
+      '5. **第五步**：點選 **匯出 PDF** 下載標準檔案，或點選 **列印 / 向量 PDF** 進行高解析度列印！\n' +
+      '6. 履歷將自動同步典藏至 **個人檔案** (`profile.html`)，隨時可再次查閱。';
+  } else if (lastUserMsg.includes('介紹') || lastUserMsg.includes('平台') || lastUserMsg.includes('功能') || lastUserMsg.includes('careerdna')) {
+    fallbackReply = '🚀 **CareerDNA 平台核心介紹：**\n\n' +
+      '- **專屬服務**：專為靜宜大學資訊學院（資工系、資管系、AI系）打造的 AI 職涯導航與履歷優化系統。\n' +
+      '- **Multi-Agent 多智能體**：整合 5 大專屬 Agent（個人畫像、學術落差填補、履歷建構、ATS 審核、主調度協同）。\n' +
+      '- **ATS 國際標準**：導入 Golden Triangle 三維度檢核、Micro-STAR 結構與 Google XYZ 量化公式。\n' +
+      '- **雲端典藏**：全自動整合 MongoDB Atlas 與 Cloudflare R2 雲端儲存技術。';
+  }
+
+  res.json({
+    status: 'ok',
+    reply: fallbackReply,
+    isFallback: true
+  });
+});
+
 module.exports = router;
 
