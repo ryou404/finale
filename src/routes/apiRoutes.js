@@ -458,7 +458,7 @@ router.post('/users/sync', async (req, res) => {
     const updatedUser = await User.findOneAndUpdate(
       { $or: [{ uid }, { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null }] },
       { $set: { uid, ...data } },
-      { new: true, upsert: true, setDefaultsOnInsert: true }
+      { returnDocument: 'after', upsert: true, setDefaultsOnInsert: true }
     );
 
     res.json({ status: 'ok', user: updatedUser });
@@ -495,7 +495,7 @@ router.put('/users/:uid/profile', async (req, res) => {
         { username: uid }
       ] },
       { $set: updateFields },
-      { new: true, upsert: true }
+      { returnDocument: 'after', upsert: true }
     );
 
     res.json({ status: 'ok', user });
@@ -556,7 +556,7 @@ router.post('/users/:uid/brand', async (req, res) => {
         },
         $push: { history_brand: snapshot }
       },
-      { new: true, upsert: true }
+      { returnDocument: 'after', upsert: true }
     );
 
     res.json({ status: 'ok', brand: snapshot, brandDocId: brandDoc._id, user });
@@ -759,7 +759,7 @@ router.post('/users/:uid/lab', async (req, res) => {
         },
         $push: { history_lab: snapshot }
       },
-      { new: true, upsert: true }
+      { returnDocument: 'after', upsert: true }
     );
 
     res.json({ status: 'ok', lab: snapshot, labDocId: labDoc._id, user });
@@ -838,11 +838,11 @@ router.post('/users/:uid/avatar', upload.single('avatar'), async (req, res) => {
     let user = await User.findOneAndUpdate(
       { $or: [{ uid }, { username: uid }, { email: uid }] },
       { $set: { photoURL: url, updatedAt: new Date() } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!user && mongoose.Types.ObjectId.isValid(uid)) {
-      user = await User.findByIdAndUpdate(uid, { $set: { photoURL: url, updatedAt: new Date() } }, { new: true });
+      user = await User.findByIdAndUpdate(uid, { $set: { photoURL: url, updatedAt: new Date() } }, { returnDocument: 'after' });
     }
 
     return res.json({

@@ -298,7 +298,7 @@ router.put('/users/:uid', async (req, res) => {
     const user = await User.findOneAndUpdate(
       { $or: [{ uid }, { username: uid }, { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null }] },
       { $set: updateFields },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!user) {
@@ -327,7 +327,7 @@ router.put('/users/:uid/reset-password', async (req, res) => {
     const user = await User.findOneAndUpdate(
       { $or: [{ uid }, { username: uid }, { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null }] },
       { $set: { password: hashedPassword, updatedAt: new Date() } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!user) {

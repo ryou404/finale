@@ -1,13 +1,50 @@
+const dns = require('dns');
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
 const nodemailer = require('nodemailer');
 
 const emailUser = process.env.GMAIL_SEND || 'lehoangtho25122004@gmail.com';
 const emailPass = (process.env.GMAIL_SMTP || '').replace(/["']/g, '').trim();
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
+if (!emailPass) {
+  console.warn('[emailService] Warning: GMAIL_SMTP environment variable is empty! Sending OTP emails will fail.');
+}
+
+// 1. Primary Transporter: Port 587 (STARTTLS) with IPv4 forced (avoids Render/Cloud IPv6 ENETUNREACH)
+const primaryTransporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // STARTTLS
   auth: {
     user: emailUser,
     pass: emailPass
+  },
+  family: 4, // Force IPv4
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 15000,
+  tls: {
+    rejectUnauthorized: false
+  }
+});
+
+// 2. Backup Transporter: Port 465 (SSL) with IPv4 forced
+const backupTransporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: emailUser,
+    pass: emailPass
+  },
+  family: 4, // Force IPv4
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 15000,
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
@@ -83,12 +120,19 @@ async function sendOtpEmail(toEmail, code, type = 'register', recipientName = 'å
     </html>
   `;
 
-  return await transporter.sendMail({
+  const mailOptions = {
     from: `"CareerDNA System" <${emailUser}>`,
     to: toEmail,
     subject: subject,
     html: html
-  });
+  };
+
+  try {
+    return await primaryTransporter.sendMail(mailOptions);
+  } catch (primaryErr) {
+    console.warn(`[emailService] Primary SMTP (port 587) failed: ${primaryErr.message}. Trying backup SMTP (port 465)...`);
+    return await backupTransporter.sendMail(mailOptions);
+  }
 }
 
 module.exports = {
