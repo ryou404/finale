@@ -2,6 +2,8 @@
  * ============================================================================
  * CareerDNA AI Assistant - Global Floating Chat Widget
  * Providence University (靜宜大學) Multi-Agent AI Career Guidance
+ * Features: Typewriter streaming effect, draggable resizing, maximize/restore,
+ * responsive markdown tables, and multi-lingual AI career advisor.
  * ============================================================================
  */
 (function () {
@@ -10,6 +12,7 @@
 
   const STORAGE_KEY = 'cdna_chat_history_v2';
   const OPEN_STATE_KEY = 'cdna_chat_is_open';
+  const SIZE_KEY = 'cdna_chat_size_v1';
 
   // Quick Prompt Recommendations (Traditional Chinese)
   const QUICK_PROMPTS = [
@@ -23,6 +26,9 @@
     constructor() {
       this.isOpen = false;
       this.isThinking = false;
+      this.isMaximized = false;
+      this.isStreaming = false;
+      this.activeStreamTimeout = null;
       this.messages = [];
       this.init();
     }
@@ -31,7 +37,9 @@
       this.injectStyles();
       this.renderWidgetHTML();
       this.loadHistory();
+      this.loadSavedSize();
       this.bindEvents();
+      this.bindResizeEvents();
 
       // Check if previously open
       if (sessionStorage.getItem(OPEN_STATE_KEY) === 'true') {
@@ -105,19 +113,21 @@
           position: absolute;
           bottom: 72px;
           right: 0;
-          width: 390px;
+          width: 440px;
+          min-width: 340px;
           max-width: calc(100vw - 32px);
-          height: 580px;
-          max-height: calc(100vh - 120px);
+          height: 600px;
+          min-height: 420px;
+          max-height: calc(100vh - 100px);
           background: #ffffff;
           border: 2px solid #002fa7;
-          box-shadow: 0 20px 40px -10px rgba(0, 26, 94, 0.35);
+          box-shadow: 0 25px 50px -12px rgba(0, 26, 94, 0.4);
           display: flex;
           flex-direction: column;
           opacity: 0;
           transform: translateY(20px) scale(0.95);
           pointer-events: none;
-          transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), width 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s cubic-bezier(0.16, 1, 0.3, 1);
           overflow: hidden;
         }
         #cdna-chat-window.is-open {
@@ -125,32 +135,64 @@
           transform: translateY(0) scale(1);
           pointer-events: auto;
         }
+        #cdna-chat-window.is-maximized {
+          width: 820px !important;
+          height: 85vh !important;
+          max-width: calc(100vw - 32px) !important;
+          max-height: calc(100vh - 90px) !important;
+        }
+
+        /* Drag Resize Handle at Top-Left Corner */
+        .cdna-resize-handle {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 18px;
+          height: 18px;
+          cursor: nwse-resize;
+          z-index: 20;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .cdna-resize-handle::before {
+          content: '';
+          position: absolute;
+          top: 4px;
+          left: 4px;
+          width: 7px;
+          height: 7px;
+          border-top: 2px solid rgba(255, 255, 255, 0.7);
+          border-left: 2px solid rgba(255, 255, 255, 0.7);
+        }
 
         /* Header */
         .cdna-chat-header {
           background: #002fa7;
           color: #ffffff;
-          padding: 14px 16px;
+          padding: 12px 16px;
           display: flex;
           align-items: center;
           justify-content: space-between;
           border-bottom: 2px solid #001a5e;
           flex-shrink: 0;
+          position: relative;
         }
         .cdna-chat-header-title {
           font-family: 'Syne', sans-serif;
           font-weight: 800;
-          font-size: 14px;
+          font-size: 13.5px;
           letter-spacing: 1px;
           text-transform: uppercase;
           display: flex;
           align-items: center;
           gap: 8px;
+          padding-left: 8px;
         }
         .cdna-chat-header-actions {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 5px;
         }
         .cdna-chat-header-btn {
           background: rgba(255, 255, 255, 0.15);
@@ -163,10 +205,11 @@
           justify-content: center;
           cursor: pointer;
           font-size: 12px;
-          transition: background 0.2s ease;
+          transition: background 0.2s ease, transform 0.15s ease;
         }
         .cdna-chat-header-btn:hover {
           background: rgba(255, 255, 255, 0.3);
+          transform: scale(1.05);
         }
 
         /* Messages Area */
@@ -177,10 +220,10 @@
           background: #f8fafc;
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 14px;
         }
         .cdna-chat-messages::-webkit-scrollbar {
-          width: 5px;
+          width: 6px;
         }
         .cdna-chat-messages::-webkit-scrollbar-thumb {
           background: #cbd5e1;
@@ -189,8 +232,8 @@
         /* Message Bubbles */
         .cdna-msg {
           display: flex;
-          gap: 8px;
-          max-width: 88%;
+          gap: 10px;
+          max-width: 92%;
           animation: cdnaMsgIn 0.2s ease-out;
         }
         @keyframes cdnaMsgIn {
@@ -203,14 +246,15 @@
         }
         .cdna-msg.cdna-ai-msg {
           align-self: flex-start;
+          width: 100%;
         }
         .cdna-msg-avatar {
-          width: 28px;
-          height: 28px;
+          width: 30px;
+          height: 30px;
           border-radius: 4px;
           background: #002fa7;
           color: #ffffff;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 800;
           display: flex;
           align-items: center;
@@ -221,36 +265,55 @@
           background: #001a5e;
         }
         .cdna-msg-bubble {
-          padding: 10px 14px;
-          font-size: 12.5px;
-          line-height: 1.6;
+          padding: 11px 15px;
+          font-size: 13px;
+          line-height: 1.65;
           word-break: break-word;
+          max-width: 100%;
         }
         .cdna-ai-msg .cdna-msg-bubble {
           background: #ffffff;
           border: 1px solid #e2e8f0;
           color: #1e293b;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+          box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+          border-left: 3px solid #002fa7;
+          width: 100%;
         }
         .cdna-user-msg .cdna-msg-bubble {
           background: #002fa7;
           color: #ffffff;
-          box-shadow: 0 2px 4px rgba(0, 47, 167, 0.2);
+          box-shadow: 0 2px 5px rgba(0, 47, 167, 0.25);
+        }
+
+        /* Typewriter Cursor */
+        .cdna-typing-cursor {
+          display: inline-block;
+          width: 7px;
+          height: 14px;
+          background: #002fa7;
+          margin-left: 3px;
+          vertical-align: middle;
+          animation: cdnaCursorBlink 0.7s infinite;
+        }
+        @keyframes cdnaCursorBlink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
         }
 
         /* Markdown in AI bubble */
-        .cdna-msg-bubble p { margin: 0 0 6px 0; }
+        .cdna-msg-bubble p { margin: 0 0 8px 0; }
         .cdna-msg-bubble p:last-child { margin-bottom: 0; }
         .cdna-msg-bubble strong { color: #002fa7; font-weight: 700; }
         .cdna-user-msg .cdna-msg-bubble strong { color: #ffffff; }
-        .cdna-msg-bubble ul, .cdna-msg-bubble ol { margin: 4px 0 6px 18px; padding: 0; }
-        .cdna-msg-bubble li { margin-bottom: 3px; }
+        .cdna-msg-bubble ul, .cdna-msg-bubble ol { margin: 6px 0 8px 18px; padding: 0; }
+        .cdna-msg-bubble li { margin-bottom: 4px; }
         .cdna-msg-bubble code {
           background: #f1f5f9;
-          padding: 1px 4px;
+          padding: 2px 5px;
           font-family: monospace;
-          font-size: 11.5px;
+          font-size: 12px;
           color: #002fa7;
+          border: 1px solid #e2e8f0;
         }
         .cdna-msg-bubble a {
           color: #002fa7;
@@ -259,6 +322,45 @@
         }
         .cdna-msg-bubble a:hover {
           color: #1a4ec4;
+        }
+
+        /* Responsive Table Formatting */
+        .cdna-table-wrapper {
+          width: 100%;
+          overflow-x: auto;
+          margin: 10px 0;
+          border: 1px solid #cbd5e1;
+          background: #ffffff;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .cdna-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 12px;
+          text-align: left;
+          min-width: 300px;
+        }
+        .cdna-table th {
+          background: #002fa7;
+          color: #ffffff;
+          padding: 8px 12px;
+          font-weight: 700;
+          border: 1px solid #001a5e;
+          font-family: 'Syne', sans-serif;
+          letter-spacing: 0.5px;
+          white-space: nowrap;
+        }
+        .cdna-table td {
+          padding: 8px 12px;
+          border: 1px solid #e2e8f0;
+          color: #1e293b;
+          line-height: 1.5;
+        }
+        .cdna-table tbody tr:nth-child(even) {
+          background: #f8fafc;
+        }
+        .cdna-table tbody tr:hover {
+          background: #f0f4ff;
         }
 
         /* Quick Prompts Container */
@@ -275,7 +377,7 @@
           font-size: 11px;
           font-family: 'Inter', sans-serif;
           font-weight: 600;
-          padding: 4px 9px;
+          padding: 5px 10px;
           background: #f0f4ff;
           color: #002fa7;
           border: 1px solid #d0daf7;
@@ -287,6 +389,7 @@
           background: #002fa7;
           color: #ffffff;
           border-color: #002fa7;
+          transform: translateY(-1px);
         }
 
         /* Input Bar */
@@ -302,21 +405,21 @@
         .cdna-chat-input {
           flex: 1;
           border: 1px solid #cbd5e1;
-          padding: 8px 12px;
-          font-size: 12.5px;
+          padding: 9px 12px;
+          font-size: 13px;
           font-family: inherit;
           outline: none;
           transition: border-color 0.2s ease;
           resize: none;
-          max-height: 80px;
-          min-height: 38px;
+          max-height: 90px;
+          min-height: 40px;
         }
         .cdna-chat-input:focus {
           border-color: #002fa7;
         }
         .cdna-chat-send-btn {
-          width: 38px;
-          height: 38px;
+          width: 40px;
+          height: 40px;
           background: #002fa7;
           color: #ffffff;
           border: none;
@@ -325,15 +428,17 @@
           align-items: center;
           justify-content: center;
           font-size: 14px;
-          transition: background 0.2s ease;
+          transition: background 0.2s ease, transform 0.15s ease;
           flex-shrink: 0;
         }
         .cdna-chat-send-btn:hover {
           background: #001a5e;
+          transform: scale(1.05);
         }
         .cdna-chat-send-btn:disabled {
           background: #94a3b8;
           cursor: not-allowed;
+          transform: none;
         }
 
         /* Typing Dots Animation */
@@ -372,6 +477,9 @@
 
         <!-- Chat Window -->
         <div id="cdna-chat-window">
+          <!-- Resizing Handle at Top-Left Corner -->
+          <div class="cdna-resize-handle" id="cdna-resize-handle" title="按住拖曳可調整視窗大小"></div>
+
           <!-- Header -->
           <div class="cdna-chat-header">
             <div class="cdna-chat-header-title">
@@ -381,6 +489,9 @@
             <div class="cdna-chat-header-actions">
               <button class="cdna-chat-header-btn" id="cdna-chat-clear-btn" title="清除對話紀錄">
                 <i class="fa-solid fa-rotate-left"></i>
+              </button>
+              <button class="cdna-chat-header-btn" id="cdna-chat-maximize-btn" title="放大 / 還原視窗">
+                <i class="fa-solid fa-expand" id="cdna-maximize-icon"></i>
               </button>
               <button class="cdna-chat-header-btn" id="cdna-chat-close-btn" title="關閉視窗">
                 <i class="fa-solid fa-xmark"></i>
@@ -440,6 +551,20 @@
       this.renderMessages();
     }
 
+    loadSavedSize() {
+      try {
+        const savedSize = localStorage.getItem(SIZE_KEY);
+        if (savedSize) {
+          const { width, height } = JSON.parse(savedSize);
+          const win = document.getElementById('cdna-chat-window');
+          if (win && width && height) {
+            win.style.width = width + 'px';
+            win.style.height = height + 'px';
+          }
+        }
+      } catch (e) {}
+    }
+
     saveHistory() {
       try {
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify(this.messages));
@@ -476,6 +601,21 @@
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
 
+      // Parse Markdown Tables
+      const tableRegex = /((?:\|[^\n]+\|\r?\n)((?:\|[-:\s|]+\|\r?\n))((?:\|[^\n]+\|\r?\n?)+))/g;
+      html = html.replace(tableRegex, (match, header, separator, body) => {
+        const headerCells = header.trim().split('|').filter(c => c.trim() !== '').map(c => `<th>${c.trim()}</th>`).join('');
+        const bodyRows = body.trim().split('\n').map(row => {
+          const cells = row.trim().split('|').filter(c => c.trim() !== '').map(c => `<td>${c.trim()}</td>`).join('');
+          return `<tr>${cells}</tr>`;
+        }).join('');
+        return `<div class="cdna-table-wrapper"><table class="cdna-table"><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table></div>`;
+      });
+
+      // Headers (### Header)
+      html = html.replace(/^###\s+(.+)/gm, '<h4 style="font-weight: 700; font-size: 13.5px; margin: 10px 0 4px 0; color: #002fa7;">$1</h4>');
+      html = html.replace(/^##\s+(.+)/gm, '<h3 style="font-weight: 800; font-size: 14px; margin: 12px 0 5px 0; color: #002fa7;">$1</h3>');
+
       // Bold **text**
       html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       // Italic *text*
@@ -498,6 +638,7 @@
       const toggleBtn = document.getElementById('cdna-chat-toggle-btn');
       const closeBtn = document.getElementById('cdna-chat-close-btn');
       const clearBtn = document.getElementById('cdna-chat-clear-btn');
+      const maximizeBtn = document.getElementById('cdna-chat-maximize-btn');
       const sendBtn = document.getElementById('cdna-chat-send-btn');
       const input = document.getElementById('cdna-chat-input');
       const quickBar = document.getElementById('cdna-quick-prompts-bar');
@@ -510,6 +651,9 @@
       }
       if (clearBtn) {
         clearBtn.addEventListener('click', () => this.clearHistory());
+      }
+      if (maximizeBtn) {
+        maximizeBtn.addEventListener('click', () => this.toggleMaximize());
       }
       if (sendBtn) {
         sendBtn.addEventListener('click', () => this.sendMessage());
@@ -533,6 +677,70 @@
           }
         });
       }
+    }
+
+    bindResizeEvents() {
+      const handle = document.getElementById('cdna-resize-handle');
+      const win = document.getElementById('cdna-chat-window');
+      if (!handle || !win) return;
+
+      let isResizing = false;
+      let startX, startY, startWidth, startHeight;
+
+      handle.addEventListener('mousedown', (e) => {
+        if (this.isMaximized) return;
+        isResizing = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startWidth = parseInt(document.defaultView.getComputedStyle(win).width, 10);
+        startHeight = parseInt(document.defaultView.getComputedStyle(win).height, 10);
+        document.documentElement.addEventListener('mousemove', onMouseMove, false);
+        document.documentElement.addEventListener('mouseup', onMouseUp, false);
+        e.preventDefault();
+      });
+
+      const onMouseMove = (e) => {
+        if (!isResizing) return;
+        // Since window is anchored at bottom-right, dragging top-left expands width (negative deltaX) & height (negative deltaY)
+        const newWidth = Math.max(340, Math.min(window.innerWidth - 40, startWidth - (e.clientX - startX)));
+        const newHeight = Math.max(420, Math.min(window.innerHeight - 100, startHeight - (e.clientY - startY)));
+        win.style.width = newWidth + 'px';
+        win.style.height = newHeight + 'px';
+      };
+
+      const onMouseUp = () => {
+        if (isResizing) {
+          isResizing = false;
+          document.documentElement.removeEventListener('mousemove', onMouseMove, false);
+          document.documentElement.removeEventListener('mouseup', onMouseUp, false);
+          // Save size to localStorage
+          try {
+            const width = parseInt(win.style.width, 10);
+            const height = parseInt(win.style.height, 10);
+            if (width && height) {
+              localStorage.setItem(SIZE_KEY, JSON.stringify({ width, height }));
+            }
+          } catch (e) {}
+        }
+      };
+    }
+
+    toggleMaximize() {
+      const win = document.getElementById('cdna-chat-window');
+      const icon = document.getElementById('cdna-maximize-icon');
+      if (!win) return;
+
+      this.isMaximized = !this.isMaximized;
+      if (this.isMaximized) {
+        win.classList.add('is-maximized');
+        if (icon) icon.className = 'fa-solid fa-compress';
+      } else {
+        win.classList.remove('is-maximized');
+        if (icon) icon.className = 'fa-solid fa-expand';
+      }
+
+      const box = document.getElementById('cdna-chat-messages-box');
+      if (box) setTimeout(() => box.scrollTop = box.scrollHeight, 220);
     }
 
     toggleChat() {
@@ -576,7 +784,7 @@
     }
 
     async sendMessage(explicitText = null) {
-      if (this.isThinking) return;
+      if (this.isThinking || this.isStreaming) return;
 
       const input = document.getElementById('cdna-chat-input');
       const text = (explicitText !== null ? explicitText : (input ? input.value : '')).trim();
@@ -612,9 +820,9 @@
         this.hideTypingIndicator();
 
         const reply = data?.reply || '抱歉，目前連線稍有延遲，請您稍後再試。';
-        this.messages.push({ role: 'assistant', content: reply });
-        this.renderMessages();
-        this.saveHistory();
+        
+        // Execute Typewriter Stream Effect
+        this.typewriterStream(reply);
 
       } catch (err) {
         console.error('[Chat Widget Error]:', err);
@@ -626,6 +834,68 @@
         this.renderMessages();
         this.saveHistory();
       }
+    }
+
+    /**
+     * Typewriter streaming effect for generating AI response smoothly
+     */
+    typewriterStream(fullText) {
+      const box = document.getElementById('cdna-chat-messages-box');
+      if (!box) {
+        this.messages.push({ role: 'assistant', content: fullText });
+        this.saveHistory();
+        return;
+      }
+
+      this.isStreaming = true;
+      const sendBtn = document.getElementById('cdna-chat-send-btn');
+      if (sendBtn) sendBtn.disabled = true;
+
+      // Create streaming message bubble element
+      const streamMsgEl = document.createElement('div');
+      streamMsgEl.className = 'cdna-msg cdna-ai-msg';
+      streamMsgEl.innerHTML = `
+        <div class="cdna-msg-avatar"><i class="fa-solid fa-brain"></i></div>
+        <div class="cdna-msg-bubble" id="cdna-stream-bubble">
+          <span id="cdna-stream-text"></span><span class="cdna-typing-cursor"></span>
+        </div>
+      `;
+      box.appendChild(streamMsgEl);
+      box.scrollTop = box.scrollHeight;
+
+      const bubbleEl = streamMsgEl.querySelector('#cdna-stream-bubble');
+      let currentIndex = 0;
+      const totalLen = fullText.length;
+      // Dynamic speed: faster for longer texts
+      const chunkSize = totalLen > 800 ? 5 : (totalLen > 300 ? 3 : 2);
+      const delay = 18;
+
+      const finishStream = () => {
+        if (this.activeStreamTimeout) clearTimeout(this.activeStreamTimeout);
+        this.isStreaming = false;
+        if (sendBtn) sendBtn.disabled = false;
+        streamMsgEl.remove();
+        this.messages.push({ role: 'assistant', content: fullText });
+        this.renderMessages();
+        this.saveHistory();
+      };
+
+      // Clicking bubble completes streaming immediately
+      bubbleEl.addEventListener('click', finishStream, { once: true });
+
+      const streamStep = () => {
+        if (currentIndex < totalLen) {
+          currentIndex = Math.min(totalLen, currentIndex + chunkSize);
+          const currentSubstr = fullText.substring(0, currentIndex);
+          bubbleEl.innerHTML = `${this.formatMarkdown(currentSubstr)}<span class="cdna-typing-cursor"></span>`;
+          box.scrollTop = box.scrollHeight;
+          this.activeStreamTimeout = setTimeout(streamStep, delay);
+        } else {
+          finishStream();
+        }
+      };
+
+      streamStep();
     }
 
     showTypingIndicator() {
@@ -656,7 +926,7 @@
     hideTypingIndicator() {
       this.isThinking = false;
       const sendBtn = document.getElementById('cdna-chat-send-btn');
-      if (sendBtn) sendBtn.disabled = false;
+      if (sendBtn && !this.isStreaming) sendBtn.disabled = false;
 
       const typingEl = document.getElementById('cdna-typing-wrapper');
       if (typingEl) typingEl.remove();
