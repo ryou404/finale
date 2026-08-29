@@ -11,6 +11,9 @@
     <!-- html2pdf.js for PDF Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
+    <!-- CareerDNA MongoDB Atlas Client -->
+    <script src="static/db-client.js"></script>
+    
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -188,6 +191,16 @@
                     <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
                         <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
                     </a>
+                    <div id="nav-auth-section" class="flex items-center gap-4 border-l border-klein/10 pl-4">
+                        <button id="nav-login-btn" onclick="window.CareerDNA_DB.showAuthModal((u) => window.location.reload())" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入 / 註冊</button>
+                        <div id="nav-user-info" class="hidden flex items-center gap-3">
+                            <div class="flex flex-col text-right">
+                                <span id="nav-user-name" class="text-xs font-bold text-klein"></span>
+                                <button onclick="window.CareerDNA_DB.logout(); window.location.reload();" class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
+                            </div>
+                            <div id="nav-user-avatar" class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -502,19 +515,22 @@
         let currentUser = null;
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
+            const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(user) : (user ? user.uid : null);
             if (!user) {
-                console.log("No authenticated user active. Local evaluation available.");
-                return;
+                console.log("No authenticated user active. Guest exploration with MongoDB sync active.");
+            } else {
+                console.log("User logged in:", user.email);
             }
-            console.log("User logged in:", user.email);
-            try {
-                const docSnap = await getDoc(doc(db, "users", user.uid, "brand_results", "latest"));
-                if (docSnap.exists()) {
-                    window.app.state.lastReport = docSnap.data();
-                    const btnLast = document.getElementById('btn-load-last');
-                    if (btnLast) btnLast.classList.remove('hidden');
-                }
-            } catch (e) { console.error("Error fetching last report:", e); }
+            if (window.CareerDNA_DB && effectiveUid) {
+                try {
+                    const res = await window.CareerDNA_DB.getBrandResult(effectiveUid);
+                    if (res && res.brand && res.brand.topHollandCode) {
+                        window.app.state.lastReport = res.brand;
+                        const btnLast = document.getElementById('btn-load-last');
+                        if (btnLast) btnLast.classList.remove('hidden');
+                    }
+                } catch (e) { console.error("Error fetching report from MongoDB Atlas:", e); }
+            }
         });
 
         const DATA = {
@@ -900,6 +916,14 @@
 
                 this.state.lastReport = resultData;
 
+                // Sync to MongoDB Atlas (Persistent Storage)
+                if (window.CareerDNA_DB) {
+                    const effectiveUid = window.CareerDNA_DB.getEffectiveUid(currentUser);
+                    window.CareerDNA_DB.saveBrandResult(effectiveUid, resultData)
+                        .then(() => console.log("✅ [MongoDB Atlas] 測驗結果已同步至雲端資料庫！"))
+                        .catch(err => console.error("❌ [MongoDB Atlas] 同步失敗:", err));
+                }
+
                 if (currentUser) {
                     try {
                         const user = currentUser;
@@ -932,8 +956,6 @@
                     } catch (e) {
                         console.error("❌ 儲存失敗", e);
                     }
-                } else {
-                    console.log("⚠️ 訪客模式，僅在本地顯示結果");
                 }
                 
                 this.renderReportView(resultData);
@@ -1108,8 +1130,7 @@
                         </div>
                     `).join('');
                 }
-
-                
+            },
 
             drawRadar(data) {
                 const svg = document.getElementById('radar-chart');

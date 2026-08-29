@@ -8,6 +8,9 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- CareerDNA MongoDB Atlas Client -->
+    <script src="static/db-client.js"></script>
+    
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -115,10 +118,20 @@
                 <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
             </div>
 
-            <div>
+            <div class="flex items-center gap-4">
                 <a href="career_fit_v2.html" class="hover-spring bg-klein text-white font-mono text-xs font-bold tracking-[0.2em] uppercase px-5 py-2.5 flex items-center gap-2">
                     立即部署 <i class="fa-solid fa-arrow-right"></i>
                 </a>
+                <div id="nav-auth-section" class="flex items-center gap-4 border-l border-klein/10 pl-4">
+                    <button id="nav-login-btn" onclick="window.CareerDNA_DB.showAuthModal((u) => window.location.reload())" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入 / 註冊</button>
+                    <div id="nav-user-info" class="hidden flex items-center gap-3">
+                        <div class="flex flex-col text-right">
+                            <span id="nav-user-name" class="text-xs font-bold text-klein"></span>
+                            <button onclick="window.CareerDNA_DB.logout(); window.location.reload();" class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
+                        </div>
+                        <div id="nav-user-avatar" class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>

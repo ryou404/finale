@@ -7,10 +7,13 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { CONFIG } = require('./config');
+const { connectDB } = require('./db/connection');
+const apiRoutes = require('./routes/apiRoutes');
 const { MasterOrchestrator } = require('./agents/masterOrchestrator');
 const { mockStudentIM, mockStudentCS, mockQuickDraft } = require('./data/mockStudentPayload');
 const { PROVIDENCE_PROGRAMS, PROVIDENCE_PRACTICAL_CLUSTERS, findRecommendedCourses } = require('./data/providenceCourses');
 const { generateDeterministicOutput } = require('./engines/deterministicEngine');
+const mongoose = require('mongoose');
 
 const app = express();
 const orchestrator = new MasterOrchestrator();
@@ -19,6 +22,9 @@ const orchestrator = new MasterOrchestrator();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Mount MongoDB Atlas API Routes
+app.use('/api', apiRoutes);
 
 // Serve static frontend files from workspace root
 app.use(express.static(path.resolve(__dirname, '..')));
@@ -32,6 +38,11 @@ app.get('/api/health', (req, res) => {
     system: 'CareerDNA Multi-Agent Resume Pipeline',
     version: '2.0.0',
     timestamp: new Date().toISOString(),
+    database: {
+      provider: 'MongoDB Atlas',
+      connected: mongoose.connection.readyState === 1,
+      name: mongoose.connection.name || 'career'
+    },
     config: {
       model: CONFIG.llm.model,
       temperature: CONFIG.llm.temperature,
@@ -139,11 +150,15 @@ app.get('/api/mock-data', (req, res) => {
 });
 
 // Start server function
-function startServer(port = CONFIG.server.port) {
+async function startServer(port = CONFIG.server.port) {
+  // Connect to MongoDB Atlas
+  await connectDB();
+
   const server = app.listen(port, () => {
     console.log(`\n======================================================`);
     console.log(`🚀 CareerDNA Multi-Agent Backend Server Active`);
     console.log(`📡 URL: http://localhost:${port}`);
+    console.log(`🗄️ Database: MongoDB Atlas (career)`);
     console.log(`🛡️ Temperature Constraint: ${CONFIG.llm.temperature} (<= 0.3 locked)`);
     console.log(`🤖 Model: ${CONFIG.llm.model}`);
     console.log(`🔑 Live API Key: ${CONFIG.api.geminiApiKey ? 'Configured' : 'Offline Heuristic Fallback'}`);

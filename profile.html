@@ -8,6 +8,9 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- CareerDNA MongoDB Atlas Client -->
+    <script src="static/db-client.js"></script>
+    
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -155,10 +158,20 @@
                 <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
             </div>
 
-            <div>
+            <div class="flex items-center gap-4">
                 <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> 返回首頁
                 </a>
+                <div id="nav-auth-section" class="flex items-center gap-4 border-l border-klein/10 pl-4">
+                    <button id="nav-login-btn" onclick="window.ProfileApp.openLogin()" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入 / 註冊</button>
+                    <div id="nav-user-info" class="hidden flex items-center gap-3">
+                        <div class="flex flex-col text-right">
+                            <span id="nav-user-name" class="text-xs font-bold text-klein"></span>
+                            <button onclick="window.ProfileApp.logout()" class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
+                        </div>
+                        <div id="nav-user-avatar" class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -185,12 +198,27 @@
                 
                 <!-- Identity Monogram Card -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1 flex flex-col items-center text-center">
-                    
-                    <!-- Technical Identity Monogram Icon Box -->
-                    <div class="w-20 h-20 border border-klein/20 flex items-center justify-center text-klein font-syne font-black text-3xl mb-6 relative bg-klein/[0.02]">
-                        <i class="fa-solid fa-user-astronaut"></i>
-                        <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border border-white"></div>
+                    <!-- Technical Identity Monogram Icon Box & Avatar Uploader (Cloudflare R2) -->
+                    <div class="relative group mb-3">
+                        <div id="avatar-container" class="w-24 h-24 border-2 border-klein flex items-center justify-center text-klein font-syne font-black text-4xl relative bg-klein/[0.03] overflow-hidden shadow-md">
+                            <i id="avatar-default-icon" class="fa-solid fa-user-astronaut text-3xl"></i>
+                            <img id="avatar-img" src="" alt="Avatar" class="hidden w-full h-full object-cover">
+                            
+                            <!-- Hover Upload Overlay -->
+                            <label for="avatar-file-input" class="absolute inset-0 bg-klein/85 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200 backdrop-blur-[2px]">
+                                <i class="fa-solid fa-camera text-base mb-1"></i>
+                                <span class="font-mono text-[9px] uppercase font-bold tracking-wider">更換頭像</span>
+                            </label>
+                        </div>
+                        <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden">
+                        
+                        <!-- Online Status Indicator -->
+                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white shadow-xs"></div>
                     </div>
+
+                    <button type="button" onclick="document.getElementById('avatar-file-input').click()" class="font-mono text-[11px] font-bold text-klein/70 hover:text-klein underline flex items-center gap-1.5 mb-5">
+                        <i class="fa-solid fa-cloud-arrow-up text-xs"></i> <span>更換個人頭像 (R2 雲端儲存)</span>
+                    </button>
 
                     <h2 id="display-name" class="font-heading font-black text-2xl uppercase tracking-tight text-klein mb-1">
                         載入中...
@@ -381,7 +409,7 @@
     <!-- Firebase SDK & Profile Runtime -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -400,9 +428,6 @@
 
         window.ProfileApp = {
             currentUser: null,
-            state: {
-                
-            },
 
             init() {
                 const hour = new Date().getHours();
@@ -419,13 +444,28 @@
                     darkModeToggle.addEventListener('change', (e) => this.toggleDarkMode(e.target.checked));
                 }
 
+                // 1. Immediately Check MongoDB Atlas User
+                const savedDbUser = window.CareerDNA_DB ? window.CareerDNA_DB.getCurrentUser() : null;
+                if (savedDbUser) {
+                    this.currentUser = savedDbUser;
+                    this.updateNavUser(savedDbUser);
+                    this.loadUserData(savedDbUser);
+                }
+
+                // 2. Firebase Fallback / Sync
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
                         this.currentUser = user;
+                        this.updateNavUser(user);
                         this.loadUserData(user);
-                    } else {
-                        alert('請先登入系統，以啟用 AI 職涯導航與專屬數據儲存功能！');
-                        window.location.href = 'index.html';
+                    } else if (!savedDbUser && !window.CareerDNA_DB?.getCurrentUser()) {
+                        if (window.CareerDNA_DB) {
+                            window.CareerDNA_DB.showAuthModal((loggedInUser) => {
+                                this.currentUser = loggedInUser;
+                                this.updateNavUser(loggedInUser);
+                                this.loadUserData(loggedInUser);
+                            });
+                        }
                     }
                 });
 
@@ -434,30 +474,109 @@
                 
                 const gradeSelect = document.getElementById('grade');
                 if (gradeSelect) gradeSelect.addEventListener('change', (e) => this.syncGrade(e.target.value));
-                
-                const skillInput = document.getElementById('skill-input');
-                const addSkillBtn = document.getElementById('add-skill-btn');
-                if (addSkillBtn) addSkillBtn.addEventListener('click', () => this.addSkill());
-                if (skillInput) {
-                    skillInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.addSkill(); } });
-                    skillInput.addEventListener('input', (e) => this.handleSkillInput(e));
-                }
-                
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('#skill-input') && !e.target.closest('#autocomplete-dropdown')) {
-                        this.hideAutocomplete();
-                    }
-                });
 
-                },
+                const avatarInput = document.getElementById('avatar-file-input');
+                if (avatarInput) avatarInput.addEventListener('change', (e) => this.handleAvatarUpload(e));
+            },
+
+            updateAvatarDisplay(photoURL) {
+                const imgEl = document.getElementById('avatar-img');
+                const defaultIcon = document.getElementById('avatar-default-icon');
+                if (photoURL) {
+                    if (imgEl) {
+                        imgEl.src = photoURL;
+                        imgEl.classList.remove('hidden');
+                    }
+                    if (defaultIcon) defaultIcon.classList.add('hidden');
+                } else {
+                    if (imgEl) imgEl.classList.add('hidden');
+                    if (defaultIcon) defaultIcon.classList.remove('hidden');
+                }
+            },
+
+            async handleAvatarUpload(e) {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+
+                if (!file.type.startsWith('image/')) {
+                    return alert('請選擇圖片檔案 (JPG, PNG, WEBP, GIF)');
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    return alert('圖片檔案過大，請選擇小於 5MB 的圖片！');
+                }
+
+                // Instant Local Preview
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    this.updateAvatarDisplay(event.target.result);
+                };
+                reader.readAsDataURL(file);
+
+                this.showToast('正在上傳頭像至 Cloudflare R2...', true);
+
+                const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid);
+                if (window.CareerDNA_DB && effectiveUid) {
+                    const res = await window.CareerDNA_DB.uploadAvatar(effectiveUid, file);
+                    if (res && res.status === 'ok' && res.photoURL) {
+                        this.updateAvatarDisplay(res.photoURL);
+                        this.updateNavUser(res.user || { ...this.currentUser, photoURL: res.photoURL });
+                        this.showToast('🎉 個人頭像已成功儲存至 Cloudflare R2！', true);
+                    } else {
+                        alert(res.message || '上傳失敗，請稍候重試');
+                    }
+                }
+            },
+
+            updateNavUser(user) {
+                if (!user) return;
+                const loginBtn = document.getElementById('nav-login-btn');
+                const userInfo = document.getElementById('nav-user-info');
+                const userName = document.getElementById('nav-user-name');
+                const userAvatar = document.getElementById('nav-user-avatar');
+                if (loginBtn) loginBtn.classList.add('hidden');
+                if (userInfo) userInfo.classList.remove('hidden');
+                const displayName = user.name || user.displayName || user.username || '用戶';
+                if (userName) userName.innerText = displayName;
+                if (userAvatar) {
+                    if (user.photoURL) {
+                        userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${displayName.charAt(0).toUpperCase()}'">`;
+                        userAvatar.className = 'w-8 h-8 overflow-hidden border border-klein flex items-center justify-center';
+                    } else {
+                        userAvatar.innerText = displayName.charAt(0).toUpperCase();
+                        userAvatar.className = 'w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm';
+                    }
+                }
+            },
+
+            openLogin() {
+                if (window.CareerDNA_DB) {
+                    window.CareerDNA_DB.showAuthModal((user) => {
+                        this.currentUser = user;
+                        this.updateNavUser(user);
+                        this.loadUserData(user);
+                        this.showToast(`歡迎回來，${user.name || user.username}！`);
+                    });
+                }
+            },
+
+            async logout() {
+                if (window.CareerDNA_DB) window.CareerDNA_DB.logout();
+                await signOut(auth).catch(() => {});
+                this.currentUser = null;
+                const loginBtn = document.getElementById('nav-login-btn');
+                const userInfo = document.getElementById('nav-user-info');
+                if (loginBtn) loginBtn.classList.remove('hidden');
+                if (userInfo) userInfo.classList.add('hidden');
+                this.showToast('已登出');
+                setTimeout(() => { window.location.href = 'index.html'; }, 800);
+            },
 
             async toggleDarkMode(isDark) {
                 document.body.classList.toggle('dark-mode', isDark);
                 localStorage.setItem('darkMode', isDark);
-                if (this.currentUser) {
-                    try {
-                        await setDoc(doc(db, "users", this.currentUser.uid), { settings: { darkMode: isDark } }, { merge: true });
-                    } catch(err) { console.error("Settings sync failed", err); }
+                const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid);
+                if (window.CareerDNA_DB && effectiveUid) {
+                    window.CareerDNA_DB.saveProfile(effectiveUid, { settings: { darkMode: isDark } }).catch(console.error);
                 }
             },
 
@@ -478,77 +597,99 @@
             },
 
             async syncGrade(newGrade) {
-                if (!this.currentUser || !newGrade) return;
-                try {
-                    await setDoc(doc(db, "users", this.currentUser.uid), { grade: newGrade }, { merge: true });
-                    localStorage.setItem('cdna_grade', newGrade);
-                    this.showToast(`已切換為 ${newGrade} 標準，履歷健檢將自動更新！`);
-                } catch (err) { console.error("Grade sync failed", err); }
+                if (!newGrade) return;
+                const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid);
+                if (window.CareerDNA_DB && effectiveUid) {
+                    window.CareerDNA_DB.saveProfile(effectiveUid, { grade: newGrade }).catch(console.error);
+                }
+                localStorage.setItem('cdna_grade', newGrade);
+                this.showToast(`已切換為 ${newGrade} 標準！`);
             },
 
             async loadUserData(user) {
+                if (!user) return;
+
+                const usernameField = document.getElementById('username');
+                const schoolField = document.getElementById('school');
+                const deptField = document.getElementById('department');
+                const gradeField = document.getElementById('grade');
                 const emailField = document.getElementById('email');
                 const displayEmail = document.getElementById('display-email');
-                if (emailField) emailField.value = user.email || '';
-                if (displayEmail) displayEmail.innerText = user.email || '...';
-                
+                const displayNameEl = document.getElementById('display-name');
+
+                const initialName = user.name || user.displayName || user.username || '';
+                const initialEmail = user.email || (user.username ? user.username + '@local' : '');
+                const initialSchool = user.school || localStorage.getItem('cdna_school') || '靜宜大學';
+                const initialDept = user.department || user.dept || localStorage.getItem('cdna_department') || 'IM';
+                const initialGrade = user.grade || localStorage.getItem('cdna_grade') || '大三';
+
+                if (usernameField) usernameField.value = initialName;
+                if (schoolField) schoolField.value = initialSchool;
+                if (deptField) deptField.value = initialDept;
+                if (gradeField) gradeField.value = initialGrade;
+                if (emailField) emailField.value = initialEmail;
+                if (displayEmail) displayEmail.innerText = initialEmail || '...';
+                if (displayNameEl) displayNameEl.innerText = initialName || '用戶';
+
+                this.updateAvatarDisplay(user.photoURL);
+
+                this.updateAcademicDisplay({
+                    school: initialSchool,
+                    department: initialDept,
+                    grade: initialGrade
+                });
+
+                // Fetch latest data from MongoDB Atlas
+                const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(user) : (user.uid || user._id);
                 try {
-                    const docSnap = await getDoc(doc(db, "users", user.uid));
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        const usernameField = document.getElementById('username');
-                        const schoolField = document.getElementById('school');
-                        const deptField = document.getElementById('department');
-                        const gradeField = document.getElementById('grade');
-                        const displayNameEl = document.getElementById('display-name');
-                        
-                        if (usernameField) usernameField.value = data.name || user.displayName || '';
-                        if (schoolField) schoolField.value = data.school || '';
-                        if (deptField) deptField.value = data.dept || data.department || '';
-                        if (gradeField) gradeField.value = data.grade || '';
-                        
-                        // Update academic info display panel
-                        this.updateAcademicDisplay(data);
+                    if (window.CareerDNA_DB && effectiveUid) {
+                        const res = await window.CareerDNA_DB.getUser(effectiveUid);
+                        if (res && res.user) {
+                            const data = res.user;
+                            if (usernameField) usernameField.value = data.name || data.displayName || data.username || initialName;
+                            if (schoolField) schoolField.value = data.school || initialSchool;
+                            if (deptField) deptField.value = data.department || data.dept || initialDept;
+                            if (gradeField) gradeField.value = data.grade || initialGrade;
+                            if (emailField) emailField.value = data.email || initialEmail;
+                            if (displayEmail) displayEmail.innerText = data.email || initialEmail;
+                            if (displayNameEl) displayNameEl.innerText = data.name || data.displayName || data.username || initialName;
 
-                        // Sync to localStorage for Lab Match & Resume integration
-                        if (data.school) localStorage.setItem('cdna_school', data.school);
-                        if (data.department) localStorage.setItem('cdna_department', data.department);
-                        if (data.grade) localStorage.setItem('cdna_grade', data.grade);
-                        
-                        if (data.name && displayNameEl) {
-                            displayNameEl.innerText = data.name;
-                        } else if (displayNameEl) {
-                            displayNameEl.innerText = user.displayName || "新朋友";
-                        }
+                            this.updateAvatarDisplay(data.photoURL || user.photoURL);
 
-                        if (data.settings && data.settings.darkMode !== undefined) {
-                            this.toggleDarkMode(data.settings.darkMode);
-                            const darkModeToggle = document.getElementById('dark-mode-toggle');
-                            if (darkModeToggle) darkModeToggle.checked = data.settings.darkMode;
+                            this.updateAcademicDisplay(data);
+
+                            if (data.school) localStorage.setItem('cdna_school', data.school);
+                            if (data.department) localStorage.setItem('cdna_department', data.department);
+                            if (data.grade) localStorage.setItem('cdna_grade', data.grade);
+
+                            if (data.settings && data.settings.darkMode !== undefined) {
+                                this.toggleDarkMode(data.settings.darkMode);
+                                const darkModeToggle = document.getElementById('dark-mode-toggle');
+                                if (darkModeToggle) darkModeToggle.checked = data.settings.darkMode;
+                            }
                         }
-                    } else {
-                        const displayNameEl = document.getElementById('display-name');
-                        if (displayNameEl) displayNameEl.innerText = user.displayName || "新朋友";
                     }
-                } catch (e) { console.error("Error loading profile:", e); }
+                } catch (e) {
+                    console.error("Error fetching latest profile from Atlas:", e);
+                }
             },
 
             async saveProfile() {
-                if (!this.currentUser) return;
                 const saveBtn = document.getElementById('save-btn');
                 if (saveBtn) {
                     saveBtn.disabled = true;
-                    saveBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>儲存中...</span>`;
+                    saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xs"></i> <span>儲存中...</span>`;
                 }
 
                 try {
-                    const username = document.getElementById('username')?.value || '';
-                    const school = document.getElementById('school')?.value || '';
+                    const username = document.getElementById('username')?.value.trim() || '';
+                    const school = document.getElementById('school')?.value.trim() || '';
                     const department = document.getElementById('department')?.value || '';
                     const grade = document.getElementById('grade')?.value || '';
 
                     const updatedData = {
                         name: username,
+                        displayName: username,
                         school: school,
                         dept: department,
                         department: department,
@@ -556,25 +697,35 @@
                         updatedAt: new Date()
                     };
                     
-                    await setDoc(doc(db, "users", this.currentUser.uid), updatedData, { merge: true });
+                    const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid);
                     
-                    // Sync to localStorage for cross-page personalization
-                    localStorage.setItem('cdna_school', updatedData.school || '');
-                    localStorage.setItem('cdna_department', updatedData.department || '');
-                    localStorage.setItem('cdna_grade', updatedData.grade || '');
-                    this.updateAcademicDisplay(updatedData);
-                    
-                    await updateProfile(this.currentUser, { displayName: updatedData.name });
-                    
-                    const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
-                    if (savedUser.email) {
-                        savedUser.name = updatedData.name;
-                        localStorage.setItem('careerDNA_user', JSON.stringify(savedUser));
+                    // 1. Sync to MongoDB Atlas
+                    if (window.CareerDNA_DB && effectiveUid) {
+                        await window.CareerDNA_DB.saveProfile(effectiveUid, updatedData);
                     }
                     
+                    // 2. Sync to localStorage for cross-page personalization
+                    if (updatedData.school) localStorage.setItem('cdna_school', updatedData.school);
+                    if (updatedData.department) localStorage.setItem('cdna_department', updatedData.department);
+                    if (updatedData.grade) localStorage.setItem('cdna_grade', updatedData.grade);
+                    if (updatedData.name) localStorage.setItem('cdna_username', updatedData.name);
+
+                    const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
+                    if (savedUser) {
+                        savedUser.name = updatedData.name;
+                        savedUser.school = updatedData.school;
+                        savedUser.department = updatedData.department;
+                        savedUser.dept = updatedData.department;
+                        savedUser.grade = updatedData.grade;
+                        localStorage.setItem('careerDNA_user', JSON.stringify(savedUser));
+                        this.updateNavUser(savedUser);
+                    }
+                    
+                    this.updateAcademicDisplay(updatedData);
                     const displayNameEl = document.getElementById('display-name');
-                    if (displayNameEl) displayNameEl.innerText = updatedData.name || '新朋友';
-                    this.showToast("資料更新成功！");
+                    if (displayNameEl) displayNameEl.innerText = updatedData.name || '用戶';
+                    
+                    this.showToast("資料已成功儲存至 MongoDB Atlas！");
                 } catch (error) {
                     alert("更新失敗：" + error.message);
                 } finally {
@@ -584,14 +735,13 @@
                     }
                 }
             },
-            
 
             updateAcademicDisplay(data) {
                 const container = document.getElementById('academic-info-display');
                 if (!container) return;
                 const school = data.school || '';
                 const deptMap = { 'CS': '資訊工程學系 (CS)', 'IM': '資訊管理學系 (IM)', 'AI': '人工智慧學系 (AI)' };
-                const dept = deptMap[data.department] || data.dept || data.department || '';
+                const dept = deptMap[data.department] || deptMap[data.dept] || data.dept || data.department || '';
                 const grade = data.grade || '';
                 
                 const pills = [];
@@ -625,10 +775,14 @@
                 } else {
                     container.innerHTML = pills.join('');
                 }
-            },
+            }
         };
 
-        document.addEventListener('DOMContentLoaded', () => ProfileApp.init());
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => window.ProfileApp.init());
+        } else {
+            window.ProfileApp.init();
+        }
     </script>
 
     <!-- Scroll Animations (Intersection Observer) -->

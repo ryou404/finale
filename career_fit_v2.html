@@ -20,6 +20,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
+    <!-- CareerDNA MongoDB Atlas Client -->
+    <script src="static/db-client.js"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -676,6 +679,17 @@
                     this.setupTrackUI(this.state.grade);
                 } catch(e) { console.error('[CareerDNA] setupTrackUI error:', e); }
 
+                // Check stored MongoDB Atlas User
+                const savedDbUser = window.CareerDNA_DB ? window.CareerDNA_DB.getCurrentUser() : null;
+                if (savedDbUser) {
+                    currentUser = savedDbUser;
+                    document.getElementById('nav-user-info').classList.remove('hidden');
+                    document.getElementById('nav-login-btn').classList.add('hidden');
+                    document.getElementById('nav-user-name').innerText = savedDbUser.name || savedDbUser.username || '用戶';
+                    document.getElementById('nav-user-avatar').innerText = (savedDbUser.name || savedDbUser.username || 'U').charAt(0).toUpperCase();
+                    this.loadUserData(savedDbUser.uid || savedDbUser._id);
+                }
+
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         currentUser = user;
@@ -685,8 +699,7 @@
                         document.getElementById('nav-user-avatar').innerText = (user.displayName || 'U').charAt(0).toUpperCase();
 
                         await this.loadUserData(user.uid);
-                    } else {
-                        // User not authenticated; continue in guest mode or redirect
+                    } else if (!savedDbUser) {
                         console.log('[CareerDNA] Guest mode active');
                     }
                 });
@@ -894,17 +907,32 @@
 
             
             async login() {
-                try {
-                    const provider = new GoogleAuthProvider();
-                    await signInWithPopup(auth, provider);
-                } catch (error) {
-                    console.error("Login Error:", error);
-                    alert("登入失敗：" + error.message);
+                if (window.CareerDNA_DB) {
+                    window.CareerDNA_DB.showAuthModal((user) => {
+                        currentUser = user;
+                        document.getElementById('nav-login-btn').classList.add('hidden');
+                        const info = document.getElementById('nav-user-info');
+                        info.classList.remove('hidden');
+                        document.getElementById('nav-user-name').innerText = user.name || user.username || '用戶';
+                        document.getElementById('nav-user-avatar').innerText = (user.name || user.username || 'U').charAt(0).toUpperCase();
+                        this.showToast(`歡迎回來，${user.name || user.username}！`);
+                        this.loadUserData(user.uid || user._id);
+                    });
+                } else {
+                    try {
+                        const provider = new GoogleAuthProvider();
+                        await signInWithPopup(auth, provider);
+                    } catch (error) {
+                        console.error("Login Error:", error);
+                        alert("登入失敗：" + error.message);
+                    }
                 }
             },
             async logout() {
                 try {
-                    await signOut(auth);
+                    if (window.CareerDNA_DB) window.CareerDNA_DB.logout();
+                    await signOut(auth).catch(() => {});
+                    currentUser = null;
                     document.getElementById('nav-user-info').classList.add('hidden');
                     document.getElementById('nav-login-btn').classList.remove('hidden');
                     this.showToast('已登出');
@@ -1133,15 +1161,23 @@ setupTrackUI(grade) {
                 let skillScore = Math.min(20, (this.state.skills?.length || 0) * 4);
                 const totalScore = programScore + expScore + skillScore;
 
+                const resultData = {
+                    selectedCourses: Array.from(this.state.selectedCourses),
+                    selectedExps: Array.from(this.state.selectedExps),
+                    scores: { total: totalScore, program: programScore, exp: expScore, skill: skillScore },
+                    updatedAt: new Date().toISOString()
+                };
+
+                // Sync to MongoDB Atlas
+                if (window.CareerDNA_DB) {
+                    const effectiveUid = window.CareerDNA_DB.getEffectiveUid(currentUser);
+                    window.CareerDNA_DB.saveResumeData(effectiveUid, resultData)
+                        .then(() => console.log("✅ [MongoDB Atlas] 履歷健檢結果已同步至雲端！"))
+                        .catch(err => console.error("❌ [MongoDB Atlas] 同步失敗:", err));
+                }
+
                 if (currentUser) {
                     try {
-                        const resultData = {
-                            selectedCourses: Array.from(this.state.selectedCourses),
-                            selectedExps: Array.from(this.state.selectedExps),
-                            scores: { total: totalScore, program: programScore, exp: expScore, skill: skillScore },
-                            updatedAt: new Date().toISOString()
-                        };
-
                         const batch = writeBatch(db);
                         const historyRef = doc(collection(db, "users", currentUser.uid, "history_resume"));
                         batch.set(historyRef, resultData);
@@ -1458,6 +1494,25 @@ ${localContext}
                         }
                     });
                     html += `</ul></div>`;
+                }
+
+                // Sync AI Report to MongoDB Atlas
+                if (window.CareerDNA_DB) {
+                    const effectiveUid = window.CareerDNA_DB.getEffectiveUid(currentUser);
+                    window.CareerDNA_DB.saveResumeData(effectiveUid, {
+                        selectedCourses: Array.from(this.state.selectedCourses),
+                        selectedExps: Array.from(this.state.selectedExps),
+                        metrics: {
+                            quantifiability: result.quantifiability,
+                            completeness: result.completeness,
+                            keywordRelevance: result.keywordRelevance
+                        },
+                        analysis: result.analysis,
+                        actionItems: result.actionItems,
+                        formattedResumeMarkdown: result.resumeMarkdown,
+                        rawDraft: document.getElementById('resume-draft-input')?.value || ''
+                    }).then(() => console.log("✅ [MongoDB Atlas] AI 健檢與 Markdown 履歷已同步！"))
+                      .catch(console.error);
                 }
 
                 aiContent.innerHTML = html;
