@@ -7,18 +7,27 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { CONFIG } = require('./config');
+const { connectDB } = require('./db/connection');
+const apiRoutes = require('./routes/apiRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const { runAllSeeds } = require('./db/seed');
 const { MasterOrchestrator } = require('./agents/masterOrchestrator');
 const { mockStudentIM, mockStudentCS, mockQuickDraft } = require('./data/mockStudentPayload');
 const { PROVIDENCE_PROGRAMS, PROVIDENCE_PRACTICAL_CLUSTERS, findRecommendedCourses } = require('./data/providenceCourses');
 const { generateDeterministicOutput } = require('./engines/deterministicEngine');
+const mongoose = require('mongoose');
 
 const app = express();
 const orchestrator = new MasterOrchestrator();
 
 // Middlewares
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Mount MongoDB Atlas API Routes
+app.use('/api', apiRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Serve static frontend files from workspace root
 app.use(express.static(path.resolve(__dirname, '..')));
@@ -32,11 +41,17 @@ app.get('/api/health', (req, res) => {
     system: 'CareerDNA Multi-Agent Resume Pipeline',
     version: '2.0.0',
     timestamp: new Date().toISOString(),
+    database: {
+      provider: 'MongoDB Atlas',
+      connected: mongoose.connection.readyState === 1,
+      name: mongoose.connection.name || 'career'
+    },
     config: {
+      provider: 'DeepSeek',
       model: CONFIG.llm.model,
       temperature: CONFIG.llm.temperature,
       deterministicConstraintMet: CONFIG.llm.temperature <= 0.3,
-      hasApiKey: Boolean(CONFIG.api.geminiApiKey)
+      hasApiKey: Boolean(CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY)
     }
   });
 });
@@ -139,14 +154,26 @@ app.get('/api/mock-data', (req, res) => {
 });
 
 // Start server function
-function startServer(port = CONFIG.server.port) {
+async function startServer(port = CONFIG.server.port) {
+  // Connect to MongoDB Atlas
+  await connectDB();
+
+  // Run Database Seeder (Admin Account & Static Resources Migration)
+  try {
+    await runAllSeeds();
+  } catch (seedErr) {
+    console.warn('[Server Seed Warning]:', seedErr.message);
+  }
+
+  const hasKey = Boolean(CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY);
   const server = app.listen(port, () => {
     console.log(`\n======================================================`);
     console.log(`🚀 CareerDNA Multi-Agent Backend Server Active`);
     console.log(`📡 URL: http://localhost:${port}`);
+    console.log(`🗄️ Database: MongoDB Atlas (career)`);
     console.log(`🛡️ Temperature Constraint: ${CONFIG.llm.temperature} (<= 0.3 locked)`);
-    console.log(`🤖 Model: ${CONFIG.llm.model}`);
-    console.log(`🔑 Live API Key: ${CONFIG.api.geminiApiKey ? 'Configured' : 'Offline Heuristic Fallback'}`);
+    console.log(`🤖 AI Engine: DeepSeek (${CONFIG.llm.model})`);
+    console.log(`🔑 Live API Key: ${hasKey ? 'Configured' : 'Offline Heuristic Fallback'}`);
     console.log(`======================================================\n`);
   });
   return server;

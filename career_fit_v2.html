@@ -20,6 +20,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
+    <!-- CareerDNA MongoDB Atlas Client -->
+    <script src="static/db-client.js"></script>
+    
+    <!-- CareerDNA CV Template System -->
+    <script src="static/cv-templates.js"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -267,14 +273,14 @@
                             <div class="h-2"></div>
                             <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
                                 <span class="w-6 h-6 bg-klein text-white text-[11px] md:text-xs font-mono font-bold flex items-center justify-center">03</span>
-                                專屬武器庫 (擅長工具)
+                                專業技能與擅長工具 (Professional Skills & Tools)
                             </h2>
                         </div>
                         <a href="profile.html" class="hover-spring font-mono text-[11px] md:text-xs font-bold text-klein bg-klein/5 hover:bg-klein hover:text-white border border-klein/20 px-3 py-1.5 transition-all">
-                            管理技能 ➔
+                            前往設定技能 ➔
                         </a>
                     </div>
-                    <p class="font-mono text-[11px] md:text-xs text-klein/50 mb-3">* 系統已從個人檔案同步技能標籤，為履歷關鍵字額外加權。</p>
+                    <p class="font-mono text-[11px] md:text-xs text-klein/50 mb-3">* 系統已從個人檔案同步您自訂建立的專業技能標籤，作為 AI 履歷生成與 ATS 診斷依據。</p>
                     <div id="skills-display-container" class="flex flex-wrap gap-2 min-h-[36px] items-center">
                         <!-- Populated by renderSkills() -->
                     </div>
@@ -322,7 +328,7 @@
                     </button>
                     <button onclick="window.App.calculateAndGenerate()" id="generate-btn" class="hover-spring w-full py-4 bg-klein text-white border border-klein font-heading font-bold text-base uppercase tracking-wider flex items-center justify-center gap-3 group">
                         <i class="fa-solid fa-wand-magic-sparkles text-sm group-hover:rotate-12 transition-transform"></i>
-                        <span>✨ AI 深度健檢與生成 (Gemini LLM)</span>
+                        <span>✨ AI 深度健檢與生成 (DeepSeek AI)</span>
                     </button>
                 </div>
 
@@ -442,20 +448,41 @@
                             <!-- Populated by renderResultUI() -->
                         </div>
                         
-                        <!-- A4 Markdown Resume Preview Panel -->
+                        <!-- A4 CV Template Preview Panel -->
                         <div id="resume-preview-panel" class="hidden border-t border-klein/10 pt-6 mt-6">
+                            
+                            <!-- Template Selector -->
+                            <div class="mb-5">
+                                <span class="font-mono text-xs font-bold text-klein uppercase tracking-wider flex items-center gap-2 mb-3">
+                                    <i class="fa-solid fa-palette"></i> 選擇履歷模板 (CV Template)
+                                </span>
+                                <div id="cv-template-selector" class="grid grid-cols-3 gap-3">
+                                    <!-- Populated by renderTemplateSelector() -->
+                                </div>
+                            </div>
+                            
                             <div class="flex items-center justify-between mb-4">
                                 <span class="font-mono text-[11px] md:text-xs font-bold text-klein uppercase tracking-wider flex items-center gap-2">
                                     <i class="fa-solid fa-file-lines"></i> AI 智能履歷預覽 (A4 Standard)
                                 </span>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="window.App.printCv()" class="hover-spring bg-white text-klein border-2 border-klein font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider py-2 px-3 flex items-center gap-1.5 hover:bg-klein/5" title="使用瀏覽器原生列印 / 另存為超高畫質向量 PDF">
+                                        <i class="fa-solid fa-print"></i> 列印 / 向量 PDF
+                                    </button>
+                                    <button onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2" id="btn-export-pdf">
+                                        <i class="fa-solid fa-download"></i> 匯出 PDF
+                                    </button>
+                                </div>
+=======
                                 <button onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2">
                                     <i class="fa-solid fa-download"></i> 匯出 PDF
                                 </button>
+>>>>>>> origin/main
                             </div>
 
                             <!-- A4 Preview Paper Sheet -->
-                            <div id="resume-output" class="bg-white border border-klein/20 p-6 md:p-8 max-h-[500px] overflow-y-auto text-klein/90 leading-relaxed font-body">
-                                <!-- Populated with marked.js HTML inside #pdf-content -->
+                            <div id="resume-output" class="bg-white border border-klein/20 overflow-y-auto" style="max-height: 700px;">
+                                <!-- Populated by CV template render -->
                             </div>
                         </div>
                     </div>
@@ -521,29 +548,9 @@
     
 
     <!-- Application Script Module -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
-
-        // === DEBUG: Log Firebase Initialization ===
-        console.log('[CareerDNA] Firebase module initializing...');
-
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
-            authDomain: "ai-resume-health-check.firebaseapp.com",
-            projectId: "ai-resume-health-check",
-            storageBucket: "ai-resume-health-check.firebasestorage.app",
-            messagingSenderId: "659646169112",
-            appId: "1:659646169112:web:d11eccae4f6abfa56a436d",
-            measurementId: "G-5E2C8FJWX5"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const functions = getFunctions(app);
+    <script>
+        // === CareerDNA Engine (MongoDB Atlas Only) ===
+        console.log('[CareerDNA] MongoDB Atlas module initializing...');
         let currentUser = null;
 
         // --- 靜宜大學在地化課綱資料庫 (三軌制) ---
@@ -667,20 +674,50 @@
                     this.setupTrackUI(this.state.grade);
                 } catch(e) { console.error('[CareerDNA] setupTrackUI error:', e); }
 
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        currentUser = user;
-                        document.getElementById('nav-user-info').classList.remove('hidden');
-                        document.getElementById('nav-login-btn').classList.add('hidden');
-                        document.getElementById('nav-user-name').innerText = user.displayName || 'User';
-                        document.getElementById('nav-user-avatar').innerText = (user.displayName || 'U').charAt(0).toUpperCase();
+                // Load skills from stored user or localStorage (immediate display)
+                const localSkills = localStorage.getItem('cdna_skills');
+                if (localSkills) {
+                    try {
+                        const parsed = JSON.parse(localSkills);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            this.state.skills = parsed;
+                        }
+                    } catch(e) {}
+                }
 
-                        await this.loadUserData(user.uid);
-                    } else {
-                        // User not authenticated; continue in guest mode or redirect
-                        console.log('[CareerDNA] Guest mode active');
+                // Check stored MongoDB Atlas User
+                const savedDbUser = window.CareerDNA_DB ? window.CareerDNA_DB.getCurrentUser() : null;
+                if (savedDbUser) {
+                    currentUser = savedDbUser;
+                    if (savedDbUser.skills && Array.isArray(savedDbUser.skills) && savedDbUser.skills.length > 0) {
+                        this.state.skills = savedDbUser.skills;
                     }
-                });
+                    if (window.CareerDNA_DB) window.CareerDNA_DB.refreshNavbar();
+                    this.renderSkills();
+                    this.loadUserData(savedDbUser.uid || savedDbUser._id);
+
+                    // Fetch latest skills from MongoDB Atlas API
+                    const effectiveUid = window.CareerDNA_DB.getEffectiveUid(savedDbUser);
+                    if (effectiveUid) {
+                        window.CareerDNA_DB.getUser(effectiveUid).then(res => {
+                            if (res && res.user && res.user.skills && Array.isArray(res.user.skills) && res.user.skills.length > 0) {
+                                this.state.skills = res.user.skills
+                                    .filter(s => s && (typeof s === 'string' ? s.trim() : s.name))
+                                    .map(s => typeof s === 'string' ? { name: s.trim(), level: '熟練' } : s);
+                                localStorage.setItem('cdna_skills', JSON.stringify(this.state.skills));
+                                this.renderSkills();
+                                console.log('[CareerDNA] Skills loaded from MongoDB Atlas:', this.state.skills.length, 'items');
+                            }
+                        }).catch(e => console.error('[CareerDNA] Failed to fetch skills from Atlas:', e));
+                    }
+                } else {
+                    this.renderSkills();
+                }
+
+                // No Firebase - Guest mode if no savedDbUser
+                if (!savedDbUser) {
+                    console.log('[CareerDNA] Guest mode active');
+                }
             },
 
             initScrollReveal() {
@@ -722,9 +759,9 @@
 
                 this.setupTrackUI(newGrade);
 
-                if (currentUser) {
-                    setDoc(doc(db, "users", currentUser.uid), { grade: newGrade }, { merge: true }).catch(console.error);
-                    setDoc(doc(db, "users", currentUser.uid, "resume_data", "latest"), { selectedCourses: [], updatedAt: new Date().toISOString() }, { merge: true });
+                if (currentUser && window.CareerDNA_DB) {
+                    const effectiveUid = window.CareerDNA_DB.getEffectiveUid(currentUser);
+                    if (effectiveUid) window.CareerDNA_DB.saveProfile(effectiveUid, { grade: newGrade }).catch(console.error);
                 }
 
                 const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
@@ -741,8 +778,9 @@
                 document.querySelectorAll('#programs-container input[type="checkbox"]').forEach(el => el.checked = false);
                 document.getElementById('ai-result-panel').classList.add('hidden');
 
-                if (currentUser) {
-                    setDoc(doc(db, "users", currentUser.uid), { dept: newDept }, { merge: true }).catch(console.error);
+                if (currentUser && window.CareerDNA_DB) {
+                    const effectiveUid = window.CareerDNA_DB.getEffectiveUid(currentUser);
+                    if (effectiveUid) window.CareerDNA_DB.saveProfile(effectiveUid, { department: newDept, dept: newDept }).catch(console.error);
                 }
                 const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
                 if (savedUser.email) {
@@ -761,8 +799,9 @@
                 this.state.selectedCourses.clear();
                 document.querySelectorAll('#programs-container input[type="checkbox"]').forEach(el => el.checked = false);
                 document.getElementById('ai-result-panel').classList.add('hidden');
-                if (currentUser) {
-                    setDoc(doc(db, "users", currentUser.uid), { dept: '' }, { merge: true }).catch(console.error);
+                if (currentUser && window.CareerDNA_DB) {
+                    const effectiveUid = window.CareerDNA_DB.getEffectiveUid(currentUser);
+                    if (effectiveUid) window.CareerDNA_DB.saveProfile(effectiveUid, { department: '', dept: '' }).catch(console.error);
                 }
                 this.setupTrackUI('大四');
             },
@@ -780,47 +819,47 @@
 
             async loadUserData(uid) {
                 try {
-                    onSnapshot(doc(db, "users", uid), (docSnap) => {
-                        if (!docSnap.exists()) return this.setupTrackUI(this.state.grade);
-                        
-                        const data = docSnap.data();
-                        const isFirstLoad = !document.getElementById('programs-container').innerHTML.trim();
-                        const hasDeptFromUrl = !!new URLSearchParams(window.location.search).get('dept');
-                        
-                        if (!hasDeptFromUrl && data.grade && (data.grade !== this.state.grade || isFirstLoad)) {
-                            this.state.grade = data.grade;
-                            document.getElementById('nav-user-grade').innerText = data.grade;
-                            const selector = document.getElementById('grade-selector');
-                            if (selector) selector.value = data.grade === '大二' ? '大一' : (data.grade === '碩士' ? '大四' : data.grade);
-                            if (data.dept && !this.state.dept) {
-                                this.state.dept = data.dept;
-                            }
-                            this.setupTrackUI(data.grade);
-                        } else if (hasDeptFromUrl && isFirstLoad) {
-                            if (currentUser) {
-                                setDoc(doc(db, "users", currentUser.uid), { dept: this.state.dept }, { merge: true }).catch(console.error);
-                            }
-                            this.setupTrackUI('大四');
-                        } else if (!data.grade && isFirstLoad) {
-                            if (data.dept && !this.state.dept) this.state.dept = data.dept;
-                            this.setupTrackUI(this.state.grade);
+                    if (!window.CareerDNA_DB) return this.setupTrackUI(this.state.grade);
+                    
+                    const effectiveUid = window.CareerDNA_DB.getEffectiveUid(currentUser) || uid;
+                    const res = await window.CareerDNA_DB.getUser(effectiveUid);
+                    if (!res || !res.user) return this.setupTrackUI(this.state.grade);
+                    
+                    const data = res.user;
+                    const isFirstLoad = !document.getElementById('programs-container').innerHTML.trim();
+                    const hasDeptFromUrl = !!new URLSearchParams(window.location.search).get('dept');
+                    
+                    if (!hasDeptFromUrl && data.grade && (data.grade !== this.state.grade || isFirstLoad)) {
+                        this.state.grade = data.grade;
+                        const gradeEl = document.getElementById('nav-user-grade');
+                        if (gradeEl) gradeEl.innerText = data.grade;
+                        const selector = document.getElementById('grade-selector');
+                        if (selector) selector.value = data.grade === '大二' ? '大一' : (data.grade === '碩士' ? '大四' : data.grade);
+                        if ((data.dept || data.department) && !this.state.dept) {
+                            this.state.dept = data.dept || data.department;
                         }
-
-                        if (data.skills !== undefined) {
-                            this.state.skills = data.skills;
-                            this.renderSkills();
+                        this.setupTrackUI(data.grade);
+                    } else if (hasDeptFromUrl && isFirstLoad) {
+                        if (currentUser && effectiveUid) {
+                            window.CareerDNA_DB.saveProfile(effectiveUid, { department: this.state.dept, dept: this.state.dept }).catch(console.error);
                         }
-                        
-                        this.restoreSelections(true);
-                    });
-
-                    const docSnap = await getDoc(doc(db, "users", uid, "resume_data", "latest"));
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        if (data.selectedCourses) this.state.selectedCourses = new Set(data.selectedCourses);
-                        if (data.selectedExps) this.state.selectedExps = new Set(data.selectedExps);
-                        this.restoreSelections(true);
+                        this.setupTrackUI('大四');
+                    } else if (!data.grade && isFirstLoad) {
+                        if ((data.dept || data.department) && !this.state.dept) this.state.dept = data.dept || data.department;
+                        this.setupTrackUI(this.state.grade);
                     }
+
+                    // Load skills from MongoDB Atlas
+                    if (data.skills && Array.isArray(data.skills) && data.skills.length > 0) {
+                        this.state.skills = data.skills
+                            .filter(s => s && (typeof s === 'string' ? s.trim() : s.name))
+                            .map(s => typeof s === 'string' ? { name: s.trim(), level: '熟練' } : s);
+                        localStorage.setItem('cdna_skills', JSON.stringify(this.state.skills));
+                        this.renderSkills();
+                        console.log('[CareerDNA] Skills loaded from MongoDB Atlas:', this.state.skills.length, 'items');
+                    }
+                    
+                    this.restoreSelections(true);
                 } catch (e) { console.error("[CareerDNA] Error loading user data:", e); }
             },
 
@@ -885,17 +924,21 @@
 
             
             async login() {
-                try {
-                    const provider = new GoogleAuthProvider();
-                    await signInWithPopup(auth, provider);
-                } catch (error) {
-                    console.error("Login Error:", error);
-                    alert("登入失敗：" + error.message);
+                if (window.CareerDNA_DB) {
+                    window.CareerDNA_DB.showAuthModal((user) => {
+                        currentUser = user;
+                        window.CareerDNA_DB.refreshNavbar();
+                        this.showToast(`歡迎回來，${user.name || user.username}！`);
+                        this.loadUserData(user.uid || user._id);
+                    });
+                } else {
+                    alert('系統尚未初始化，請重新整理頁面後再試。');
                 }
             },
             async logout() {
                 try {
-                    await signOut(auth);
+                    if (window.CareerDNA_DB) window.CareerDNA_DB.logout();
+                    currentUser = null;
                     document.getElementById('nav-user-info').classList.add('hidden');
                     document.getElementById('nav-login-btn').classList.remove('hidden');
                     this.showToast('已登出');
@@ -961,12 +1004,36 @@ setupTrackUI(grade) {
 
             renderSkills() {
                 const container = document.getElementById('skills-display-container');
-                if (!this.state.skills || this.state.skills.length === 0) {
-                    container.innerHTML = '<span class="text-[11px] md:text-xs font-mono text-klein/40 italic">尚未裝備任何武器，建議前往「個人檔案」挑選，可大幅提升綜合戰力！</span>';
+                if (!container) return;
+
+                const skills = this.state.skills || [];
+                if (!Array.isArray(skills) || skills.length === 0) {
+                    container.innerHTML = `
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 w-full p-3 bg-klein/[0.02] border border-dashed border-klein/20">
+                            <span class="text-[11px] md:text-xs font-mono text-klein/60 italic">尚未裝備任何武器，建議前往「個人檔案」挑選，可大幅提升綜合戰力！</span>
+                            <a href="profile.html" class="px-2.5 py-1 bg-klein text-white text-xs font-mono font-bold hover:bg-blue-800 transition-all flex items-center gap-1 shrink-0 self-start sm:self-auto shadow-sm">
+                                <i class="fa-solid fa-plus text-[10px]"></i> 挑選技能
+                            </a>
+                        </div>
+                    `;
                 } else {
-                    container.innerHTML = this.state.skills.map(skill => 
-                        `<span class="px-3 py-1 bg-klein/5 text-klein border border-klein/20 font-mono text-[11px] md:text-xs font-bold">${skill}</span>`
-                    ).join('');
+                    container.innerHTML = skills.map(skill => {
+                        const name = typeof skill === 'string' ? skill : skill.name;
+                        const level = (typeof skill === 'object' && skill.level) ? skill.level : '熟練';
+                        const levelColors = {
+                            '精通': 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                            '熟練': 'bg-blue-100 text-blue-800 border-blue-300',
+                            '基礎': 'bg-amber-100 text-amber-800 border-amber-300'
+                        };
+                        const badgeClass = levelColors[level] || 'bg-klein/10 text-klein border-klein/20';
+                        return `
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-klein text-klein font-mono text-xs font-bold shadow-sm hover-spring">
+                                <i class="fa-solid fa-screwdriver-wrench text-[10px] text-klein/70"></i>
+                                <span>${name}</span>
+                                <span class="text-[10px] px-1.5 py-0.2 border ${badgeClass}">${level}</span>
+                            </div>
+                        `;
+                    }).join('');
                 }
                 this.updateLiveScore();
             },
@@ -1124,30 +1191,12 @@ setupTrackUI(grade) {
                 let skillScore = Math.min(20, (this.state.skills?.length || 0) * 4);
                 const totalScore = programScore + expScore + skillScore;
 
-                if (currentUser) {
-                    try {
-                        const resultData = {
-                            selectedCourses: Array.from(this.state.selectedCourses),
-                            selectedExps: Array.from(this.state.selectedExps),
-                            scores: { total: totalScore, program: programScore, exp: expScore, skill: skillScore },
-                            updatedAt: new Date().toISOString()
-                        };
-
-                        const batch = writeBatch(db);
-                        const historyRef = doc(collection(db, "users", currentUser.uid, "history_resume"));
-                        batch.set(historyRef, resultData);
-
-                        const userRef = doc(db, "users", currentUser.uid);
-                        batch.set(userRef, {
-                            summary_cache: { resume: { updatedAt: resultData.updatedAt, totalScore: resultData.scores.total } }
-                        }, { merge: true });
-
-                        await batch.commit();
-                        console.log("✅ 履歷健檢結果已同步至雲端！");
-                    } catch (e) {
-                        console.error("❌ 儲存失敗", e);
-                    }
-                }
+                const resultData = {
+                    selectedCourses: Array.from(this.state.selectedCourses),
+                    selectedExps: Array.from(this.state.selectedExps),
+                    scores: { total: totalScore, program: programScore, exp: expScore, skill: skillScore },
+                    updatedAt: new Date().toISOString()
+                };
 
                 const btn = document.getElementById('generate-btn');
                 if (btn) {
@@ -1264,13 +1313,35 @@ setupTrackUI(grade) {
                           case 'C': hollandTrait = '【個人特質優勢】：具備極高的細心度與組織規劃能力，擅長流程優化、資料管理，並能在工作中維持高度的精確與穩定性。'; break;
                           default: hollandTrait = '【個人特質優勢】：具備快速學習與適應環境的能力，重視團隊合作與專業成長。';
                       }
-const draftText = document.getElementById('resume-draft-input').value.trim() || '無';
+
+                    // === USE REAL USER DATA FROM LOGIN SESSION ===
+                    const staticUserInfo = window.CVTemplates ? window.CVTemplates.collectUserData() : {};
+                    const staticName = staticUserInfo.name || '您的姓名';
+                    const staticEmail = staticUserInfo.email || '';
+                    const staticPhone = staticUserInfo.phone || '';
+                    const staticSchool = staticUserInfo.school || '靜宜大學';
+                    const staticGithub = staticUserInfo.github || '';
+                    const staticLinkedin = staticUserInfo.linkedin || '';
+                    const staticDeptFull = window.CVTemplates ? window.CVTemplates.getDeptFullName(this.state.dept) : this.state.dept;
+
+                    const draftText = document.getElementById('resume-draft-input').value.trim() || '無';
                     const expNames = Array.from(this.state.selectedExps).map(id => {
                         const found = EXPERIENCES.find(e => e.id === id);
                         return found ? found.name : id;
                     }).join(', ') || '無';
 
-                    const resumeMarkdown = `# 履歷表 (Resume)\n\n## 關於我 (About Me)\n[請在此用 2-3 句話總結您的核心優勢與目標職位]\n* ${hollandTrait}\n${draftText ? '\n**使用者草稿/簡介：**\n' + draftText : ''}\n\n## 專業技能 (Professional Skills)\n> 💡 *Yourator 履歷指南建議：避免使用無意義的「能量條」圖表，請直接列出並以熟練度分類，讓人資一目了然。*\n\n- **核心技能 (精通)**：${(this.state.skills || []).slice(0,3).join(', ') || '請填寫您最擅長的 3-5 項技能'}\n- **熟悉工具 (進階)**：${(this.state.skills || []).slice(3).join(', ') || '請填寫相關軟體或工具'}\n\n## 專案與實務經歷 (Experience & Projects)\n> 💡 *1111 人力銀行與人資專家建議：避免「許多」、「善於」等抽象詞彙。請採用「Micro-STAR」與「Google XYZ」量化句型。*\n\n### ${expNames || '[請填寫專案或公司名稱]'}\n- **[Situation / Task 情境與任務]**：在什麼情境下，面臨什麼挑戰或任務？\n- **[Action 具體行動]**：你具體採取了什麼行動？使用了什麼技術或工具？\n- **[Result 成果表現 (Google XYZ)]**：達成 [X] 成果，以 [Y] 數據為衡量指標，透過 [Z] 方法完成。\n  *(範例：透過優化資料庫查詢結構 (Z)，成功將系統載入時間降低 30% (Y)，大幅提升了整體用戶體驗 (X)。)*\n\n## 學歷與進修 (Education)\n- **系所**：${localStorage.getItem('cdna_department') || this.state.dept || '未知科系'} (年級：${this.state.grade})\n- **專業修課紀錄**：${Array.from(this.state.selectedCourses).join(', ') || '無'} (${this.state.selectedCourses.size} 門)\n`;
+                    // Build contact info line with real user data
+                    const contactParts = [];
+                    if (staticPhone) contactParts.push(`電話: ${staticPhone}`);
+                    if (staticEmail) contactParts.push(`Email: ${staticEmail}`);
+                    if (staticGithub) contactParts.push(`GitHub: ${staticGithub}`);
+                    if (staticLinkedin) contactParts.push(`LinkedIn: ${staticLinkedin}`);
+                    const contactLine = contactParts.length > 0 ? contactParts.join(' | ') : '';
+
+                    // Build skills display
+                    const skillNames = (this.state.skills || []).map(s => typeof s === 'string' ? s : s.name);
+
+                    const resumeMarkdown = `# ${staticName}\n\n**${staticSchool} ${staticDeptFull} ${this.state.grade}**${contactLine ? ' | ' + contactLine : ''}\n\n## 關於我 (About Me)\n${hollandTrait}\n${draftText !== '無' ? '\n' + draftText : ''}\n\n## 專業技能 (Technical Skills)\n\n${skillNames.length > 0 ? '- **掌握技能**：' + skillNames.join('、') : '- 尚未新增技能標籤，請前往個人檔案設定'}\n\n## 專案與實務經歷 (Experience & Projects)\n\n### ${expNames || '(尚未勾選經歷)'}\n- **[Situation]**：在什麼情境下，面臨什麼挑戰或任務？\n- **[Action]**：具體採取了什麼行動？使用了什麼技術？\n- **[Result (Google XYZ)]**：達成 [X] 成果，以 [Y] 數據衡量，透過 [Z] 方法完成。\n\n## 學歷 (Education)\n- **${staticSchool}** — ${staticDeptFull} (${this.state.grade})\n- **修習課程**：${Array.from(this.state.selectedCourses).join('、') || '無'} (${this.state.selectedCourses.size} 門)\n`;
 
                     const result = {
                         quantifiability: quantScore,
@@ -1310,13 +1381,28 @@ const draftText = document.getElementById('resume-draft-input').value.trim() || 
                 const dept = localStorage.getItem('cdna_department') || this.state.dept || '未知科系';
                 const holland = localStorage.getItem('cdna_primary_holland') || '未知';
                 
+                // === COLLECT REAL USER INFO FROM LOGIN SESSION ===
+                const userInfo = window.CVTemplates ? window.CVTemplates.collectUserData() : {};
+                const realName = userInfo.name || '未提供姓名';
+                const realEmail = userInfo.email || '未提供';
+                const realPhone = userInfo.phone || '未提供';
+                const realSchool = userInfo.school || '靜宜大學';
+                const realGithub = userInfo.github || '未提供';
+                const realLinkedin = userInfo.linkedin || '未提供';
+                const realStudentId = userInfo.studentId || '未提供';
+                const deptFullName = window.CVTemplates ? window.CVTemplates.getDeptFullName(dept) : dept;
+                
                 // Map courses and experiences from state sets
                 const courses = Array.from(this.state.selectedCourses).join(', ') || '無';
                 const experiences = Array.from(this.state.selectedExps).map(id => {
                     const found = EXPERIENCES.find(e => e.id === id);
                     return found ? found.name : id;
                 }).join(', ') || '無';
-                const skills = (this.state.skills || []).join(', ') || '無';
+                const skillsList = (this.state.skills || []).map(s => {
+                    if (typeof s === 'string') return s;
+                    return `${s.name} (熟練度: ${s.level || '熟練'})`;
+                });
+                const skills = skillsList.length > 0 ? skillsList.join('、') : '尚未特定指定，請根據科系專業發揮';
                 
                 const PU_LOCAL_KNOWLEDGE = {
                     "CS": "靜宜資工近期產學合作重點：光寶科技、台積電先修學程。校友多從事：後端工程師、資安防禦。推薦實驗室：物聯網應用實驗室、網路安全實驗室。",
@@ -1325,145 +1411,253 @@ const draftText = document.getElementById('resume-draft-input').value.trim() || 
                 };
                 const localContext = PU_LOCAL_KNOWLEDGE[dept] || PU_LOCAL_KNOWLEDGE["CS"];
                 
-                const aiPrompt = `作為靜宜大學資訊學院的專屬職涯顧問與資深人資，請根據以下學生的狀態，與靜宜在地的產業趨勢，進行「履歷維度檢核」並「直接重寫履歷」。
+                const aiPrompt = `作為靜宜大學資訊學院的專屬職涯顧問與資深人資，請根據以下學生的「真實個人資料」與狀態，進行「履歷維度檢核」並「直接重寫履歷」。
+
+⚠️ 【嚴格限制 - 個人資料使用規範】
+以下是該學生的真實個人資料，你必須嚴格使用這些資料填寫履歷，絕對不可以自行編造或虛構任何姓名、電話、Email、學校等個人資訊。如果某項資料標示為「未提供」，請在履歷中省略該欄位，不要自行補充假資料。
+
+【學生真實個人資料】
+- 姓名：${realName}
+- Email：${realEmail}
+- 電話：${realPhone}
+- 學校：${realSchool}
+- 科系：${deptFullName} (${dept})
+- 年級：${grade}
+- GitHub：${realGithub}
+- LinkedIn：${realLinkedin}
 
 【靜宜大學在地產業背景資訊】
 ${localContext}
 
-【學生背景】
-- 年級：${grade}
-- 科系：${dept} (請根據在地背景提供針對性建議)
+【學生學術與技能背景】
 - UCAN 類型：${holland}
 - 已修專業課程：${courses}
 - 實務經歷：${experiences}
-- 技能武器庫：${skills}
+- 專屬武器庫 (掌握技術棧與熟練度)：${skills}
 - 使用者自我介紹草稿：${draftText}
 
 請以 JSON 格式回傳評估結果，務必包含以下結構：
 {
-  "quantifiability": 50,
-  "completeness": 60,
-  "keywordRelevance": 70,
+  "quantifiability": 75,
+  "completeness": 80,
+  "keywordRelevance": 85,
   "analysis": "整體分析與具體的職位對接建議 (HTML 格式，使用 <strong> 與 <br>)",
-  "actionItems": ["具體行動建議 1", "具體行動建議 2 (必須包含具體的校內修課建議，例如推薦去修資料庫或演算法)"],
-  "resumeMarkdown": "在此撰寫一份符合企業的 Markdown 履歷。\n1. 【個人簡介】：請結合學生的 UCAN 類型(\${holland})與草稿，撰寫一段突顯其個人特質與軟實力的簡介。\n2. 【經歷改寫】：必須使用『Micro-STAR』以及『Google XYZ 句型』改寫經歷。\n3. 【嚴格限制】：絕對禁止過度美化或捏造數據。只能重組使用者提供的內容，不可無中生有，請保持大學生的誠懇質樸。不要寫在 code block 裡，就是一個字串。"
+  "actionItems": ["具體行動建議 1", "具體行動建議 2 (必須包含具體的校內修課建議)"],
+  "resumeMarkdown": "在此撰寫一份符合企業標準的 Markdown 履歷。\n要求：\n1. 履歷開頭必須使用學生的【真實姓名】：${realName}，以及真實的聯絡資訊（僅使用上方提供的資料，未提供的請省略）。\n2. 【個人簡介】：結合 UCAN 類型與草稿，撰寫突顯個人特質與軟實力的簡介。\n3. 【專業技能】：完整列出已掌握的技能工具(${skills})。\n4. 【專案與經歷】：使用『Micro-STAR』及『Google XYZ 句型』改寫經歷，融入具體技術工具與量化成果。\n5. 【嚴格限制】：保持大學生真實語氣，不使用過度浮誇術語。不要寫在 code block 裡。"
 }
 注意：
-1. 評分與建議請以「大學生/應屆畢業生」的合理標準出發，不要使用過度浮誇的商業行銷術語，請保持大學生真實、質樸但具備潛力的語氣。
-2. 針對學生的能力缺口，請務必在 actionItems 中給出具體的「校內課程修課建議」。
-3. 請只輸出 JSON 格式，不要包含任何 markdown code block 圍欄。`;
+1. 評分與建議以「大學生/應屆畢業生」合理標準出發。
+2. 針對能力缺口，務必在 actionItems 給出具體「校內課程修課建議」。
+3. 請只輸出 JSON 格式，不要包含任何 markdown code block 圍欄。
+4. 再次強調：履歷中的姓名必須是「${realName}」，不可自行編造。`;
 
                 this.currentManualPrompt = aiPrompt;
 
                 try {
-                    let apiKey = localStorage.getItem('gemini_api_key');
-                    if (!apiKey) {
-                        this.openManualMode();
-                        return;
-                    }
-                    apiKey = apiKey.trim();
-
-                    const inputArray = [{ type: 'text', text: aiPrompt }];
-                    if (this.pdfBase64) {
-                        inputArray.push({
-                            type: 'document',
-                            mime_type: 'application/pdf',
-                            data: this.pdfBase64
-                        });
-                    }
-
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/interactions?key=${apiKey}`, {
+                    const response = await fetch('/api/ai/diagnose', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            model: 'gemini-3.6-flash',
-                            input: inputArray,
-                            generation_config: { temperature: 0.3, max_output_tokens: 4096 }
+                            prompt: aiPrompt,
+                            pdfBase64: this.pdfBase64 || null,
+                            department: dept,
+                            grade: grade,
+                            draftText: draftText,
+                            courses: Array.from(this.state.selectedCourses),
+                            experiences: Array.from(this.state.selectedExps),
+                            skills: this.state.skills || [],
+                            userInfo: {
+                                name: realName,
+                                email: realEmail,
+                                phone: realPhone,
+                                school: realSchool,
+                                department: dept,
+                                deptFullName: deptFullName,
+                                grade: grade,
+                                github: realGithub,
+                                linkedin: realLinkedin,
+                                studentId: realStudentId
+                            }
                         })
                     });
 
-                    if (!response.ok) {
-                        if (response.status === 429) {
-                            console.warn("API 額度已耗盡，自動切換至手動模式");
-                            this.openManualMode();
-                            return;
-                        }
-                        throw new Error(`API Error: ${response.status}`);
-                    }
-
                     const data = await response.json();
-                    let jsonText = '';
-                    const outputStep = data.steps?.find(s => s.type === 'model_output');
-                    if (outputStep && outputStep.content) {
-                        const textBlock = outputStep.content.find(c => c.type === 'text');
-                        if (textBlock) jsonText = textBlock.text;
+
+                    if (data && data.status === 'ok' && data.result) {
+                        this.renderResultUI(data.result);
+                    } else if (data && data.result) {
+                        this.renderResultUI(data.result);
+                    } else {
+                        throw new Error(data.message || 'AI 伺服器無回應');
                     }
-                    
-                    jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-                    const result = JSON.parse(jsonText);
-                    
-                    this.renderResultUI(result);
 
                 } catch (err) {
-                    console.error(err);
-                    aiContent.innerHTML = `<div class="text-flame-orange font-bold text-[11px] md:text-xs p-3 border border-flame-orange/20 bg-flame-orange/5">AI 解析失敗，請稍後再試或使用手動模式。<br>(${err.message})</div>`;
+                    console.error('[AI Diagnose Error]:', err);
+                    aiContent.innerHTML = `
+                        <div class="p-4 border-2 border-rose-500 bg-rose-50 text-rose-800 space-y-2 font-mono text-xs">
+                            <div class="font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-triangle-exclamation"></i> AI 連線異常 (${err.message})
+                            </div>
+                            <p class="text-[11px] text-rose-700">您可以點擊下方按鈕切換至手動模式進行備用解析：</p>
+                            <button onclick="window.App.openManualMode()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold uppercase tracking-wider">
+                                開啟手動模式 (Manual Prompt)
+                            </button>
+                        </div>
+                    `;
+                } finally {
                     const btn = document.getElementById('generate-btn');
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-sm"></i> <span>✨ AI 深度健檢與生成 (Gemini LLM)</span>`;
+                        btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-sm"></i> <span>✨ AI 深度健檢與生成 (DeepSeek AI)</span>`;
                     }
                 }
             },
 
-            renderResultUI(result) {
+            renderResultUI(rawResult) {
                 document.getElementById('ai-result-panel').classList.remove('hidden');
                 const aiContent = document.getElementById('ai-content');
                 
-                this.animateScore('score-quant', result.quantifiability);
-                document.getElementById('bar-quant').style.width = `${result.quantifiability}%`;
-                this.animateScore('score-comp', result.completeness);
-                document.getElementById('bar-comp').style.width = `${result.completeness}%`;
-                this.animateScore('score-kw', result.keywordRelevance);
-                document.getElementById('bar-kw').style.width = `${result.keywordRelevance}%`;
-
-                let html = `<div class="mb-6 p-4 border border-klein/10 bg-klein/[0.02]">${result.analysis}</div>`;
+                // Defensive normalization of returned fields
+                const quant = rawResult.quantifiability ?? rawResult.quantifiable_score ?? rawResult.resume_golden_triangle_report?.dimensions_assessment?.quantifiability?.score ?? 75;
+                const comp = rawResult.completeness ?? rawResult.completeness_score ?? rawResult.resume_golden_triangle_report?.dimensions_assessment?.completeness?.score ?? 80;
+                const kw = rawResult.keywordRelevance ?? rawResult.keyword_score ?? rawResult.resume_golden_triangle_report?.dimensions_assessment?.keywordRelevance?.score ?? 70;
                 
-                if (result.actionItems && result.actionItems.length > 0) {
+                const analysis = rawResult.analysis || rawResult.overall_analysis || rawResult.resume_golden_triangle_report?.overall_summary?.analysis || '整體履歷架構完整，具備良好發展潛力。';
+                const actionItems = rawResult.actionItems || rawResult.action_items || rawResult.resume_golden_triangle_report?.overall_summary?.actionItems || [];
+                const resumeMarkdown = rawResult.resumeMarkdown || rawResult.resume_markdown || rawResult.formattedResumeMarkdown || '';
+
+                this.animateScore('score-quant', quant);
+                document.getElementById('bar-quant').style.width = `${quant}%`;
+                this.animateScore('score-comp', comp);
+                document.getElementById('bar-comp').style.width = `${comp}%`;
+                this.animateScore('score-kw', kw);
+                document.getElementById('bar-kw').style.width = `${kw}%`;
+
+                let html = `<div class="mb-6 p-4 border border-klein/10 bg-klein/[0.02]">${analysis}</div>`;
+                
+                if (Array.isArray(actionItems) && actionItems.length > 0) {
                     html += `<div class="border border-klein/20 p-4 bg-white crosshair-corner">
                         <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-list-check text-[11px] md:text-xs"></i> Action Items (下一步行動建議)
                         </h4>
                         <ul class="space-y-2.5">`;
-                    result.actionItems.forEach(item => {
-                        const isCourseRec = item.includes('修') || item.includes('課') || item.includes('學程');
+                    actionItems.forEach(item => {
+                        const itemText = typeof item === 'string' ? item : (item.text || item.title || JSON.stringify(item));
+                        const isCourseRec = itemText.includes('修') || itemText.includes('課') || itemText.includes('學程');
                         if (isCourseRec) {
                             html += `<li class="text-[11px] md:text-xs text-klein flex items-start gap-2.5 bg-klein/5 p-3 border border-klein/15">
                                 <span class="text-base shrink-0">📚</span>
                                 <div>
                                     <span class="text-klein font-mono font-bold text-[10px] uppercase tracking-wider mb-0.5 block">三軌制修課導航建議</span>
-                                    ${item}
+                                    ${itemText}
                                 </div>
                             </li>`;
                         } else {
-                            html += `<li class="text-[11px] md:text-xs text-klein/80 flex items-start gap-2"><span class="text-klein font-bold font-mono">▪</span> ${item}</li>`;
+                            html += `<li class="text-[11px] md:text-xs text-klein/80 flex items-start gap-2"><span class="text-klein font-bold font-mono">▪</span> ${itemText}</li>`;
                         }
                     });
                     html += `</ul></div>`;
                 }
 
+                // Sync AI Report & Complete CV Snapshot to MongoDB Atlas
+                if (window.CareerDNA_DB) {
+                    const effectiveUid = window.CareerDNA_DB.getEffectiveUid();
+                    const cvDataForStorage = window.CVTemplates ? window.CVTemplates.buildCvData(rawResult, this.state) : {};
+                    window.CareerDNA_DB.saveResumeData(effectiveUid, {
+                        title: `${this.state.targetRole || '職涯'} 智能履歷`,
+                        templateId: this.selectedTemplate || 'modern',
+                        selectedCourses: Array.from(this.state.selectedCourses),
+                        selectedExps: Array.from(this.state.selectedExps),
+                        skills: this.state.skills || [],
+                        targetRole: this.state.targetRole || '',
+                        metrics: {
+                            quantifiability: quant,
+                            completeness: comp,
+                            keywordRelevance: kw
+                        },
+                        analysis: analysis,
+                        actionItems: actionItems,
+                        formattedResumeMarkdown: resumeMarkdown,
+                        cvData: cvDataForStorage,
+                        rawDraft: document.getElementById('resume-draft-input')?.value || '',
+                        updatedAt: new Date().toISOString()
+                    }).then(() => {
+                        console.log("✅ [MongoDB Atlas] AI 健檢與履歷典藏已同步！");
+                        if (this.showToast) this.showToast("✨ 履歷已自動典藏至個人檔案！");
+                    }).catch(console.error);
+                }
+
                 aiContent.innerHTML = html;
+
+                // === STORE AI RESULT FOR TEMPLATE RENDERING ===
+                this.lastAiResult = rawResult;
                 
-                const resumeOutput = document.getElementById('resume-output');
-                const resumeHtml = marked.parse(result.resumeMarkdown || '*AI 未能生成履歷*');
-                resumeOutput.innerHTML = `<div class="prose max-w-none text-klein font-body leading-relaxed" id="pdf-content">${resumeHtml}</div>`;
+                // === BUILD CV DATA & RENDER TEMPLATE SELECTOR ===
+                if (window.CVTemplates) {
+                    const cvData = window.CVTemplates.buildCvData(rawResult, this.state);
+                    this.currentCvData = cvData;
+                    this.selectedTemplate = this.selectedTemplate || 'modern';
+                    
+                    // Render template selector buttons
+                    const selectorContainer = document.getElementById('cv-template-selector');
+                    if (selectorContainer) {
+                        const templates = window.CVTemplates.getTemplateList();
+                        selectorContainer.innerHTML = templates.map(tpl => `
+                            <button onclick="window.App.switchCvTemplate('${tpl.id}')" 
+                                id="cv-tpl-btn-${tpl.id}"
+                                class="p-3 border-2 ${this.selectedTemplate === tpl.id ? 'border-klein bg-klein/5' : 'border-klein/15 bg-white hover:border-klein/40'} text-left transition-all hover-spring cursor-pointer">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <i class="${tpl.icon} text-sm" style="color: ${tpl.color}"></i>
+                                    <span class="font-heading font-bold text-xs text-klein uppercase">${tpl.name}</span>
+                                </div>
+                                <p class="font-mono text-[10px] text-klein/60">${tpl.description}</p>
+                            </button>
+                        `).join('');
+                    }
+                    
+                    // Render CV with selected template
+                    this.renderCvTemplate(this.selectedTemplate, cvData);
+                } else {
+                    // Fallback: render markdown as before
+                    const resumeOutput = document.getElementById('resume-output');
+                    const resumeHtml = typeof marked !== 'undefined' ? marked.parse(resumeMarkdown || '*AI 已完成分析*') : resumeMarkdown;
+                    resumeOutput.innerHTML = `<div class="prose max-w-none text-klein font-body leading-relaxed" id="pdf-content">${resumeHtml}</div>`;
+                }
                 
                 document.getElementById('resume-preview-panel').classList.remove('hidden');
                 
                 const btn = document.getElementById('generate-btn');
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-sm"></i> <span>✨ AI 深度健檢與生成 (Gemini LLM)</span>`;
+                    btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-sm"></i> <span>✨ AI 深度健檢與生成 (DeepSeek AI)</span>`;
                 }
+            },
+
+            // === CV TEMPLATE SWITCHER ===
+            switchCvTemplate(templateId) {
+                this.selectedTemplate = templateId;
+                if (this.currentCvData) {
+                    this.renderCvTemplate(templateId, this.currentCvData);
+                }
+                // Update selector button styles
+                const templates = window.CVTemplates ? window.CVTemplates.getTemplateList() : [];
+                templates.forEach(tpl => {
+                    const btn = document.getElementById(`cv-tpl-btn-${tpl.id}`);
+                    if (btn) {
+                        if (tpl.id === templateId) {
+                            btn.className = 'p-3 border-2 border-klein bg-klein/5 text-left transition-all hover-spring cursor-pointer';
+                        } else {
+                            btn.className = 'p-3 border-2 border-klein/15 bg-white hover:border-klein/40 text-left transition-all hover-spring cursor-pointer';
+                        }
+                    }
+                });
+            },
+
+            renderCvTemplate(templateId, cvData) {
+                const resumeOutput = document.getElementById('resume-output');
+                if (!resumeOutput || !window.CVTemplates) return;
+                const html = window.CVTemplates.render(templateId, cvData);
+                resumeOutput.innerHTML = `<div id="pdf-content">${html}</div>`;
             },
 
             async handlePdfUpload(event) {
@@ -1559,30 +1753,142 @@ ${localContext}
                 }
             },
 
-            downloadPDF() {
+            async downloadPDF() {
                 const element = document.getElementById('pdf-content');
                 if (!element) return;
 
+                const exportBtn = document.getElementById('btn-export-pdf');
+                if (exportBtn) {
+                    exportBtn.disabled = true;
+                    exportBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>匯出中...</span>';
+                }
+
+                // Generate filename with user name if available
+                const userInfo = window.CVTemplates ? window.CVTemplates.collectUserData() : {};
+                const userName = userInfo.name || 'CareerDNA';
+                const filename = `${userName}_Resume_CareerDNA.pdf`;
+
+                // Temporarily unconstrain parent container so html2canvas renders full content
+                const outputContainer = document.getElementById('resume-output');
+                const prevMaxHeight = outputContainer ? outputContainer.style.maxHeight : '';
+                const prevOverflow = outputContainer ? outputContainer.style.overflow : '';
+                if (outputContainer) {
+                    outputContainer.style.maxHeight = 'none';
+                    outputContainer.style.overflow = 'visible';
+                }
+
                 const opt = {
-                    margin:       15,
-                    filename:     'CareerDNA_Resume.pdf',
+                    margin:       [0, 0, 0, 0],
+                    filename:     filename,
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true },
+                    html2canvas:  { 
+                        scale: 2, 
+                        useCORS: true, 
+                        letterRendering: true,
+                        scrollY: 0,
+                        scrollX: 0
+                    },
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
-                
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = element.innerHTML;
-                tempDiv.style.fontFamily = "'Noto Sans TC', 'Inter', sans-serif";
-                tempDiv.style.color = "#002fa7";
-                tempDiv.style.fontSize = "14px";
-                
-                html2pdf().set(opt).from(tempDiv).save();
+
+                try {
+                    await html2pdf().set(opt).from(element).save();
+                    this.showToast(`PDF 已成功匯出：${filename}`);
+                } catch (err) {
+                    console.error('[PDF Export Error]:', err);
+                    this.showToast('PDF 匯出異常，正在開啟原生列印視窗...');
+                    this.printCv();
+                } finally {
+                    if (outputContainer) {
+                        outputContainer.style.maxHeight = prevMaxHeight || '700px';
+                        outputContainer.style.overflow = prevOverflow || 'auto';
+                    }
+                    if (exportBtn) {
+                        exportBtn.disabled = false;
+                        exportBtn.innerHTML = '<i class="fa-solid fa-download"></i> 匯出 PDF';
+                    }
+                }
+            },
+
+            printCv() {
+                const element = document.getElementById('pdf-content');
+                if (!element) return;
+
+                const userInfo = window.CVTemplates ? window.CVTemplates.collectUserData() : {};
+                const userName = userInfo.name || 'CareerDNA';
+
+                const printWindow = window.open('', '_blank');
+                if (!printWindow) {
+                    alert('請允許瀏覽器開啟彈出式視窗以進行列印 / 匯出！');
+                    return;
+                }
+
+                printWindow.document.write(`
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>${userName} - 履歷表 (CareerDNA)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    ${element.innerHTML}
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 300);
+        };
+    <\/script>
+</body>
+</html>
+                `);
+                printWindow.document.close();
+            },
+
+            showToast(msg) {
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-6 right-6 bg-klein text-white px-5 py-3 shadow-2xl font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2.5 z-50 border border-white/20 animate-bounce';
+                toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> <span>${msg}</span>`;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.transition = 'opacity 0.5s ease';
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 500);
+                }, 3000);
             }
         };
 
         // Initialize application on DOM ready
         document.addEventListener('DOMContentLoaded', () => window.App.init());
     </script>
+
+    <!-- CareerDNA AI Chatbot Assistant Widget -->
+    <script src="static/chat-widget.js"></script>
 </body>
 </html>

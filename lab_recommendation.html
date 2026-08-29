@@ -8,6 +8,9 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- CareerDNA MongoDB Atlas Client -->
+    <script src="static/db-client.js"></script>
+    
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -152,6 +155,16 @@
                 <a href="index.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
                 </a>
+                <div id="nav-auth-section" class="flex items-center gap-4 border-l border-klein/10 pl-4">
+                    <button id="nav-login-btn" onclick="window.CareerDNA_DB.showAuthModal((u) => window.location.reload())" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入 / 註冊</button>
+                    <div id="nav-user-info" class="hidden flex items-center gap-3">
+                        <div class="flex flex-col text-right">
+                            <span id="nav-user-name" class="text-xs font-bold text-klein"></span>
+                            <button onclick="window.CareerDNA_DB.logout(); window.location.reload();" class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
+                        </div>
+                        <div id="nav-user-avatar" class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -591,16 +604,25 @@
                     btn.innerHTML = `<span>查看 ${winner} 必修課</span> <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>`;
                 }
 
+                const resultData = {
+                    dept: winner,
+                    deptName: data.title,
+                    date: new Date().toISOString(),
+                    scores: this.scores
+                };
+
+                // Sync to MongoDB Atlas
+                if (window.CareerDNA_DB) {
+                    const effectiveUid = window.CareerDNA_DB.getEffectiveUid(currentUser);
+                    window.CareerDNA_DB.saveLabResult(effectiveUid, resultData)
+                        .then(() => console.log("✅ [MongoDB Atlas] 實驗室推薦結果已同步！"))
+                        .catch(err => console.error("❌ [MongoDB Atlas] 同步失敗:", err));
+                }
+
                 // Persist Result to Firestore if Authenticated
                 if (currentUser) {
                     try {
                         const batch = writeBatch(db);
-                        const resultData = {
-                            dept: winner,
-                            deptName: data.title,
-                            date: new Date().toISOString(),
-                            scores: this.scores
-                        };
                         
                         // 1. Snapshot in user history
                         const historyRef = doc(collection(db, "users", currentUser.uid, "history_lab"));
@@ -645,5 +667,8 @@
             });
         });
     </script>
+
+    <!-- CareerDNA AI Chatbot Assistant Widget -->
+    <script src="static/chat-widget.js"></script>
 </body>
 </html>

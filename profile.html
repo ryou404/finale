@@ -8,6 +8,16 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- CareerDNA MongoDB Atlas Client -->
+    <script src="static/db-client.js"></script>
+    
+    <!-- CareerDNA CV Template System -->
+    <script src="static/cv-templates.js"></script>
+    
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -159,6 +169,16 @@
                 <a href="index.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> 返回首頁
                 </a>
+                <div id="nav-auth-section" class="flex items-center gap-4 border-l border-klein/10 pl-4">
+                    <button id="nav-login-btn" onclick="window.ProfileApp.openLogin()" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入 / 註冊</button>
+                    <div id="nav-user-info" class="hidden flex items-center gap-3">
+                        <div class="flex flex-col text-right">
+                            <span id="nav-user-name" class="text-xs font-bold text-klein"></span>
+                            <button onclick="window.ProfileApp.logout()" class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
+                        </div>
+                        <div id="nav-user-avatar" class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -185,12 +205,27 @@
                 
                 <!-- Identity Monogram Card -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1 flex flex-col items-center text-center">
-                    
-                    <!-- Technical Identity Monogram Icon Box -->
-                    <div class="w-20 h-20 border border-klein/20 flex items-center justify-center text-klein font-syne font-black text-3xl mb-6 relative bg-klein/[0.02]">
-                        <i class="fa-solid fa-user-astronaut"></i>
-                        <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border border-white"></div>
+                    <!-- Technical Identity Monogram Icon Box & Avatar Uploader (Cloudflare R2) -->
+                    <div class="relative group mb-3">
+                        <div id="avatar-container" class="w-24 h-24 border-2 border-klein flex items-center justify-center text-klein font-syne font-black text-4xl relative bg-klein/[0.03] overflow-hidden shadow-md">
+                            <i id="avatar-default-icon" class="fa-solid fa-user-astronaut text-3xl"></i>
+                            <img id="avatar-img" src="" alt="Avatar" class="hidden w-full h-full object-cover">
+                            
+                            <!-- Hover Upload Overlay -->
+                            <label for="avatar-file-input" class="absolute inset-0 bg-klein/85 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200 backdrop-blur-[2px]">
+                                <i class="fa-solid fa-camera text-base mb-1"></i>
+                                <span class="font-mono text-[9px] uppercase font-bold tracking-wider">更換頭像</span>
+                            </label>
+                        </div>
+                        <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden">
+                        
+                        <!-- Online Status Indicator -->
+                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white shadow-xs"></div>
                     </div>
+
+                    <button type="button" onclick="document.getElementById('avatar-file-input').click()" class="font-mono text-[11px] font-bold text-klein/70 hover:text-klein underline flex items-center gap-1.5 mb-5">
+                        <i class="fa-solid fa-cloud-arrow-up text-xs"></i> <span>更換個人頭像 (R2 雲端儲存)</span>
+                    </button>
 
                     <h2 id="display-name" class="font-heading font-black text-2xl uppercase tracking-tight text-klein mb-1">
                         載入中...
@@ -323,18 +358,61 @@
 
                         </div>
 
-                        <!-- Theme Switcher Section -->
+                        <!-- Skills & Proficiency Section (Universal for all majors) -->
                         <div class="pt-8 border-t border-klein/10">
-                            <div class="flex items-center justify-between p-5 border border-klein/10 bg-klein/[0.02]">
+                            <div class="border-b border-klein/10 pb-3 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div>
-                                    <div class="h-2"></div>
-                                    <h3 class="font-heading font-black text-lg uppercase tracking-tight text-klein">深色模式 (Dark Mode)</h3>
-                                    <p class="font-body text-[11px] md:text-xs text-klein/60 mt-1">切換全站極黑 Cyber-HUD 與經典純白賽博極簡主題。</p>
+                                    <h3 class="font-heading font-black text-lg uppercase tracking-tight text-klein flex items-center gap-2">
+                                        <i class="fa-solid fa-wand-magic-sparkles text-klein"></i>
+                                        專屬專業技能與擅長工具 (Professional Skills & Tools)
+                                    </h3>
+                                    <p class="font-mono text-[11px] md:text-xs text-klein/60 mt-1">
+                                        請依據您的科系或專業背景自訂輸入技能標籤（例如：多益證照、財務報表、Photoshop、AutoCAD、Python 等），系統將在 <strong>AI 履歷生成</strong> 時自動融入此技能清單。
+                                    </p>
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
-                                    <div class="w-12 h-6 border border-klein/30 bg-white peer-focus:outline-none peer peer-checked:after:translate-x-6 peer-checked:after:bg-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-klein after:border after:border-klein after:h-4 after:w-4 after:transition-all peer-checked:bg-klein"></div>
-                                </label>
+                                <div id="selected-skills-count-badge" class="font-mono text-xs font-bold bg-klein text-white px-3 py-1.5 shrink-0 self-start sm:self-auto shadow-sm">
+                                    已建立 0 項技能
+                                </div>
+                            </div>
+
+                            <!-- Universal Skill Input Form -->
+                            <div class="space-y-4">
+                                <div class="p-4 bg-klein/[0.02] border border-klein/15 space-y-3">
+                                    <label class="block font-mono text-xs font-bold text-klein uppercase tracking-wider">
+                                        輸入專業技能或工具名稱 (Enter Skill / Tool Name)
+                                    </label>
+                                    <div class="flex flex-col sm:flex-row gap-2">
+                                        <div class="relative flex-1">
+                                            <input type="text" id="custom-skill-input" placeholder="例如：財務分析, 多益 850, Photoshop, 專案管理, Python..." class="w-full pl-9 pr-3 py-2.5 border border-klein/20 focus:border-klein text-klein font-mono text-xs placeholder:text-klein/30">
+                                            <div class="absolute left-3 top-1/2 -translate-y-1/2 text-klein/40 text-xs">
+                                                <i class="fa-solid fa-tag"></i>
+                                            </div>
+                                        </div>
+                                        <select id="custom-skill-level" class="px-3 py-2.5 border border-klein/20 focus:border-klein text-klein font-mono text-xs bg-white font-bold">
+                                            <option value="熟練">熟練 (Proficient)</option>
+                                            <option value="精通">精通 (Expert)</option>
+                                            <option value="基礎">基礎 (Familiar)</option>
+                                        </select>
+                                        <button type="button" onclick="window.ProfileApp.addCustomSkill()" class="px-5 py-2.5 bg-klein hover:bg-blue-800 text-white font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shrink-0 shadow-sm">
+                                            <i class="fa-solid fa-plus text-xs"></i> <span>新增技能</span>
+                                        </button>
+                                    </div>
+                                    <p class="font-mono text-[11px] text-klein/40">* 輸入完成後可直接按下 Enter 鍵快速新增</p>
+                                </div>
+
+                                <!-- Active Added Skills List -->
+                                <div class="p-4 bg-white border-2 border-klein space-y-3 crosshair-corner">
+                                    <div class="font-mono text-xs font-bold text-klein flex items-center justify-between border-b border-klein/10 pb-2">
+                                        <span class="flex items-center gap-2">
+                                            <i class="fa-solid fa-list-check text-klein"></i>
+                                            <span>我的技能清單 (點選標籤右側按鈕可切換熟練度 / 點擊 ✕ 移除)</span>
+                                        </span>
+                                        <button type="button" onclick="window.ProfileApp.clearAllSkills()" class="text-[11px] text-rose-600 hover:underline font-bold">全部清空</button>
+                                    </div>
+                                    <div id="active-skills-list" class="flex flex-wrap gap-2 pt-1 min-h-[48px] items-center">
+                                        <!-- Injected user skills chips -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -353,11 +431,99 @@
                     </form>
                 </div>
 
+                <!-- ================= AI RESUME ARCHIVE & HISTORY CARD ================= -->
+                <div class="p-8 md:p-12 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-klein/10 pb-6 mb-8">
+                        <div>
+                            <div class="h-2"></div>
+                            <h2 class="font-heading font-black text-2xl uppercase tracking-tight text-klein flex items-center gap-2.5">
+                                <i class="fa-solid fa-folder-open text-klein"></i>
+                                AI 履歷典藏庫 (Resume Archive)
+                            </h2>
+                            <p class="font-mono text-xs text-klein/60 mt-1">
+                                查看您過去由 AI 深度健檢所生成的所有履歷版本，支援即時預覽、切換模板與匯出 PDF。
+                            </p>
+                        </div>
+                        <div id="saved-resumes-count-badge" class="font-mono text-xs font-bold bg-klein text-white px-3.5 py-2 shrink-0 shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span id="saved-resumes-count-text">已典藏 0 份</span>
+                        </div>
+                    </div>
+
+                    <!-- Resume Cards Container -->
+                    <div id="saved-resumes-list" class="space-y-4">
+                        <div class="p-8 border-2 border-dashed border-klein/20 text-center space-y-3 bg-klein/[0.01]">
+                            <div class="w-12 h-12 bg-klein/5 border border-klein/20 flex items-center justify-center mx-auto text-klein text-xl">
+                                <i class="fa-solid fa-file-circle-plus"></i>
+                            </div>
+                            <h4 class="font-heading font-bold text-sm text-klein uppercase">尚無已生成的履歷紀錄</h4>
+                            <p class="font-mono text-xs text-klein/50 max-w-md mx-auto">
+                                前往「AI 履歷健檢」結合您的專屬技能武器庫與修課紀錄，立即生成第一份高競爭力 A4 履歷！
+                            </p>
+                            <a href="career_fit_v2.html" class="inline-flex items-center gap-2 px-6 py-2.5 bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider hover-spring mt-2">
+                                <span>前往生成履歷</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
+
+            </div>
         </div>
     </main>
 
-    
+    <!-- CV Fullscreen Preview Modal -->
+    <div id="cv-preview-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white border-2 border-klein w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-klein text-white flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-file-lines text-lg"></i>
+                    <div>
+                        <h3 id="modal-cv-title" class="font-heading font-black text-sm uppercase tracking-wider">履歷預覽</h3>
+                        <p id="modal-cv-subtitle" class="font-mono text-[10px] text-white/70">A4 Standard Format</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.ProfileApp.printModalCv()" class="px-3 py-1.5 bg-white text-klein font-mono text-xs font-bold uppercase tracking-wider hover:bg-white/90 flex items-center gap-1.5 hover-spring">
+                        <i class="fa-solid fa-print"></i> 列印 / 向量 PDF
+                    </button>
+                    <button onclick="window.ProfileApp.exportModalCvPdf()" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 hover-spring" id="modal-btn-export-pdf">
+                        <i class="fa-solid fa-download"></i> 匯出 PDF
+                    </button>
+                    <button onclick="window.ProfileApp.closeCvModal()" class="w-8 h-8 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 text-lg transition-colors ml-2">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Template Switcher in Modal -->
+            <div class="px-6 py-2.5 bg-klein/5 border-b border-klein/10 flex items-center gap-3 shrink-0">
+                <span class="font-mono text-xs font-bold text-klein shrink-0">切換版型：</span>
+                <div id="modal-template-selector" class="flex gap-2">
+                    <!-- Template buttons injected by renderModalTemplateSelector() -->
+                </div>
+            </div>
+
+            <!-- Modal Body: A4 Paper Preview Container -->
+            <div class="flex-1 overflow-y-auto p-6 bg-slate-100 flex justify-center" id="modal-cv-container">
+                <div id="modal-cv-paper" class="bg-white shadow-lg w-full max-w-[210mm] border border-klein/10">
+                    <!-- Rendered template HTML -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Footer -->
+    <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
+        <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+            &copy; 2026 Providence University // CareerDNA Engine
+        </div>
+        <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
+            <span class="hidden sm:inline">LATENCY: &lt;12ms</span>
+        </div>
+    </footer>
 
     <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-8 right-8 z-50 transform translate-y-20 opacity-0 transition-all duration-400 pointer-events-none">
@@ -372,7 +538,7 @@
     <!-- Firebase SDK & Profile Runtime -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -391,9 +557,7 @@
 
         window.ProfileApp = {
             currentUser: null,
-            state: {
-                
-            },
+            skills: [], // Array of { name: string, level: '精通' | '熟練' | '基礎' }
 
             init() {
                 const hour = new Date().getHours();
@@ -401,22 +565,39 @@
                 const greetingEl = document.getElementById('greeting-text');
                 if (greetingEl) greetingEl.innerText = `${greeting}，很高興見到你`;
 
-                const darkModeToggle = document.getElementById('dark-mode-toggle');
-                if (darkModeToggle) {
-                    if (localStorage.getItem('darkMode') === 'true') {
-                        document.body.classList.add('dark-mode');
-                        darkModeToggle.checked = true;
-                    }
-                    darkModeToggle.addEventListener('change', (e) => this.toggleDarkMode(e.target.checked));
+                // Setup Enter Key Listener for Custom Skill Input
+                const customSkillInput = document.getElementById('custom-skill-input');
+                if (customSkillInput) {
+                    customSkillInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.addCustomSkill();
+                        }
+                    });
                 }
 
+                // 1. Immediately Check MongoDB Atlas User
+                const savedDbUser = window.CareerDNA_DB ? window.CareerDNA_DB.getCurrentUser() : null;
+                if (savedDbUser) {
+                    this.currentUser = savedDbUser;
+                    this.updateNavUser(savedDbUser);
+                    this.loadUserData(savedDbUser);
+                }
+
+                // 2. Firebase Fallback / Sync
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
                         this.currentUser = user;
+                        this.updateNavUser(user);
                         this.loadUserData(user);
-                    } else {
-                        alert('請先登入系統，以啟用 AI 職涯導航與專屬數據儲存功能！');
-                        window.location.href = 'index.html';
+                    } else if (!savedDbUser && !window.CareerDNA_DB?.getCurrentUser()) {
+                        if (window.CareerDNA_DB) {
+                            window.CareerDNA_DB.showAuthModal((loggedInUser) => {
+                                this.currentUser = loggedInUser;
+                                this.updateNavUser(loggedInUser);
+                                this.loadUserData(loggedInUser);
+                            });
+                        }
                     }
                 });
 
@@ -425,31 +606,182 @@
                 
                 const gradeSelect = document.getElementById('grade');
                 if (gradeSelect) gradeSelect.addEventListener('change', (e) => this.syncGrade(e.target.value));
-                
-                const skillInput = document.getElementById('skill-input');
-                const addSkillBtn = document.getElementById('add-skill-btn');
-                if (addSkillBtn) addSkillBtn.addEventListener('click', () => this.addSkill());
-                if (skillInput) {
-                    skillInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.addSkill(); } });
-                    skillInput.addEventListener('input', (e) => this.handleSkillInput(e));
+
+                const avatarInput = document.getElementById('avatar-file-input');
+                if (avatarInput) avatarInput.addEventListener('change', (e) => this.handleAvatarUpload(e));
+            },
+
+            renderActiveSkills() {
+                const container = document.getElementById('active-skills-list');
+                const badge = document.getElementById('selected-skills-count-badge');
+                if (badge) badge.innerText = `已建立 ${this.skills.length} 項技能`;
+
+                if (!container) return;
+
+                if (this.skills.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-xs font-mono text-klein/50 italic py-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-klein/40"></i>
+                            <span>目前尚未新增任何專業技能，請在上方輸入您的專長工具、專業證照或修習能力。</span>
+                        </div>
+                    `;
+                    return;
                 }
-                
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('#skill-input') && !e.target.closest('#autocomplete-dropdown')) {
-                        this.hideAutocomplete();
+
+                container.innerHTML = this.skills.map((skill, idx) => {
+                    const levelColors = {
+                        '精通': 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                        '熟練': 'bg-blue-100 text-blue-800 border-blue-300',
+                        '基礎': 'bg-amber-100 text-amber-800 border-amber-300'
+                    };
+                    const levelClass = levelColors[skill.level] || levelColors['熟練'];
+                    return `
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-klein text-klein font-mono text-xs shadow-sm hover-spring">
+                            <i class="fa-solid fa-tag text-[10px] text-klein/60"></i>
+                            <span class="font-bold">${skill.name}</span>
+                            <button type="button" onclick="window.ProfileApp.cycleSkillLevel('${skill.name}')" title="點擊切換熟練度 (精通 ➔ 熟練 ➔ 基礎)" class="px-2 py-0.5 text-[10px] font-bold border ${levelClass} hover:opacity-80 transition-opacity">
+                                ${skill.level} ⟳
+                            </button>
+                            <button type="button" onclick="window.ProfileApp.removeSkill('${skill.name}')" title="移除此技能" class="text-klein/40 hover:text-rose-600 ml-1 transition-colors">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            cycleSkillLevel(name) {
+                const skill = this.skills.find(s => s.name === name);
+                if (!skill) return;
+                const levels = ['精通', '熟練', '基礎'];
+                const currentIdx = levels.indexOf(skill.level);
+                const nextIdx = (currentIdx + 1) % levels.length;
+                skill.level = levels[nextIdx];
+                this.renderActiveSkills();
+            },
+
+            addCustomSkill() {
+                const input = document.getElementById('custom-skill-input');
+                const levelSelect = document.getElementById('custom-skill-level');
+                if (!input) return;
+                const val = input.value.trim();
+                const level = levelSelect ? levelSelect.value : '熟練';
+                if (!val) return;
+
+                if (this.skills.some(s => s.name.toLowerCase() === val.toLowerCase())) {
+                    this.showToast(`技能「${val}」已在清單中！`, false);
+                    return;
+                }
+
+                this.skills.push({ name: val, level: level });
+                input.value = '';
+                this.renderActiveSkills();
+                this.showToast(`已新增技能「${val} (${level})」！`);
+            },
+
+            removeSkill(name) {
+                this.skills = this.skills.filter(s => s.name !== name);
+                this.renderActiveSkills();
+            },
+
+            clearAllSkills() {
+                if (this.skills.length === 0) return;
+                if (confirm('確定要清空所有已建立的專業技能嗎？')) {
+                    this.skills = [];
+                    this.renderActiveSkills();
+                }
+            },
+
+            updateAvatarDisplay(photoURL) {
+                const imgEl = document.getElementById('avatar-img');
+                const defaultIcon = document.getElementById('avatar-default-icon');
+                if (photoURL) {
+                    if (imgEl) {
+                        imgEl.src = photoURL;
+                        imgEl.classList.remove('hidden');
                     }
-                });
-
-                },
-
-            async toggleDarkMode(isDark) {
-                document.body.classList.toggle('dark-mode', isDark);
-                localStorage.setItem('darkMode', isDark);
-                if (this.currentUser) {
-                    try {
-                        await setDoc(doc(db, "users", this.currentUser.uid), { settings: { darkMode: isDark } }, { merge: true });
-                    } catch(err) { console.error("Settings sync failed", err); }
+                    if (defaultIcon) defaultIcon.classList.add('hidden');
+                } else {
+                    if (imgEl) imgEl.classList.add('hidden');
+                    if (defaultIcon) defaultIcon.classList.remove('hidden');
                 }
+            },
+
+            async handleAvatarUpload(e) {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+
+                if (!file.type.startsWith('image/')) {
+                    return alert('請選擇圖片檔案 (JPG, PNG, WEBP, GIF)');
+                }
+                if (file.size > 5 * 1024 * 1024) {
+                    return alert('圖片檔案過大，請選擇小於 5MB 的圖片！');
+                }
+
+                // Instant Local Preview
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    this.updateAvatarDisplay(event.target.result);
+                };
+                reader.readAsDataURL(file);
+
+                this.showToast('正在上傳頭像至 Cloudflare R2...', true);
+
+                const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid);
+                if (window.CareerDNA_DB && effectiveUid) {
+                    const res = await window.CareerDNA_DB.uploadAvatar(effectiveUid, file);
+                    if (res && res.status === 'ok' && res.photoURL) {
+                        this.updateAvatarDisplay(res.photoURL);
+                        this.updateNavUser(res.user || { ...this.currentUser, photoURL: res.photoURL });
+                        this.showToast('🎉 個人頭像已成功儲存至 Cloudflare R2！', true);
+                    } else {
+                        alert(res.message || '上傳失敗，請稍候重試');
+                    }
+                }
+            },
+
+            updateNavUser(user) {
+                if (!user) return;
+                const loginBtn = document.getElementById('nav-login-btn');
+                const userInfo = document.getElementById('nav-user-info');
+                const userName = document.getElementById('nav-user-name');
+                const userAvatar = document.getElementById('nav-user-avatar');
+                if (loginBtn) loginBtn.classList.add('hidden');
+                if (userInfo) userInfo.classList.remove('hidden');
+                const displayName = user.name || user.displayName || user.username || '用戶';
+                if (userName) userName.innerText = displayName;
+                if (userAvatar) {
+                    if (user.photoURL) {
+                        userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${displayName.charAt(0).toUpperCase()}'">`;
+                        userAvatar.className = 'w-8 h-8 overflow-hidden border border-klein flex items-center justify-center';
+                    } else {
+                        userAvatar.innerText = displayName.charAt(0).toUpperCase();
+                        userAvatar.className = 'w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm';
+                    }
+                }
+            },
+
+            openLogin() {
+                if (window.CareerDNA_DB) {
+                    window.CareerDNA_DB.showAuthModal((user) => {
+                        this.currentUser = user;
+                        this.updateNavUser(user);
+                        this.loadUserData(user);
+                        this.showToast(`歡迎回來，${user.name || user.username}！`);
+                    });
+                }
+            },
+
+            async logout() {
+                if (window.CareerDNA_DB) window.CareerDNA_DB.logout();
+                await signOut(auth).catch(() => {});
+                this.currentUser = null;
+                const loginBtn = document.getElementById('nav-login-btn');
+                const userInfo = document.getElementById('nav-user-info');
+                if (loginBtn) loginBtn.classList.remove('hidden');
+                if (userInfo) userInfo.classList.add('hidden');
+                this.showToast('已登出');
+                setTimeout(() => { window.location.href = 'index.html'; }, 800);
             },
 
             showToast(message, isSuccess = true) {
@@ -469,103 +801,164 @@
             },
 
             async syncGrade(newGrade) {
-                if (!this.currentUser || !newGrade) return;
-                try {
-                    await setDoc(doc(db, "users", this.currentUser.uid), { grade: newGrade }, { merge: true });
-                    localStorage.setItem('cdna_grade', newGrade);
-                    this.showToast(`已切換為 ${newGrade} 標準，履歷健檢將自動更新！`);
-                } catch (err) { console.error("Grade sync failed", err); }
+                if (!newGrade) return;
+                const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid);
+                if (window.CareerDNA_DB && effectiveUid) {
+                    window.CareerDNA_DB.saveProfile(effectiveUid, { grade: newGrade }).catch(console.error);
+                }
+                localStorage.setItem('cdna_grade', newGrade);
+                this.showToast(`已切換為 ${newGrade} 標準！`);
             },
 
             async loadUserData(user) {
+                if (!user) return;
+
+                const usernameField = document.getElementById('username');
+                const schoolField = document.getElementById('school');
+                const deptField = document.getElementById('department');
+                const gradeField = document.getElementById('grade');
                 const emailField = document.getElementById('email');
                 const displayEmail = document.getElementById('display-email');
-                if (emailField) emailField.value = user.email || '';
-                if (displayEmail) displayEmail.innerText = user.email || '...';
-                
-                try {
-                    const docSnap = await getDoc(doc(db, "users", user.uid));
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        const usernameField = document.getElementById('username');
-                        const schoolField = document.getElementById('school');
-                        const deptField = document.getElementById('department');
-                        const gradeField = document.getElementById('grade');
-                        const displayNameEl = document.getElementById('display-name');
-                        
-                        if (usernameField) usernameField.value = data.name || user.displayName || '';
-                        if (schoolField) schoolField.value = data.school || '';
-                        if (deptField) deptField.value = data.dept || data.department || '';
-                        if (gradeField) gradeField.value = data.grade || '';
-                        
-                        // Update academic info display panel
-                        this.updateAcademicDisplay(data);
+                const displayNameEl = document.getElementById('display-name');
 
-                        // Sync to localStorage for Lab Match & Resume integration
-                        if (data.school) localStorage.setItem('cdna_school', data.school);
-                        if (data.department) localStorage.setItem('cdna_department', data.department);
-                        if (data.grade) localStorage.setItem('cdna_grade', data.grade);
-                        
-                        if (data.name && displayNameEl) {
-                            displayNameEl.innerText = data.name;
-                        } else if (displayNameEl) {
-                            displayNameEl.innerText = user.displayName || "新朋友";
-                        }
+                const initialName = user.name || user.displayName || user.username || '';
+                const initialEmail = user.email || (user.username ? user.username + '@local' : '');
+                const initialSchool = user.school || localStorage.getItem('cdna_school') || '靜宜大學';
+                const initialDept = user.department || user.dept || localStorage.getItem('cdna_department') || 'IM';
+                const initialGrade = user.grade || localStorage.getItem('cdna_grade') || '大三';
 
-                        if (data.settings && data.settings.darkMode !== undefined) {
-                            this.toggleDarkMode(data.settings.darkMode);
-                            const darkModeToggle = document.getElementById('dark-mode-toggle');
-                            if (darkModeToggle) darkModeToggle.checked = data.settings.darkMode;
-                        }
-                    } else {
-                        const displayNameEl = document.getElementById('display-name');
-                        if (displayNameEl) displayNameEl.innerText = user.displayName || "新朋友";
+                if (usernameField) usernameField.value = initialName;
+                if (schoolField) schoolField.value = initialSchool;
+                if (deptField) deptField.value = initialDept;
+                if (gradeField) gradeField.value = initialGrade;
+                if (emailField) emailField.value = initialEmail;
+                if (displayEmail) displayEmail.innerText = initialEmail || '...';
+                if (displayNameEl) displayNameEl.innerText = initialName || '用戶';
+
+                this.updateAvatarDisplay(user.photoURL);
+
+                this.updateAcademicDisplay({
+                    school: initialSchool,
+                    department: initialDept,
+                    grade: initialGrade
+                });
+
+                // Load cached skills from user object or localStorage
+                if (user.skills && Array.isArray(user.skills)) {
+                    this.skills = user.skills
+                        .filter(s => s && (typeof s === 'string' ? s.trim() : s.name))
+                        .map(s => typeof s === 'string' ? { name: s.trim(), level: '熟練' } : s);
+                } else {
+                    const cachedSkills = localStorage.getItem('cdna_skills');
+                    if (cachedSkills) {
+                        try {
+                            const parsed = JSON.parse(cachedSkills);
+                            if (Array.isArray(parsed)) {
+                                this.skills = parsed
+                                    .filter(s => s && (typeof s === 'string' ? s.trim() : s.name))
+                                    .map(s => typeof s === 'string' ? { name: s.trim(), level: '熟練' } : s);
+                            }
+                        } catch(e) {}
                     }
-                } catch (e) { console.error("Error loading profile:", e); }
+                }
+                this.renderActiveSkills();
+
+                // Fetch latest data from MongoDB Atlas
+                const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(user) : (user.uid || user._id);
+                try {
+                    if (window.CareerDNA_DB && effectiveUid) {
+                        const res = await window.CareerDNA_DB.getUser(effectiveUid);
+                        if (res && res.user) {
+                            const data = res.user;
+                            if (usernameField) usernameField.value = data.name || data.displayName || data.username || initialName;
+                            if (schoolField) schoolField.value = data.school || initialSchool;
+                            if (deptField) deptField.value = data.department || data.dept || initialDept;
+                            if (gradeField) gradeField.value = data.grade || initialGrade;
+                            if (emailField) emailField.value = data.email || initialEmail;
+                            if (displayEmail) displayEmail.innerText = data.email || initialEmail;
+                            if (displayNameEl) displayNameEl.innerText = data.name || data.displayName || data.username || initialName;
+
+                            this.updateAvatarDisplay(data.photoURL || user.photoURL);
+                            this.updateAcademicDisplay(data);
+
+                            if (data.school) localStorage.setItem('cdna_school', data.school);
+                            if (data.department) localStorage.setItem('cdna_department', data.department);
+                            if (data.grade) localStorage.setItem('cdna_grade', data.grade);
+
+                            if (data.skills && Array.isArray(data.skills)) {
+                                this.skills = data.skills
+                                    .filter(s => s && (typeof s === 'string' ? s.trim() : s.name))
+                                    .map(s => typeof s === 'string' ? { name: s.trim(), level: '熟練' } : s);
+                                localStorage.setItem('cdna_skills', JSON.stringify(this.skills));
+                                this.renderActiveSkills();
+                            }
+                        }
+                    }
+                    // Load saved AI resumes history
+                    await this.loadSavedResumes(effectiveUid);
+                } catch (e) {
+                    console.error("Error fetching latest profile from Atlas:", e);
+                }
             },
 
             async saveProfile() {
-                if (!this.currentUser) return;
                 const saveBtn = document.getElementById('save-btn');
                 if (saveBtn) {
                     saveBtn.disabled = true;
-                    saveBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>儲存中...</span>`;
+                    saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xs"></i> <span>儲存中...</span>`;
                 }
 
                 try {
-                    const username = document.getElementById('username')?.value || '';
-                    const school = document.getElementById('school')?.value || '';
+                    const username = document.getElementById('username')?.value.trim() || '';
+                    const school = document.getElementById('school')?.value.trim() || '';
                     const department = document.getElementById('department')?.value || '';
                     const grade = document.getElementById('grade')?.value || '';
 
                     const updatedData = {
                         name: username,
+                        displayName: username,
                         school: school,
                         dept: department,
                         department: department,
                         grade: grade,
+                        skills: this.skills,
                         updatedAt: new Date()
                     };
                     
-                    await setDoc(doc(db, "users", this.currentUser.uid), updatedData, { merge: true });
+                    const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid);
                     
-                    // Sync to localStorage for cross-page personalization
-                    localStorage.setItem('cdna_school', updatedData.school || '');
-                    localStorage.setItem('cdna_department', updatedData.department || '');
-                    localStorage.setItem('cdna_grade', updatedData.grade || '');
-                    this.updateAcademicDisplay(updatedData);
-                    
-                    await updateProfile(this.currentUser, { displayName: updatedData.name });
-                    
-                    const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
-                    if (savedUser.email) {
-                        savedUser.name = updatedData.name;
-                        localStorage.setItem('careerDNA_user', JSON.stringify(savedUser));
+                    // 1. Sync to MongoDB Atlas
+                    if (window.CareerDNA_DB && effectiveUid) {
+                        const res = await window.CareerDNA_DB.saveProfile(effectiveUid, updatedData);
+                        if (res && res.status === 'error') {
+                            throw new Error(res.message || '資料庫更新異常');
+                        }
                     }
                     
+                    // 2. Sync to localStorage for cross-page personalization
+                    if (updatedData.school) localStorage.setItem('cdna_school', updatedData.school);
+                    if (updatedData.department) localStorage.setItem('cdna_department', updatedData.department);
+                    if (updatedData.grade) localStorage.setItem('cdna_grade', updatedData.grade);
+                    if (updatedData.name) localStorage.setItem('cdna_username', updatedData.name);
+                    localStorage.setItem('cdna_skills', JSON.stringify(this.skills));
+
+                    const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
+                    if (savedUser) {
+                        savedUser.name = updatedData.name;
+                        savedUser.school = updatedData.school;
+                        savedUser.department = updatedData.department;
+                        savedUser.dept = updatedData.department;
+                        savedUser.grade = updatedData.grade;
+                        savedUser.skills = updatedData.skills;
+                        localStorage.setItem('careerDNA_user', JSON.stringify(savedUser));
+                        this.updateNavUser(savedUser);
+                    }
+                    
+                    this.updateAcademicDisplay(updatedData);
                     const displayNameEl = document.getElementById('display-name');
-                    if (displayNameEl) displayNameEl.innerText = updatedData.name || '新朋友';
-                    this.showToast("資料更新成功！");
+                    if (displayNameEl) displayNameEl.innerText = updatedData.name || '用戶';
+                    
+                    this.showToast("資料與專業技能清單已成功儲存至 MongoDB Atlas！");
                 } catch (error) {
                     alert("更新失敗：" + error.message);
                 } finally {
@@ -575,14 +968,13 @@
                     }
                 }
             },
-            
 
             updateAcademicDisplay(data) {
                 const container = document.getElementById('academic-info-display');
                 if (!container) return;
                 const school = data.school || '';
                 const deptMap = { 'CS': '資訊工程學系 (CS)', 'IM': '資訊管理學系 (IM)', 'AI': '人工智慧學系 (AI)' };
-                const dept = deptMap[data.department] || data.dept || data.department || '';
+                const dept = deptMap[data.department] || deptMap[data.dept] || data.dept || data.department || '';
                 const grade = data.grade || '';
                 
                 const pills = [];
@@ -617,9 +1009,346 @@
                     container.innerHTML = pills.join('');
                 }
             },
+
+            // ==========================================
+            // AI RESUME ARCHIVE & HISTORY LOGIC
+            // ==========================================
+            savedResumes: [],
+            currentModalResume: null,
+            currentModalTemplate: 'modern',
+
+            async loadSavedResumes(uid) {
+                const targetUid = uid || (window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid));
+                if (!window.CareerDNA_DB || !targetUid) return;
+
+                try {
+                    const res = await window.CareerDNA_DB.getResumesList(targetUid);
+                    if (res && res.status === 'ok') {
+                        this.savedResumes = res.resumes || [];
+                    } else {
+                        // Fallback: check getUser history
+                        const userRes = await window.CareerDNA_DB.getUser(targetUid);
+                        this.savedResumes = (userRes?.user?.history_resume || []).slice().reverse();
+                    }
+                    this.renderSavedResumesList();
+                } catch (err) {
+                    console.error('[loadSavedResumes error]:', err);
+                }
+            },
+
+            renderSavedResumesList() {
+                const container = document.getElementById('saved-resumes-list');
+                const badgeText = document.getElementById('saved-resumes-count-text');
+                if (badgeText) badgeText.innerText = `已典藏 ${this.savedResumes.length} 份`;
+
+                if (!container) return;
+
+                if (!this.savedResumes || this.savedResumes.length === 0) {
+                    container.innerHTML = `
+                        <div class="p-8 border-2 border-dashed border-klein/20 text-center space-y-3 bg-klein/[0.01]">
+                            <div class="w-12 h-12 bg-klein/5 border border-klein/20 flex items-center justify-center mx-auto text-klein text-xl">
+                                <i class="fa-solid fa-file-circle-plus"></i>
+                            </div>
+                            <h4 class="font-heading font-bold text-sm text-klein uppercase">尚無已生成的履歷紀錄</h4>
+                            <p class="font-mono text-xs text-klein/50 max-w-md mx-auto">
+                                前往「AI 履歷健檢」結合您的專屬技能武器庫與修課紀錄，立即生成第一份高競爭力 A4 履歷！
+                            </p>
+                            <a href="career_fit_v2.html" class="inline-flex items-center gap-2 px-6 py-2.5 bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider hover-spring mt-2">
+                                <span>前往生成履歷</span>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.savedResumes.map((resume, idx) => {
+                    const dateStr = resume.updatedAt ? new Date(resume.updatedAt).toLocaleString('zh-TW', {
+                        year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+                    }) : '未標記時間';
+
+                    const title = resume.title || (resume.targetRole ? `${resume.targetRole} 智能履歷` : 'AI 智能履歷');
+                    const tplId = resume.templateId || 'modern';
+                    const tplName = (window.CVTemplates && window.CVTemplates.templates[tplId]?.name) || '現代雙欄';
+                    
+                    const quant = resume.metrics?.quantifiability ?? 75;
+                    const comp = resume.metrics?.completeness ?? 80;
+                    const kw = resume.metrics?.keywordRelevance ?? 70;
+                    const resumeId = resume._id || resume.updatedAt || idx;
+
+                    return `
+                        <div class="p-5 border-2 border-klein/15 hover:border-klein bg-white hover:bg-klein/[0.01] transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 crosshair-corner">
+                            <!-- Left: Info & Scores -->
+                            <div class="space-y-2 flex-1 min-w-0">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="px-2.5 py-0.5 bg-klein text-white font-mono text-[10px] font-bold uppercase tracking-wider">
+                                        ${tplName}
+                                    </span>
+                                    <h4 class="font-heading font-black text-base text-klein truncate">
+                                        ${title}
+                                    </h4>
+                                    <span class="font-mono text-[11px] text-klein/50">
+                                        <i class="fa-regular fa-clock text-[10px] mr-1"></i>${dateStr}
+                                    </span>
+                                </div>
+
+                                <!-- Dimension Score Badges -->
+                                <div class="flex flex-wrap items-center gap-3 font-mono text-[11px] pt-1">
+                                    <span class="flex items-center gap-1.5 text-klein/80">
+                                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                        量化數據：<strong class="text-klein">${quant}%</strong>
+                                    </span>
+                                    <span class="flex items-center gap-1.5 text-klein/80">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                        完整度：<strong class="text-klein">${comp}%</strong>
+                                    </span>
+                                    <span class="flex items-center gap-1.5 text-klein/80">
+                                        <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                                        關鍵字匹配：<strong class="text-klein">${kw}%</strong>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Right: Action Buttons -->
+                            <div class="flex items-center gap-2 shrink-0 self-end md:self-auto">
+                                <button onclick="window.ProfileApp.openCvModal(${idx})" class="px-3.5 py-2 bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider hover-spring flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-eye"></i> <span>預覽 / 匯出</span>
+                                </button>
+                                <button onclick="window.ProfileApp.directExportPdf(${idx})" class="px-3 py-2 bg-white text-klein border border-klein/30 hover:border-klein font-mono text-xs font-bold uppercase tracking-wider hover:bg-klein/5 flex items-center gap-1.5" title="快速下載 PDF">
+                                    <i class="fa-solid fa-file-pdf text-rose-600"></i> <span>PDF</span>
+                                </button>
+                                <button onclick="window.ProfileApp.deleteSavedResume('${resumeId}')" class="w-8 h-8 flex items-center justify-center text-klein/40 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors" title="刪除此紀錄">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            openCvModal(idx) {
+                const resume = this.savedResumes[idx];
+                if (!resume) return;
+
+                this.currentModalResume = resume;
+                this.currentModalTemplate = resume.templateId || 'modern';
+
+                // Set Modal Headers
+                const titleEl = document.getElementById('modal-cv-title');
+                const subtitleEl = document.getElementById('modal-cv-subtitle');
+                const dateStr = resume.updatedAt ? new Date(resume.updatedAt).toLocaleDateString('zh-TW') : '';
+                if (titleEl) titleEl.innerText = resume.title || 'AI 智能履歷';
+                if (subtitleEl) subtitleEl.innerText = `生成日期：${dateStr} · A4 Standard`;
+
+                // Render Template Selector in Modal
+                const selectorContainer = document.getElementById('modal-template-selector');
+                if (selectorContainer && window.CVTemplates) {
+                    const templates = window.CVTemplates.getTemplateList();
+                    selectorContainer.innerHTML = templates.map(tpl => `
+                        <button onclick="window.ProfileApp.switchModalTemplate('${tpl.id}')" 
+                            id="modal-tpl-btn-${tpl.id}"
+                            class="px-3 py-1 font-mono text-xs font-bold border ${this.currentModalTemplate === tpl.id ? 'bg-klein text-white border-klein' : 'bg-white text-klein border-klein/20 hover:border-klein/60'} transition-all">
+                            ${tpl.name}
+                        </button>
+                    `).join('');
+                }
+
+                // Render Content
+                this.renderModalCv();
+
+                // Show Modal
+                const modal = document.getElementById('cv-preview-modal');
+                if (modal) modal.classList.remove('hidden');
+            },
+
+            closeCvModal() {
+                const modal = document.getElementById('cv-preview-modal');
+                if (modal) modal.classList.add('hidden');
+            },
+
+            switchModalTemplate(tplId) {
+                this.currentModalTemplate = tplId;
+                if (window.CVTemplates) {
+                    const templates = window.CVTemplates.getTemplateList();
+                    templates.forEach(tpl => {
+                        const btn = document.getElementById(`modal-tpl-btn-${tpl.id}`);
+                        if (btn) {
+                            if (tpl.id === tplId) {
+                                btn.className = 'px-3 py-1 font-mono text-xs font-bold border bg-klein text-white border-klein transition-all';
+                            } else {
+                                btn.className = 'px-3 py-1 font-mono text-xs font-bold border bg-white text-klein border-klein/20 hover:border-klein/60 transition-all';
+                            }
+                        }
+                    });
+                }
+                this.renderModalCv();
+            },
+
+            renderModalCv() {
+                const paper = document.getElementById('modal-cv-paper');
+                if (!paper || !this.currentModalResume) return;
+
+                const resume = this.currentModalResume;
+                
+                // Re-build cvData from formattedResumeMarkdown using our upgraded parser
+                let cvData = resume.cvData;
+                if (!cvData || !cvData.experienceHtml || !cvData.summary || Object.keys(cvData).length === 0) {
+                    if (window.CVTemplates) {
+                        cvData = window.CVTemplates.buildCvData(
+                            { 
+                                resumeMarkdown: resume.formattedResumeMarkdown || resume.resumeMarkdown, 
+                                analysis: resume.analysis 
+                            },
+                            { 
+                                selectedCourses: resume.selectedCourses || [], 
+                                selectedExps: resume.selectedExps || [], 
+                                skills: resume.skills || [],
+                                targetRole: resume.targetRole || ''
+                            }
+                        );
+                    }
+                }
+
+                if (window.CVTemplates && cvData) {
+                    const html = window.CVTemplates.render(this.currentModalTemplate, cvData);
+                    paper.innerHTML = `<div id="profile-pdf-render-target">${html}</div>`;
+                } else {
+                    // Fallback to markdown parse
+                    const md = resume.formattedResumeMarkdown || resume.resumeMarkdown || '無履歷內容';
+                    const html = typeof marked !== 'undefined' ? marked.parse(md) : md;
+                    paper.innerHTML = `<div id="profile-pdf-render-target" class="p-8 text-klein">${html}</div>`;
+                }
+            },
+
+            async exportModalCvPdf() {
+                const element = document.getElementById('profile-pdf-render-target');
+                if (!element) return;
+
+                const exportBtn = document.getElementById('modal-btn-export-pdf');
+                if (exportBtn) {
+                    exportBtn.disabled = true;
+                    exportBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>匯出中...</span>';
+                }
+
+                const userName = this.currentUser?.name || this.currentUser?.displayName || 'CareerDNA';
+                const filename = `${userName}_Resume_Archived.pdf`;
+
+                const opt = {
+                    margin:       [0, 0, 0, 0],
+                    filename:     filename,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { 
+                        scale: 2, 
+                        useCORS: true, 
+                        letterRendering: true,
+                        scrollY: 0,
+                        scrollX: 0
+                    },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                try {
+                    await html2pdf().set(opt).from(element).save();
+                    this.showToast(`PDF 已成功匯出：${filename}`);
+                } catch (err) {
+                    console.error('[PDF Export Error]:', err);
+                    this.showToast('PDF 匯出異常，正在開啟原生列印視窗...');
+                    this.printModalCv();
+                } finally {
+                    if (exportBtn) {
+                        exportBtn.disabled = false;
+                        exportBtn.innerHTML = '<i class="fa-solid fa-download"></i> 匯出 PDF';
+                    }
+                }
+            },
+
+            printModalCv() {
+                const element = document.getElementById('profile-pdf-render-target');
+                if (!element) return;
+
+                const userName = this.currentUser?.name || this.currentUser?.displayName || 'CareerDNA';
+
+                const printWindow = window.open('', '_blank');
+                if (!printWindow) {
+                    alert('請允許瀏覽器開啟彈出式視窗以進行列印 / 匯出！');
+                    return;
+                }
+
+                printWindow.document.write(`
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>${userName} - 典藏履歷表 (CareerDNA)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        @page { size: A4 portrait; margin: 0; }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    ${element.innerHTML}
+    <script>
+        window.onload = function() {
+            setTimeout(function() { window.print(); }, 300);
+        };
+    <\/script>
+</body>
+</html>
+                `);
+                printWindow.document.close();
+            },
+
+            async directExportPdf(idx) {
+                this.openCvModal(idx);
+                setTimeout(() => {
+                    this.exportModalCvPdf();
+                }, 300);
+            },
+
+            async deleteSavedResume(resumeId) {
+                if (!confirm('確定要從個人檔案中刪除此份履歷紀錄嗎？')) return;
+
+                const targetUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid);
+                if (!window.CareerDNA_DB || !targetUid) return;
+
+                try {
+                    const res = await window.CareerDNA_DB.deleteResume(targetUid, resumeId);
+                    if (res && res.status === 'ok') {
+                        this.savedResumes = res.resumes || [];
+                        this.renderSavedResumesList();
+                        this.showToast('履歷紀錄已成功刪除！');
+                    } else {
+                        alert(res.message || '刪除失敗');
+                    }
+                } catch (err) {
+                    alert('刪除失敗：' + err.message);
+                }
+            }
         };
 
-        document.addEventListener('DOMContentLoaded', () => ProfileApp.init());
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => window.ProfileApp.init());
+        } else {
+            window.ProfileApp.init();
+        }
     </script>
 
     <!-- Scroll Animations (Intersection Observer) -->
@@ -643,5 +1372,8 @@
             observer.observe(el);
         });
     </script>
+
+    <!-- CareerDNA AI Chatbot Assistant Widget -->
+    <script src="static/chat-widget.js"></script>
 </body>
 </html>
