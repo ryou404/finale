@@ -46,11 +46,17 @@
     </script>
 
     <style>
-        body {
+        html, body {
             background-color: #ffffff;
             color: #002fa7;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            overflow-x: hidden;
+            max-width: 100vw;
+            overflow-x: hidden !important;
+            position: relative;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
         }
 
         /* Stryde Spring Animations */
@@ -103,19 +109,19 @@
             position: absolute;
             color: rgba(0, 47, 167, 0.3);
             font-family: monospace;
-            font-size: 1rem;
+            font-size: 0.85rem;
             line-height: 1;
             pointer-events: none;
         }
 
         .crosshair-corner::before {
-            top: -8px;
-            left: -4px;
+            top: 2px;
+            left: 2px;
         }
 
         .crosshair-corner::after {
-            bottom: -8px;
-            right: -4px;
+            bottom: 2px;
+            right: 2px;
         }
 
         /* Outline Display Typography */
@@ -182,56 +188,54 @@
         }
     </style>
 </head>
-<body class="overflow-x-hidden pb-16 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
+<body class="overflow-x-hidden pb-24 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
     <script>
         if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
     </script>
 
-    <!-- Global Cyber-Brutalist Navigation Bar -->
-    <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
-        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-4 group">
-                <div
-                    class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
+    <!-- Global Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 w-full z-40 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 h-16 sm:h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 sm:gap-4 group shrink-0">
+                <div class="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 items-center justify-center border border-klein/20 text-klein font-mono text-base sm:text-xl group-hover:bg-klein group-hover:text-white transition-all">
                     <i class="fa-solid fa-bolt"></i>
                 </div>
                 <div class="flex flex-col">
-                    <span
-                        class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
-                    <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">RESOURCE_ARCHIVE
-                        // v2026</span>
+                    <span class="font-syne font-extrabold text-sm sm:text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    <span class="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-klein/40 -mt-0.5 sm:-mt-1 hidden sm:block">RESOURCE_ARCHIVE // v2026</span>
                 </div>
             </a>
             
-            <div class="fixed md:static bottom-0 left-0 w-full md:w-auto bg-white/95 md:bg-transparent backdrop-blur-xl border-t md:border-t-0 border-klein/10 p-3 md:p-0 flex justify-evenly md:justify-start items-center md:gap-8 z-50 overflow-x-auto shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:shadow-none pb-[calc(12px+env(safe-area-inset-bottom))] md:pb-0">
-                <a href="career_fit_v2.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
-                <a href="profile.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
-                <a href="brand_test.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
-                <a href="resource_library.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein border-b-2 border-klein pb-1">學習資源</a>
+            <!-- Desktop Nav Links (Hidden on Mobile) -->
+            <div class="hidden md:flex items-center gap-6 lg:gap-8 whitespace-nowrap">
+                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
+                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1 transition-colors">學習資源</a>
             </div>
 
-            <div class="flex items-center gap-3 md:gap-4">
+            <!-- Top Right Action Controls -->
+            <div class="flex items-center gap-2 sm:gap-4 shrink-0">
                 <a href="admin.html" id="static-nav-admin-btn"
-                    class="hidden nav-admin-btn px-3 py-1.5 bg-flame-orange hover:bg-orange-600 text-white text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-shield-halved"></i> <span>管理後台</span>
+                    class="hidden nav-admin-btn px-2 sm:px-3 py-1 sm:py-1.5 bg-flame-orange hover:bg-orange-600 text-white text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1 sm:gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-shield-halved"></i> <span class="hidden sm:inline">管理後台</span>
                 </a>
-                <a href="index.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
-                    <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
+                <a href="index.html" class="hidden sm:flex font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> <span>返回首頁</span>
                 </a>
-                <div id="nav-auth-section" class="flex items-center gap-4 border-l border-klein/10 pl-4">
+                <div id="nav-auth-section" class="flex items-center gap-2 sm:gap-3 border-l border-klein/10 pl-2 sm:pl-4 shrink-0">
                     <button id="nav-login-btn"
                         onclick="window.CareerDNA_DB.showAuthModal((u) => window.location.reload())"
-                        class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入
-                        / 註冊</button>
-                    <div id="nav-user-info" class="hidden flex items-center gap-3">
+                        class="font-mono uppercase text-[11px] sm:text-xs font-bold tracking-wider text-klein hover:text-white hover:bg-klein border border-klein px-2.5 sm:px-4 py-1 sm:py-1.5 transition-all">登入</button>
+                    <div id="nav-user-info" class="hidden flex items-center gap-2 sm:gap-3">
                         <div class="flex flex-col text-right">
-                            <span id="nav-user-name" class="text-xs font-bold text-klein"></span>
+                            <span id="nav-user-name" class="text-[11px] sm:text-xs font-bold text-klein truncate max-w-[80px] sm:max-w-[120px]"></span>
                             <button onclick="window.CareerDNA_DB.logout(); window.location.reload();"
                                 class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
                         </div>
                         <div id="nav-user-avatar"
-                            class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm">
+                            class="w-7 h-7 sm:w-8 sm:h-8 bg-klein text-white flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
                         </div>
                     </div>
                 </div>
@@ -239,52 +243,61 @@
         </div>
     </nav>
 
+    <!-- Mobile Fixed Bottom Navigation Bar -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
+        <a href="career_fit_v2.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">AI 履歷健檢</a>
+        <a href="profile.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">個人檔案</a>
+        <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">品牌測驗</a>
+        <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">科系適配</a>
+        <a href="resource_library.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein border-b-2 border-klein pb-0.5 px-2 py-1 transition-colors shrink-0">學習資源</a>
+    </nav>
+
     <!-- Main Workspace -->
-    <main class="flex-grow pt-28 pb-20 px-4 md:px-12">
+    <main class="flex-grow pt-24 sm:pt-28 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12">
         <div
-            class="max-w-[1400px] mx-auto min-h-[75vh] border-x border-klein/10 px-6 md:px-16 lg:px-20 py-10 relative crosshair-corner">
+            class="max-w-[1400px] mx-auto min-h-[75vh] border-x border-klein/10 px-4 sm:px-8 md:px-16 lg:px-20 py-8 sm:py-10 relative crosshair-corner overflow-hidden">
 
             <!-- Page Header -->
-            <div class="border-b border-klein/10 pb-8 mb-10 reveal-up">
+            <div class="border-b border-klein/10 pb-6 sm:pb-8 mb-8 sm:mb-10 reveal-up">
 
                 <h1
-                    class="font-syne font-extrabold text-3xl md:text-5xl lg:text-6xl uppercase tracking-tight text-klein">
+                    class="font-syne font-extrabold text-2xl sm:text-4xl md:text-5xl lg:text-6xl uppercase tracking-tight text-klein break-words">
                     學習資源 <span class="outline-text">資料庫</span>
                 </h1>
-                <p class="font-body text-klein/70 text-sm md:text-base mt-2 max-w-3xl leading-relaxed">
+                <p class="font-body text-klein/70 text-xs sm:text-sm md:text-base mt-2 max-w-3xl leading-relaxed">
                     靜宜大學資訊學院官方精選專業學習資源，依據您的學系與年級動態個人化篩選，助力跨領域專業扎根。
                 </p>
             </div>
 
             <!-- Personalized Banner -->
             <div id="personalized-banner"
-                class="hidden mb-12 border-2 border-klein bg-white p-8 relative crosshair-corner reveal-up">
-                <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                class="hidden mb-8 sm:mb-12 border-2 border-klein bg-white p-5 sm:p-8 relative crosshair-corner reveal-up">
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 sm:gap-6">
                     <div>
                         <div class="flex items-center gap-2 mb-2">
                             <span class="w-2 h-2 bg-klein animate-pulse"></span>
-                            <span class="font-mono text-[11px] md:text-xs font-bold tracking-[0.3em] uppercase text-klein">PERSONALIZED_RECOMMENDATION // PROFILE_MATCHED</span>
+                            <span class="font-mono text-[10px] sm:text-xs font-bold tracking-tight sm:tracking-[0.3em] uppercase text-klein">PERSONALIZED_RECOMMENDATION // PROFILE_MATCHED</span>
                         </div>
-                        <h2 class="font-heading font-black text-2xl md:text-3xl text-klein uppercase tracking-tight mb-2"
+                        <h2 class="font-heading font-black text-xl sm:text-2xl md:text-3xl text-klein uppercase tracking-tight mb-2"
                             id="banner-title">你好！</h2>
-                        <p class="font-body text-klein/70 text-sm md:text-base max-w-2xl" id="banner-desc">
+                        <p class="font-body text-klein/70 text-xs sm:text-sm md:text-base max-w-2xl" id="banner-desc">
                             已為你篩選出最相關的學習資源，優先顯示在下方推薦區塊</p>
-                        <div class="flex flex-wrap gap-2 mt-5" id="banner-chips">
+                        <div class="flex flex-wrap gap-2 mt-4 sm:mt-5" id="banner-chips">
                             <!-- Injected by JS -->
                         </div>
                     </div>
-                    <button onclick="ResourceLib.clearPersonalization()" class="hover-spring border border-klein/20 hover:border-klein text-klein font-mono text-[11px] md:text-xs font-bold uppercase tracking-wider px-4 py-2 hover:bg-klein hover:text-white transition-all shrink-0">
+                    <button onclick="ResourceLib.clearPersonalization()" class="hover-spring border border-klein/20 hover:border-klein text-klein font-mono text-[10px] sm:text-xs font-bold uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-klein hover:text-white transition-all shrink-0">
                         <i class="fa-solid fa-rotate-left mr-1.5"></i> 顯示全部資源
                     </button>
                 </div>
             </div>
 
             <!-- 2-Column Responsive Layout -->
-            <div class="flex flex-col lg:flex-row gap-10">
+            <div class="flex flex-col lg:flex-row gap-6 lg:gap-10">
 
                 <!-- Left Sidebar Filters -->
                 <aside class="lg:w-80 shrink-0">
-                    <div class="bg-white border border-klein/10 p-6 sticky top-28 space-y-8 crosshair-corner">
+                    <div class="bg-white border border-klein/10 p-5 sm:p-6 lg:sticky lg:top-28 space-y-6 sm:space-y-8 crosshair-corner">
 
                         <!-- Search Box -->
                         <div>

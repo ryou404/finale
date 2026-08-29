@@ -49,11 +49,17 @@
     </script>
     
     <style>
-        body {
+        html, body {
             background-color: #ffffff;
             color: #002fa7;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            overflow-x: hidden;
+            max-width: 100vw;
+            overflow-x: hidden !important;
+            position: relative;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
         }
 
         /* Stryde Spring Animations */
@@ -90,14 +96,15 @@
             position: absolute;
             color: rgba(0, 47, 167, 0.3);
             font-family: monospace;
-            font-size: 1rem;
+            font-size: 0.85rem;
             line-height: 1;
             pointer-events: none;
         }
-        .crosshair-corner::before { top: -8px; left: -4px; }
-        .crosshair-corner::after { bottom: -8px; right: -4px; }
+        .crosshair-corner::before { top: 2px; left: 2px; }
+        .crosshair-corner::after { bottom: 2px; right: 2px; }
 
-        /* Outline Display Typography */        .outline-text {
+        /* Outline Display Typography */
+        .outline-text {
             color: #ffffff;
             -webkit-text-stroke: 1.5px #002fa7;
             paint-order: stroke fill;
@@ -116,6 +123,7 @@
             border-radius: 0 !important;
             font-family: 'Chakra Petch', 'Noto Sans TC', sans-serif !important;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            max-width: 100%;
         }
         input:focus, select:focus, textarea:focus {
             border-color: #002fa7 !important;
@@ -136,7 +144,7 @@
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="overflow-x-hidden pb-16 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col">
+<body class="overflow-x-hidden max-w-full pb-24 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col">
     <script>
       // Apply dark mode instantly to prevent FOUC (Flash of Unstyled Content)
       if (localStorage.getItem('darkMode') === 'true') {
@@ -144,67 +152,76 @@
       }
     </script>
 
-    <!-- Global Navigation Bar -->
-    <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
-        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-4 group">
-                <div class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
+    <!-- Global Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 w-full z-40 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 h-16 sm:h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 sm:gap-4 group shrink-0">
+                <div class="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 items-center justify-center border border-klein/20 text-klein font-mono text-base sm:text-xl group-hover:bg-klein group-hover:text-white transition-all">
                     <i class="fa-solid fa-bolt"></i>
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
-                    <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">USER_PROFILE // v2026</span>
+                    <span class="font-syne font-extrabold text-sm sm:text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    <span class="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-klein/40 -mt-0.5 sm:-mt-1 hidden sm:block">USER_PROFILE // v2026</span>
                 </div>
             </a>
             
-            <div class="fixed md:static bottom-0 left-0 w-full md:w-auto bg-white/95 md:bg-transparent backdrop-blur-xl border-t md:border-t-0 border-klein/10 p-3 md:p-0 flex justify-evenly md:justify-start items-center md:gap-8 z-50 overflow-x-auto shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:shadow-none pb-[calc(12px+env(safe-area-inset-bottom))] md:pb-0">
-                <a href="career_fit_v2.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
-                <a href="profile.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein border-b-2 border-klein pb-1">個人檔案</a>
-                <a href="brand_test.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
-                <a href="resource_library.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+            <!-- Desktop Nav Links (Hidden on Mobile) -->
+            <div class="hidden md:flex items-center gap-6 lg:gap-8 whitespace-nowrap">
+                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1 transition-colors">個人檔案</a>
+                <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
+                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
             </div>
 
-            <div class="flex items-center gap-3 md:gap-4">
-                <a href="index.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
-                    <i class="fa-solid fa-arrow-left"></i> 返回首頁
+            <!-- Top Right Action Controls -->
+            <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+                <a href="index.html" class="hidden sm:flex font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> <span>返回首頁</span>
                 </a>
-                <div id="nav-auth-section" class="flex items-center gap-3 md:gap-4 border-l border-klein/10 pl-3 md:pl-4">
-                    <button id="nav-login-btn" onclick="window.ProfileApp.openLogin()" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入 / 註冊</button>
-                    <div id="nav-user-info" class="hidden flex items-center gap-3">
+                <div id="nav-auth-section" class="flex items-center gap-2 sm:gap-3 border-l border-klein/10 pl-2 sm:pl-4 shrink-0">
+                    <button id="nav-login-btn" onclick="window.ProfileApp.openLogin()" class="font-mono uppercase text-[11px] sm:text-xs font-bold tracking-wider text-klein hover:text-white hover:bg-klein border border-klein px-2.5 sm:px-4 py-1 sm:py-1.5 transition-all">登入</button>
+                    <div id="nav-user-info" class="hidden flex items-center gap-2 sm:gap-3">
                         <div class="flex flex-col text-right">
-                            <span id="nav-user-name" class="text-xs font-bold text-klein"></span>
+                            <span id="nav-user-name" class="text-[11px] sm:text-xs font-bold text-klein truncate max-w-[65px] sm:max-w-[120px]"></span>
                             <button onclick="window.ProfileApp.logout()" class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
                         </div>
-                        <div id="nav-user-avatar" class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm"></div>
+                        <div id="nav-user-avatar" class="w-7 h-7 sm:w-8 sm:h-8 bg-klein text-white flex items-center justify-center font-bold text-xs sm:text-sm shrink-0"></div>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Mobile Fixed Bottom Navigation Bar -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
+        <a href="career_fit_v2.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">AI 履歷健檢</a>
+        <a href="profile.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein border-b-2 border-klein pb-0.5 px-2 py-1 transition-colors shrink-0">個人檔案</a>
+        <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">品牌測驗</a>
+        <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">科系適配</a>
+        <a href="resource_library.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">學習資源</a>
+    </nav>
+
     <!-- Header Title Banner (Hero Display) -->
-    <section class="max-w-[1400px] mx-auto border-x border-klein/10 px-6 md:px-12 pt-28 pb-10 crosshair-corner">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-klein/10 pb-8 reveal-up">
+    <section class="max-w-[1400px] mx-auto border-x border-klein/10 px-3 sm:px-6 md:px-12 pt-20 sm:pt-28 pb-4 sm:pb-10 crosshair-corner overflow-hidden">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 border-b border-klein/10 pb-6 sm:pb-8 reveal-up">
             <div>
-                
-                <h1 class="font-syne font-extrabold text-4xl md:text-6xl uppercase tracking-tight text-klein flex items-center gap-3">
-                    Profile <span class="outline-text">Settings</span>
+                <h1 class="font-syne font-extrabold text-2xl sm:text-4xl md:text-6xl uppercase tracking-tight text-klein flex flex-wrap items-center gap-2 sm:gap-3 break-words">
+                    <span>Profile</span> <span class="outline-text">Settings</span>
                 </h1>
             </div>
-            
         </div>
     </section>
 
     <!-- Main Content Dual-Column Layout -->
-    <main class="flex-grow max-w-[1400px] mx-auto w-full border-x border-klein/10 px-6 md:px-12 pb-24">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <main class="flex-grow max-w-[1400px] mx-auto w-full border-x border-klein/10 px-3 sm:px-6 md:px-12 pb-20 sm:pb-24 overflow-x-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
             
             <!-- ================= LEFT COLUMN: Identity & Greeting (4 Cols) ================= -->
             <div class="lg:col-span-4 space-y-6">
                 
                 <!-- Identity Monogram Card -->
-                <div class="p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1 flex flex-col items-center text-center">
+                <div class="p-4 sm:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1 flex flex-col items-center text-center max-w-full overflow-hidden">
                     <!-- Technical Identity Monogram Icon Box & Avatar Uploader (Cloudflare R2) -->
                     <div class="relative group mb-3">
                         <div id="avatar-container" class="w-24 h-24 border-2 border-klein flex items-center justify-center text-klein font-syne font-black text-4xl relative bg-klein/[0.03] overflow-hidden shadow-md">
@@ -223,14 +240,14 @@
                         <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white shadow-xs"></div>
                     </div>
 
-                    <button type="button" onclick="document.getElementById('avatar-file-input').click()" class="font-mono text-[11px] font-bold text-klein/70 hover:text-klein underline flex items-center gap-1.5 mb-5">
-                        <i class="fa-solid fa-cloud-arrow-up text-xs"></i> <span>更換個人頭像 (R2 雲端儲存)</span>
+                    <button type="button" onclick="document.getElementById('avatar-file-input').click()" class="font-mono text-[10px] sm:text-[11px] font-bold text-klein/70 hover:text-klein underline flex items-center justify-center gap-1.5 mb-5 max-w-full text-center">
+                        <i class="fa-solid fa-cloud-arrow-up text-xs shrink-0"></i> <span>更換個人頭像 (R2 雲端儲存)</span>
                     </button>
 
-                    <h2 id="display-name" class="font-heading font-black text-2xl uppercase tracking-tight text-klein mb-1">
+                    <h2 id="display-name" class="font-heading font-black text-xl sm:text-2xl uppercase tracking-tight text-klein mb-1 break-words max-w-full">
                         載入中...
                     </h2>
-                    <p id="display-email" class="font-mono text-[11px] md:text-xs text-klein/50 tracking-wider mb-6">
+                    <p id="display-email" class="font-mono text-[11px] md:text-xs text-klein/50 tracking-wider mb-6 break-all max-w-full">
                         ...
                     </p>
 
@@ -241,24 +258,24 @@
                 </div>
 
                 <!-- System Greeting & Mission Briefing Card -->
-                <div class="p-8 bg-klein text-white border border-klein crosshair-corner reveal-up reveal-delay-2 flex flex-col justify-between">
+                <div class="p-5 sm:p-8 bg-klein text-white border border-klein crosshair-corner reveal-up reveal-delay-2 flex flex-col justify-between max-w-full overflow-hidden">
                     <div>
                         <div class="font-mono text-[11px] md:text-xs uppercase tracking-normal md:tracking-[0.2em] text-white/60 mb-2">SYS // BRIEFING</div>
-                        <h3 class="font-heading font-black text-xl uppercase mb-3 flex items-center gap-2">
+                        <h3 class="font-heading font-black text-lg sm:text-xl uppercase mb-3 flex items-center gap-2">
                             <span id="greeting-text">早安，很高興見到你</span>
                         </h3>
-                        <p class="font-body text-white/80 text-sm leading-relaxed mb-6">
+                        <p class="font-body text-white/80 text-xs sm:text-sm leading-relaxed mb-6">
                             完善學籍與技能武器庫，將使 AI 履歷健檢與科系適配引擎獲得更高維度的精準判讀。
                         </p>
                     </div>
-                    <div class="font-mono text-[11px] md:text-xs text-white/40 tracking-normal md:tracking-[0.2em] uppercase border-t border-white/10 pt-4 flex items-center justify-between">
+                    <div class="font-mono text-[10px] sm:text-[11px] md:text-xs text-white/40 tracking-normal md:tracking-[0.2em] uppercase border-t border-white/10 pt-4 flex flex-wrap items-center justify-between gap-2">
                         <span>CAREER_DNA_CORE</span>
                         <span><i class="fa-solid fa-shield-halved"></i> 256-BIT LOCAL_SYNC</span>
                     </div>
                 </div>
 
                 <!-- Quick Jump Navigation Card -->
-                <div class="p-6 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-3">
+                <div class="p-4 sm:p-6 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-3 max-w-full overflow-hidden">
                     <div class="font-mono text-[11px] md:text-xs font-bold uppercase tracking-normal md:tracking-[0.2em] text-klein/40 mb-4">NAV // QUICK_OPERATIONS</div>
                     <div class="space-y-3">
                         <a href="career_fit_v2.html" class="flex items-center justify-between p-3 border border-klein/10 hover:border-klein text-klein text-[11px] md:text-xs font-mono font-bold tracking-wider hover:bg-klein hover:text-white transition-all group">
@@ -282,7 +299,7 @@
             <div class="lg:col-span-8 space-y-8">
                 
                 <!-- Master Profile Form Card -->
-                <div class="p-8 md:p-12 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1">
+                <div class="p-4 sm:p-8 md:p-12 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1 max-w-full overflow-hidden">
                     
                     <!-- Section Header with Save Button -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-klein/10 pb-6 mb-8">
@@ -432,13 +449,13 @@
                 </div>
 
                 <!-- ================= AI RESUME ARCHIVE & HISTORY CARD ================= -->
-                <div class="p-8 md:p-12 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2">
+                <div class="p-4 sm:p-8 md:p-12 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2 max-w-full overflow-hidden">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-klein/10 pb-6 mb-8">
                         <div>
                             <div class="h-2"></div>
-                            <h2 class="font-heading font-black text-2xl uppercase tracking-tight text-klein flex items-center gap-2.5">
+                            <h2 class="font-heading font-black text-xl sm:text-2xl uppercase tracking-tight text-klein flex items-center gap-2.5">
                                 <i class="fa-solid fa-folder-open text-klein"></i>
-                                AI 履歷典藏庫 (Resume Archive)
+                                <span>AI 履歷典藏庫 (Resume Archive)</span>
                             </h2>
                             <p class="font-mono text-xs text-klein/60 mt-1">
                                 查看您過去由 AI 深度健檢所生成的所有履歷版本，支援即時預覽、切換模板與匯出 PDF。
@@ -451,8 +468,8 @@
                     </div>
 
                     <!-- Resume Cards Container -->
-                    <div id="saved-resumes-list" class="space-y-4">
-                        <div class="p-8 border-2 border-dashed border-klein/20 text-center space-y-3 bg-klein/[0.01]">
+                    <div id="saved-resumes-list" class="space-y-4 max-w-full overflow-hidden">
+                        <div class="p-6 sm:p-8 border-2 border-dashed border-klein/20 text-center space-y-3 bg-klein/[0.01]">
                             <div class="w-12 h-12 bg-klein/5 border border-klein/20 flex items-center justify-center mx-auto text-klein text-xl">
                                 <i class="fa-solid fa-file-circle-plus"></i>
                             </div>
@@ -515,7 +532,7 @@
     </div>
 
     <!-- Global Footer -->
-    <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
+    <footer class="border-t border-klein/10 p-4 sm:p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6 bg-white max-w-[1400px] mx-auto w-full overflow-hidden">
         <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
             &copy; 2026 Providence University // CareerDNA Engine
         </div>

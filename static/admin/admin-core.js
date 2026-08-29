@@ -166,8 +166,10 @@ window.AdminApp = (function () {
     if (!root) return;
 
     root.innerHTML = `
-      <div id="active-modal-backdrop" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm modal-animate">
-        ${contentHtml}
+      <div id="active-modal-backdrop" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm modal-animate overflow-y-auto">
+        <div class="max-h-[92vh] overflow-y-auto w-full max-w-2xl flex justify-center">
+          ${contentHtml}
+        </div>
       </div>
     `;
   }

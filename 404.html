@@ -37,11 +37,17 @@
     </script>
 
     <style>
-        body {
+        html, body {
             background-color: #ffffff;
             color: #002fa7;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            overflow-x: hidden;
+            max-width: 100vw;
+            overflow-x: hidden !important;
+            position: relative;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
         }
 
         .hover-spring {
@@ -61,12 +67,14 @@
             position: absolute;
             color: rgba(0, 47, 167, 0.3);
             font-family: monospace;
-            font-size: 1rem;
+            font-size: 0.85rem;
             line-height: 1;
             pointer-events: none;
         }
-        .crosshair-corner::before { top: -8px; left: -4px; }
-        .crosshair-corner::after { bottom: -8px; right: -4px; }        .outline-text {
+        .crosshair-corner::before { top: 2px; left: 2px; }
+        .crosshair-corner::after { bottom: 2px; right: 2px; }
+
+        .outline-text {
             color: #ffffff;
             -webkit-text-stroke: 1.5px #002fa7;
             paint-order: stroke fill;
@@ -78,78 +86,88 @@
         }
     </style>
 </head>
-<body class="overflow-x-hidden pb-16 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col justify-between bg-white">
+<body class="overflow-x-hidden pb-24 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col justify-between bg-white">
 
-    <!-- Global Navigation Bar -->
-    <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
-        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-4 group">
-                <div class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
+    <!-- Global Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 w-full z-40 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 h-16 sm:h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 sm:gap-4 group shrink-0">
+                <div class="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 items-center justify-center border border-klein/20 text-klein font-mono text-base sm:text-xl group-hover:bg-klein group-hover:text-white transition-all">
                     <i class="fa-solid fa-bolt"></i>
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
-                    <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">SYS // ERROR_ROUTING</span>
+                    <span class="font-syne font-extrabold text-sm sm:text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    <span class="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-klein/40 -mt-0.5 sm:-mt-1 hidden sm:block">SYS // ERROR_ROUTING</span>
                 </div>
             </a>
             
-            <div class="fixed md:static bottom-0 left-0 w-full md:w-auto bg-white/95 md:bg-transparent backdrop-blur-xl border-t md:border-t-0 border-klein/10 p-3 md:p-0 flex justify-evenly md:justify-start items-center md:gap-8 z-50 overflow-x-auto shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:shadow-none pb-[calc(12px+env(safe-area-inset-bottom))] md:pb-0">
-                <a href="career_fit_v2.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
-                <a href="profile.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
-                <a href="brand_test.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
-                <a href="resource_library.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+            <!-- Desktop Nav Links (Hidden on Mobile) -->
+            <div class="hidden md:flex items-center gap-6 lg:gap-8 whitespace-nowrap">
+                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
+                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
             </div>
 
-            <div>
-                <a href="index.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors flex items-center gap-2">
-                    <i class="fa-solid fa-arrow-left"></i> 返回首頁
+            <div class="shrink-0">
+                <a href="index.html" class="font-mono uppercase text-[11px] sm:text-xs font-bold tracking-tight sm:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors flex items-center gap-1 sm:gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
                 </a>
             </div>
         </div>
     </nav>
 
+    <!-- Mobile Fixed Bottom Navigation Bar -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
+        <a href="career_fit_v2.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">AI 履歷健檢</a>
+        <a href="profile.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">個人檔案</a>
+        <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">品牌測驗</a>
+        <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">科系適配</a>
+        <a href="resource_library.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">學習資源</a>
+    </nav>
+
     <!-- Error HUD Main Section -->
-    <main class="flex-grow pt-32 pb-20 px-6 md:px-12 flex items-center justify-center">
-        <div class="max-w-[1000px] w-full mx-auto border-x border-klein/10 px-8 md:px-16 py-16 text-center relative crosshair-corner">
+    <main class="flex-grow pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 flex items-center justify-center">
+        <div class="max-w-[1000px] w-full mx-auto border-x border-klein/10 px-4 sm:px-8 md:px-16 py-10 sm:py-16 text-center relative crosshair-corner overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-[1px] bg-klein/10"></div>
             <div class="absolute bottom-0 left-0 w-full h-[1px] bg-klein/10"></div>
             
-            <div id="message" class="flex flex-col items-center gap-6">
-                <div class="font-mono text-[11px] md:text-xs font-bold tracking-[0.3em] uppercase text-flame-orange border border-flame-orange/30 px-3 py-1 bg-flame-orange/5 flex items-center gap-2">
+            <div id="message" class="flex flex-col items-center gap-4 sm:gap-6">
+                <div class="font-mono text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-flame-orange border border-flame-orange/30 px-3 py-1 bg-flame-orange/5 flex items-center gap-2">
                     <span class="w-2 h-2 bg-flame-orange animate-ping"></span>
                     SYS // HTTP_404_PAGE_NOT_FOUND
                 </div>
                 
-                <h1 class="font-syne font-extrabold text-[15vw] md:text-[11rem] text-klein leading-[0.9] tracking-tight uppercase select-none">
+                <h1 class="font-syne font-extrabold text-6xl sm:text-8xl md:text-[10rem] text-klein leading-[0.9] tracking-tight uppercase select-none">
                     4<span class="outline-text">0</span>4
                 </h1>
                 
-                <h2 class="font-heading font-black text-2xl md:text-4xl text-klein uppercase tracking-tight">
+                <h2 class="font-heading font-black text-lg sm:text-2xl md:text-4xl text-klein uppercase tracking-tight break-words">
                     TARGET NODE UNRESOLVED // 頁面未配置
                 </h2>
                 
-                <p class="font-body text-klein/70 text-base md:text-lg max-w-xl leading-relaxed">
+                <p class="font-body text-klein/70 text-sm sm:text-base md:text-lg max-w-xl leading-relaxed">
                     您所請求的資源節點不存在或已被系統重新編組。請確認目標路徑，或返回 CareerDNA 核心控制台。
                 </p>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-xl mt-6">
-                    <a href="index.html" class="hover-spring bg-klein text-white font-heading font-bold text-base uppercase py-4 px-6 flex items-center justify-center gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full max-w-xl mt-4 sm:mt-6">
+                    <a href="index.html" class="hover-spring bg-klein text-white font-heading font-bold text-sm sm:text-base uppercase py-3.5 sm:py-4 px-4 sm:px-6 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-house"></i> 系統首頁
                     </a>
-                    <a href="career_fit_v2.html" class="hover-spring border border-klein/20 hover:border-klein text-klein hover:bg-klein hover:text-white font-heading font-bold text-base uppercase py-4 px-6 flex items-center justify-center gap-2 transition-all">
+                    <a href="career_fit_v2.html" class="hover-spring border border-klein/20 hover:border-klein text-klein hover:bg-klein hover:text-white font-heading font-bold text-sm sm:text-base uppercase py-3.5 sm:py-4 px-4 sm:px-6 flex items-center justify-center gap-2 transition-all">
                         <i class="fa-solid fa-file-signature"></i> 履歷健檢
                     </a>
-                    <a href="resource_library.html" class="hover-spring border border-klein/20 hover:border-klein text-klein hover:bg-klein hover:text-white font-heading font-bold text-base uppercase py-4 px-6 flex items-center justify-center gap-2 transition-all">
+                    <a href="resource_library.html" class="hover-spring border border-klein/20 hover:border-klein text-klein hover:bg-klein hover:text-white font-heading font-bold text-sm sm:text-base uppercase py-3.5 sm:py-4 px-4 sm:px-6 flex items-center justify-center gap-2 transition-all">
                         <i class="fa-solid fa-book-bookmark"></i> 學習資源
                     </a>
                 </div>
                 
-                <div class="mt-8 border border-klein/10 p-5 w-full max-w-xl text-left bg-klein/[0.02] crosshair-corner">
-                    <h3 class="font-mono text-[11px] md:text-xs font-bold text-klein uppercase tracking-normal md:tracking-[0.2em] mb-2 flex items-center gap-2">
+                <div class="mt-6 sm:mt-8 border border-klein/10 p-4 sm:p-5 w-full max-w-xl text-left bg-klein/[0.02] crosshair-corner">
+                    <h3 class="font-mono text-[10px] sm:text-xs font-bold text-klein uppercase tracking-tight sm:tracking-[0.2em] mb-2 flex items-center gap-2">
                         <i class="fa-solid fa-terminal"></i> DIAGNOSTIC_READOUT:
                     </h3>
-                    <p class="font-mono text-[11px] text-klein/70 leading-relaxed">
+                    <p class="font-mono text-[10px] sm:text-[11px] text-klein/70 leading-relaxed break-all">
                         HTTP_STATUS: 404 Not Found<br>
                         CLIENT_IP: RESOLVED<br>
                         GATEWAY: CareerDNA Edge Router v2026<br>

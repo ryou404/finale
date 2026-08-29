@@ -253,12 +253,12 @@
 
     const modal = document.createElement('div');
     modal.id = 'cdna-auth-modal';
-    modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300';
+    modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300';
     
     modal.innerHTML = `
-      <div class="relative w-full max-w-xl md:max-w-2xl bg-white border-2 border-klein shadow-2xl p-8 md:p-10 animate-in fade-in zoom-in-95 duration-200 crosshair-corner">
+      <div class="relative w-full max-w-xl md:max-w-2xl max-h-[92vh] overflow-y-auto bg-white border-2 border-klein shadow-2xl p-5 sm:p-8 md:p-10 animate-in fade-in zoom-in-95 duration-200 crosshair-corner">
         <!-- Close Button -->
-        <button id="cdna-modal-close" class="absolute top-5 right-5 text-klein/50 hover:text-klein hover:bg-klein/5 w-8 h-8 flex items-center justify-center text-xl font-bold transition-all">
+        <button id="cdna-modal-close" class="absolute top-3 right-3 sm:top-5 sm:right-5 text-klein/50 hover:text-klein hover:bg-klein/5 w-8 h-8 flex items-center justify-center text-xl font-bold transition-all">
           <i class="fa-solid fa-xmark"></i>
         </button>
 

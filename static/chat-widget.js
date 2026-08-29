@@ -59,15 +59,12 @@
           right: 24px;
           z-index: 999999;
           font-family: 'Inter', 'Noto Sans TC', sans-serif;
-          pointer-events: none;
-        }
-        #cdna-chat-container * {
-          box-sizing: border-box;
-          pointer-events: auto;
+          pointer-events: none !important;
         }
 
         /* Floating Toggle Button */
         #cdna-chat-toggle-btn {
+          pointer-events: auto !important;
           width: 58px;
           height: 58px;
           border-radius: 50%;
@@ -122,17 +119,23 @@
           background: #ffffff;
           border: 2px solid #002fa7;
           box-shadow: 0 25px 50px -12px rgba(0, 26, 94, 0.4);
-          display: flex;
+          display: none;
           flex-direction: column;
           opacity: 0;
+          visibility: hidden;
+          pointer-events: none !important;
           transform: translateY(20px) scale(0.95);
-          pointer-events: none;
           transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), width 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s cubic-bezier(0.16, 1, 0.3, 1);
           overflow: hidden;
         }
         #cdna-chat-window.is-open {
-          opacity: 1;
-          transform: translateY(0) scale(1);
+          display: flex !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          pointer-events: auto !important;
+          transform: translateY(0) scale(1) !important;
+        }
+        #cdna-chat-window.is-open * {
           pointer-events: auto;
         }
         #cdna-chat-window.is-maximized {
@@ -460,6 +463,38 @@
         @keyframes cdnaBounce {
           0%, 80%, 100% { transform: scale(0); }
           40% { transform: scale(1); }
+        }
+
+        @media (max-width: 640px) {
+          #cdna-chat-container {
+            bottom: 76px;
+            right: 14px;
+          }
+          #cdna-chat-toggle-btn {
+            width: 50px;
+            height: 50px;
+          }
+          #cdna-chat-toggle-btn .toggle-icon {
+            font-size: 20px;
+          }
+          #cdna-chat-window {
+            bottom: 64px;
+            right: 0;
+            width: calc(100vw - 28px);
+            min-width: 280px;
+            max-width: calc(100vw - 28px);
+            height: calc(100vh - 160px);
+            max-height: calc(100vh - 160px);
+          }
+          #cdna-chat-window.is-maximized {
+            width: calc(100vw - 28px) !important;
+            height: calc(100vh - 160px) !important;
+            max-width: calc(100vw - 28px) !important;
+            max-height: calc(100vh - 160px) !important;
+          }
+          .cdna-resize-handle {
+            display: none;
+          }
         }
       `;
       document.head.appendChild(style);
