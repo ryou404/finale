@@ -279,9 +279,6 @@
           <button id="tab-btn-reg" class="flex-1 py-3 font-mono text-xs md:text-sm font-bold uppercase tracking-wider text-klein/50 hover:text-klein border-b-2 border-transparent transition-all flex items-center justify-center gap-2">
             <i class="fa-solid fa-user-plus"></i> 快速註冊
           </button>
-          <button id="tab-btn-quick" class="flex-1 py-3 font-mono text-xs md:text-sm font-bold uppercase tracking-wider text-klein/50 hover:text-klein border-b-2 border-transparent transition-all flex items-center justify-center gap-2">
-            <i class="fa-solid fa-users"></i> 現有帳戶
-          </button>
         </div>
 
         <!-- ================= 1. Direct Login Panel ================= -->
@@ -447,14 +444,6 @@
           </div>
         </div>
 
-        <!-- ================= 4. Quick Select Existing Accounts Panel ================= -->
-        <div id="auth-panel-quick" class="hidden space-y-4">
-          <p class="font-mono text-xs md:text-sm text-klein/70">點擊以下 MongoDB 資料庫中的帳號快速填入登入：</p>
-          <div id="auth-quick-list" class="space-y-2.5 max-h-64 overflow-y-auto pr-1">
-            <div class="p-4 bg-klein/5 border border-klein/20 animate-pulse text-xs font-mono text-center">載入中...</div>
-          </div>
-        </div>
-
         <!-- Message Box -->
         <div id="auth-modal-msg" class="mt-4 text-xs md:text-sm font-mono text-center hidden"></div>
       </div>
@@ -471,7 +460,6 @@
     // DOM Elements
     const tabLogin = document.getElementById('tab-btn-login');
     const tabReg = document.getElementById('tab-btn-reg');
-    const tabQuick = document.getElementById('tab-btn-quick');
     const tabsNav = document.getElementById('auth-tabs-nav');
 
     const panelLogin = document.getElementById('auth-panel-login');
@@ -479,7 +467,6 @@
     const panelRegStep2 = document.getElementById('auth-panel-reg-step2');
     const panelForgotStep1 = document.getElementById('auth-panel-forgot-step1');
     const panelForgotStep2 = document.getElementById('auth-panel-forgot-step2');
-    const panelQuick = document.getElementById('auth-panel-quick');
 
     const msgEl = document.getElementById('auth-modal-msg');
     const mainTitle = document.getElementById('auth-main-title');
@@ -502,13 +489,13 @@
     }
 
     function hideAllPanels() {
-      [panelLogin, panelRegStep1, panelRegStep2, panelForgotStep1, panelForgotStep2, panelQuick].forEach(p => p.classList.add('hidden'));
+      [panelLogin, panelRegStep1, panelRegStep2, panelForgotStep1, panelForgotStep2].filter(Boolean).forEach(p => p.classList.add('hidden'));
       hideMsg();
     }
 
     function switchTab(activeTab, targetPanel) {
       tabsNav.classList.remove('hidden');
-      [tabLogin, tabReg, tabQuick].forEach(t => {
+      [tabLogin, tabReg].filter(Boolean).forEach(t => {
         t.className = 'flex-1 py-3 font-mono text-xs md:text-sm font-bold uppercase tracking-wider text-klein/50 hover:text-klein border-b-2 border-transparent transition-all flex items-center justify-center gap-2';
       });
       activeTab.className = 'flex-1 py-3 font-mono text-xs md:text-sm font-bold uppercase tracking-wider text-klein border-b-2 border-klein transition-all flex items-center justify-center gap-2';
@@ -528,46 +515,6 @@
     // Tab Listeners
     tabLogin.addEventListener('click', () => switchTab(tabLogin, panelLogin));
     tabReg.addEventListener('click', () => switchTab(tabReg, panelRegStep1));
-    tabQuick.addEventListener('click', async () => {
-      switchTab(tabQuick, panelQuick);
-      const listEl = document.getElementById('auth-quick-list');
-      listEl.innerHTML = '<div class="p-3 text-center text-xs font-mono text-klein/50">正在讀取 Atlas 用戶...</div>';
-      const res = await CareerDNA_DB.getUsersList();
-      if (res && res.users && res.users.length > 0) {
-        listEl.innerHTML = res.users.map(u => `
-          <div class="auth-quick-item p-3.5 bg-white border border-klein/20 hover:border-klein hover:bg-klein/5 cursor-pointer flex items-center justify-between transition-all group shadow-sm" data-id="${u.username || u.email || u.name}" data-name="${u.name || u.username}">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 bg-klein text-white flex items-center justify-center font-bold text-sm uppercase">
-                ${(u.name || u.username || 'U').charAt(0)}
-              </div>
-              <div>
-                <span class="font-heading font-bold text-sm text-klein block">${u.name || u.username || '用戶'}</span>
-                <span class="font-mono text-xs text-klein/60">${u.department || 'IM'} · ${u.grade || '大三'} ${u.email ? '· ' + u.email : ''}</span>
-              </div>
-            </div>
-            <span class="text-xs text-klein font-mono font-bold group-hover:translate-x-1 transition-transform flex items-center gap-1">
-              填入登入 <i class="fa-solid fa-arrow-right"></i>
-            </span>
-          </div>
-        `).join('');
-
-        listEl.querySelectorAll('.auth-quick-item').forEach(item => {
-          item.addEventListener('click', () => {
-            const targetId = item.getAttribute('data-id');
-            switchTab(tabLogin, panelLogin);
-            const inputId = document.getElementById('auth-input-id');
-            const inputPwd = document.getElementById('auth-input-password');
-            if (inputId) inputId.value = targetId;
-            if (inputPwd) {
-              inputPwd.focus();
-              showMsg(`已填入帳號「${targetId}」，請輸入密碼以登入`, 'info');
-            }
-          });
-        });
-      } else {
-        listEl.innerHTML = '<div class="p-3 text-center text-xs font-mono text-klein/50">無現存帳號，請直接輸入登入</div>';
-      }
-    });
 
     // Password Toggles
     const togglePwdLogin = document.getElementById('auth-toggle-pwd-login');

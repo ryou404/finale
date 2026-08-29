@@ -25,24 +25,24 @@ function generateOTP() {
  * @param {string} type - 'register' or 'forgot_password'
  * @param {string} recipientName - Display name of recipient
  */
-async function sendOtpEmail(toEmail, code, type = 'register', recipientName = 'Bạn') {
+async function sendOtpEmail(toEmail, code, type = 'register', recipientName = '同學') {
   const isRegister = type === 'register';
   const subject = isRegister
-    ? '【CareerDNA】Mã xác thực đăng ký tài khoản mới'
-    : '【CareerDNA】Mã xác thực đặt lại mật khẩu của bạn';
+    ? '【CareerDNA】新帳號註冊驗證碼'
+    : '【CareerDNA】密碼重設驗證碼';
 
-  const title = isRegister ? 'Xác thực tài khoản CareerDNA' : 'Đặt lại mật khẩu CareerDNA';
+  const title = isRegister ? 'CareerDNA 帳號驗證' : 'CareerDNA 密碼重設';
   const desc = isRegister
-    ? 'Cảm ơn bạn đã đăng ký tài khoản trên hệ thống CareerDNA. Vui lòng nhập mã OTP dưới đây để hoàn tất bước xác thực email:'
-    : 'Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn. Vui lòng nhập mã OTP dưới đây để tiến hành đổi mật khẩu mới:';
+    ? '感謝您註冊 CareerDNA 職涯規劃系統。請在驗證欄位輸入下方的 6 位數 OTP 驗證碼以完成信箱驗證：'
+    : '我們收到您重設 CareerDNA 帳號密碼的申請。請輸入下方的 6 位數 OTP 驗證碼以進行密碼變更：';
 
   const html = `
     <!DOCTYPE html>
-    <html lang="vi">
+    <html lang="zh-TW">
     <head>
       <meta charset="UTF-8">
       <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #1e293b; }
+        body { font-family: 'PingFang TC', 'Microsoft JhengHei', 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #1e293b; }
         .container { max-width: 540px; margin: 0 auto; background: #ffffff; border: 2px solid #002fa7; border-radius: 4px; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 47, 167, 0.1); }
         .header { background: #002fa7; color: #ffffff; padding: 24px; text-align: center; }
         .header h1 { margin: 0; font-size: 22px; letter-spacing: 2px; text-transform: uppercase; font-weight: 900; }
@@ -64,19 +64,19 @@ async function sendOtpEmail(toEmail, code, type = 'register', recipientName = 'B
           <p>Multi-Agent Academic & Career Planning System</p>
         </div>
         <div class="content">
-          <div class="greeting">Xin chào ${recipientName},</div>
+          <div class="greeting">親愛的 ${recipientName}，您好：</div>
           <div class="desc">${desc}</div>
           <div class="otp-box">
-            <div class="otp-label">MÃ XÁC THỰC (OTP)</div>
+            <div class="otp-label">OTP 驗證碼 (VERIFICATION CODE)</div>
             <div class="otp-code">${code}</div>
           </div>
           <div class="warning">
-            ⏳ Mã xác thực này có hiệu lực trong vòng <strong>10 phút</strong>.<br>
-            🔒 Không chia sẻ mã này với bất kỳ ai để bảo vệ an toàn cho tài khoản của bạn.
+            ⏳ 此驗證碼有效期限為 <strong>10 分鐘</strong>。<br>
+            🔒 為了您的帳號安全，請勿將此驗證碼透露給任何人。
           </div>
         </div>
         <div class="footer">
-          Đây là email tự động từ hệ thống CareerDNA · Vui lòng không trả lời email này.
+          此信件為 CareerDNA 系統自動發送，請勿直接回覆此郵件。
         </div>
       </div>
     </body>

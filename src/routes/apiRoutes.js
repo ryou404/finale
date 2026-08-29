@@ -34,7 +34,7 @@ const upload = multer({
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
-      cb(new Error('Chỉ chấp nhận file hình ảnh (JPG, PNG, WEBP, GIF)'));
+      cb(new Error('只允許上傳圖片檔案 (JPG, PNG, WEBP, GIF)'));
     }
   }
 });
@@ -56,10 +56,10 @@ router.post('/auth/login', async (req, res) => {
   try {
     const { identifier, password } = req.body || {};
     if (!identifier || !identifier.trim()) {
-      return res.status(400).json({ status: 'error', message: 'Vui lòng nhập Email hoặc Tên tài khoản' });
+      return res.status(400).json({ status: 'error', message: '請輸入電子信箱或使用者名稱' });
     }
     if (!password) {
-      return res.status(400).json({ status: 'error', message: 'Vui lòng nhập Mật khẩu' });
+      return res.status(400).json({ status: 'error', message: '請輸入登入密碼' });
     }
 
     const trimmedId = identifier.trim();
@@ -75,14 +75,14 @@ router.post('/auth/login', async (req, res) => {
     if (!user) {
       return res.status(404).json({
         status: 'error',
-        message: 'Tài khoản không tồn tại. Vui lòng kiểm tra lại hoặc chuyển sang tab Đăng ký!'
+        message: '帳號不存在，請確認輸入或切換至註冊頁面！'
       });
     }
 
     if (user.isActive === false) {
       return res.status(403).json({
         status: 'error',
-        message: 'Tài khoản của bạn đã bị tạm khóa. Vui lòng liên hệ quản trị viên!'
+        message: '您的帳號已被停用，請聯繫系統管理員！'
       });
     }
 
@@ -96,7 +96,7 @@ router.post('/auth/login', async (req, res) => {
       }
 
       if (!isMatch) {
-        return res.status(401).json({ status: 'error', message: 'Mật khẩu không chính xác. Vui lòng thử lại!' });
+        return res.status(401).json({ status: 'error', message: '密碼不正確，請重新輸入！' });
       }
     } else {
       // If user had no password yet, set this as their password
@@ -106,7 +106,7 @@ router.post('/auth/login', async (req, res) => {
     user.lastLoginAt = new Date();
     await user.save();
 
-    res.json({ status: 'ok', message: 'Đăng nhập thành công', user });
+    res.json({ status: 'ok', message: '登入成功', user });
   } catch (err) {
     console.error('[API /auth/login error]:', err);
     res.status(500).json({ status: 'error', message: err.message });
@@ -121,16 +121,16 @@ router.post('/auth/register-request', async (req, res) => {
     const { username, password, email, name, school, department, grade } = req.body || {};
     
     if (!name || !name.trim()) {
-      return res.status(400).json({ status: 'error', message: 'Vui lòng nhập Họ tên / Biệt danh' });
+      return res.status(400).json({ status: 'error', message: '請輸入姓名 / 暱稱' });
     }
     if (!username || !username.trim()) {
-      return res.status(400).json({ status: 'error', message: 'Vui lòng nhập Tên tài khoản' });
+      return res.status(400).json({ status: 'error', message: '請輸入使用者帳號名稱' });
     }
     if (!email || !email.includes('@')) {
-      return res.status(400).json({ status: 'error', message: 'Vui lòng nhập địa chỉ Email hợp lệ để nhận mã xác thực' });
+      return res.status(400).json({ status: 'error', message: '請輸入有效的電子信箱以接收驗證碼' });
     }
     if (!password || password.length < 4) {
-      return res.status(400).json({ status: 'error', message: 'Mật khẩu phải có ít nhất 4 ký tự' });
+      return res.status(400).json({ status: 'error', message: '密碼長度至少需 4 個字元' });
     }
 
     const targetUsername = username.trim();
@@ -146,8 +146,8 @@ router.post('/auth/register-request', async (req, res) => {
 
     if (existing) {
       const msg = existing.username === targetUsername
-        ? 'Tên tài khoản này đã tồn tại trong hệ thống. Vui lòng chọn tên khác!'
-        : 'Địa chỉ Email này đã được đăng ký. Vui lòng đăng nhập hoặc dùng chức năng Quên mật khẩu!';
+        ? '此帳號名稱已被使用，請選擇其他名稱！'
+        : '此電子信箱已被註冊，請直接登入或使用忘記密碼功能！';
       return res.status(409).json({ status: 'error', message: msg });
     }
 
@@ -179,13 +179,13 @@ router.post('/auth/register-request', async (req, res) => {
 
     res.json({
       status: 'ok',
-      message: `Mã xác thực đã được gửi tới email ${maskEmail(targetEmail)}. Vui lòng kiểm tra hộp thư!`,
+      message: `驗證碼已發送至信箱 ${maskEmail(targetEmail)}，請檢查收件匣！`,
       email: targetEmail,
       maskedEmail: maskEmail(targetEmail)
     });
   } catch (err) {
     console.error('[API /auth/register-request error]:', err);
-    res.status(500).json({ status: 'error', message: 'Không thể gửi email xác thực: ' + err.message });
+    res.status(500).json({ status: 'error', message: '無法發送驗證郵件：' + err.message });
   }
 });
 
@@ -196,7 +196,7 @@ router.post('/auth/register-verify', async (req, res) => {
   try {
     const { email, code } = req.body || {};
     if (!email || !code) {
-      return res.status(400).json({ status: 'error', message: 'Vui lòng nhập Email và Mã xác thực OTP' });
+      return res.status(400).json({ status: 'error', message: '請輸入電子信箱與 OTP 驗證碼' });
     }
 
     const targetEmail = email.trim().toLowerCase();
@@ -211,7 +211,7 @@ router.post('/auth/register-verify', async (req, res) => {
     if (!otpDoc) {
       return res.status(400).json({
         status: 'error',
-        message: 'Mã xác thực không chính xác hoặc đã hết hạn. Vui lòng thử lại!'
+        message: '驗證碼不正確或已過期，請重新嘗試！'
       });
     }
 
@@ -235,7 +235,7 @@ router.post('/auth/register-verify', async (req, res) => {
 
     res.json({
       status: 'ok',
-      message: 'Xác thực email thành công! Tài khoản của bạn đã được kích hoạt.',
+      message: '信箱驗證成功！您的帳號已順利啟用。',
       user
     });
   } catch (err) {
@@ -251,7 +251,7 @@ router.post('/auth/forgot-request', async (req, res) => {
   try {
     const { identifier } = req.body || {};
     if (!identifier || !identifier.trim()) {
-      return res.status(400).json({ status: 'error', message: 'Vui lòng nhập Tên tài khoản hoặc Email đã đăng ký' });
+      return res.status(400).json({ status: 'error', message: '請輸入已註冊的使用者帳號或電子信箱' });
     }
 
     const trimmedId = identifier.trim();
@@ -266,14 +266,14 @@ router.post('/auth/forgot-request', async (req, res) => {
     if (!user) {
       return res.status(404).json({
         status: 'error',
-        message: 'Không tìm thấy tài khoản tương ứng trong hệ thống. Vui lòng kiểm tra lại!'
+        message: '查無此帳號資料，請再次確認！'
       });
     }
 
     if (!user.email || !user.email.includes('@')) {
       return res.status(400).json({
         status: 'error',
-        message: 'Tài khoản này chưa liên kết địa chỉ Email. Vui lòng liên hệ ban quản trị để được hỗ trợ!'
+        message: '此帳號未綁定電子信箱，請聯繫管理員協助處理！'
       });
     }
 
@@ -295,13 +295,13 @@ router.post('/auth/forgot-request', async (req, res) => {
 
     res.json({
       status: 'ok',
-      message: `Mã đặt lại mật khẩu đã được gửi tới ${maskEmail(user.email)}. Vui lòng kiểm tra hộp thư!`,
+      message: `密碼重設驗證碼已發送至 ${maskEmail(user.email)}，請檢查收件匣！`,
       email: user.email.toLowerCase(),
       maskedEmail: maskEmail(user.email)
     });
   } catch (err) {
     console.error('[API /auth/forgot-request error]:', err);
-    res.status(500).json({ status: 'error', message: 'Không thể gửi email đặt lại mật khẩu: ' + err.message });
+    res.status(500).json({ status: 'error', message: '無法發送密碼重設郵件：' + err.message });
   }
 });
 
@@ -312,11 +312,11 @@ router.post('/auth/forgot-verify-reset', async (req, res) => {
   try {
     const { email, code, newPassword } = req.body || {};
     if (!email || !code || !newPassword) {
-      return res.status(400).json({ status: 'error', message: 'Vui lòng điền đầy đủ Email, Mã OTP và Mật khẩu mới' });
+      return res.status(400).json({ status: 'error', message: '請完整填寫電子信箱、驗證碼與新密碼' });
     }
 
     if (newPassword.length < 4) {
-      return res.status(400).json({ status: 'error', message: 'Mật khẩu mới phải có ít nhất 4 ký tự' });
+      return res.status(400).json({ status: 'error', message: '新密碼長度至少需 4 個字元' });
     }
 
     const targetEmail = email.trim().toLowerCase();
@@ -331,13 +331,13 @@ router.post('/auth/forgot-verify-reset', async (req, res) => {
     if (!otpDoc) {
       return res.status(400).json({
         status: 'error',
-        message: 'Mã xác thực đặt lại mật khẩu không chính xác hoặc đã hết hạn!'
+        message: '密碼重設驗證碼錯誤或已過期！'
       });
     }
 
     const user = await User.findOne({ email: targetEmail });
     if (!user) {
-      return res.status(404).json({ status: 'error', message: 'Không tìm thấy người dùng tương ứng' });
+      return res.status(404).json({ status: 'error', message: '查無對應使用者' });
     }
 
     // Update password with new bcrypt hash
@@ -349,7 +349,7 @@ router.post('/auth/forgot-verify-reset', async (req, res) => {
 
     res.json({
       status: 'ok',
-      message: 'Đặt lại mật khẩu thành công! Bạn có thể đăng nhập ngay với mật khẩu mới.',
+      message: '密碼重設成功！您現在可以使用新密碼登入。',
       user
     });
   } catch (err) {
@@ -365,7 +365,7 @@ router.post('/auth/resend-otp', async (req, res) => {
   try {
     const { email, type } = req.body || {};
     if (!email || !email.includes('@')) {
-      return res.status(400).json({ status: 'error', message: 'Địa chỉ Email không hợp lệ' });
+      return res.status(400).json({ status: 'error', message: '電子信箱格式不正確' });
     }
 
     const targetEmail = email.trim().toLowerCase();
@@ -373,7 +373,7 @@ router.post('/auth/resend-otp', async (req, res) => {
 
     const existingOtp = await OtpToken.findOne({ email: targetEmail, type: otpType });
     if (!existingOtp) {
-      return res.status(404).json({ status: 'error', message: 'Phiên xác thực đã hết hạn. Vui lòng thực hiện lại từ đầu!' });
+      return res.status(404).json({ status: 'error', message: '驗證階段已過期，請重新發送！' });
     }
 
     const newCode = generateOTP();
@@ -385,7 +385,7 @@ router.post('/auth/resend-otp', async (req, res) => {
 
     res.json({
       status: 'ok',
-      message: `Mã OTP mới đã được gửi lại tới email ${maskEmail(targetEmail)}`
+      message: `新的 OTP 驗證碼已重新發送至 ${maskEmail(targetEmail)}`
     });
   } catch (err) {
     console.error('[API /auth/resend-otp error]:', err);
@@ -829,7 +829,7 @@ router.post('/users/:uid/avatar', upload.single('avatar'), async (req, res) => {
   try {
     const { uid } = req.params;
     if (!req.file) {
-      return res.status(400).json({ status: 'error', message: 'Vui lòng chọn một file hình ảnh avatar!' });
+      return res.status(400).json({ status: 'error', message: '請選擇一張頭像圖片檔案！' });
     }
 
     const { key, url } = await uploadAvatarToR2(req.file.buffer, req.file.mimetype, uid, req.file.originalname);
@@ -847,7 +847,7 @@ router.post('/users/:uid/avatar', upload.single('avatar'), async (req, res) => {
 
     return res.json({
       status: 'ok',
-      message: 'Tải lên avatar thành công lên Cloudflare R2!',
+      message: '頭像已成功上傳至 Cloudflare R2！',
       photoURL: url,
       key,
       user
