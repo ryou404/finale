@@ -151,11 +151,15 @@
                 <a href="resource_library.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
             </div>
 
-            <div>
-                <a href="career_fit_v2.html" class="hover-spring bg-klein text-white font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] uppercase px-5 py-2.5 flex items-center gap-2">
+            <div class="flex items-center gap-3 md:gap-4">
+                <a href="admin.html" id="static-nav-admin-btn"
+                    class="hidden nav-admin-btn px-3 py-1.5 bg-orange-600 text-white text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-shield-halved"></i> <span>管理後台</span>
+                </a>
+                <a href="career_fit_v2.html" class="hover-spring bg-klein text-white font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] uppercase px-4 md:px-5 py-2 md:py-2.5 flex items-center gap-2">
                     立即部署 <i class="fa-solid fa-arrow-right"></i>
                 </a>
-                <div id="nav-auth-section" class="flex items-center gap-4 border-l border-klein/10 pl-4">
+                <div id="nav-auth-section" class="flex items-center gap-3 md:gap-4 border-l border-klein/10 pl-3 md:pl-4">
                     <button id="nav-login-btn"
                         onclick="window.CareerDNA_DB.showAuthModal((u) => window.location.reload())"
                         class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入
