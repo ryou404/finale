@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-TW" class="scroll-smooth bg-white text-klein">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CareerDNA | 學習資源資料庫 (Resource Library)</title>
-    
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome 6.5.1 -->
@@ -12,11 +13,13 @@
     <!-- Google Fonts: Syne, Inter, Noto Sans TC, Chakra Petch, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <!-- Static Data Resource Dependency -->
     <script src="static/resources_data.js"></script>
-    
+
     <!-- CareerDNA MongoDB Atlas Client -->
     <script src="static/db-client.js"></script>
 
@@ -56,19 +59,33 @@
             transform: translateY(30px) scale(0.99);
             transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .reveal-up.is-visible {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.3s; }
-        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        .reveal-delay-4 {
+            transition-delay: 0.4s;
+        }
 
         /* Interactive Spring Lift */
         .hover-spring {
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         }
+
         .hover-spring:hover {
             transform: translateY(-6px) scale(1.01) !important;
             box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.08) !important;
@@ -79,7 +96,9 @@
         .crosshair-corner {
             position: relative;
         }
-        .crosshair-corner::before, .crosshair-corner::after {
+
+        .crosshair-corner::before,
+        .crosshair-corner::after {
             content: '+';
             position: absolute;
             color: rgba(0, 47, 167, 0.3);
@@ -88,22 +107,34 @@
             line-height: 1;
             pointer-events: none;
         }
-        .crosshair-corner::before { top: -8px; left: -4px; }
-        .crosshair-corner::after { bottom: -8px; right: -4px; }
 
-        /* Outline Display Typography */        .outline-text {
+        .crosshair-corner::before {
+            top: -8px;
+            left: -4px;
+        }
+
+        .crosshair-corner::after {
+            bottom: -8px;
+            right: -4px;
+        }
+
+        /* Outline Display Typography */
+        .outline-text {
             color: #ffffff;
             -webkit-text-stroke: 1.5px #002fa7;
             paint-order: stroke fill;
             transition: all 0.4s ease;
         }
+
         .outline-text:hover {
             color: #002fa7;
             -webkit-text-stroke: 1.5px transparent;
         }
 
         /* Brutalist Form Controls */
-        input, select, textarea {
+        input,
+        select,
+        textarea {
             background-color: #ffffff !important;
             border: 1px solid rgba(0, 47, 167, 0.2) !important;
             color: #002fa7 !important;
@@ -111,28 +142,47 @@
             font-family: 'Chakra Petch', 'Noto Sans TC', sans-serif !important;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
-        input:focus, select:focus, textarea:focus {
+
+        input:focus,
+        select:focus,
+        textarea:focus {
             border-color: #002fa7 !important;
             outline: none !important;
             box-shadow: 0 0 0 1px #002fa7 !important;
         }
 
         /* Active Filter State */
-        .cat-btn.active, .grade-btn.active {
+        .cat-btn.active,
+        .grade-btn.active {
             background-color: #002fa7 !important;
             color: #ffffff !important;
             border-color: #002fa7 !important;
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #ffffff; }
-        ::-webkit-scrollbar-thumb { background: #a3bdf2; }
-        ::-webkit-scrollbar-thumb:hover { background: #002fa7; }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
 
-        .hidden { display: none !important; }
+        ::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #a3bdf2;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #002fa7;
+        }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
+
 <body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
     <script>
         if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
@@ -142,35 +192,55 @@
     <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
         <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-4 group">
-                <div class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
+                <div
+                    class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
                     <i class="fa-solid fa-bolt"></i>
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
-                    <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">RESOURCE_ARCHIVE // v2026</span>
+                    <span
+                        class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">RESOURCE_ARCHIVE
+                        // v2026</span>
                 </div>
             </a>
-            
+
             <div class="hidden md:flex items-center gap-8">
-                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
-                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
-                <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
-                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">學習資源</a>
+                <a href="career_fit_v2.html"
+                    class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI
+                    履歷健檢</a>
+                <a href="profile.html"
+                    class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                <a href="brand_test.html"
+                    class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
+                <a href="lab_recommendation.html"
+                    class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
+                <a href="resource_library.html"
+                    class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">學習資源</a>
             </div>
 
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
+            <div class="flex items-center gap-3 md:gap-4">
+                <a href="admin.html" id="static-nav-admin-btn"
+                    class="hidden nav-admin-btn px-3 py-1.5 bg-flame-orange hover:bg-orange-600 text-white text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-shield-halved"></i> <span>管理後台</span>
+                </a>
+                <a href="index.html"
+                    class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
                 </a>
                 <div id="nav-auth-section" class="flex items-center gap-4 border-l border-klein/10 pl-4">
-                    <button id="nav-login-btn" onclick="window.CareerDNA_DB.showAuthModal((u) => window.location.reload())" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入 / 註冊</button>
+                    <button id="nav-login-btn"
+                        onclick="window.CareerDNA_DB.showAuthModal((u) => window.location.reload())"
+                        class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-4 py-1.5 transition-all">登入
+                        / 註冊</button>
                     <div id="nav-user-info" class="hidden flex items-center gap-3">
                         <div class="flex flex-col text-right">
                             <span id="nav-user-name" class="text-xs font-bold text-klein"></span>
-                            <button onclick="window.CareerDNA_DB.logout(); window.location.reload();" class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
+                            <button onclick="window.CareerDNA_DB.logout(); window.location.reload();"
+                                class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
                         </div>
-                        <div id="nav-user-avatar" class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm"></div>
+                        <div id="nav-user-avatar"
+                            class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -179,12 +249,14 @@
 
     <!-- Main Workspace -->
     <main class="flex-grow pt-28 pb-20 px-4 md:px-12">
-        <div class="max-w-[1400px] mx-auto min-h-[75vh] border-x border-klein/10 px-6 md:px-16 lg:px-20 py-10 relative crosshair-corner">
-            
+        <div
+            class="max-w-[1400px] mx-auto min-h-[75vh] border-x border-klein/10 px-6 md:px-16 lg:px-20 py-10 relative crosshair-corner">
+
             <!-- Page Header -->
             <div class="border-b border-klein/10 pb-8 mb-10 reveal-up">
-                
-                <h1 class="font-syne font-extrabold text-3xl md:text-5xl lg:text-6xl uppercase tracking-tight text-klein">
+
+                <h1
+                    class="font-syne font-extrabold text-3xl md:text-5xl lg:text-6xl uppercase tracking-tight text-klein">
                     學習資源 <span class="outline-text">資料庫</span>
                 </h1>
                 <p class="font-body text-klein/70 text-sm md:text-base mt-2 max-w-3xl leading-relaxed">
@@ -193,20 +265,26 @@
             </div>
 
             <!-- Personalized Banner -->
-            <div id="personalized-banner" class="hidden mb-12 border-2 border-klein bg-white p-8 relative crosshair-corner reveal-up">
+            <div id="personalized-banner"
+                class="hidden mb-12 border-2 border-klein bg-white p-8 relative crosshair-corner reveal-up">
                 <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
                     <div>
                         <div class="flex items-center gap-2 mb-2">
                             <span class="w-2 h-2 bg-klein animate-pulse"></span>
-                            <span class="font-mono text-xs font-bold tracking-[0.3em] uppercase text-klein">PERSONALIZED_RECOMMENDATION // PROFILE_MATCHED</span>
+                            <span
+                                class="font-mono text-xs font-bold tracking-[0.3em] uppercase text-klein">PERSONALIZED_RECOMMENDATION
+                                // PROFILE_MATCHED</span>
                         </div>
-                        <h2 class="font-heading font-black text-2xl md:text-3xl text-klein uppercase tracking-tight mb-2" id="banner-title">你好！</h2>
-                        <p class="font-body text-klein/70 text-sm md:text-base max-w-2xl" id="banner-desc">已為你篩選出最相關的學習資源，優先顯示在下方推薦區塊</p>
+                        <h2 class="font-heading font-black text-2xl md:text-3xl text-klein uppercase tracking-tight mb-2"
+                            id="banner-title">你好！</h2>
+                        <p class="font-body text-klein/70 text-sm md:text-base max-w-2xl" id="banner-desc">
+                            已為你篩選出最相關的學習資源，優先顯示在下方推薦區塊</p>
                         <div class="flex flex-wrap gap-2 mt-5" id="banner-chips">
                             <!-- Injected by JS -->
                         </div>
                     </div>
-                    <button onclick="ResourceLib.clearPersonalization()" class="hover-spring border border-klein/20 hover:border-klein text-klein font-mono text-xs font-bold uppercase tracking-wider px-4 py-2 hover:bg-klein hover:text-white transition-all shrink-0">
+                    <button onclick="ResourceLib.clearPersonalization()"
+                        class="hover-spring border border-klein/20 hover:border-klein text-klein font-mono text-xs font-bold uppercase tracking-wider px-4 py-2 hover:bg-klein hover:text-white transition-all shrink-0">
                         <i class="fa-solid fa-rotate-left mr-1.5"></i> 顯示全部資源
                     </button>
                 </div>
@@ -214,24 +292,27 @@
 
             <!-- 2-Column Responsive Layout -->
             <div class="flex flex-col lg:flex-row gap-10">
-                
+
                 <!-- Left Sidebar Filters -->
                 <aside class="lg:w-80 shrink-0">
                     <div class="bg-white border border-klein/10 p-6 sticky top-28 space-y-8 crosshair-corner">
-                        
+
                         <!-- Search Box -->
                         <div>
-                            <label class="font-mono text-xs font-bold text-klein uppercase tracking-[0.2em] mb-3 block flex items-center gap-2">
+                            <label
+                                class="font-mono text-xs font-bold text-klein uppercase tracking-[0.2em] mb-3 block flex items-center gap-2">
                                 <i class="fa-solid fa-magnifying-glass"></i> 搜尋資源
                             </label>
                             <div class="relative">
-                                <input type="text" id="search-input" placeholder="輸入關鍵字 (如: Python, LeetCode)..." class="w-full px-4 py-3 border border-klein/20 text-sm font-mono focus:border-klein outline-none">
+                                <input type="text" id="search-input" placeholder="輸入關鍵字 (如: Python, LeetCode)..."
+                                    class="w-full px-4 py-3 border border-klein/20 text-sm font-mono focus:border-klein outline-none">
                             </div>
                         </div>
 
                         <!-- Category Filters -->
                         <div>
-                            <label class="font-mono text-xs font-bold text-klein uppercase tracking-[0.2em] mb-3 block flex items-center gap-2">
+                            <label
+                                class="font-mono text-xs font-bold text-klein uppercase tracking-[0.2em] mb-3 block flex items-center gap-2">
                                 <i class="fa-solid fa-layer-group"></i> 資源分類
                             </label>
                             <div class="space-y-1.5" id="category-list">
@@ -241,15 +322,21 @@
 
                         <!-- Grade Filter -->
                         <div>
-                            <label class="font-mono text-xs font-bold text-klein uppercase tracking-[0.2em] mb-3 block flex items-center gap-2">
+                            <label
+                                class="font-mono text-xs font-bold text-klein uppercase tracking-[0.2em] mb-3 block flex items-center gap-2">
                                 <i class="fa-solid fa-graduation-cap"></i> 年級篩選
                             </label>
                             <div class="grid grid-cols-5 gap-1.5" id="grade-filter">
-                                <button onclick="ResourceLib.filterGrade('all')" data-grade="all" class="grade-btn active py-2 border border-klein/20 text-xs font-mono font-bold uppercase text-klein hover:bg-klein hover:text-white transition-all text-center">全部</button>
-                                <button onclick="ResourceLib.filterGrade(1)" data-grade="1" class="grade-btn py-2 border border-klein/20 text-xs font-mono font-bold uppercase text-klein hover:bg-klein hover:text-white transition-all text-center">大一</button>
-                                <button onclick="ResourceLib.filterGrade(2)" data-grade="2" class="grade-btn py-2 border border-klein/20 text-xs font-mono font-bold uppercase text-klein hover:bg-klein hover:text-white transition-all text-center">大二</button>
-                                <button onclick="ResourceLib.filterGrade(3)" data-grade="3" class="grade-btn py-2 border border-klein/20 text-xs font-mono font-bold uppercase text-klein hover:bg-klein hover:text-white transition-all text-center">大三</button>
-                                <button onclick="ResourceLib.filterGrade(4)" data-grade="4" class="grade-btn py-2 border border-klein/20 text-xs font-mono font-bold uppercase text-klein hover:bg-klein hover:text-white transition-all text-center">大四</button>
+                                <button onclick="ResourceLib.filterGrade('all')" data-grade="all"
+                                    class="grade-btn active py-2 border border-klein/20 text-xs font-mono font-bold uppercase text-klein hover:bg-klein hover:text-white transition-all text-center">全部</button>
+                                <button onclick="ResourceLib.filterGrade(1)" data-grade="1"
+                                    class="grade-btn py-2 border border-klein/20 text-xs font-mono font-bold uppercase text-klein hover:bg-klein hover:text-white transition-all text-center">大一</button>
+                                <button onclick="ResourceLib.filterGrade(2)" data-grade="2"
+                                    class="grade-btn py-2 border border-klein/20 text-xs font-mono font-bold uppercase text-klein hover:bg-klein hover:text-white transition-all text-center">大二</button>
+                                <button onclick="ResourceLib.filterGrade(3)" data-grade="3"
+                                    class="grade-btn py-2 border border-klein/20 text-xs font-mono font-bold uppercase text-klein hover:bg-klein hover:text-white transition-all text-center">大三</button>
+                                <button onclick="ResourceLib.filterGrade(4)" data-grade="4"
+                                    class="grade-btn py-2 border border-klein/20 text-xs font-mono font-bold uppercase text-klein hover:bg-klein hover:text-white transition-all text-center">大四</button>
                             </div>
                         </div>
 
@@ -258,12 +345,14 @@
 
                 <!-- Right Main Grid -->
                 <div class="flex-1 min-w-0">
-                    
+
                     <!-- Recommended Priority Section -->
                     <div id="recommended-section" class="hidden mb-12 border-b border-klein/10 pb-10">
                         <div class="flex items-center gap-3 mb-6">
-                            <span class="font-mono text-xs font-bold px-3 py-1 bg-klein text-white uppercase tracking-wider">FEATURED</span>
-                            <h2 class="font-heading font-black text-xl md:text-2xl text-klein uppercase tracking-tight flex items-center gap-2">
+                            <span
+                                class="font-mono text-xs font-bold px-3 py-1 bg-klein text-white uppercase tracking-wider">FEATURED</span>
+                            <h2
+                                class="font-heading font-black text-xl md:text-2xl text-klein uppercase tracking-tight flex items-center gap-2">
                                 ⭐ 為你優先推薦
                             </h2>
                         </div>
@@ -274,8 +363,10 @@
 
                     <!-- Filter Results Header -->
                     <div class="flex items-center justify-between mb-6 pb-3 border-b border-klein/10">
-                        <h2 class="font-heading font-black text-lg md:text-xl uppercase text-klein tracking-tight" id="results-label">全部資源</h2>
-                        <span class="font-mono text-xs font-bold tracking-wider text-klein/60" id="results-count">載入中...</span>
+                        <h2 class="font-heading font-black text-lg md:text-xl uppercase text-klein tracking-tight"
+                            id="results-label">全部資源</h2>
+                        <span class="font-mono text-xs font-bold tracking-wider text-klein/60"
+                            id="results-count">載入中...</span>
                     </div>
 
                     <!-- Master Resource Grid -->
@@ -284,13 +375,16 @@
                     </div>
 
                     <!-- Empty State HUD -->
-                    <div id="empty-state" class="hidden text-center py-20 border border-dashed border-klein/20 p-8 crosshair-corner">
-                        <div class="w-16 h-16 border border-klein/20 text-klein font-mono text-2xl mx-auto flex items-center justify-center mb-4">
+                    <div id="empty-state"
+                        class="hidden text-center py-20 border border-dashed border-klein/20 p-8 crosshair-corner">
+                        <div
+                            class="w-16 h-16 border border-klein/20 text-klein font-mono text-2xl mx-auto flex items-center justify-center mb-4">
                             <i class="fa-solid fa-filter-circle-xmark"></i>
                         </div>
                         <h3 class="font-heading font-black text-xl text-klein uppercase mb-2">找不到符合條件的資源</h3>
                         <p class="font-body text-klein/60 text-sm">請嘗試更換搜尋關鍵字，或重設分類與年級篩選條件。</p>
-                        <button onclick="ResourceLib.resetAllFilters()" class="mt-6 hover-spring bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider px-6 py-3">
+                        <button onclick="ResourceLib.resetAllFilters()"
+                            class="mt-6 hover-spring bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider px-6 py-3">
                             重設所有篩選條件
                         </button>
                     </div>
@@ -302,15 +396,20 @@
     </main>
 
     <!-- Global Footer -->
-    <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
+    <footer
+        class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
         <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
             &copy; 2026 Providence University // CareerDNA Engine
         </div>
         <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
+            <span class="flex items-center gap-2"><span
+                    class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
             <span class="hidden sm:inline">LATENCY: &lt;12ms</span>
         </div>
     </footer>
+
+    <!-- Client Global Modal Root -->
+    <div id="client-modal-root"></div>
 
     <!-- JavaScript Logic -->
     <script>
@@ -318,6 +417,7 @@
 
         const ResourceLib = {
             allResources: [],
+            categories: [],
             filtered: [],
             activeCategory: 'all',
             activeGrade: 'all',
@@ -326,15 +426,30 @@
             userGrade: '',
             showOnlyPersonalized: false,
 
-            init() {
+            async init() {
+                // Initial static data fallback for zero delay
                 this.allResources = window.RESOURCES_DATA || [];
                 this.userDept = localStorage.getItem('cdna_department') || '';
                 this.userGrade = localStorage.getItem('cdna_grade') || '';
-                
-                this.renderCategories();
+
+                // Load categories dynamically from API
+                await this.loadCategories();
                 this.setupPersonalizedBanner();
                 this.setupSearch();
                 this.applyFilters();
+
+                // Fetch dynamic resources from MongoDB Atlas API
+                try {
+                    const res = await fetch('/api/resources');
+                    const data = await res.json();
+                    if (data && data.status === 'ok' && Array.isArray(data.resources) && data.resources.length > 0) {
+                        this.allResources = data.resources;
+                        this.setupPersonalizedBanner();
+                        this.applyFilters();
+                    }
+                } catch (e) {
+                    console.log('[ResourceLib] Using static fallback data');
+                }
 
                 // Initialize scroll reveal observer if supported
                 if (typeof IntersectionObserver !== 'undefined') {
@@ -350,21 +465,36 @@
                 }
             },
 
+            async loadCategories() {
+                try {
+                    const res = await fetch('/api/resources/categories');
+                    const data = await res.json();
+                    if (data && data.status === 'ok' && Array.isArray(data.categories) && data.categories.length > 0) {
+                        this.categories = data.categories;
+                    } else {
+                        this.categories = window.RESOURCE_CATEGORIES || [];
+                    }
+                } catch (e) {
+                    this.categories = window.RESOURCE_CATEGORIES || [];
+                }
+                this.renderCategories();
+            },
+
             setupPersonalizedBanner() {
                 if (!this.userDept && !this.userGrade) return;
                 const banner = document.getElementById('personalized-banner');
                 if (!banner) return;
                 banner.classList.remove('hidden');
-                
+
                 const gradeLabel = this.userGrade || '全年級';
                 const deptLabel = this.userDept || '全系所';
 
                 const titleEl = document.getElementById('banner-title');
                 if (titleEl) titleEl.textContent = `${deptLabel} ${gradeLabel} 同學，你好！`;
-                
+
                 const descEl = document.getElementById('banner-desc');
                 if (descEl) descEl.textContent = `已為你篩選出最相關的學習資源，優先顯示在下方推薦區塊`;
-                
+
                 const chips = [];
                 if (this.userDept) chips.push(`<span class="px-3 py-1 font-mono text-xs font-bold border border-klein/20 bg-klein/5 text-klein uppercase">${deptLabel}</span>`);
                 if (this.userGrade) chips.push(`<span class="px-3 py-1 font-mono text-xs font-bold border border-klein/20 bg-klein/5 text-klein uppercase">${gradeLabel}</span>`);
@@ -374,8 +504,8 @@
                 // Show recommended section
                 const gradeNum2 = GRADE_TO_NUM[this.userGrade] || null;
                 const recommended = this.allResources.filter(r => {
-                    const deptMatch = !this.userDept || r.departments.some(d => d.includes(this.userDept.replace('學系','').replace('系','')) || this.userDept.includes(d.replace('系','').replace('學系','')));
-                    const gradeMatch = !gradeNum2 || r.grades.includes(gradeNum2);
+                    const deptMatch = !this.userDept || (r.departments || []).some(d => d.includes(this.userDept.replace('學系', '').replace('系', '')) || this.userDept.includes(d.replace('系', '').replace('學系', '')));
+                    const gradeMatch = !gradeNum2 || (r.grades || []).includes(gradeNum2);
                     return deptMatch && gradeMatch && r.featured;
                 });
 
@@ -400,13 +530,14 @@
             renderCategories() {
                 const list = document.getElementById('category-list');
                 if (!list) return;
-                list.innerHTML = (window.RESOURCE_CATEGORIES || []).map(cat => `
+                const cats = this.categories.length > 0 ? this.categories : (window.RESOURCE_CATEGORIES || []);
+                list.innerHTML = cats.map(cat => `
                     <button onclick="ResourceLib.filterCategory('${cat.id}')" 
                         data-cat="${cat.id}"
                         class="cat-btn ${cat.id === this.activeCategory ? 'active' : ''} w-full text-left px-4 py-3 border border-klein/10 bg-white hover:bg-klein hover:text-white transition-all font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-between group">
                         <span class="flex items-center gap-2.5">
-                            <span class="text-base">${cat.icon}</span>
-                            <span>${cat.label}</span>
+                            <span class="text-base">${cat.icon || '📁'}</span>
+                            <span>${cat.label || cat.id}</span>
                         </span>
                         <i class="fa-solid fa-chevron-right text-[10px] opacity-0 group-hover:opacity-100 group-[.active]:opacity-100 transition-opacity"></i>
                     </button>
@@ -467,15 +598,15 @@
 
                 // Grade filter
                 if (this.activeGrade !== 'all') {
-                    results = results.filter(r => r.grades.includes(Number(this.activeGrade)));
+                    results = results.filter(r => (r.grades || []).includes(Number(this.activeGrade)));
                 }
 
                 // Search filter
                 if (this.searchQuery) {
                     results = results.filter(r =>
-                        r.title.toLowerCase().includes(this.searchQuery) ||
-                        r.description.toLowerCase().includes(this.searchQuery) ||
-                        r.tags.some(t => t.toLowerCase().includes(this.searchQuery))
+                        (r.title || '').toLowerCase().includes(this.searchQuery) ||
+                        (r.description || '').toLowerCase().includes(this.searchQuery) ||
+                        (r.tags || []).some(t => t.toLowerCase().includes(this.searchQuery))
                     );
                 }
 
@@ -489,7 +620,8 @@
                 const label = document.getElementById('results-label');
                 const count = document.getElementById('results-count');
 
-                const catName = (window.RESOURCE_CATEGORIES || []).find(c => c.id === this.activeCategory)?.label || '全部資源';
+                const catObj = this.categories.find(c => c.id === this.activeCategory);
+                const catName = catObj?.label || (this.activeCategory === 'all' ? '全部資源' : this.activeCategory);
                 if (label) label.textContent = catName;
                 if (count) count.textContent = `共 ${this.filtered.length} 項資源`;
 
@@ -505,11 +637,15 @@
             },
 
             renderCard(resource, isRecommended) {
-                const tagsHtml = resource.tags.slice(0, 3).map(t =>
+                const rId = resource.id || resource.resourceId;
+                const filesCount = (resource.files && resource.files.length) || (resource.fileKey ? 1 : 0);
+                const linksCount = (resource.links && resource.links.length) || (resource.url && !resource.fileKey ? 1 : 0);
+
+                const tagsHtml = (resource.tags || []).slice(0, 3).map(t =>
                     `<span class="px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider bg-klein/5 text-klein border border-klein/10">${t}</span>`
                 ).join('');
 
-                const deptHtml = resource.departments.map(d =>
+                const deptHtml = (resource.departments || []).map(d =>
                     `<span class="px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider bg-black/5 text-klein/70 border border-black/10">${d}</span>`
                 ).join('');
 
@@ -519,33 +655,207 @@
                         <div>
                             <div class="flex items-start gap-4 mb-4">
                                 <div class="w-12 h-12 border border-klein/15 bg-klein/5 flex items-center justify-center text-2xl shrink-0 text-klein">
-                                    ${resource.icon}
+                                    ${resource.icon || '📚'}
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2 mb-1">
                                         <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/60">${resource.category}</span>
                                         <span class="text-klein/20">/</span>
-                                        <span class="font-mono text-[10px] font-bold uppercase text-klein/40">${resource.type}</span>
+                                        <span class="font-mono text-[10px] font-bold uppercase text-klein/40">${resource.type || '筆記'}</span>
                                     </div>
-                                    <h3 class="font-heading font-black text-base md:text-lg text-klein leading-snug line-clamp-2">${resource.title}</h3>
+                                    <h3 class="font-heading font-black text-base md:text-lg text-klein leading-snug line-clamp-2">
+                                        <a href="resource_detail.html?id=${encodeURIComponent(rId)}" class="hover:text-flame-orange transition-colors">
+                                            ${resource.title}
+                                        </a>
+                                    </h3>
                                 </div>
                             </div>
-                            <p class="font-body text-klein/70 text-xs md:text-sm leading-relaxed mb-5 line-clamp-3">${resource.description}</p>
-                            <div class="space-y-2 mb-6">
+                            <p class="font-body text-klein/70 text-xs md:text-sm leading-relaxed mb-4 line-clamp-3">${resource.description || ''}</p>
+                            
+                            <div class="space-y-2 mb-5">
                                 <div class="flex flex-wrap gap-1.5">${tagsHtml}</div>
                                 <div class="flex flex-wrap gap-1.5">${deptHtml}</div>
                             </div>
+
+                            <!-- Attachments & Links Summary Badges -->
+                            <div class="flex flex-wrap items-center gap-2 mb-4">
+                                ${filesCount > 0 ? `
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-cyan-50 text-cyan-900 border border-cyan-200 font-mono text-[10px] font-bold">
+                                        <i class="fa-solid fa-cloud-arrow-down text-cyan-600"></i> ${filesCount} 個 R2 附件檔案
+                                    </span>
+                                ` : ''}
+                                ${linksCount > 0 ? `
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 text-indigo-900 border border-indigo-200 font-mono text-[10px] font-bold">
+                                        <i class="fa-solid fa-link text-indigo-600"></i> ${linksCount} 個參考連結
+                                    </span>
+                                ` : ''}
+                            </div>
                         </div>
+
                         <div class="flex items-center justify-between pt-4 border-t border-klein/10">
-                            <span class="font-mono text-[11px] font-medium text-klein/40">${resource.updatedAt} VERIFIED</span>
-                            <a href="${resource.url}" target="_blank" rel="noopener noreferrer"
-                                class="hover-spring bg-klein text-white font-mono font-bold text-xs uppercase tracking-wider px-4 py-2 flex items-center gap-2 group">
-                                <span>訪問資源</span>
-                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                            <span class="font-mono text-[11px] font-medium text-klein/40">${resource.updatedAt || '2026-03'} VERIFIED</span>
+                            <a href="resource_detail.html?id=${encodeURIComponent(rId)}"
+                                class="hover-spring bg-klein hover:bg-deep-klein text-white font-mono font-bold text-xs uppercase tracking-wider px-4 py-2 flex items-center gap-2 group shadow-sm">
+                                <span>看詳情</span>
+                                <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
                             </a>
                         </div>
                     </div>
                 `;
+            },
+
+            openDetailModal(resourceId) {
+                const r = this.allResources.find(item => (item.id === resourceId || item.resourceId === resourceId));
+                if (!r) return;
+
+                let files = r.files && r.files.length > 0 ? r.files : [];
+                let links = r.links && r.links.length > 0 ? r.links : [];
+
+                if (files.length === 0 && r.fileKey) {
+                    files = [{
+                        name: r.fileName || 'attachment',
+                        url: r.url,
+                        key: r.fileKey,
+                        size: r.fileSize || 0
+                    }];
+                }
+
+                if (links.length === 0 && r.url && !r.fileKey) {
+                    links = [{
+                        title: '前往官方外部資源',
+                        url: r.url,
+                        type: 'link'
+                    }];
+                }
+
+                const modalRoot = document.getElementById('client-modal-root');
+                if (!modalRoot) return;
+
+                modalRoot.innerHTML = `
+                    <div id="resource-detail-backdrop" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div class="max-w-2xl w-full bg-white border-2 border-klein shadow-2xl p-6 md:p-8 space-y-6 crosshair-corner max-h-[90vh] overflow-y-auto">
+                            
+                            <!-- Header -->
+                            <div class="flex items-start justify-between gap-4 border-b-2 border-klein pb-4">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-14 h-14 bg-klein/5 border border-klein/20 text-3xl flex items-center justify-center shrink-0 text-klein">
+                                        ${r.icon || '📚'}
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="font-mono text-xs font-bold uppercase tracking-wider text-klein bg-klein/10 px-2 py-0.5">${r.category}</span>
+                                            <span class="text-klein/20">/</span>
+                                            <span class="font-mono text-xs font-bold text-klein/60 uppercase">${r.type || '筆記'}</span>
+                                        </div>
+                                        <h2 class="font-heading font-black text-xl md:text-2xl text-klein leading-snug">${r.title}</h2>
+                                    </div>
+                                </div>
+                                <button onclick="ResourceLib.closeDetailModal()" class="text-klein/40 hover:text-klein text-2xl font-bold p-1 cursor-pointer transition-colors">&times;</button>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="space-y-3">
+                                <div class="font-mono text-xs font-bold text-klein uppercase tracking-wider">
+                                    <i class="fa-solid fa-circle-info text-klein mr-1"></i> 資源簡介
+                                </div>
+                                <p class="font-body text-klein/80 text-sm leading-relaxed bg-slate-50 border border-klein/15 p-4">
+                                    ${r.description || '無詳細說明'}
+                                </p>
+                            </div>
+
+                            <!-- Departments & Grades Badges -->
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-mono text-xs font-bold text-klein mr-2">適用對象：</span>
+                                ${(r.departments || []).map(d => `<span class="px-2.5 py-1 bg-klein/10 text-klein font-mono text-xs font-bold uppercase">${d}</span>`).join('')}
+                                ${(r.grades || []).map(g => `<span class="px-2.5 py-1 bg-slate-200 text-slate-800 font-mono text-xs font-bold uppercase">大${g}</span>`).join('')}
+                                ${(r.tags || []).map(t => `<span class="px-2.5 py-1 border border-klein/20 text-klein font-mono text-xs font-bold">#${t}</span>`).join('')}
+                            </div>
+
+                            <!-- CLOUDFLARE R2 FILES ATTACHMENTS LIST -->
+                            ${files.length > 0 ? `
+                                <div class="space-y-3 pt-2">
+                                    <div class="font-mono text-xs font-bold text-cyan-900 uppercase tracking-wider flex items-center justify-between border-b border-cyan-200 pb-2">
+                                        <span class="flex items-center gap-2">
+                                            <i class="fa-solid fa-cloud-arrow-down text-cyan-600"></i> 雲端檔案下載 (Cloudflare R2)
+                                        </span>
+                                        <span class="text-[11px] text-cyan-700 font-normal">共 ${files.length} 個附件</span>
+                                    </div>
+                                    <div class="space-y-2">
+                                        ${files.map(f => {
+                    const sizeStr = f.size ? `${(f.size / (1024 * 1024)).toFixed(2)} MB` : '檔案';
+                    return `
+                                                <div class="flex items-center justify-between p-3.5 bg-cyan-50/70 border-2 border-cyan-200 hover:border-cyan-500 transition-colors">
+                                                    <div class="flex items-center gap-3 min-w-0 flex-1 pr-3">
+                                                        <div class="w-9 h-9 bg-white border border-cyan-300 flex items-center justify-center text-cyan-800 shrink-0 text-base">
+                                                            <i class="fa-solid fa-file-arrow-down"></i>
+                                                        </div>
+                                                        <div class="min-w-0">
+                                                            <div class="font-bold text-xs text-cyan-950 truncate">${f.name}</div>
+                                                            <div class="font-mono text-[10px] text-cyan-700">${sizeStr} · 全球 CDN 高速分發</div>
+                                                        </div>
+                                                    </div>
+                                                    <a href="${f.url}" target="_blank" download="${f.name}" class="px-4 py-2 bg-cyan-800 hover:bg-cyan-900 text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shrink-0 flex items-center gap-1.5 shadow-sm">
+                                                        <i class="fa-solid fa-download text-xs"></i> <span>下載檔案</span>
+                                                    </a>
+                                                </div>
+                                            `;
+                }).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            <!-- EXTERNAL LINKS & DOCS LIST -->
+                            ${links.length > 0 ? `
+                                <div class="space-y-3 pt-2">
+                                    <div class="font-mono text-xs font-bold text-indigo-900 uppercase tracking-wider flex items-center justify-between border-b border-indigo-200 pb-2">
+                                        <span class="flex items-center gap-2">
+                                            <i class="fa-solid fa-link text-indigo-600"></i> 線上參考文檔與外部資源
+                                        </span>
+                                        <span class="text-[11px] text-indigo-700 font-normal">共 ${links.length} 個連結</span>
+                                    </div>
+                                    <div class="space-y-2">
+                                        ${links.map(l => `
+                                            <div class="flex items-center justify-between p-3.5 bg-indigo-50/70 border-2 border-indigo-200 hover:border-indigo-500 transition-colors">
+                                                <div class="flex items-center gap-3 min-w-0 flex-1 pr-3">
+                                                    <div class="w-9 h-9 bg-white border border-indigo-300 flex items-center justify-center text-indigo-800 shrink-0 text-base">
+                                                        <i class="fa-solid fa-globe"></i>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <div class="font-bold text-xs text-indigo-950 truncate">${l.title || '外部參考網址'}</div>
+                                                        <div class="font-mono text-[10px] text-indigo-600 truncate">${l.url}</div>
+                                                    </div>
+                                                </div>
+                                                <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-indigo-700 hover:bg-indigo-800 text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shrink-0 flex items-center gap-1.5 shadow-sm">
+                                                    <span>訪問連結</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                                </a>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            <!-- Empty Fallback -->
+                            ${files.length === 0 && links.length === 0 ? `
+                                <div class="p-6 text-center text-klein/50 font-mono text-xs border border-dashed border-klein/20">
+                                    此學習資源尚未附加檔案或外部連結
+                                </div>
+                            ` : ''}
+
+                            <!-- Footer -->
+                            <div class="pt-4 border-t border-klein/10 flex justify-between items-center">
+                                <span class="font-mono text-xs text-klein/40">${r.updatedAt || '2026-03'} VERIFIED // CAREERDNA</span>
+                                <button onclick="ResourceLib.closeDetailModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-mono text-xs font-bold uppercase transition-all">
+                                    關閉視窗
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            closeDetailModal() {
+                const modalRoot = document.getElementById('client-modal-root');
+                if (modalRoot) modalRoot.innerHTML = '';
             }
         };
 
@@ -553,4 +863,5 @@
         document.addEventListener('DOMContentLoaded', () => ResourceLib.init());
     </script>
 </body>
+
 </html>

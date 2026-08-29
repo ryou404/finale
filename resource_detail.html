@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>資源詳情 // CareerDNA Learning Resource</title>
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Plus+Jakarta+Sans:wght@700;800&family=Syne:wght@700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'klein': '#002fa7',
+                        'deep-klein': '#001f70',
+                        'flame-orange': '#ff4d00',
+                        'safety-yellow': '#ffea00',
+                        'acid-lime': '#bcf000'
+                    },
+                    fontFamily: {
+                        'syne': ['Syne', 'sans-serif'],
+                        'heading': ['Plus Jakarta Sans', 'Space Grotesk', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace'],
+                        'body': ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .bg-cyber-grid {
+            background-color: #f8fafc;
+            background-image: 
+                linear-gradient(to right, rgba(0, 47, 167, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 47, 167, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .crosshair-corner {
+            position: relative;
+        }
+        .crosshair-corner::before, .crosshair-corner::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .crosshair-corner::before {
+            top: -2px; left: -2px;
+            border-top: 2px solid #002fa7;
+            border-left: 2px solid #002fa7;
+        }
+        .crosshair-corner::after {
+            bottom: -2px; right: -2px;
+            border-bottom: 2px solid #002fa7;
+            border-right: 2px solid #002fa7;
+        }
+        .hover-spring {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+        }
+        .hover-spring:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px 0px #002fa7;
+        }
+    </style>
+</head>
+<body class="bg-cyber-grid min-h-screen selection:bg-klein selection:text-white flex flex-col font-body">
+
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 w-full z-40 bg-white/90 backdrop-blur-md border-b-2 border-klein">
+        <div class="max-w-[1400px] mx-auto px-4 md:px-8 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-4 md:gap-6">
+                <a href="index.html" class="flex items-center gap-2.5 group">
+                    <div class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-base shadow-sm group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-dna"></i>
+                    </div>
+                    <span class="font-heading font-black text-xl text-klein tracking-tight">
+                        CAREERDNA <span class="text-xs font-mono bg-klein/10 text-klein px-1.5 py-0.5 uppercase">ARCHIVE</span>
+                    </span>
+                </a>
+                <span class="text-klein/20 hidden sm:inline">/</span>
+                <a href="resource_library.html" class="hidden sm:flex items-center gap-1.5 font-mono text-xs font-bold text-klein/70 hover:text-klein transition-colors">
+                    <i class="fa-solid fa-arrow-left text-[10px]"></i> 返回學習資源庫
+                </a>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="resource_library.html" class="px-3 py-1.5 border border-klein text-klein font-mono text-xs font-bold hover:bg-klein hover:text-white transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-layer-group"></i> <span>全部資源</span>
+                </a>
+                <a href="admin.html" id="static-nav-admin-btn" class="hidden nav-admin-btn px-3 py-1.5 bg-flame-orange text-white font-mono text-xs font-bold hover:bg-orange-600 transition-all flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-shield-halved"></i> <span class="hidden md:inline">管理後台</span>
+                </a>
+                <div id="nav-auth-section" class="flex items-center gap-3 border-l border-klein/10 pl-3">
+                    <button id="nav-login-btn"
+                        onclick="window.CareerDNA_DB.showAuthModal((u) => window.location.reload())"
+                        class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein hover:text-white hover:bg-klein border border-klein px-3 py-1.5 transition-all">登入</button>
+                    <div id="nav-user-info" class="hidden flex items-center gap-3">
+                        <div class="flex flex-col text-right">
+                            <span id="nav-user-name" class="text-xs font-bold text-klein truncate max-w-[100px]"></span>
+                        </div>
+                        <div id="nav-user-avatar"
+                            class="w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="flex-grow pt-24 pb-20 px-4 md:px-8 max-w-[1400px] mx-auto w-full">
+        
+        <!-- Breadcrumb & Back Action -->
+        <div class="py-4 flex items-center justify-between border-b border-klein/10 mb-8">
+            <div class="flex items-center gap-2 font-mono text-xs text-klein/60">
+                <a href="index.html" class="hover:text-klein hover:underline">首頁</a>
+                <span>/</span>
+                <a href="resource_library.html" class="hover:text-klein hover:underline">學習資源庫</a>
+                <span>/</span>
+                <span id="breadcrumb-title" class="text-klein font-bold truncate max-w-[200px] md:max-w-[400px]">載入中...</span>
+            </div>
+            <a href="resource_library.html" class="px-3 py-1.5 border border-klein/30 text-klein font-mono text-xs font-bold hover:bg-klein hover:text-white transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-chevron-left text-[10px]"></i> 返回列表
+            </a>
+        </div>
+
+        <!-- Loading State Placeholder -->
+        <div id="loading-state" class="p-16 text-center font-mono space-y-3">
+            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-klein"></i>
+            <div class="text-xs font-bold text-klein uppercase tracking-widest">
+                CAREERDNA // LOADING RESOURCE REPOSITORY...
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="hidden p-12 bg-white border-2 border-rose-600 text-center space-y-4 crosshair-corner">
+            <i class="fa-solid fa-triangle-exclamation text-4xl text-rose-600"></i>
+            <h2 class="font-heading font-bold text-xl text-rose-600">找不到此學習資源</h2>
+            <p class="font-mono text-xs text-slate-600 max-w-md mx-auto">此資源可能已被管理員移除或網址參數錯誤。</p>
+            <a href="resource_library.html" class="inline-block px-5 py-2.5 bg-klein text-white font-mono text-xs font-bold uppercase hover:bg-deep-klein">
+                返回學習資源庫
+            </a>
+        </div>
+
+        <!-- Resource Detail Container -->
+        <div id="resource-container" class="hidden space-y-8">
+            
+            <!-- Hero Banner -->
+            <div class="bg-white border-2 border-klein p-6 md:p-10 crosshair-corner shadow-sm">
+                <div class="flex flex-col md:flex-row items-start justify-between gap-6">
+                    <div class="space-y-4 flex-1">
+                        <!-- Category, Type & Featured Badges -->
+                        <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+                            <span id="res-badge-cat" class="px-3 py-1 bg-klein text-white font-bold uppercase tracking-wider">
+                                學科資源
+                            </span>
+                            <span id="res-badge-type" class="px-3 py-1 bg-klein/10 text-klein font-bold uppercase tracking-wider border border-klein/20">
+                                筆記
+                            </span>
+                            <span id="res-badge-featured" class="hidden px-3 py-1 bg-amber-100 text-amber-900 font-bold border border-amber-300 uppercase">
+                                <i class="fa-solid fa-star text-amber-500 mr-1"></i> 精選推薦 (Featured)
+                            </span>
+                            <span id="res-badge-updated" class="px-3 py-1 bg-slate-100 text-slate-700 font-mono text-xs">
+                                2026-03 VERIFIED
+                            </span>
+                        </div>
+
+                        <!-- Title -->
+                        <h1 id="res-title" class="font-heading font-black text-2xl md:text-4xl text-klein tracking-tight leading-tight">
+                            載入資源中...
+                        </h1>
+
+                        <!-- Tags & Target Badges -->
+                        <div class="flex flex-wrap items-center gap-2 pt-2" id="res-tags-container">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Large Icon Box -->
+                    <div class="w-20 h-20 md:w-24 md:h-24 bg-klein/5 border-2 border-klein flex items-center justify-center text-4xl md:text-5xl shrink-0 text-klein shadow-sm">
+                        <span id="res-icon">📚</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2-Column Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                
+                <!-- Main Content Area (Left 2 Cols) -->
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <!-- Description Card -->
+                    <div class="bg-white border-2 border-klein p-6 md:p-8 crosshair-corner space-y-4 shadow-sm">
+                        <div class="flex items-center gap-2.5 font-heading font-bold text-sm text-klein uppercase tracking-wider border-b border-klein/10 pb-3">
+                            <i class="fa-solid fa-align-left text-flame-orange"></i> 資源簡介與學習重點 (Overview)
+                        </div>
+                        <p id="res-description" class="font-body text-slate-800 text-sm md:text-base leading-relaxed whitespace-pre-line">
+                            <!-- Description content -->
+                        </p>
+                    </div>
+
+                    <!-- Cloudflare R2 Attached Files Section -->
+                    <div id="section-files" class="bg-white border-2 border-cyan-700 p-6 md:p-8 crosshair-corner space-y-5 shadow-sm">
+                        <div class="flex items-center justify-between border-b-2 border-cyan-700 pb-3">
+                            <div class="flex items-center gap-2.5 font-heading font-bold text-sm text-cyan-900 uppercase tracking-wider">
+                                <i class="fa-solid fa-cloud-arrow-down text-cyan-600 text-base"></i> 
+                                雲端附件檔案下載 (Cloudflare R2 Fast CDN)
+                            </div>
+                            <span id="files-count-badge" class="font-mono text-xs font-bold text-cyan-800 bg-cyan-100 px-2.5 py-0.5 border border-cyan-300">
+                                0 個檔案
+                            </span>
+                        </div>
+
+                        <div id="files-list-container" class="space-y-3">
+                            <!-- Dynamically injected file cards -->
+                        </div>
+                    </div>
+
+                    <!-- External Links & Documentation Section -->
+                    <div id="section-links" class="bg-white border-2 border-indigo-700 p-6 md:p-8 crosshair-corner space-y-5 shadow-sm">
+                        <div class="flex items-center justify-between border-b-2 border-indigo-700 pb-3">
+                            <div class="flex items-center gap-2.5 font-heading font-bold text-sm text-indigo-900 uppercase tracking-wider">
+                                <i class="fa-solid fa-link text-indigo-600 text-base"></i> 
+                                線上參考文檔與外部連結 (External Links & Docs)
+                            </div>
+                            <span id="links-count-badge" class="font-mono text-xs font-bold text-indigo-800 bg-indigo-100 px-2.5 py-0.5 border border-indigo-300">
+                                0 個連結
+                            </span>
+                        </div>
+
+                        <div id="links-list-container" class="space-y-3">
+                            <!-- Dynamically injected link cards -->
+                        </div>
+                    </div>
+
+                    <!-- PDF Inline Viewer (If applicable) -->
+                    <div id="section-pdf-viewer" class="hidden bg-white border-2 border-klein p-6 crosshair-corner space-y-4">
+                        <div class="flex items-center justify-between border-b border-klein/20 pb-3">
+                            <div class="flex items-center gap-2 font-heading font-bold text-sm text-klein uppercase">
+                                <i class="fa-solid fa-file-pdf text-rose-600"></i> 線上 PDF 瀏覽預覽 (Inline Document Viewer)
+                            </div>
+                            <button onclick="ResourceDetailPage.togglePdfFullscreen()" class="px-2.5 py-1 border border-klein text-klein font-mono text-xs font-bold hover:bg-klein hover:text-white">
+                                <i class="fa-solid fa-expand mr-1"></i> 全螢幕檢視
+                            </button>
+                        </div>
+                        <iframe id="pdf-frame" src="" class="w-full h-[600px] border border-klein/20"></iframe>
+                    </div>
+
+                </div>
+
+                <!-- Sidebar Metadata & Actions (Right 1 Col) -->
+                <div class="space-y-6">
+                    
+                    <!-- Metadata Dossier Card -->
+                    <div class="bg-white border-2 border-klein p-6 crosshair-corner space-y-4 shadow-sm">
+                        <div class="font-heading font-bold text-xs text-klein uppercase tracking-wider border-b border-klein/10 pb-2.5 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-nodes text-klein"></i> 資源規格與適用條件 (Dossier)
+                        </div>
+
+                        <div class="font-mono text-xs space-y-3 divide-y divide-klein/10">
+                            <div class="pt-2 flex justify-between items-center">
+                                <span class="text-klein/60">資源識別碼:</span>
+                                <span id="meta-id" class="font-bold text-klein">--</span>
+                            </div>
+                            <div class="pt-2 flex justify-between items-center">
+                                <span class="text-klein/60">資源分類:</span>
+                                <span id="meta-category" class="font-bold text-klein">--</span>
+                            </div>
+                            <div class="pt-2 flex justify-between items-center">
+                                <span class="text-klein/60">資源類型:</span>
+                                <span id="meta-type" class="font-bold text-klein">--</span>
+                            </div>
+                            <div class="pt-2 flex flex-col gap-1">
+                                <span class="text-klein/60">適用系所:</span>
+                                <div id="meta-depts" class="flex flex-wrap gap-1">--</div>
+                            </div>
+                            <div class="pt-2 flex flex-col gap-1">
+                                <span class="text-klein/60">適用年級:</span>
+                                <div id="meta-grades" class="flex flex-wrap gap-1">--</div>
+                            </div>
+                            <div class="pt-2 flex justify-between items-center">
+                                <span class="text-klein/60">雲端儲存:</span>
+                                <span class="font-bold text-emerald-700 flex items-center gap-1">
+                                    <i class="fa-solid fa-cloud"></i> Cloudflare R2
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-klein/10 space-y-2">
+                            <button onclick="ResourceDetailPage.copyShareUrl()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-klein font-mono text-xs font-bold border border-klein/30 transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-share-nodes"></i> 複製分享連結 (Share URL)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Related Resources Recommendations -->
+                    <div class="bg-white border-2 border-klein p-6 crosshair-corner space-y-4 shadow-sm">
+                        <div class="font-heading font-bold text-xs text-klein uppercase tracking-wider border-b border-klein/10 pb-2.5 flex items-center gap-2">
+                            <i class="fa-solid fa-compass text-klein"></i> 相關同類學習資源 (Related)
+                        </div>
+
+                        <div id="related-container" class="space-y-3 font-mono text-xs">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full mt-auto">
+        <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+            &copy; 2026 Providence University // CareerDNA Engine
+        </div>
+        <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
+            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
+            <span class="hidden sm:inline">R2 CLOUD ARCHIVE</span>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-root" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Database & Auth Bridge -->
+    <script src="static/db-client.js"></script>
+
+    <!-- Script Logic -->
+    <script>
+        const ResourceDetailPage = {
+            resourceId: '',
+            resourceData: null,
+            relatedData: [],
+
+            async init() {
+                const urlParams = new URLSearchParams(window.location.search);
+                this.resourceId = urlParams.get('id') || urlParams.get('resourceId') || '';
+
+                if (!this.resourceId) {
+                    this.showError();
+                    return;
+                }
+
+                await this.fetchResourceDetail();
+            },
+
+            async fetchResourceDetail() {
+                try {
+                    const res = await fetch(`/api/resources/${encodeURIComponent(this.resourceId)}`);
+                    const data = await res.json();
+
+                    if (data && data.status === 'ok' && data.resource) {
+                        this.resourceData = data.resource;
+                        this.relatedData = data.related || [];
+                        this.renderPage();
+                    } else {
+                        this.showError();
+                    }
+                } catch (err) {
+                    console.error('[ResourceDetailPage Error]:', err);
+                    this.showError();
+                }
+            },
+
+            renderPage() {
+                const r = this.resourceData;
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('error-state').classList.add('hidden');
+                document.getElementById('resource-container').classList.remove('hidden');
+
+                // Page Title
+                document.title = `${r.title} // CareerDNA`;
+                document.getElementById('breadcrumb-title').textContent = r.title;
+
+                // Hero Info
+                document.getElementById('res-icon').textContent = r.icon || '📚';
+                document.getElementById('res-title').textContent = r.title;
+                document.getElementById('res-badge-cat').textContent = r.category;
+                document.getElementById('res-badge-type').textContent = r.type || '筆記';
+                document.getElementById('res-badge-updated').textContent = `${r.updatedAt || '2026-03'} VERIFIED`;
+
+                if (r.featured) {
+                    document.getElementById('res-badge-featured').classList.remove('hidden');
+                }
+
+                // Tags & Target Depts
+                const tagsContainer = document.getElementById('res-tags-container');
+                const deptsHtml = (r.departments || []).map(d => `<span class="px-2.5 py-1 bg-klein/10 text-klein font-mono text-xs font-bold uppercase border border-klein/20"><i class="fa-solid fa-graduation-cap mr-1"></i>${d}</span>`).join('');
+                const gradesHtml = (r.grades || []).map(g => `<span class="px-2.5 py-1 bg-slate-200 text-slate-800 font-mono text-xs font-bold uppercase">大${g}</span>`).join('');
+                const tagsHtml = (r.tags || []).map(t => `<span class="px-2.5 py-1 bg-white text-klein font-mono text-xs font-bold border border-klein/30">#${t}</span>`).join('');
+                tagsContainer.innerHTML = deptsHtml + gradesHtml + tagsHtml;
+
+                // Description
+                document.getElementById('res-description').textContent = r.description || '暫無詳細文字簡介。';
+
+                // Attached Files (Cloudflare R2)
+                const files = r.files || [];
+                const filesSection = document.getElementById('section-files');
+                const filesList = document.getElementById('files-list-container');
+                const filesBadge = document.getElementById('files-count-badge');
+
+                if (files.length > 0) {
+                    filesBadge.textContent = `${files.length} 個檔案`;
+                    filesList.innerHTML = files.map((f, idx) => {
+                        const sizeStr = f.size ? `${(f.size / (1024 * 1024)).toFixed(2)} MB` : (f.size === 0 ? '雲端文檔' : `${Math.round(f.size/1024)} KB`);
+                        const isPdf = (f.name || '').toLowerCase().endsWith('.pdf') || (f.mimeType || '').includes('pdf');
+
+                        return `
+                            <div class="p-4 bg-cyan-50/80 border-2 border-cyan-300 hover:border-cyan-600 transition-colors flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                                <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                    <div class="w-11 h-11 bg-white border border-cyan-400 flex items-center justify-center text-cyan-800 shrink-0 text-xl shadow-sm">
+                                        <i class="fa-solid ${isPdf ? 'fa-file-pdf text-rose-600' : 'fa-file-lines'}"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="font-heading font-bold text-sm text-cyan-950 truncate">${f.name}</div>
+                                        <div class="font-mono text-xs text-cyan-700 flex items-center gap-2 mt-0.5">
+                                            <span><i class="fa-solid fa-hard-drive mr-1"></i>${sizeStr}</span>
+                                            <span>•</span>
+                                            <span class="text-cyan-800 font-bold"><i class="fa-solid fa-bolt mr-1"></i>Cloudflare CDN</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2 shrink-0 w-full md:w-auto">
+                                    ${isPdf ? `
+                                        <button onclick="ResourceDetailPage.previewPdf('${f.url}')" class="px-3.5 py-2 bg-white hover:bg-cyan-100 text-cyan-900 border border-cyan-400 font-mono text-xs font-bold transition-all flex items-center gap-1.5">
+                                            <i class="fa-solid fa-eye"></i> 預覽
+                                        </button>
+                                    ` : ''}
+                                    <a href="${f.url}" target="_blank" download="${f.name}" class="flex-1 md:flex-none px-4 py-2 bg-cyan-800 hover:bg-cyan-900 text-white font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                                        <i class="fa-solid fa-download"></i> 下載檔案
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    filesSection.classList.add('hidden');
+                }
+
+                // External Links
+                const links = r.links || [];
+                const linksSection = document.getElementById('section-links');
+                const linksList = document.getElementById('links-list-container');
+                const linksBadge = document.getElementById('links-count-badge');
+
+                if (links.length > 0) {
+                    linksBadge.textContent = `${links.length} 個連結`;
+                    linksList.innerHTML = links.map(l => {
+                        let domain = '';
+                        try { domain = new URL(l.url).hostname; } catch (e) { domain = l.url; }
+
+                        return `
+                            <div class="p-4 bg-indigo-50/80 border-2 border-indigo-300 hover:border-indigo-600 transition-colors flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                                <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                    <div class="w-11 h-11 bg-white border border-indigo-400 flex items-center justify-center text-indigo-800 shrink-0 text-xl shadow-sm">
+                                        <i class="fa-solid fa-globe"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="font-heading font-bold text-sm text-indigo-950 truncate">${l.title || '外部參考資源'}</div>
+                                        <div class="font-mono text-xs text-indigo-600 truncate mt-0.5">
+                                            <i class="fa-solid fa-link mr-1"></i>${domain}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2 shrink-0 w-full md:w-auto">
+                                    <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="flex-1 md:flex-none px-4 py-2 bg-indigo-700 hover:bg-indigo-800 text-white font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                                        <span>前往資源</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    linksSection.classList.add('hidden');
+                }
+
+                // Metadata Dossier
+                document.getElementById('meta-id').textContent = r.resourceId || r.id;
+                document.getElementById('meta-category').textContent = r.category;
+                document.getElementById('meta-type').textContent = r.type || '筆記';
+                document.getElementById('meta-depts').innerHTML = (r.departments || []).map(d => `<span class="px-1.5 py-0.5 bg-klein/5 text-klein font-bold">${d}</span>`).join(' ') || '全部';
+                document.getElementById('meta-grades').innerHTML = (r.grades || []).map(g => `<span class="px-1.5 py-0.5 bg-slate-100 text-slate-700 font-bold">大${g}</span>`).join(' ') || '全部';
+
+                // Related Resources
+                const relatedContainer = document.getElementById('related-container');
+                if (this.relatedData.length > 0) {
+                    relatedContainer.innerHTML = this.relatedData.map(rel => `
+                        <a href="resource_detail.html?id=${encodeURIComponent(rel.resourceId || rel.id)}" class="p-3 bg-slate-50 hover:bg-klein/5 border border-klein/20 block space-y-1 transition-all group">
+                            <div class="flex items-center gap-2">
+                                <span class="text-base">${rel.icon || '📚'}</span>
+                                <span class="font-bold text-klein group-hover:underline truncate">${rel.title}</span>
+                            </div>
+                            <div class="text-[10px] text-klein/60 font-mono flex items-center gap-2">
+                                <span>${rel.category}</span>
+                                <span>·</span>
+                                <span>${rel.filesCount} 檔案</span>
+                            </div>
+                        </a>
+                    `).join('');
+                } else {
+                    relatedContainer.innerHTML = '<div class="p-3 text-center text-klein/40 font-mono">暫無其他同類推薦</div>';
+                }
+            },
+
+            previewPdf(url) {
+                const viewer = document.getElementById('section-pdf-viewer');
+                const iframe = document.getElementById('pdf-frame');
+                if (viewer && iframe) {
+                    iframe.src = url;
+                    viewer.classList.remove('hidden');
+                    viewer.scrollIntoView({ behavior: 'smooth' });
+                }
+            },
+
+            togglePdfFullscreen() {
+                const iframe = document.getElementById('pdf-frame');
+                if (iframe.requestFullscreen) {
+                    iframe.requestFullscreen();
+                }
+            },
+
+            copyShareUrl() {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    this.showToast('資源分享連結已複製至剪貼簿！', 'success');
+                }).catch(() => {
+                    this.showToast('複製失敗', 'error');
+                });
+            },
+
+            showToast(msg, type = 'info') {
+                const root = document.getElementById('toast-root');
+                if (!root) return;
+                const toast = document.createElement('div');
+                toast.className = `px-4 py-2.5 ${type === 'success' ? 'bg-emerald-600' : 'bg-klein'} text-white font-mono text-xs font-bold border-2 border-white shadow-xl pointer-events-auto flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2`;
+                toast.innerHTML = `<i class="fa-solid fa-check"></i> ${msg}`;
+                root.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            },
+
+            showError() {
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('resource-container').classList.add('hidden');
+                document.getElementById('error-state').classList.remove('hidden');
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => ResourceDetailPage.init());
+    </script>
+</body>
+</html>

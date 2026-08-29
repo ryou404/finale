@@ -351,18 +351,61 @@
 
                         </div>
 
-                        <!-- Theme Switcher Section -->
+                        <!-- Skills & Proficiency Section (Universal for all majors) -->
                         <div class="pt-8 border-t border-klein/10">
-                            <div class="flex items-center justify-between p-5 border border-klein/10 bg-klein/[0.02]">
+                            <div class="border-b border-klein/10 pb-3 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div>
-                                    <div class="h-2"></div>
-                                    <h3 class="font-heading font-black text-lg uppercase tracking-tight text-klein">深色模式 (Dark Mode)</h3>
-                                    <p class="font-body text-xs text-klein/60 mt-1">切換全站極黑 Cyber-HUD 與經典純白賽博極簡主題。</p>
+                                    <h3 class="font-heading font-black text-lg uppercase tracking-tight text-klein flex items-center gap-2">
+                                        <i class="fa-solid fa-wand-magic-sparkles text-klein"></i>
+                                        專屬專業技能與擅長工具 (Professional Skills & Tools)
+                                    </h3>
+                                    <p class="font-mono text-xs text-klein/60 mt-1">
+                                        請依據您的科系或專業背景自訂輸入技能標籤（例如：多益證照、財務報表、Photoshop、AutoCAD、Python 等），系統將在 <strong>AI 履歷生成</strong> 時自動融入此技能清單。
+                                    </p>
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
-                                    <div class="w-12 h-6 border border-klein/30 bg-white peer-focus:outline-none peer peer-checked:after:translate-x-6 peer-checked:after:bg-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-klein after:border after:border-klein after:h-4 after:w-4 after:transition-all peer-checked:bg-klein"></div>
-                                </label>
+                                <div id="selected-skills-count-badge" class="font-mono text-xs font-bold bg-klein text-white px-3 py-1.5 shrink-0 self-start sm:self-auto shadow-sm">
+                                    已建立 0 項技能
+                                </div>
+                            </div>
+
+                            <!-- Universal Skill Input Form -->
+                            <div class="space-y-4">
+                                <div class="p-4 bg-klein/[0.02] border border-klein/15 space-y-3">
+                                    <label class="block font-mono text-xs font-bold text-klein uppercase tracking-wider">
+                                        輸入專業技能或工具名稱 (Enter Skill / Tool Name)
+                                    </label>
+                                    <div class="flex flex-col sm:flex-row gap-2">
+                                        <div class="relative flex-1">
+                                            <input type="text" id="custom-skill-input" placeholder="例如：財務分析, 多益 850, Photoshop, 專案管理, Python..." class="w-full pl-9 pr-3 py-2.5 border border-klein/20 focus:border-klein text-klein font-mono text-xs placeholder:text-klein/30">
+                                            <div class="absolute left-3 top-1/2 -translate-y-1/2 text-klein/40 text-xs">
+                                                <i class="fa-solid fa-tag"></i>
+                                            </div>
+                                        </div>
+                                        <select id="custom-skill-level" class="px-3 py-2.5 border border-klein/20 focus:border-klein text-klein font-mono text-xs bg-white font-bold">
+                                            <option value="熟練">熟練 (Proficient)</option>
+                                            <option value="精通">精通 (Expert)</option>
+                                            <option value="基礎">基礎 (Familiar)</option>
+                                        </select>
+                                        <button type="button" onclick="window.ProfileApp.addCustomSkill()" class="px-5 py-2.5 bg-klein hover:bg-blue-800 text-white font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shrink-0 shadow-sm">
+                                            <i class="fa-solid fa-plus text-xs"></i> <span>新增技能</span>
+                                        </button>
+                                    </div>
+                                    <p class="font-mono text-[11px] text-klein/40">* 輸入完成後可直接按下 Enter 鍵快速新增</p>
+                                </div>
+
+                                <!-- Active Added Skills List -->
+                                <div class="p-4 bg-white border-2 border-klein space-y-3 crosshair-corner">
+                                    <div class="font-mono text-xs font-bold text-klein flex items-center justify-between border-b border-klein/10 pb-2">
+                                        <span class="flex items-center gap-2">
+                                            <i class="fa-solid fa-list-check text-klein"></i>
+                                            <span>我的技能清單 (點選標籤右側按鈕可切換熟練度 / 點擊 ✕ 移除)</span>
+                                        </span>
+                                        <button type="button" onclick="window.ProfileApp.clearAllSkills()" class="text-[11px] text-rose-600 hover:underline font-bold">全部清空</button>
+                                    </div>
+                                    <div id="active-skills-list" class="flex flex-wrap gap-2 pt-1 min-h-[48px] items-center">
+                                        <!-- Injected user skills chips -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -428,6 +471,7 @@
 
         window.ProfileApp = {
             currentUser: null,
+            skills: [], // Array of { name: string, level: '精通' | '熟練' | '基礎' }
 
             init() {
                 const hour = new Date().getHours();
@@ -435,13 +479,15 @@
                 const greetingEl = document.getElementById('greeting-text');
                 if (greetingEl) greetingEl.innerText = `${greeting}，很高興見到你`;
 
-                const darkModeToggle = document.getElementById('dark-mode-toggle');
-                if (darkModeToggle) {
-                    if (localStorage.getItem('darkMode') === 'true') {
-                        document.body.classList.add('dark-mode');
-                        darkModeToggle.checked = true;
-                    }
-                    darkModeToggle.addEventListener('change', (e) => this.toggleDarkMode(e.target.checked));
+                // Setup Enter Key Listener for Custom Skill Input
+                const customSkillInput = document.getElementById('custom-skill-input');
+                if (customSkillInput) {
+                    customSkillInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.addCustomSkill();
+                        }
+                    });
                 }
 
                 // 1. Immediately Check MongoDB Atlas User
@@ -477,6 +523,87 @@
 
                 const avatarInput = document.getElementById('avatar-file-input');
                 if (avatarInput) avatarInput.addEventListener('change', (e) => this.handleAvatarUpload(e));
+            },
+
+            renderActiveSkills() {
+                const container = document.getElementById('active-skills-list');
+                const badge = document.getElementById('selected-skills-count-badge');
+                if (badge) badge.innerText = `已建立 ${this.skills.length} 項技能`;
+
+                if (!container) return;
+
+                if (this.skills.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-xs font-mono text-klein/50 italic py-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-klein/40"></i>
+                            <span>目前尚未新增任何專業技能，請在上方輸入您的專長工具、專業證照或修習能力。</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.skills.map((skill, idx) => {
+                    const levelColors = {
+                        '精通': 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                        '熟練': 'bg-blue-100 text-blue-800 border-blue-300',
+                        '基礎': 'bg-amber-100 text-amber-800 border-amber-300'
+                    };
+                    const levelClass = levelColors[skill.level] || levelColors['熟練'];
+                    return `
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-klein text-klein font-mono text-xs shadow-sm hover-spring">
+                            <i class="fa-solid fa-tag text-[10px] text-klein/60"></i>
+                            <span class="font-bold">${skill.name}</span>
+                            <button type="button" onclick="window.ProfileApp.cycleSkillLevel('${skill.name}')" title="點擊切換熟練度 (精通 ➔ 熟練 ➔ 基礎)" class="px-2 py-0.5 text-[10px] font-bold border ${levelClass} hover:opacity-80 transition-opacity">
+                                ${skill.level} ⟳
+                            </button>
+                            <button type="button" onclick="window.ProfileApp.removeSkill('${skill.name}')" title="移除此技能" class="text-klein/40 hover:text-rose-600 ml-1 transition-colors">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            cycleSkillLevel(name) {
+                const skill = this.skills.find(s => s.name === name);
+                if (!skill) return;
+                const levels = ['精通', '熟練', '基礎'];
+                const currentIdx = levels.indexOf(skill.level);
+                const nextIdx = (currentIdx + 1) % levels.length;
+                skill.level = levels[nextIdx];
+                this.renderActiveSkills();
+            },
+
+            addCustomSkill() {
+                const input = document.getElementById('custom-skill-input');
+                const levelSelect = document.getElementById('custom-skill-level');
+                if (!input) return;
+                const val = input.value.trim();
+                const level = levelSelect ? levelSelect.value : '熟練';
+                if (!val) return;
+
+                if (this.skills.some(s => s.name.toLowerCase() === val.toLowerCase())) {
+                    this.showToast(`技能「${val}」已在清單中！`, false);
+                    return;
+                }
+
+                this.skills.push({ name: val, level: level });
+                input.value = '';
+                this.renderActiveSkills();
+                this.showToast(`已新增技能「${val} (${level})」！`);
+            },
+
+            removeSkill(name) {
+                this.skills = this.skills.filter(s => s.name !== name);
+                this.renderActiveSkills();
+            },
+
+            clearAllSkills() {
+                if (this.skills.length === 0) return;
+                if (confirm('確定要清空所有已建立的專業技能嗎？')) {
+                    this.skills = [];
+                    this.renderActiveSkills();
+                }
             },
 
             updateAvatarDisplay(photoURL) {
@@ -571,15 +698,6 @@
                 setTimeout(() => { window.location.href = 'index.html'; }, 800);
             },
 
-            async toggleDarkMode(isDark) {
-                document.body.classList.toggle('dark-mode', isDark);
-                localStorage.setItem('darkMode', isDark);
-                const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(this.currentUser) : (this.currentUser?.uid);
-                if (window.CareerDNA_DB && effectiveUid) {
-                    window.CareerDNA_DB.saveProfile(effectiveUid, { settings: { darkMode: isDark } }).catch(console.error);
-                }
-            },
-
             showToast(message, isSuccess = true) {
                 const toast = document.getElementById('toast');
                 if (!toast) return;
@@ -639,6 +757,26 @@
                     grade: initialGrade
                 });
 
+                // Load cached skills from user object or localStorage
+                if (user.skills && Array.isArray(user.skills)) {
+                    this.skills = user.skills
+                        .filter(s => s && (typeof s === 'string' ? s.trim() : s.name))
+                        .map(s => typeof s === 'string' ? { name: s.trim(), level: '熟練' } : s);
+                } else {
+                    const cachedSkills = localStorage.getItem('cdna_skills');
+                    if (cachedSkills) {
+                        try {
+                            const parsed = JSON.parse(cachedSkills);
+                            if (Array.isArray(parsed)) {
+                                this.skills = parsed
+                                    .filter(s => s && (typeof s === 'string' ? s.trim() : s.name))
+                                    .map(s => typeof s === 'string' ? { name: s.trim(), level: '熟練' } : s);
+                            }
+                        } catch(e) {}
+                    }
+                }
+                this.renderActiveSkills();
+
                 // Fetch latest data from MongoDB Atlas
                 const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(user) : (user.uid || user._id);
                 try {
@@ -655,17 +793,18 @@
                             if (displayNameEl) displayNameEl.innerText = data.name || data.displayName || data.username || initialName;
 
                             this.updateAvatarDisplay(data.photoURL || user.photoURL);
-
                             this.updateAcademicDisplay(data);
 
                             if (data.school) localStorage.setItem('cdna_school', data.school);
                             if (data.department) localStorage.setItem('cdna_department', data.department);
                             if (data.grade) localStorage.setItem('cdna_grade', data.grade);
 
-                            if (data.settings && data.settings.darkMode !== undefined) {
-                                this.toggleDarkMode(data.settings.darkMode);
-                                const darkModeToggle = document.getElementById('dark-mode-toggle');
-                                if (darkModeToggle) darkModeToggle.checked = data.settings.darkMode;
+                            if (data.skills && Array.isArray(data.skills)) {
+                                this.skills = data.skills
+                                    .filter(s => s && (typeof s === 'string' ? s.trim() : s.name))
+                                    .map(s => typeof s === 'string' ? { name: s.trim(), level: '熟練' } : s);
+                                localStorage.setItem('cdna_skills', JSON.stringify(this.skills));
+                                this.renderActiveSkills();
                             }
                         }
                     }
@@ -694,6 +833,7 @@
                         dept: department,
                         department: department,
                         grade: grade,
+                        skills: this.skills,
                         updatedAt: new Date()
                     };
                     
@@ -701,7 +841,10 @@
                     
                     // 1. Sync to MongoDB Atlas
                     if (window.CareerDNA_DB && effectiveUid) {
-                        await window.CareerDNA_DB.saveProfile(effectiveUid, updatedData);
+                        const res = await window.CareerDNA_DB.saveProfile(effectiveUid, updatedData);
+                        if (res && res.status === 'error') {
+                            throw new Error(res.message || '資料庫更新異常');
+                        }
                     }
                     
                     // 2. Sync to localStorage for cross-page personalization
@@ -709,6 +852,7 @@
                     if (updatedData.department) localStorage.setItem('cdna_department', updatedData.department);
                     if (updatedData.grade) localStorage.setItem('cdna_grade', updatedData.grade);
                     if (updatedData.name) localStorage.setItem('cdna_username', updatedData.name);
+                    localStorage.setItem('cdna_skills', JSON.stringify(this.skills));
 
                     const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
                     if (savedUser) {
@@ -717,6 +861,7 @@
                         savedUser.department = updatedData.department;
                         savedUser.dept = updatedData.department;
                         savedUser.grade = updatedData.grade;
+                        savedUser.skills = updatedData.skills;
                         localStorage.setItem('careerDNA_user', JSON.stringify(savedUser));
                         this.updateNavUser(savedUser);
                     }
@@ -725,7 +870,7 @@
                     const displayNameEl = document.getElementById('display-name');
                     if (displayNameEl) displayNameEl.innerText = updatedData.name || '用戶';
                     
-                    this.showToast("資料已成功儲存至 MongoDB Atlas！");
+                    this.showToast("資料與專業技能清單已成功儲存至 MongoDB Atlas！");
                 } catch (error) {
                     alert("更新失敗：" + error.message);
                 } finally {

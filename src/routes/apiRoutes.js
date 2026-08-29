@@ -46,6 +46,9 @@ function maskEmail(email) {
   return `${visible}@${domain}`;
 }
 
+const { Resource } = require('../db/models/Resource');
+const { UploadedFile } = require('../db/models/UploadedFile');
+
 /**
  * 0. Auth APIs (MongoDB Atlas Direct Authentication with Passwords & Email Verification)
  */
@@ -76,6 +79,13 @@ router.post('/auth/login', async (req, res) => {
       });
     }
 
+    if (user.isActive === false) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Tài khoản của bạn đã bị tạm khóa. Vui lòng liên hệ quản trị viên!'
+      });
+    }
+
     // Verify Password
     if (user.password && user.password.length > 0) {
       let isMatch = false;
@@ -91,8 +101,10 @@ router.post('/auth/login', async (req, res) => {
     } else {
       // If user had no password yet, set this as their password
       user.password = await bcrypt.hash(password, 10);
-      await user.save();
     }
+
+    user.lastLoginAt = new Date();
+    await user.save();
 
     res.json({ status: 'ok', message: 'Đăng nhập thành công', user });
   } catch (err) {
@@ -405,6 +417,8 @@ router.get('/db/status', async (req, res) => {
       careerFitResultsCount: isConnected ? await CareerFitResult.countDocuments() : 0,
       labResultsCount: isConnected ? await LabRecommendationResult.countDocuments() : 0,
       professorsCount: isConnected ? await Professor.countDocuments() : 0,
+      resourcesCount: isConnected ? await Resource.countDocuments() : 0,
+      uploadedFilesCount: isConnected ? await UploadedFile.countDocuments() : 0,
       auditLogsCount: isConnected ? await AuditLog.countDocuments() : 0
     };
     res.json({ status: 'ok', database: stats });
@@ -474,7 +488,12 @@ router.put('/users/:uid/profile', async (req, res) => {
     updateFields.updatedAt = new Date();
 
     const user = await User.findOneAndUpdate(
-      { $or: [{ uid }, { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null }] },
+      { $or: [
+        { uid }, 
+        { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null },
+        { email: uid },
+        { username: uid }
+      ] },
       { $set: updateFields },
       { new: true, upsert: true }
     );
@@ -803,11 +822,321 @@ router.get('/r2/file/*', async (req, res) => {
 });
 
 /**
- * Cloudflare R2 Status Check Endpoint
+ * 8. Public Learning Resources API (Connected to MongoDB)
  */
-router.get('/r2/status', async (req, res) => {
-  const result = await checkR2Status();
-  return res.json(result);
+router.get('/resources', async (req, res) => {
+  try {
+    const { dept, category, grade, search } = req.query;
+    const query = { isActive: { $ne: false } };
+
+    if (dept && dept !== 'all') {
+      const cleanDept = dept.replace('學系', '').replace('系', '');
+      query.departments = { $regex: cleanDept, $options: 'i' };
+    }
+
+    if (category && category !== 'all') {
+      query.category = category;
+    }
+
+    if (grade && grade !== 'all') {
+      const gradeNum = parseInt(grade);
+      if (!isNaN(gradeNum)) {
+        query.grades = gradeNum;
+      }
+    }
+
+    if (search && search.trim()) {
+      const regex = new RegExp(search.trim(), 'i');
+      query.$or = [
+        { title: regex },
+        { description: regex },
+        { tags: regex }
+      ];
+    }
+
+    let resources = await Resource.find(query).sort({ featured: -1, createdAt: -1 });
+
+    // Format for frontend compatibility
+    const formatted = resources.map(r => {
+      let files = r.files && r.files.length > 0 ? r.files : [];
+      let links = r.links && r.links.length > 0 ? r.links : [];
+
+      if (files.length === 0 && r.fileKey) {
+        files = [{
+          name: r.fileName || 'attachment',
+          url: r.url,
+          key: r.fileKey,
+          size: r.fileSize || 0,
+          mimeType: r.fileMimeType || ''
+        }];
+      }
+
+      if (links.length === 0 && r.url && !r.fileKey) {
+        links = [{
+          title: '訪問資源 (Official Link)',
+          url: r.url,
+          type: 'link'
+        }];
+      }
+
+      return {
+        id: r.resourceId || String(r._id),
+        resourceId: r.resourceId || String(r._id),
+        title: r.title,
+        category: r.category,
+        type: r.type,
+        departments: r.departments || [],
+        grades: r.grades || [],
+        description: r.description || '',
+        content: r.content || '',
+        files,
+        links,
+        url: r.url || (files.length > 0 ? files[0].url : (links.length > 0 ? links[0].url : '')),
+        fileKey: r.fileKey || (files.length > 0 ? files[0].key : ''),
+        fileName: r.fileName || (files.length > 0 ? files[0].name : ''),
+        fileSize: r.fileSize || (files.length > 0 ? files[0].size : 0),
+        tags: r.tags || [],
+        featured: r.featured || false,
+        icon: r.icon || '📚',
+        updatedAt: r.updatedAtFormatted || (r.updatedAt ? r.updatedAt.toISOString().substring(0, 7) : '')
+      };
+    });
+
+    res.json({
+      status: 'ok',
+      count: formatted.length,
+      resources: formatted
+    });
+  } catch (err) {
+    console.error('[API /resources error]:', err);
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
+// Get Categories (Must be defined before /resources/:id)
+router.get('/resources/categories', async (req, res) => {
+  try {
+    const Category = require('../db/models/Category');
+    const dbCats = await Category.find().sort({ order: 1, createdAt: 1 });
+
+    const categories = [
+      { id: 'all', label: '全部資源', labelEn: 'All Resources', icon: '📚', color: 'blue' }
+    ];
+
+    if (dbCats && dbCats.length > 0) {
+      dbCats.forEach(c => {
+        categories.push({
+          id: c.name,
+          label: c.name,
+          labelEn: c.nameEn || c.name,
+          icon: c.icon || '📁',
+          color: 'indigo',
+          description: c.description || ''
+        });
+      });
+    } else {
+      // Fallback defaults
+      categories.push(
+        { id: '學科資源', label: '學科資源', labelEn: 'Academic', icon: '📖', color: 'indigo' },
+        { id: '實驗室資訊', label: '實驗室資訊', labelEn: 'Lab Info', icon: '🔬', color: 'purple' },
+        { id: '職涯發展', label: '職涯發展', labelEn: 'Career', icon: '💼', color: 'teal' },
+        { id: '考試備戰', label: '考試備戰', labelEn: 'Exams', icon: '📋', color: 'amber' },
+        { id: '常用工具', label: '常用工具', labelEn: 'Tools', icon: '⚙️', color: 'slate' }
+      );
+    }
+
+    res.json({ status: 'ok', count: categories.length, categories });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
+// Get Single Resource Details by ID (for dedicated detail page)
+router.get('/resources/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const r = await Resource.findOne({
+      $or: [
+        { resourceId: id },
+        { _id: mongoose.Types.ObjectId.isValid(id) ? id : null }
+      ]
+    });
+
+    if (!r) {
+      return res.status(404).json({ status: 'error', message: 'Resource not found' });
+    }
+
+    let files = r.files && r.files.length > 0 ? r.files : [];
+    let links = r.links && r.links.length > 0 ? r.links : [];
+
+    if (files.length === 0 && r.fileKey) {
+      files = [{
+        name: r.fileName || 'attachment',
+        url: r.url,
+        key: r.fileKey,
+        size: r.fileSize || 0,
+        mimeType: r.fileMimeType || ''
+      }];
+    }
+
+    if (links.length === 0 && r.url && !r.fileKey) {
+      links = [{
+        title: '前往官方外部資源',
+        url: r.url,
+        type: 'link'
+      }];
+    }
+
+    // Fetch related resources in the same category
+    const relatedDocs = await Resource.find({
+      category: r.category,
+      _id: { $ne: r._id },
+      isActive: true
+    }).limit(4);
+
+    const related = relatedDocs.map(rel => ({
+      id: rel.resourceId || String(rel._id),
+      resourceId: rel.resourceId || String(rel._id),
+      title: rel.title,
+      category: rel.category,
+      type: rel.type,
+      icon: rel.icon || '📚',
+      description: rel.description,
+      filesCount: (rel.files && rel.files.length) || (rel.fileKey ? 1 : 0),
+      linksCount: (rel.links && rel.links.length) || (rel.url && !rel.fileKey ? 1 : 0)
+    }));
+
+    const formatted = {
+      id: r.resourceId || String(r._id),
+      resourceId: r.resourceId || String(r._id),
+      title: r.title,
+      category: r.category,
+      type: r.type,
+      departments: r.departments || [],
+      grades: r.grades || [],
+      description: r.description || '',
+      content: r.content || '',
+      files,
+      links,
+      url: r.url || (files.length > 0 ? files[0].url : (links.length > 0 ? links[0].url : '')),
+      fileKey: r.fileKey || (files.length > 0 ? files[0].key : ''),
+      fileName: r.fileName || (files.length > 0 ? files[0].name : ''),
+      fileSize: r.fileSize || (files.length > 0 ? files[0].size : 0),
+      tags: r.tags || [],
+      featured: r.featured || false,
+      icon: r.icon || '📚',
+      updatedAt: r.updatedAtFormatted || (r.updatedAt ? r.updatedAt.toISOString().substring(0, 7) : ''),
+      createdAt: r.createdAt
+    };
+
+    res.json({
+      status: 'ok',
+      resource: formatted,
+      related
+    });
+  } catch (err) {
+    console.error('[API /resources/:id error]:', err);
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
+/**
+ * Direct DeepSeek AI Resume Diagnosis & Generation API
+ * Ingests prompt, student context, and optional PDF resume, calls DeepSeek Chat Completions API using backend key.
+ */
+router.post('/ai/diagnose', async (req, res) => {
+  const { CONFIG } = require('../config');
+  const { generateDeterministicOutput } = require('../engines/deterministicEngine');
+  const apiKey = CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY;
+  const baseUrl = CONFIG.api.deepseekBaseUrl || process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com';
+  const modelName = CONFIG.llm.model || process.env.DEEPSEEK_MODEL || 'deepseek-chat';
+
+  const { prompt, pdfBase64, department, grade, draftText, courses, experiences, skills } = req.body || {};
+
+  if (!prompt && !draftText) {
+    return res.status(400).json({ status: 'error', message: '缺少提示詞或履歷內容' });
+  }
+
+  if (apiKey) {
+    try {
+      const userPrompt = prompt || `請診斷以下履歷內容並輸出標準 JSON 格式的健檢報告與 Markdown 履歷：\n科系：${department || '資管系'}\n年級：${grade || '大四'}\n自述草稿：${draftText || ''}`;
+
+      const messages = [
+        {
+          role: 'system',
+          content: '你是靜宜大學資訊學院專屬的資深人資與 AI 職涯顧問。請客觀且嚴謹地進行履歷 Golden Triangle 三維度檢核，給出具體且誠懇的建議，並只輸出符合格式規範的純 JSON 物件 (不要包含 markdown code block 標記)。格式務必包含: quantifiability (0-100), completeness (0-100), keywordRelevance (0-100), analysis (HTML格式), actionItems (字串陣列), resumeMarkdown (Markdown格式字串)。'
+        },
+        {
+          role: 'user',
+          content: userPrompt
+        }
+      ];
+
+      const requestPayload = {
+        model: modelName,
+        messages: messages,
+        response_format: { type: 'json_object' },
+        temperature: CONFIG.llm.temperature,
+        max_tokens: 4096
+      };
+
+      const response = await fetch(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(requestPayload)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const rawContent = data?.choices?.[0]?.message?.content;
+        if (rawContent) {
+          const cleanJson = rawContent.replace(/```json/g, '').replace(/```/g, '').trim();
+          const result = JSON.parse(cleanJson);
+          return res.json({
+            status: 'ok',
+            provider: 'DeepSeek',
+            model: data.model || modelName,
+            result
+          });
+        }
+      } else {
+        const errText = await response.text();
+        console.error(`[DeepSeek API Error HTTP ${response.status}]:`, errText);
+      }
+    } catch (apiErr) {
+      console.error('[DeepSeek API Call Exception]:', apiErr.message);
+    }
+  }
+
+  // Graceful Offline Heuristic Fallback (Ensures user ALWAYS gets a complete report)
+  console.log('[AI Diagnose] Triggering Deterministic Fallback Engine...');
+  const fallback = generateDeterministicOutput({
+    department: department || 'IM',
+    grade: grade || '大四',
+    completedCourses: Array.isArray(courses) ? courses : [],
+    experiences: Array.isArray(experiences) ? experiences : [],
+    strengths: Array.isArray(skills) ? skills : [],
+    rawDraft: draftText || ''
+  });
+
+  res.json({
+    status: 'ok',
+    provider: 'DeepSeek (Offline Fallback)',
+    model: 'deterministic-heuristic-engine',
+    isFallback: true,
+    result: {
+      quantifiability: fallback.atsAudit?.metrics?.quantifiability || 75,
+      completeness: fallback.atsAudit?.metrics?.completeness || 80,
+      keywordRelevance: fallback.atsAudit?.metrics?.relevance || 70,
+      analysis: fallback.atsAudit?.auditSummary || '<p>履歷整體結構清晰，建議增加量化數據與 STAR 句型敘述。</p>',
+      actionItems: fallback.academicPlan?.recommendations?.map(r => `建議修習【${r.courseName}】以強化 ${r.teachesSkills.join(', ')} 能力 (${r.reason})`) || [],
+      resumeMarkdown: fallback.resume?.formattedResumeMarkdown || ''
+    }
+  });
 });
 
 module.exports = router;
+

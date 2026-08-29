@@ -56,7 +56,7 @@ const UserSchema = new mongoose.Schema({
   department: { type: String, default: 'IM' },
   dept: { type: String, default: 'IM' },
   grade: { type: String, default: '大三' },
-  skills: [{ type: String }],
+  skills: { type: mongoose.Schema.Types.Mixed, default: [] },
   hollandCode: { type: String, default: '' },
   
   // References to Dedicated Result Collections
@@ -65,6 +65,11 @@ const UserSchema = new mongoose.Schema({
   labRecommendationResult: { type: mongoose.Schema.Types.Mixed, default: null },
   resume: { type: mongoose.Schema.Types.Mixed, default: null },
   
+  // Permissions & Status
+  role: { type: String, enum: ['user', 'admin'], default: 'user', index: true },
+  isActive: { type: Boolean, default: true },
+  lastLoginAt: { type: Date },
+
   // UI & App Settings
   settings: {
     darkMode: { type: Boolean, default: false }

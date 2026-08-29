@@ -24,8 +24,7 @@ class AcademicGapFillerAgent {
    * @returns {Promise<Object>} Output adhering to ACADEMIC_GAP_FILLER_JSON_SCHEMA
    */
   async execute(atsAuditResult, studentPayload) {
-    const startTime = Date.now();
-    const apiKey = CONFIG.api.geminiApiKey;
+    const apiKey = CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY;
     const safeATS = (atsAuditResult && typeof atsAuditResult === 'object') ? atsAuditResult : {};
     const safePayload = (studentPayload && typeof studentPayload === 'object') ? studentPayload : {};
 
@@ -60,41 +59,12 @@ ${JSON.stringify(PROVIDENCE_PRACTICAL_CLUSTERS.map(c => ({ name: c.name, courses
 Please recommend 2-4 exact Providence University courses to bridge the missing tech stack gaps, and construct a realistic 30/60/90-day action plan.
 Output strictly valid JSON matching schema.`;
 
-      const endpoint = `${CONFIG.api.geminiEndpoint}/${this.model}:generateContent?key=${apiKey}`;
-      const requestBody = {
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: prompt }]
-          }
-        ],
-        systemInstruction: {
-          parts: [{ text: PROMPTS.academicGapFillerAgent.system }]
-        },
-        generationConfig: {
-          responseMimeType: "application/json",
-          temperature: this.temperature,
-          topP: CONFIG.llm.topP,
-          maxOutputTokens: CONFIG.llm.maxOutputTokens
-        }
-      };
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody)
+      const { callDeepSeekChat } = require('../services/llmService');
+      const parsed = await callDeepSeekChat({
+        systemPrompt: PROMPTS.academicGapFillerAgent.system,
+        userPrompt: prompt,
+        temperature: this.temperature
       });
-
-      if (!response.ok) {
-        throw new Error(`Gemini API error ${response.status}: ${await response.text()}`);
-      }
-
-      const data = await response.json();
-      const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!rawText) throw new Error("Empty response from Gemini API");
-
-      const cleanJson = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-      const parsed = JSON.parse(cleanJson);
 
       return {
         ...parsed,

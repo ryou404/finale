@@ -51,19 +51,119 @@
     const userName = document.getElementById('nav-user-name');
     const userAvatar = document.getElementById('nav-user-avatar');
 
+    // Handle Admin Link Button - STRICT ADMIN ACCESS CONTROL ONLY
+    const adminBtns = document.querySelectorAll('#dynamic-nav-admin-btn, #static-nav-admin-btn, .nav-admin-btn');
+    if (user && user.role === 'admin') {
+      adminBtns.forEach(btn => btn.classList.remove('hidden'));
+      if (adminBtns.length === 0 && userInfo && userInfo.parentNode) {
+        const newBtn = document.createElement('a');
+        newBtn.id = 'dynamic-nav-admin-btn';
+        newBtn.href = 'admin.html';
+        newBtn.className = 'nav-admin-btn px-3 py-1.5 bg-flame-orange hover:bg-orange-600 text-white text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm mr-2 cursor-pointer shrink-0';
+        newBtn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> <span>管理後台</span>';
+        userInfo.parentNode.insertBefore(newBtn, userInfo);
+      }
+    } else {
+      // Strictly hide from guests and normal users
+      adminBtns.forEach(btn => btn.classList.add('hidden'));
+    }
+
     if (user && (user.name || user.username || user.email)) {
       if (loginBtn) loginBtn.classList.add('hidden');
-      if (userInfo) userInfo.classList.remove('hidden');
+      if (userInfo) {
+        userInfo.classList.remove('hidden');
+        userInfo.className = 'relative group flex items-center gap-3 cursor-pointer py-1.5';
+      }
+      
       const name = user.name || user.displayName || user.username || '用戶';
+      const email = user.email || user.username || '';
+      const dept = user.department || user.dept || localStorage.getItem('cdna_department') || '靜宜大學';
+      const grade = user.grade || localStorage.getItem('cdna_grade') || '大學部';
+      const roleName = user.role === 'admin' ? 'SUPER ADMIN' : 'STUDENT';
+      const initial = name.charAt(0).toUpperCase();
+
       if (userName) userName.innerText = name;
       if (userAvatar) {
         if (user.photoURL) {
-          userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${name.charAt(0).toUpperCase()}'">`;
-          userAvatar.className = 'w-8 h-8 overflow-hidden border border-klein flex items-center justify-center';
+          userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${initial}'">`;
+          userAvatar.className = 'w-9 h-9 overflow-hidden border border-klein flex items-center justify-center bg-white shadow-sm shrink-0';
         } else {
-          userAvatar.innerText = name.charAt(0).toUpperCase();
-          userAvatar.className = 'w-8 h-8 bg-klein text-white flex items-center justify-center font-bold text-sm';
+          userAvatar.innerText = initial;
+          userAvatar.className = 'w-9 h-9 bg-klein text-white flex items-center justify-center font-bold text-sm shadow-sm shrink-0';
         }
+      }
+
+      // Injected User Hover Profile Dropdown (with seamless hover bridge)
+      let dropdown = document.getElementById('nav-user-dropdown-menu');
+      if (!dropdown && userInfo) {
+        dropdown = document.createElement('div');
+        dropdown.id = 'nav-user-dropdown-menu';
+        dropdown.className = 'absolute right-0 top-full pt-1 w-72 z-50 transition-all duration-150 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto';
+        userInfo.appendChild(dropdown);
+      }
+
+      if (dropdown) {
+        dropdown.innerHTML = `
+          <!-- Seamless Invisible Hover Bridge -->
+          <div class="bg-white border-2 border-klein shadow-2xl p-4 crosshair-corner relative">
+            <!-- Header Profile Summary -->
+            <div class="flex items-center gap-3 pb-3 mb-3 border-b border-klein/15">
+              <div class="w-12 h-12 bg-klein text-white flex items-center justify-center font-bold text-lg border border-klein overflow-hidden shrink-0 shadow-sm">
+                ${user.photoURL ? `<img src="${user.photoURL}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${initial}'">` : initial}
+              </div>
+              <div class="min-w-0 flex-1 text-left">
+                <div class="font-heading font-black text-sm text-klein truncate leading-tight">${name}</div>
+                <div class="font-mono text-[10px] text-klein/60 truncate mt-0.5">${email}</div>
+                <div class="flex items-center gap-1.5 mt-1">
+                  <span class="px-1.5 py-0.2 font-mono text-[9px] font-bold uppercase tracking-wider ${user.role === 'admin' ? 'bg-flame-orange text-white' : 'bg-klein/10 text-klein'}">${roleName}</span>
+                  <span class="font-mono text-[10px] text-klein/50 truncate">${dept} · ${grade}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Navigation Links -->
+            <div class="space-y-1 font-mono text-xs font-bold text-left">
+              <a href="profile.html" class="flex items-center justify-between p-2 hover:bg-klein/5 text-klein border border-transparent hover:border-klein/20 transition-all group/item">
+                <span class="flex items-center gap-2">
+                  <i class="fa-solid fa-user text-klein/60 group-hover/item:text-klein"></i>
+                  <span>查看個人檔案與資料</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-[10px] text-klein/30 group-hover/item:translate-x-0.5 transition-transform"></i>
+              </a>
+              <a href="career_fit_v2.html" class="flex items-center justify-between p-2 hover:bg-klein/5 text-klein border border-transparent hover:border-klein/20 transition-all group/item">
+                <span class="flex items-center gap-2">
+                  <i class="fa-solid fa-wand-magic-sparkles text-klein/60 group-hover/item:text-klein"></i>
+                  <span>AI 履歷診斷與健檢</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-[10px] text-klein/30 group-hover/item:translate-x-0.5 transition-transform"></i>
+              </a>
+              <a href="resource_library.html" class="flex items-center justify-between p-2 hover:bg-klein/5 text-klein border border-transparent hover:border-klein/20 transition-all group/item">
+                <span class="flex items-center gap-2">
+                  <i class="fa-solid fa-book-bookmark text-klein/60 group-hover/item:text-klein"></i>
+                  <span>學習資源資料庫</span>
+                </span>
+                <i class="fa-solid fa-chevron-right text-[10px] text-klein/30 group-hover/item:translate-x-0.5 transition-transform"></i>
+              </a>
+              ${user.role === 'admin' ? `
+                <a href="admin.html" class="flex items-center justify-between p-2 bg-flame-orange/10 hover:bg-flame-orange hover:text-white text-flame-orange border border-flame-orange/20 transition-all group/item">
+                  <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>進入系統管理後台</span>
+                  </span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+              ` : ''}
+            </div>
+
+            <!-- Logout Action Button -->
+            <div class="pt-3 mt-3 border-t border-klein/15">
+              <button onclick="window.CareerDNA_DB.logout(); window.location.reload();" class="w-full py-2 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white border border-rose-200 font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-power-off text-xs"></i>
+                <span>登出系統 (LOGOUT)</span>
+              </button>
+            </div>
+          </div>
+        `;
       }
     } else {
       if (loginBtn) loginBtn.classList.remove('hidden');
@@ -735,7 +835,9 @@
     getOrCreateGuestUid,
     getCurrentUser,
     setCurrentUser,
+    refreshNavbar,
     showAuthModal: createAuthModal,
+    openAuthModal: createAuthModal,
 
     // Database Status Check
     async checkStatus() {
@@ -786,6 +888,7 @@
       localStorage.removeItem(STORAGE_KEYS.USER);
       localStorage.removeItem(STORAGE_KEYS.UID);
       localStorage.removeItem(STORAGE_KEYS.NAME);
+      refreshNavbar();
     },
 
     // 1. Get Complete User Profile from MongoDB Atlas
@@ -877,6 +980,47 @@
         console.error('[CareerDNA DB uploadAvatar error]:', err);
         return { status: 'error', message: err.message };
       }
+    },
+
+    // 11. Public Resources from MongoDB
+    async getResources(filters = {}) {
+      const query = new URLSearchParams();
+      if (filters.dept) query.append('dept', filters.dept);
+      if (filters.category) query.append('category', filters.category);
+      if (filters.grade) query.append('grade', filters.grade);
+      if (filters.search) query.append('search', filters.search);
+      const qs = query.toString() ? `?${query.toString()}` : '';
+      return await apiCall(`/api/resources${qs}`);
+    },
+
+    async getResourceCategories() {
+      return await apiCall('/api/resources/categories');
+    },
+
+    // 12. Admin Role Helpers & API Call Bridge
+    isAdmin() {
+      const user = getCurrentUser();
+      return Boolean(user && user.role === 'admin' && user.isActive !== false);
+    },
+
+    getAdminUid() {
+      const user = getCurrentUser();
+      return user ? (user.uid || user._id || user.username) : '';
+    },
+
+    async adminApiCall(endpoint, options = {}) {
+      const adminUid = this.getAdminUid();
+      const headers = {
+        'X-Admin-UID': adminUid,
+        ...(options.headers || {})
+      };
+      if (!(options.body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+      }
+      return await apiCall(endpoint, {
+        ...options,
+        headers
+      });
     }
   };
 
