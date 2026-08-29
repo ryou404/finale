@@ -122,7 +122,7 @@
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
+<body class="overflow-x-hidden pb-16 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
     <script>
         if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
     </script>
@@ -140,16 +140,16 @@
                 </div>
             </a>
             
-            <div class="hidden md:flex items-center gap-8">
-                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
-                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
-                <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">科系適配</a>
-                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+            <div class="fixed md:static bottom-0 left-0 w-full md:w-auto bg-white/95 md:bg-transparent backdrop-blur-xl border-t md:border-t-0 border-klein/10 p-3 md:p-0 flex justify-evenly md:justify-start items-center md:gap-8 z-50 overflow-x-auto shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:shadow-none pb-[calc(12px+env(safe-area-inset-bottom))] md:pb-0">
+                <a href="career_fit_v2.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="profile.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                <a href="brand_test.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein border-b-2 border-klein pb-1">科系適配</a>
+                <a href="resource_library.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
             </div>
 
             <div>
-                <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
+                <a href="index.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
                 </a>
             </div>
@@ -167,9 +167,9 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-klein/10 pb-6">
                     <div class="flex items-center gap-3">
                         <span class="w-2.5 h-2.5 bg-emerald-500 animate-pulse"></span>
-                        <span class="font-mono uppercase text-xs font-bold tracking-[0.25em] text-klein/60">SYS // ACADEMIC_DISCOVERY_MODULE</span>
+                        <span class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-[0.25em] text-klein/60">SYS // ACADEMIC_DISCOVERY_MODULE</span>
                     </div>
-                    <div class="font-mono text-xs text-klein/60 flex items-center gap-2 bg-klein/5 px-3 py-1.5 border border-klein/10">
+                    <div class="font-mono text-[11px] md:text-xs text-klein/60 flex items-center gap-2 bg-klein/5 px-3 py-1.5 border border-klein/10">
                         <i class="fa-solid fa-circle-info text-klein"></i>
                         <span>免責聲明：本測試為探索參考工具，非學校官方實驗室分發依據。</span>
                     </div>
@@ -194,7 +194,7 @@
                         <div class="w-12 h-12 border border-klein/20 group-hover:border-white/30 flex items-center justify-center mb-6 font-mono text-2xl text-klein group-hover:text-white">
                             💻
                         </div>
-                        <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 group-hover:text-white/70 uppercase mb-2">CS // TRACK</div>
+                        <div class="font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 group-hover:text-white/70 uppercase mb-2">CS // TRACK</div>
                         <h3 class="font-heading font-black text-2xl uppercase mb-3">資訊工程學系</h3>
                         <p class="font-body text-sm text-klein/70 group-hover:text-white/80 leading-relaxed">
                             探究計算機底層架構、Linux 核心、物聯網嵌入式系統、分散式運算與網路安全攻防。
@@ -206,7 +206,7 @@
                         <div class="w-12 h-12 border border-klein/20 group-hover:border-white/30 flex items-center justify-center mb-6 font-mono text-2xl text-klein group-hover:text-white">
                             📊
                         </div>
-                        <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 group-hover:text-white/70 uppercase mb-2">IM // TRACK</div>
+                        <div class="font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 group-hover:text-white/70 uppercase mb-2">IM // TRACK</div>
                         <h3 class="font-heading font-black text-2xl uppercase mb-3">資訊管理學系</h3>
                         <p class="font-body text-sm text-klein/70 group-hover:text-white/80 leading-relaxed">
                             貫穿技術與商業價值，專精智慧商務、社群運算、ERP 企業流程管理與金融科技 (FinTech)。
@@ -218,7 +218,7 @@
                         <div class="w-12 h-12 border border-klein/20 group-hover:border-white/30 flex items-center justify-center mb-6 font-mono text-2xl text-klein group-hover:text-white">
                             🤖
                         </div>
-                        <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 group-hover:text-white/70 uppercase mb-2">AI // TRACK</div>
+                        <div class="font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 group-hover:text-white/70 uppercase mb-2">AI // TRACK</div>
                         <h3 class="font-heading font-black text-2xl uppercase mb-3">人工智慧學系</h3>
                         <p class="font-body text-sm text-klein/70 group-hover:text-white/80 leading-relaxed">
                             鑽研機器學習演算法、深度學習、智慧互動、元宇宙 VR/AR 與多媒體遊戲技術實務。
@@ -232,7 +232,7 @@
                         <span>開始適配探索</span>
                         <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>
                     </button>
-                    <div class="font-mono text-xs tracking-[0.2em] text-klein/50 uppercase flex items-center gap-3">
+                    <div class="font-mono text-[11px] md:text-xs tracking-normal md:tracking-[0.2em] text-klein/50 uppercase flex items-center gap-3">
                         <i class="fa-solid fa-clock"></i>
                         <span>ESTIMATED TIME: 2 MINUTES · 6 SCENARIOS</span>
                     </div>
@@ -246,7 +246,7 @@
                 <!-- Progress HUD -->
                 <div class="border-b border-klein/10 pb-6">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="font-mono uppercase text-xs font-bold tracking-[0.25em] text-klein/60">ASSESSMENT PROGRESS</span>
+                        <span class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-[0.25em] text-klein/60">ASSESSMENT PROGRESS</span>
                         <span id="progress-text" class="font-mono text-sm font-bold text-klein tracking-widest px-3 py-1 bg-klein/5 border border-klein/10">1/6</span>
                     </div>
                     <div class="w-full bg-klein/10 h-2 overflow-hidden">
@@ -270,9 +270,9 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-klein/10 pb-6 mb-8">
                         <div class="flex items-center gap-3">
                             <span class="w-2.5 h-2.5 bg-emerald-500 animate-ping"></span>
-                            <span class="font-mono uppercase text-xs font-bold tracking-[0.25em] text-klein/60">SYS // MATCH_ANALYSIS_COMPLETED</span>
+                            <span class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-[0.25em] text-klein/60">SYS // MATCH_ANALYSIS_COMPLETED</span>
                         </div>
-                        <span class="font-mono text-xs text-klein/40 uppercase tracking-[0.2em]">PROVIDENCE UNIVERSITY // CURRICULAR RADAR</span>
+                        <span class="font-mono text-[11px] md:text-xs text-klein/40 uppercase tracking-normal md:tracking-[0.2em]">PROVIDENCE UNIVERSITY // CURRICULAR RADAR</span>
                     </div>
 
                     <div class="flex flex-col lg:flex-row items-start lg:items-center gap-8 mb-8">
@@ -282,7 +282,7 @@
                         </div>
                         
                         <div class="space-y-2">
-                            <div class="font-mono text-xs font-bold tracking-[0.3em] text-klein/50 uppercase">TOP COMPATIBILITY // 最佳適配推薦</div>
+                            <div class="font-mono text-[11px] md:text-xs font-bold tracking-[0.3em] text-klein/50 uppercase">TOP COMPATIBILITY // 最佳適配推薦</div>
                             <h1 id="result-title" class="font-syne font-black text-3xl md:text-5xl lg:text-6xl text-klein uppercase tracking-tight">
                                 分析中...
                             </h1>
@@ -296,7 +296,7 @@
 
                     <!-- Score Spectrum / Compatibility Distribution -->
                     <div class="border-t border-klein/10 pt-8 mb-10">
-                        <h3 class="font-mono uppercase text-xs font-bold tracking-[0.25em] text-klein/60 mb-4">
+                        <h3 class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-[0.25em] text-klein/60 mb-4">
                             COMPATIBILITY SPECTRUM // 各領域適配分佈
                         </h3>
                         <div id="score-spectrum-container" class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -340,16 +340,7 @@
         </div>
     </main>
 
-    <!-- Global Footer -->
-    <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
-        <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-            &copy; 2026 Providence University // CareerDNA Engine
-        </div>
-        <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
-            <span class="hidden sm:inline">LATENCY: &lt;12ms</span>
-        </div>
-    </footer>
+    
 
     <!-- JavaScript Application Logic & Firebase Synchronization -->
     <script type="module">
@@ -495,7 +486,7 @@
                 let html = `
                     <div class="reveal-up is-visible space-y-8">
                         <div class="space-y-3">
-                            <div class="inline-block px-3 py-1 border border-klein/20 bg-klein/5 font-mono text-xs font-bold tracking-[0.3em] text-klein uppercase">
+                            <div class="inline-block px-3 py-1 border border-klein/20 bg-klein/5 font-mono text-[11px] md:text-xs font-bold tracking-[0.3em] text-klein uppercase">
                                 SCENARIO 0${this.currentQ + 1} // OF 06
                             </div>
                             <h2 class="font-heading font-black text-2xl md:text-4xl text-klein tracking-tight leading-snug">
@@ -518,7 +509,7 @@
                                     ${opt.t}
                                 </span>
                             </div>
-                            <div class="hidden sm:flex items-center gap-2 font-mono text-xs text-klein/40 group-hover:text-white/80 uppercase tracking-widest pl-4">
+                            <div class="hidden sm:flex items-center gap-2 font-mono text-[11px] md:text-xs text-klein/40 group-hover:text-white/80 uppercase tracking-widest pl-4">
                                 <span>SELECT</span>
                                 <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                             </div>

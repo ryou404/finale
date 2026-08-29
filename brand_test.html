@@ -155,7 +155,7 @@
         }
     </style>
 </head>
-<body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
+<body class="overflow-x-hidden pb-16 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
 
     <!-- Landing View -->
     <div id="view-landing" class="min-h-screen flex flex-col justify-between selection:bg-klein selection:text-white">
@@ -173,19 +173,19 @@
                     </div>
                 </a>
                 
-                <div class="hidden md:flex items-center gap-8">
-                    <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
-                    <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
-                    <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">品牌測驗</a>
-                    <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
-                    <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+                <div class="fixed md:static bottom-0 left-0 w-full md:w-auto bg-white/95 md:bg-transparent backdrop-blur-xl border-t md:border-t-0 border-klein/10 p-3 md:p-0 flex justify-evenly md:justify-start items-center md:gap-8 z-50 overflow-x-auto shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:shadow-none pb-[calc(12px+env(safe-area-inset-bottom))] md:pb-0">
+                    <a href="career_fit_v2.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                    <a href="profile.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                    <a href="brand_test.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein border-b-2 border-klein pb-1">品牌測驗</a>
+                    <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
+                    <a href="resource_library.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <button onclick="window.app.loadDemo()" class="hover-spring font-mono text-xs font-bold tracking-[0.2em] uppercase text-klein/70 hover:text-klein border border-klein/20 hover:border-klein px-4 py-2 hover:bg-klein/5 transition-all">
+                    <button onclick="window.app.loadDemo()" class="hover-spring font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] uppercase text-klein/70 hover:text-klein border border-klein/20 hover:border-klein px-4 py-2 hover:bg-klein/5 transition-all">
                         DEMO MODE
                     </button>
-                    <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
+                    <a href="index.html" class="font-mono uppercase text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
                         <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
                     </a>
                 </div>
@@ -202,7 +202,7 @@
                 <div class="relative z-10 w-full flex flex-col gap-6 md:gap-8 pt-4">
                     
                     <div class="reveal-up">
-                        <span class="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-[0.3em] uppercase text-klein/60 border border-klein/20 px-3 py-1 bg-white">
+                        <span class="inline-flex items-center gap-2 font-mono text-[11px] md:text-xs font-bold tracking-[0.3em] uppercase text-klein/60 border border-klein/20 px-3 py-1 bg-white">
                             <span class="w-2 h-2 bg-klein"></span>
                             SYS // BRAND_POSITIONING_PROTOCOL
                         </span>
@@ -246,16 +246,7 @@
             </section>
         </main>
 
-        <!-- Global Footer -->
-        <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
-            <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-                &copy; 2026 Providence University // CareerDNA Engine
-            </div>
-            <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-                <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
-                <span class="hidden sm:inline">LATENCY: &lt;12ms</span>
-            </div>
-        </footer>
+        
     </div>
 
     <!-- Quiz Assessment View -->
@@ -264,7 +255,7 @@
         <!-- Sticky Brutalist Header -->
         <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-klein/10 py-4">
             <div class="max-w-4xl mx-auto px-6">
-                <div class="flex justify-between items-center font-mono text-xs font-bold tracking-[0.2em] text-klein/60 mb-2">
+                <div class="flex justify-between items-center font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 mb-2">
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 bg-klein"></span>
                         <span>ASSESSMENT // 30 QUESTIONS</span>
@@ -301,7 +292,7 @@
         
         <!-- Top Action Bar (no-print) -->
         <div class="max-w-[1400px] mx-auto mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print border-b border-klein/10 pb-6">
-            <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/60 uppercase flex items-center gap-2">
+            <div class="font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 uppercase flex items-center gap-2">
                 <span class="w-2 h-2 bg-klein"></span>
                 SYS // BRAND_CANVAS_REPORT_GENERATED
             </div>
@@ -322,10 +313,10 @@
             <div class="lg:col-span-12 p-8 md:p-12 bg-white border border-klein/10 crosshair-corner relative overflow-hidden">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-klein/10 pb-6 mb-8 gap-2">
                     <div>
-                        <span class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 uppercase">ASSESSMENT PROTOCOL // CAREER_DNA_V2</span>
+                        <span class="font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/50 uppercase">ASSESSMENT PROTOCOL // CAREER_DNA_V2</span>
                         <h2 class="font-heading font-black text-3xl md:text-4xl uppercase tracking-tight text-klein mt-1">My Brand Canvas 品牌定位報告</h2>
                     </div>
-                    <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/60 border border-klein/20 px-3 py-1.5" id="report-date"></div>
+                    <div class="font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 border border-klein/20 px-3 py-1.5" id="report-date"></div>
                 </div>
 
                 <div class="flex flex-col md:flex-row items-center justify-start gap-10 md:gap-14">
@@ -337,13 +328,13 @@
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
                             <span id="score-display" class="font-syne font-extrabold text-5xl text-klein tracking-tighter">0</span>
-                            <span class="font-mono text-[10px] font-bold text-klein/50 uppercase tracking-[0.2em] mt-1">Fit Score</span>
+                            <span class="font-mono text-[10px] font-bold text-klein/50 uppercase tracking-normal md:tracking-[0.2em] mt-1">Fit Score</span>
                         </div>
                     </div>
 
                     <!-- Career Recommendation Details -->
                     <div class="text-left flex-1">
-                        <div class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
+                        <div class="font-mono text-[11px] md:text-xs font-bold text-klein/50 uppercase tracking-normal md:tracking-[0.2em] mb-2 flex items-center gap-2">
                             <span class="w-1.5 h-1.5 bg-klein"></span> 推薦職涯角色 (RECOMMENDED CAREER ROLES)
                         </div>
                         <div id="best-dept" class="font-heading font-black text-3xl md:text-5xl uppercase tracking-tight text-klein">分析中...</div>
@@ -362,7 +353,7 @@
                 <!-- Six-Axis Capability Radar -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner">
                     <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> 六維能力雷達 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">RADAR</span>
+                        <span class="w-2 h-6 bg-klein"></span> 六維能力雷達 <span class="font-mono text-[11px] md:text-xs text-klein/40 tracking-normal md:tracking-[0.2em]">RADAR</span>
                     </h3>
                     <div class="relative w-full aspect-square max-w-[320px] mx-auto">
                         <svg id="radar-chart" viewBox="0 0 300 300" class="w-full h-full"></svg>
@@ -372,10 +363,10 @@
                 <!-- Holland Spectrum -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner">
                     <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> Holland 興趣光譜 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">SPECTRUM</span>
+                        <span class="w-2 h-6 bg-klein"></span> Holland 興趣光譜 <span class="font-mono text-[11px] md:text-xs text-klein/40 tracking-normal md:tracking-[0.2em]">SPECTRUM</span>
                     </h3>
                     <div class="flex items-baseline gap-4 mb-6 border-b border-klein/10 pb-4">
-                        <span class="font-mono text-xs text-klein/50 uppercase tracking-[0.2em]">PRIMARY CODE:</span>
+                        <span class="font-mono text-[11px] md:text-xs text-klein/50 uppercase tracking-normal md:tracking-[0.2em]">PRIMARY CODE:</span>
                         <span id="holland-code" class="font-syne font-extrabold text-4xl md:text-5xl text-klein tracking-widest">---</span>
                     </div>
                     <div id="holland-bars" class="space-y-4"></div>
@@ -384,7 +375,7 @@
                 <!-- Social Media Strategy -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner">
                     <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> 社群經營策略 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">STRATEGY</span>
+                        <span class="w-2 h-6 bg-klein"></span> 社群經營策略 <span class="font-mono text-[11px] md:text-xs text-klein/40 tracking-normal md:tracking-[0.2em]">STRATEGY</span>
                     </h3>
                     <div id="platform-card" class="space-y-4"></div>
                 </div>
@@ -396,7 +387,7 @@
                 <!-- Dimension Quantitative Benchmarks -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner">
                     <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> 能力維度量化分析 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">BENCHMARK</span>
+                        <span class="w-2 h-6 bg-klein"></span> 能力維度量化分析 <span class="font-mono text-[11px] md:text-xs text-klein/40 tracking-normal md:tracking-[0.2em]">BENCHMARK</span>
                     </h3>
                     <div id="radar-details" class="space-y-5 divide-y divide-klein/10"></div>
                 </div>
@@ -404,7 +395,7 @@
                 <!-- Top 5 Talents -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner">
                     <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> Top 5 天賦優勢 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">STRENGTHS</span>
+                        <span class="w-2 h-6 bg-klein"></span> Top 5 天賦優勢 <span class="font-mono text-[11px] md:text-xs text-klein/40 tracking-normal md:tracking-[0.2em]">STRENGTHS</span>
                     </h3>
                     <div id="strength-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
@@ -412,7 +403,7 @@
                 <!-- Brand Action Card -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner">
                     <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> 品牌行動卡片 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">ACTION_CARD</span>
+                        <span class="w-2 h-6 bg-klein"></span> 品牌行動卡片 <span class="font-mono text-[11px] md:text-xs text-klein/40 tracking-normal md:tracking-[0.2em]">ACTION_CARD</span>
                     </h3>
                     <div id="action-card-content" class="space-y-4"></div>
                 </div>
@@ -420,7 +411,7 @@
                 <!-- 30/60/90 Day Roadmap -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner">
                     <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> 30/60/90 天成長計畫 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">ROADMAP</span>
+                        <span class="w-2 h-6 bg-klein"></span> 30/60/90 天成長計畫 <span class="font-mono text-[11px] md:text-xs text-klein/40 tracking-normal md:tracking-[0.2em]">ROADMAP</span>
                     </h3>
                     <div id="action-plan-timeline" class="space-y-4 divide-y divide-klein/10"></div>
                 </div>
@@ -430,7 +421,7 @@
 
         <!-- Retake Button -->
         <div class="text-center pt-12 pb-16 no-print max-w-[1400px] mx-auto w-full">
-            <button id="btn-retake" onclick="location.reload()" class="font-mono text-sm font-bold uppercase tracking-[0.2em] text-klein/60 hover:text-klein hover:underline transition">
+            <button id="btn-retake" onclick="location.reload()" class="font-mono text-sm font-bold uppercase tracking-normal md:tracking-[0.2em] text-klein/60 hover:text-klein hover:underline transition">
                 重新開始測驗 (RETAKE ASSESSMENT)
             </button>
         </div>
@@ -442,7 +433,7 @@
         <div class="bg-white border border-klein/20 p-8 max-w-lg w-full relative z-10 shadow-2xl crosshair-corner reveal-up is-visible">
             
             <div class="flex items-center justify-between border-b border-klein/10 pb-4 mb-6">
-                <span class="font-mono text-xs font-bold tracking-[0.2em] text-klein/60 uppercase">SYS // UCAN_IMPORT_PROTOCOL</span>
+                <span class="font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/60 uppercase">SYS // UCAN_IMPORT_PROTOCOL</span>
                 <button onclick="window.app.closeUCAN()" class="text-klein/60 hover:text-klein font-mono text-xl leading-none">&times;</button>
             </div>
 
@@ -452,13 +443,13 @@
             </p>
             
             <div class="mb-6">
-                <label class="block font-mono text-xs font-bold uppercase tracking-[0.2em] text-klein mb-2">UCAN Holland Code 代碼 (1~3碼)</label>
+                <label class="block font-mono text-[11px] md:text-xs font-bold uppercase tracking-normal md:tracking-[0.2em] text-klein mb-2">UCAN Holland Code 代碼 (1~3碼)</label>
                 <input type="text" id="ucan-input" placeholder="例如：RIA" class="w-full px-4 py-3 border border-klein/20 font-mono uppercase text-klein text-lg font-bold">
             </div>
 
             <div class="bg-klein/5 border border-klein/10 p-4 mb-6">
-                <p class="font-mono text-xs font-bold text-klein mb-3 uppercase tracking-[0.2em]">代碼對照表 (CODE MAPPING):</p>
-                <div class="grid grid-cols-2 gap-2 font-mono text-xs text-klein/80">
+                <p class="font-mono text-[11px] md:text-xs font-bold text-klein mb-3 uppercase tracking-normal md:tracking-[0.2em]">代碼對照表 (CODE MAPPING):</p>
+                <div class="grid grid-cols-2 gap-2 font-mono text-[11px] md:text-xs text-klein/80">
                     <div><strong class="text-klein font-bold">R</strong> 實用型 (Hardware)</div>
                     <div><strong class="text-klein font-bold">I</strong> 研究型 (Data/Algo)</div>
                     <div><strong class="text-klein font-bold">A</strong> 藝術型 (UI/UX)</div>
@@ -788,8 +779,8 @@
                     html += `
                         <div class="mb-8 p-8 bg-white border border-klein/10 crosshair-corner reveal-up is-visible">
                             <div class="flex items-center justify-between mb-4">
-                                <span class="font-mono text-xs font-bold tracking-[0.2em] text-klein/40 uppercase">QUESTION ${idx + 1} / 30</span>
-                                <span class="font-mono text-xs font-bold px-2 py-0.5 border border-klein/20 text-klein/70 uppercase">${q.cat === 's' ? 'STRENGTHS' : 'HOLLAND'}</span>
+                                <span class="font-mono text-[11px] md:text-xs font-bold tracking-normal md:tracking-[0.2em] text-klein/40 uppercase">QUESTION ${idx + 1} / 30</span>
+                                <span class="font-mono text-[11px] md:text-xs font-bold px-2 py-0.5 border border-klein/20 text-klein/70 uppercase">${q.cat === 's' ? 'STRENGTHS' : 'HOLLAND'}</span>
                             </div>
                             <h3 class="font-heading font-black text-xl md:text-2xl text-klein mb-6 tracking-tight leading-snug">${idx + 1}. ${q.t}</h3>
                             <div class="grid grid-cols-5 gap-3">
@@ -802,7 +793,7 @@
                                     </label>
                                 `).join('')}
                             </div>
-                            <div class="flex justify-between font-mono text-xs font-semibold text-klein/50 mt-3 px-1 tracking-wider uppercase">
+                            <div class="flex justify-between font-mono text-[11px] md:text-xs font-semibold text-klein/50 mt-3 px-1 tracking-wider uppercase">
                                 <span>[1] 完全不符合</span>
                                 <span>[5] 非常符合</span>
                             </div>
@@ -1011,7 +1002,7 @@
                     strengthsEl.innerHTML = topStrengths.map((s, i) => `
                         <div class="p-4 bg-white border border-klein/15 flex items-center justify-between hover-spring rounded-none">
                             <span class="font-heading font-bold text-klein text-sm md:text-base">#${i + 1} ${DATA.strengthsInfo[s] || s}</span>
-                            <span class="font-mono text-xs bg-klein/5 border border-klein/20 px-2 py-1 text-klein font-bold">${s}</span>
+                            <span class="font-mono text-[11px] md:text-xs bg-klein/5 border border-klein/20 px-2 py-1 text-klein font-bold">${s}</span>
                         </div>
                     `).join('');
                 }
@@ -1028,11 +1019,11 @@
                                 <span class="font-heading font-bold text-klein text-sm md:text-base">${dim.name}</span>
                                 <div class="flex items-baseline gap-1 mt-1">
                                     <span class="font-syne font-extrabold text-2xl md:text-3xl ${scoreColor}">${score}</span>
-                                    <span class="font-mono text-xs text-klein/40">/100</span>
+                                    <span class="font-mono text-[11px] md:text-xs text-klein/40">/100</span>
                                 </div>
                             </div>
                             <div class="w-full sm:w-2/3 sm:pl-6 sm:border-l border-klein/10">
-                                <p class="font-body text-xs md:text-sm text-klein/70 leading-relaxed">${meaning}</p>
+                                <p class="font-body text-[11px] md:text-xs md:text-sm text-klein/70 leading-relaxed">${meaning}</p>
                             </div>
                         </div>
                     `;
@@ -1048,23 +1039,23 @@
                         <div class="mb-4">
                             <div class="flex items-center justify-between mb-2">
                                 <h4 class="font-heading font-black text-klein text-lg md:text-xl">${platformInfo.name}</h4>
-                                <span class="font-mono text-xs font-bold border border-klein/20 px-2.5 py-1 text-klein bg-klein/5 uppercase">${platformInfo.role}</span>
+                                <span class="font-mono text-[11px] md:text-xs font-bold border border-klein/20 px-2.5 py-1 text-klein bg-klein/5 uppercase">${platformInfo.role}</span>
                             </div>
                             <p class="font-body text-sm text-klein/70 leading-relaxed">${platformInfo.strategy}</p>
                         </div>
                         
                         <div class="space-y-4">
                             <div class="p-4 bg-white border border-klein/15">
-                                <div class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] mb-2 flex items-center justify-between">
+                                <div class="font-mono text-[11px] md:text-xs font-bold text-klein/50 uppercase tracking-normal md:tracking-[0.2em] mb-2 flex items-center justify-between">
                                     <span>Bio 範本 (個人簡介)</span>
                                     <span class="text-[10px] text-klein/40">點擊快速複製</span>
                                 </div>
-                                <p class="font-mono text-xs md:text-sm text-klein bg-klein/5 p-3 border border-klein/10 select-all cursor-pointer hover:bg-klein/10 transition" title="點擊複製" onclick="navigator.clipboard.writeText(this.innerText);alert('已複製 Bio！')">${platformInfo.bio}</p>
+                                <p class="font-mono text-[11px] md:text-xs md:text-sm text-klein bg-klein/5 p-3 border border-klein/10 select-all cursor-pointer hover:bg-klein/10 transition" title="點擊複製" onclick="navigator.clipboard.writeText(this.innerText);alert('已複製 Bio！')">${platformInfo.bio}</p>
                             </div>
                             
                             <div class="p-4 bg-white border border-klein/15">
-                                <div class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] mb-2">Content Ideas (貼文靈感)</div>
-                                <ul class="font-body text-xs md:text-sm text-klein/80 space-y-1.5 list-disc list-inside">
+                                <div class="font-mono text-[11px] md:text-xs font-bold text-klein/50 uppercase tracking-normal md:tracking-[0.2em] mb-2">Content Ideas (貼文靈感)</div>
+                                <ul class="font-body text-[11px] md:text-xs md:text-sm text-klein/80 space-y-1.5 list-disc list-inside">
                                     ${platformInfo.content.map(c => `<li>${c}</li>`).join('')}
                                 </ul>
                             </div>
@@ -1079,16 +1070,16 @@
                     actionEl.innerHTML = `
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                             <div class="p-3 bg-white border border-klein/15">
-                                <span class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] block mb-1">📚 推薦書籍</span>
+                                <span class="font-mono text-[11px] md:text-xs font-bold text-klein/50 uppercase tracking-normal md:tracking-[0.2em] block mb-1">📚 推薦書籍</span>
                                 <span class="font-heading font-bold text-klein text-sm">${actionInfo.book}</span>
                             </div>
                             <div class="p-3 bg-white border border-klein/15">
-                                <span class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] block mb-1">🛠️ 必修技能</span>
+                                <span class="font-mono text-[11px] md:text-xs font-bold text-klein/50 uppercase tracking-normal md:tracking-[0.2em] block mb-1">🛠️ 必修技能</span>
                                 <span class="font-heading font-bold text-klein text-sm">${actionInfo.skill}</span>
                             </div>
                         </div>
                         <div class="p-4 bg-klein/5 border border-klein/20">
-                            <span class="font-mono text-xs font-bold text-klein block mb-1 uppercase tracking-[0.2em]">⚡ 今日微行動 (MICRO-ACTION)</span>
+                            <span class="font-mono text-[11px] md:text-xs font-bold text-klein block mb-1 uppercase tracking-normal md:tracking-[0.2em]">⚡ 今日微行動 (MICRO-ACTION)</span>
                             <span class="font-heading font-bold text-klein text-sm md:text-base">${actionInfo.task}</span>
                         </div>
                     `;
@@ -1100,10 +1091,10 @@
                 if (timelineEl) {
                     timelineEl.innerHTML = planData.map(p => `
                         <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 py-4 first:pt-0 last:pb-0 items-start">
-                            <div class="font-mono text-xs font-bold text-klein bg-klein/5 px-3 py-1.5 border border-klein/20 uppercase tracking-wider flex-shrink-0">${p.d}</div>
+                            <div class="font-mono text-[11px] md:text-xs font-bold text-klein bg-klein/5 px-3 py-1.5 border border-klein/20 uppercase tracking-wider flex-shrink-0">${p.d}</div>
                             <div class="flex-1">
                                 <h5 class="font-heading font-bold text-klein text-base mb-1">${p.t}</h5>
-                                <p class="font-body text-xs md:text-sm text-klein/70 leading-relaxed">${p.c}</p>
+                                <p class="font-body text-[11px] md:text-xs md:text-sm text-klein/70 leading-relaxed">${p.c}</p>
                             </div>
                         </div>
                     `).join('');
