@@ -841,20 +841,41 @@
         const userInfo = window.CVTemplates ? window.CVTemplates.collectUserData() : {};
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-        const res = await fetch('/api/ai/chat', {
+        // Retrieve current authenticated user UID
+        let currentUid = null;
+        try {
+          const userRaw = localStorage.getItem('careerDNA_user');
+          if (userRaw) {
+            const u = JSON.parse(userRaw);
+            currentUid = u.uid || u._id || u.id;
+          }
+          if (!currentUid) {
+            currentUid = localStorage.getItem('cdna_uid');
+          }
+        } catch(e) {}
+
+        const res = await fetch('/api/rag/chat', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            ...(currentUid ? { 'x-user-id': currentUid } : {})
+          },
           body: JSON.stringify({
             messages: this.messages,
             currentPage: currentPage,
-            userInfo: userInfo
+            userInfo: userInfo,
+            userId: currentUid
           })
         });
 
         const data = await res.json();
         this.hideTypingIndicator();
 
-        const reply = data?.reply || '抱歉，目前連線稍有延遲，請您稍後再試。';
+        let reply = data?.reply || '抱歉，目前連線稍有延遲，請您稍後再試。';
+        if (data?.sources && data.sources.length > 0) {
+          const sourceTitles = data.sources.map(s => `《${s.title}》`).join(', ');
+          reply += `\n\n*📚 Nguồn tham khảo: ${sourceTitles}*`;
+        }
         
         // Execute Typewriter Stream Effect
         this.typewriterStream(reply);

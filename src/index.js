@@ -15,6 +15,7 @@ const { CONFIG } = require('./config');
 const { connectDB } = require('./db/connection');
 const apiRoutes = require('./routes/apiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const ragChatRoutes = require('./routes/ragChatRoutes');
 const { runAllSeeds } = require('./db/seed');
 const { MasterOrchestrator } = require('./agents/masterOrchestrator');
 const { mockStudentIM, mockStudentCS, mockQuickDraft } = require('./data/mockStudentPayload');
@@ -33,6 +34,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Mount MongoDB Atlas API Routes
 app.use('/api', apiRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/rag', ragChatRoutes);
 
 // Serve static frontend files from workspace root
 app.use(express.static(path.resolve(__dirname, '..')));
