@@ -71,6 +71,11 @@
 - **Chat Widget 介面與快捷問答**：根據語系自動適配提示詞與系統橫幅。
 - **後端 REST API 訊息**：所有 `/api/rag/*` 回應訊息皆標準化為中英雙語輸出。
 
+### 7. 後台導覽側欄 UI/UX 與視覺色彩全面統一 (Admin Sidebar Optimization)
+在 [`static/admin/components/Sidebar.js`](file:///j:/ThoBeo/finale/static/admin/components/Sidebar.js) 中完成導覽體驗精緻化：
+- **寬度與字距舒適升級**：側邊欄由預設 `w-64` (256px) 拓寬至 `md:w-72 lg:w-80` (288px ~ 320px)，按鈕內距升級為 `px-3.5 md:px-4 py-2.5 md:py-3`，解決 `CLOUDFLARE R2 STORAGE` 與 `RAG KNOWLEDGE BASE` 等長字串緊繃擠壓的問題。
+- **色彩 100% 協調一致**：移除 RAG 腦部圖標之綠色樣式 (`text-emerald-600`) 與 R2 橙色標籤，全數統一為標準 Cyber-Brutalist Klein Blue (`bg-klein/10 text-klein` 標籤邊框與階層式圖標)，確保 8 大管理模組色彩一致、層次分明。
+
 ---
 
 ## 📁 三、 核心檔案結構對照 (System Architecture Map)
