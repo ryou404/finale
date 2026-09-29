@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW" class="scroll-smooth bg-white text-klein">
 <head>
     <meta charset="UTF-8">
@@ -141,7 +141,7 @@
             </a>
             
             <div class="hidden md:flex items-center gap-8">
-                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
                 <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
                 <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
                 <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">科系適配</a>
@@ -319,7 +319,7 @@
 
                     <!-- Action Button Matrix -->
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-5 pt-4">
-                        <a id="btn-career-fit" href="career_fit_v2.html" class="hover-spring bg-klein text-white font-heading font-black text-base md:text-lg tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-3 group">
+                        <a id="btn-career-fit" href="career_fit.html" class="hover-spring bg-klein text-white font-heading font-black text-base md:text-lg tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-3 group">
                             <span>查看該系所必修課</span>
                             <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>
                         </a>
@@ -596,7 +596,7 @@
                 // Update Link to Career Fit
                 const btn = document.getElementById('btn-career-fit');
                 if (btn) {
-                    btn.href = `career_fit_v2.html?dept=${winner}`;
+                    btn.href = `career_fit.html?dept=${winner}`;
                     btn.innerHTML = `<span>查看 ${winner} 必修課</span> <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>`;
                 }
 

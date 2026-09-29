@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW" class="scroll-smooth bg-white text-klein">
 <head>
     <meta charset="UTF-8">
@@ -146,7 +146,7 @@
             </a>
             
             <div class="hidden md:flex items-center gap-8">
-                <a href="career_fit_v2.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
                 <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
                 <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
                 <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
@@ -1159,6 +1159,12 @@
             },
 
             async generateStaticReport(isSilent = false) {
+    let ucanText = "無 UCAN 數據";
+    try {
+        const u = JSON.parse(localStorage.getItem('ucan_dna_result'));
+        if(u) ucanText = `優勢職能: ${u.profPathway} (PR ${u.profPr})`;
+    } catch(e) {}
+
                 try {
                     if (this.state.selectedCourses.size === 0 && this.state.selectedExps.size === 0) {
                         if (!isSilent) {
@@ -1276,7 +1282,28 @@ ${draftText}`;
                 }
             },
 
-            async generateSmartReport(grade, totalScore, bestProgName, maxProgCredits, goalCredits, expScore, hasInternship, skillScore) {
+            
+    async generateSmartReport(grade, totalScore, bestProgName, maxProgCredits, goalCredits, expScore, hasInternship, skillScore) {
+        // --- UCAN DATA INJECTION ---
+        let ucanText = "未提供 UCAN 數據";
+        let dept = localStorage.getItem('cdna_department') || this.state.dept || '未知科系';
+        try {
+            const ucanLocal = localStorage.getItem('ucan_dna_result');
+            if(ucanLocal) {
+                const u = JSON.parse(ucanLocal);
+                let compString = Object.keys(u.commonComps).map(k => `${k}(PR ${u.commonComps[k].pr})`).join(', ');
+                ucanText = `【UCAN 核心職能】${u.primaryHolland}型。\n【共通職能強度】${compString}\n【專業職能對接】${u.profPathway} (PR ${u.profPr})`;
+                
+                // Override department based on UCAN if not strictly set
+                if (!this.state.dept) {
+                    if (['軟體開發', '網路與系統維運'].includes(u.profPathway)) dept = 'CS';
+                    else if (['資料科學與分析', '資訊安全'].includes(u.profPathway)) dept = 'AI';
+                    else dept = 'IM';
+                }
+            }
+        } catch(e) { console.error("UCAN parse error", e); }
+        // ---------------------------
+
                 document.getElementById('ai-result-panel').classList.remove('hidden');
                 const aiContent = document.getElementById('ai-content');
                 aiContent.innerHTML = `<div class="animate-pulse flex space-x-4 py-4">
@@ -1314,11 +1341,13 @@ ${localContext}
 【學生背景】
 - 年級：${grade}
 - 科系：${dept} (請根據在地背景提供針對性建議)
-- UCAN 類型：${holland}
-- 已修專業課程：${courses}
-- 實務經歷：${experiences}
+- 實務經驗與修課紀錄：已修 ${courses}、參與 ${experiences}
 - 技能武器庫：${skills}
 - 使用者自我介紹草稿：${draftText}
+
+【UCAN 官方職能診斷數據 (關鍵依據！)】
+${ucanText}
+*(請務必參考上述 PR 值！若共通職能 PR>67，表示優勢，請在履歷中強調；若專業職能 PR<34，請在建議中強烈推薦相關修課)*
 
 請以 JSON 格式回傳評估結果，務必包含以下結構：
 {
@@ -1326,13 +1355,17 @@ ${localContext}
   "completeness": 60,
   "keywordRelevance": 70,
   "analysis": "整體分析與具體的職位對接建議 (HTML 格式，使用 <strong> 與 <br>)",
-  "actionItems": ["具體行動建議 1", "具體行動建議 2 (必須包含具體的校內修課建議，例如推薦去修資料庫或演算法)"],
-  "resumeMarkdown": "在此撰寫一份排版專業的 Markdown 履歷。請將上述的課程、實務經歷、技能，結合使用者的草稿擴寫成流暢的個人簡介與經歷列表。不要寫在 code block 裡，這是一個字串。"
+  "actionItems": [
+     "具體行動建議 1 (針對履歷的改進)", 
+     "畢業專題戰略指引 (根據 UCAN 數據推薦的專題方向)",
+     "學業適配警示與修課建議 (根據 UCAN PR 值，具體推薦校內應修的課程名稱)"
+  ],
+  "resumeMarkdown": "在此撰寫一份排版專業的 Markdown 履歷。請將課程、實務經歷、技能，結合 UCAN 職能優勢，擴寫成流暢的個人簡介與經歷列表。不要寫在 code block 裡。"
 }
 注意：
-1. 評分與建議請以「大學生/應屆畢業生」的合理標準出發，不要使用過度浮誇的商業行銷術語，請保持大學生真實、質樸但具備潛力的語氣。
+1. 評分與建議請以「大學生/應屆畢業生」的合理標準出發。
 2. 針對學生的能力缺口，請務必在 actionItems 中給出具體的「校內課程修課建議」。
-3. 請只輸出 JSON 格式，不要包含任何 markdown code block 圍欄。`;
+3. 請只輸出 JSON 格式，不要包含任何 markdown code block 圍欄。`;//
 
                 this.currentManualPrompt = aiPrompt;
 
@@ -1563,6 +1596,7 @@ ${localContext}
         };
 
         // Initialize application on DOM ready
+        
         document.addEventListener('DOMContentLoaded', () => window.App.init());
     </script>
 </body>
