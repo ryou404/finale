@@ -42,7 +42,8 @@ class MasterOrchestrator {
       : {};
 
     // Force deterministic engine if requested
-    if (options.forceDeterministic || !CONFIG.api.geminiApiKey) {
+    const apiKey = CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY;
+    if (options.forceDeterministic || !apiKey) {
       const offlineResult = generateDeterministicOutput(normalizedPayload);
       offlineResult.pipelineLatencyMs = Date.now() - pipelineStartTime;
       return offlineResult;

@@ -7,20 +7,20 @@ require('dotenv').config();
 
 const CONFIG = {
   llm: {
-    model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+    provider: 'DeepSeek',
+    model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
     temperature: Math.min(parseFloat(process.env.LLM_TEMPERATURE || '0.2'), 0.3), // Strictly <= 0.3
     topP: 0.8,
-    topK: 40,
     maxOutputTokens: 4096,
-    responseMimeType: 'application/json'
+    responseFormat: { type: 'json_object' }
   },
   server: {
     port: parseInt(process.env.PORT || '3000', 10),
     env: process.env.NODE_ENV || 'development'
   },
   api: {
-    geminiApiKey: process.env.GEMINI_API_KEY || '',
-    geminiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models'
+    deepseekApiKey: process.env.DEEPSEEK_API_KEY || 'sk-2db647b9301f45ab8f70a515eff1665c',
+    deepseekBaseUrl: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com'
   },
   weights: {
     ats: {

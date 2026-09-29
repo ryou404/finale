@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerDNA // Super Admin Dashboard & Cloud Manager</title>
+    
+    <!-- Design Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Outfit:wght@400;600;800;900&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Charts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Tailwind CSS with Custom Cyber-Brutalist Palette -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        klein: '#002fa7',
+                        'deep-klein': '#001a5e',
+                        'flame-orange': '#ff4500',
+                        'neon-cyan': '#00e5ff',
+                        sand: '#faf9f6',
+                        charcoal: '#121212'
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'monospace'],
+                        heading: ['Syne', 'sans-serif'],
+                        sans: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #faf9f6;
+            color: #121212;
+        }
+
+        /* Cyber-Brutalist Grid Background */
+        .bg-cyber-grid {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 47, 167, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 47, 167, 0.04) 1px, transparent 1px);
+        }
+
+        /* Crosshair Corner Markers */
+        .crosshair-corner {
+            position: relative;
+        }
+        .crosshair-corner::before, .crosshair-corner::after {
+            content: '+';
+            position: absolute;
+            color: rgba(0, 47, 167, 0.4);
+            font-family: monospace;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        .crosshair-corner::before { top: -8px; left: -4px; }
+        .crosshair-corner::after { bottom: -8px; right: -4px; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #faf9f6; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 47, 167, 0.3); }
+        ::-webkit-scrollbar-thumb:hover { background: #002fa7; }
+
+        /* Buttons & Animations */
+        .btn-cyber {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-cyber:hover {
+            transform: translateY(-2px);
+        }
+        .modal-animate {
+            animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-cyber-grid min-h-screen selection:bg-klein selection:text-white flex flex-col">
+
+    <!-- Modular Admin App Mounting Root -->
+    <div id="admin-app-root" class="w-full min-h-screen flex flex-col">
+        <!-- Loading Placeholder -->
+        <div class="flex-1 flex items-center justify-center p-12">
+            <div class="text-center font-mono space-y-3">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl text-klein"></i>
+                <div class="text-xs font-bold text-klein uppercase tracking-widest">
+                    CAREERDNA // INITIALIZING ADMIN SYSTEM...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Database & Authentication Bridge -->
+    <script src="static/db-client.js"></script>
+
+    <!-- Admin I18N Translation Dictionary -->
+    <script src="static/admin/i18n.js"></script>
+
+    <!-- Admin Layout & Access Components -->
+    <script src="static/admin/components/Header.js"></script>
+    <script src="static/admin/components/Sidebar.js"></script>
+    <script src="static/admin/components/AccessDenied.js"></script>
+
+    <!-- Admin Tab Components -->
+    <script src="static/admin/components/TabDashboard.js"></script>
+    <script src="static/admin/components/TabUsers.js"></script>
+    <script src="static/admin/components/TabResources.js"></script>
+    <script src="static/admin/components/TabFiles.js"></script>
+    <script src="static/admin/components/TabProfessors.js"></script>
+    <script src="static/admin/components/TabAuditLogs.js"></script>
+    <script src="static/admin/components/TabSystem.js"></script>
+
+    <!-- Master Admin Application Orchestrator -->
+    <script src="static/admin/admin-core.js"></script>
+</body>
+</html>
