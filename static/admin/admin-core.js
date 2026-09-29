@@ -36,6 +36,7 @@ window.AdminApp = (function () {
     TabUsers.init();
     TabResources.init();
     TabFiles.init();
+    TabRag.init();
     TabProfessors.init();
     TabAuditLogs.init();
   }
@@ -110,6 +111,7 @@ window.AdminApp = (function () {
             ${TabUsers.render()}
             ${TabResources.render()}
             ${TabFiles.render()}
+            ${TabRag.render()}
             ${TabProfessors.render()}
             ${TabAuditLogs.render()}
             ${TabSystem.render()}
@@ -130,7 +132,7 @@ window.AdminApp = (function () {
     AdminSidebar.updateActive(tabId);
 
     // Toggle panels visibility
-    ['dashboard', 'users', 'resources', 'files', 'professors', 'auditlogs', 'system'].forEach(p => {
+    ['dashboard', 'users', 'resources', 'files', 'rag', 'professors', 'auditlogs', 'system'].forEach(p => {
       const el = document.getElementById(`panel-${p}`);
       if (el) el.classList.toggle('hidden', p !== tabId);
     });
@@ -148,6 +150,9 @@ window.AdminApp = (function () {
         break;
       case 'files':
         TabFiles.loadFiles();
+        break;
+      case 'rag':
+        TabRag.loadDocuments();
         break;
       case 'professors':
         TabProfessors.loadProfessors();

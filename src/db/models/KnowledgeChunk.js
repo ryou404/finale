@@ -19,7 +19,7 @@ const KnowledgeChunkSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      default: 'Chưa đặt tên tài liệu'
+      default: '未命名文檔 (Untitled)'
     },
     text: {
       type: String,
@@ -57,7 +57,15 @@ const KnowledgeChunkSchema = new mongoose.Schema(
       originalFileName: { type: String, default: '' },
       fileUrl: { type: String, default: '' },
       chunkIndex: { type: Number, default: 0 },
-      totalChunks: { type: Number, default: 1 }
+      totalChunks: { type: Number, default: 1 },
+      // Course-specific structured fields for instant retrieval & hybrid search
+      courseCode: { type: String, default: null },
+      courseName: { type: String, default: null },
+      instructor: { type: String, default: null },
+      department: { type: String, default: null }, // 'AI', 'CS', 'IM', etc.
+      classGrade: { type: String, default: null },
+      scheduleLocation: { type: String, default: null },
+      courseType: { type: String, default: null }
     }
   },
   {
@@ -69,6 +77,9 @@ const KnowledgeChunkSchema = new mongoose.Schema(
 // Compound indexes for fast filtered lookups
 KnowledgeChunkSchema.index({ scope: 1, userId: 1 });
 KnowledgeChunkSchema.index({ docId: 1, chunkIndex: 1 });
+KnowledgeChunkSchema.index({ 'metadata.courseCode': 1 });
+KnowledgeChunkSchema.index({ 'metadata.department': 1 });
+KnowledgeChunkSchema.index({ 'metadata.courseName': 1 });
 
 const KnowledgeChunk = mongoose.model('KnowledgeChunk', KnowledgeChunkSchema);
 

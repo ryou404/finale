@@ -45,6 +45,14 @@ window.AdminSidebar = (function () {
             <span class="bg-flame-orange/10 text-flame-orange font-bold px-1.5 py-0.2 font-mono text-[10px] ml-1.5 md:ml-0">R2</span>
           </button>
 
+          <button onclick="AdminApp.switchTab('rag')" id="nav-tab-rag" class="sidebar-tab-btn shrink-0 md:w-full flex items-center justify-between px-3 md:px-3.5 py-2 md:py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-klein/70 hover:text-klein hover:bg-klein/5 border-b-2 md:border-b-0 md:border-l-4 border-transparent transition-all">
+            <span class="flex items-center gap-2 md:gap-2.5">
+              <i class="fa-solid fa-brain w-4 text-center text-emerald-600"></i>
+              <span>${t('tabs.rag', null, 'RAG Tri thức Vector')}</span>
+            </span>
+            <span id="badge-rag-count" class="bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 font-mono text-[10px] ml-1.5 md:ml-0">RAG</span>
+          </button>
+
           <button onclick="AdminApp.switchTab('professors')" id="nav-tab-professors" class="sidebar-tab-btn shrink-0 md:w-full flex items-center justify-between px-3 md:px-3.5 py-2 md:py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-klein/70 hover:text-klein hover:bg-klein/5 border-b-2 md:border-b-0 md:border-l-4 border-transparent transition-all">
             <span class="flex items-center gap-2 md:gap-2.5">
               <i class="fa-solid fa-chalkboard-user w-4 text-center"></i>

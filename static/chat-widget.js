@@ -13,14 +13,31 @@
   const STORAGE_KEY = 'cdna_chat_history_v2';
   const OPEN_STATE_KEY = 'cdna_chat_is_open';
   const SIZE_KEY = 'cdna_chat_size_v1';
+  const MAX_SESSION_MESSAGES = 16; // Limit session to 16 messages (~8 dialogue turns) to optimize context and prevent drift
 
-  // Quick Prompt Recommendations (Traditional Chinese)
-  const QUICK_PROMPTS = [
+  // Bilingual Quick Prompts (Traditional Chinese & English)
+  const QUICK_PROMPTS_ZH = [
     { label: '🎯 CareerDNA 平台介紹', text: '請介紹 CareerDNA 平台的核心功能與特色？' },
     { label: '📝 如何生成與匯出履歷', text: '如何使用 AI 健檢生成履歷並匯出標準 A4 PDF？' },
     { label: '🧭 何謂 Holland 職涯測驗', text: '請說明 Holland RIASEC 職涯測驗如何幫助學生探索方向？' },
     { label: '🏫 靜宜資院三系導覽', text: '請介紹靜宜大學資訊學院（資工、資管、人工智慧）的專業特色與研究方向？' }
   ];
+
+  const QUICK_PROMPTS_EN = [
+    { label: '🎯 Platform Features', text: 'What are the core features and capabilities of CareerDNA?' },
+    { label: '📝 AI Resume & PDF Export', text: 'How do I use AI resume diagnosis and export standard A4 PDF?' },
+    { label: '🧭 Holland RIASEC Test', text: 'How does the Holland RIASEC test guide students in career discovery?' },
+    { label: '🏫 Providence CS College', text: 'Can you introduce the specialties and research in Providence University College of Computing?' }
+  ];
+
+  function getWidgetLang() {
+    if (window.AdminI18N && typeof window.AdminI18N.getLang === 'function') {
+      return window.AdminI18N.getLang();
+    }
+    const stored = localStorage.getItem('cdna_admin_lang') || localStorage.getItem('app_lang');
+    if (stored === 'en') return 'en';
+    return (navigator.language && navigator.language.toLowerCase().startsWith('en')) ? 'en' : 'zh';
+  }
 
   class ChatWidget {
     constructor() {
@@ -465,6 +482,67 @@
           40% { transform: scale(1); }
         }
 
+        /* Context Limit Banner */
+        .cdna-limit-banner {
+          margin: 14px;
+          padding: 14px;
+          background: #f8fafc;
+          border: 1.5px dashed #002fa7;
+          border-radius: 6px;
+          text-align: center;
+          font-family: inherit;
+          box-shadow: 0 4px 12px rgba(0, 47, 167, 0.08);
+          animation: cdnaFadeIn 0.3s ease-out;
+        }
+        .cdna-limit-banner-title {
+          font-size: 13px;
+          font-weight: 700;
+          color: #002fa7;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          margin-bottom: 6px;
+        }
+        .cdna-limit-banner-desc {
+          font-size: 12px;
+          color: #475569;
+          line-height: 1.5;
+          margin-bottom: 12px;
+        }
+        .cdna-new-chat-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          background: linear-gradient(135deg, #002fa7 0%, #1e40af 100%);
+          color: #ffffff;
+          padding: 8px 16px;
+          font-size: 12px;
+          font-weight: 700;
+          border: none;
+          cursor: pointer;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 10px rgba(0, 47, 167, 0.25);
+        }
+        .cdna-new-chat-btn:hover {
+          background: linear-gradient(135deg, #001a5e 0%, #172554 100%);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 15px rgba(0, 47, 167, 0.4);
+        }
+        .cdna-session-counter {
+          font-size: 10px;
+          font-family: monospace;
+          background: rgba(255, 255, 255, 0.2);
+          color: #ffffff;
+          padding: 2px 7px;
+          border-radius: 12px;
+          margin-left: 6px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          transition: all 0.3s ease;
+        }
+
         @media (max-width: 640px) {
           #cdna-chat-container {
             bottom: 76px;
@@ -519,16 +597,17 @@
           <div class="cdna-chat-header">
             <div class="cdna-chat-header-title">
               <i class="fa-solid fa-robot"></i>
-              <span>CareerDNA AI Assistant</span>
+              <span>CareerDNA AI</span>
+              <span id="cdna-session-badge" class="cdna-session-counter" title="對話進度 / 上下文限制 (Context Limit)">1/16</span>
             </div>
             <div class="cdna-chat-header-actions">
-              <button class="cdna-chat-header-btn" id="cdna-chat-clear-btn" title="清除對話紀錄">
+              <button class="cdna-chat-header-btn" id="cdna-chat-clear-btn" title="開啟新對話 / Start New Chat">
                 <i class="fa-solid fa-rotate-left"></i>
               </button>
-              <button class="cdna-chat-header-btn" id="cdna-chat-maximize-btn" title="放大 / 還原視窗">
+              <button class="cdna-chat-header-btn" id="cdna-chat-maximize-btn" title="放大 / 還原視窗 (Maximize / Restore)">
                 <i class="fa-solid fa-expand" id="cdna-maximize-icon"></i>
               </button>
-              <button class="cdna-chat-header-btn" id="cdna-chat-close-btn" title="關閉視窗">
+              <button class="cdna-chat-header-btn" id="cdna-chat-close-btn" title="關閉視窗 / Close">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
@@ -541,7 +620,7 @@
 
           <!-- Quick Prompts Pill Bar -->
           <div class="cdna-chat-quick-prompts" id="cdna-quick-prompts-bar">
-            ${QUICK_PROMPTS.map(p => `
+            ${(getWidgetLang() === 'en' ? QUICK_PROMPTS_EN : QUICK_PROMPTS_ZH).map(p => `
               <button type="button" class="cdna-quick-btn" data-text="${p.text}">
                 ${p.label}
               </button>
@@ -550,8 +629,8 @@
 
           <!-- Input Bar -->
           <div class="cdna-chat-input-bar">
-            <textarea id="cdna-chat-input" class="cdna-chat-input" placeholder="詢問平台功能、生成履歷、探索科系..." rows="1"></textarea>
-            <button id="cdna-chat-send-btn" class="cdna-chat-send-btn" title="發送訊息">
+            <textarea id="cdna-chat-input" class="cdna-chat-input" placeholder="${getWidgetLang() === 'en' ? 'Ask about platform features, resume review, courses...' : '詢問平台功能、生成履歷、探索科系...'}" rows="1"></textarea>
+            <button id="cdna-chat-send-btn" class="cdna-chat-send-btn" title="${getWidgetLang() === 'en' ? 'Send Message' : '發送訊息'}">
               <i class="fa-solid fa-paper-plane"></i>
             </button>
           </div>
@@ -571,14 +650,17 @@
         this.messages = [];
       }
 
-      // If no history, add default greeting (Traditional Chinese)
+      // If no history, add default greeting (Traditional Chinese or English)
       if (!this.messages || this.messages.length === 0) {
         const user = window.CareerDNA_DB ? window.CareerDNA_DB.getCurrentUser() : null;
-        const name = user?.name || user?.displayName || user?.username || '同學';
+        const isEn = getWidgetLang() === 'en';
+        const name = user?.name || user?.displayName || user?.username || (isEn ? 'Student' : '同學');
         this.messages = [
           {
             role: 'assistant',
-            content: `您好 **${name}**！👋 我是 **CareerDNA AI 智能助手**。\n\n我可以為您解答關於 CareerDNA 平台的各項功能使用疑問，例如：進行 Holland 職涯測驗、AI 深度履歷健檢、切換範本匯出 PDF，或是探索靜宜大學資訊學院的專業課程與實驗室。歡迎點擊下方快捷問題或直接輸入您的提問！✨`
+            content: isEn
+              ? `Hello **${name}**! 👋 I am the **CareerDNA AI Career Advisor**.\n\nI can help you navigate CareerDNA platform features, take the Holland RIASEC test, optimize your resume with AI ATS diagnosis, export PDF, or explore Providence University course syllabi and research labs. Feel free to click a prompt below or type your question! ✨`
+              : `您好 **${name}**！👋 我是 **CareerDNA AI 智能助手**。\n\n我可以為您解答關於 CareerDNA 平台的各項功能使用疑問，例如：進行 Holland 職涯測驗、AI 深度履歷健檢、切換範本匯出 PDF，或是探索靜宜大學資訊學院的專業課程與實驗室。歡迎點擊下方快捷問題或直接輸入您的提問！✨`
           }
         ];
       }
@@ -610,7 +692,9 @@
       const box = document.getElementById('cdna-chat-messages-box');
       if (!box) return;
 
-      box.innerHTML = this.messages.map(m => {
+      const isLimitReached = this.messages.length >= MAX_SESSION_MESSAGES;
+
+      let html = this.messages.map(m => {
         const isUser = m.role === 'user';
         const formattedText = this.formatMarkdown(m.content);
         return `
@@ -624,6 +708,27 @@
           </div>
         `;
       }).join('');
+
+      if (isLimitReached) {
+        const isEn = getWidgetLang() === 'en';
+        html += `
+          <div class="cdna-limit-banner">
+            <div class="cdna-limit-banner-title">
+              <i class="fa-solid fa-clock-rotate-left text-amber-500"></i>
+              <span>${isEn ? `Conversation reached context limit (${MAX_SESSION_MESSAGES}/${MAX_SESSION_MESSAGES} messages)` : `對話已達上限 (${MAX_SESSION_MESSAGES}/${MAX_SESSION_MESSAGES} 則訊息)`}</span>
+            </div>
+            <div class="cdna-limit-banner-desc">
+              ${isEn ? 'To ensure optimal AI understanding and avoid context confusion, please start a new conversation.' : '為確保 AI 能精準理解上下文並避免混淆過往話題，請點擊下方開啟新對話。'}
+            </div>
+            <button type="button" class="cdna-new-chat-btn" onclick="window.CareerDNA_ChatWidget.clearHistory(true)">
+              <i class="fa-solid fa-rotate-left"></i> ${isEn ? 'Start New Chat' : '開啟新對話 (New Chat)'}
+            </button>
+          </div>
+        `;
+      }
+
+      box.innerHTML = html;
+      this.updateInputState();
 
       // Scroll to bottom
       box.scrollTop = box.scrollHeight;
@@ -811,15 +916,61 @@
       if (icon) icon.className = 'fa-solid fa-comments toggle-icon';
     }
 
-    clearHistory() {
-      if (!confirm('確定要清除所有對話紀錄嗎？')) return;
+    clearHistory(skipConfirm = false) {
+      if (!skipConfirm && !confirm('確定要開啟新的對話嗎？目前的對話紀錄將會重置。\n(Bạn có muốn bắt đầu một đoạn chat mới không?)')) return;
       sessionStorage.removeItem(STORAGE_KEY);
       this.messages = [];
       this.loadHistory();
+      this.renderMessages();
+      this.updateInputState();
+
+      const input = document.getElementById('cdna-chat-input');
+      if (input) {
+        setTimeout(() => input.focus(), 120);
+      }
+    }
+
+    updateInputState() {
+      const isLimitReached = this.messages.length >= MAX_SESSION_MESSAGES;
+      const input = document.getElementById('cdna-chat-input');
+      const sendBtn = document.getElementById('cdna-chat-send-btn');
+      const badge = document.getElementById('cdna-session-badge');
+
+      if (badge) {
+        badge.textContent = `${this.messages.length}/${MAX_SESSION_MESSAGES}`;
+        if (isLimitReached) {
+          badge.style.background = '#ef4444';
+          badge.style.color = '#ffffff';
+        } else if (this.messages.length >= MAX_SESSION_MESSAGES - 4) {
+          badge.style.background = '#f59e0b';
+          badge.style.color = '#ffffff';
+        } else {
+          badge.style.background = 'rgba(255, 255, 255, 0.2)';
+          badge.style.color = '#ffffff';
+        }
+      }
+
+      if (input) {
+        if (isLimitReached) {
+          input.disabled = true;
+          input.placeholder = 'Đã đạt giới hạn phiên chat. Vui lòng bấm Bắt đầu đoạn chat mới...';
+        } else {
+          input.disabled = false;
+          input.placeholder = '詢問平台功能、生成履歷、探索科系...';
+        }
+      }
+
+      if (sendBtn) {
+        sendBtn.disabled = isLimitReached || this.isThinking || this.isStreaming;
+      }
     }
 
     async sendMessage(explicitText = null) {
       if (this.isThinking || this.isStreaming) return;
+      if (this.messages.length >= MAX_SESSION_MESSAGES) {
+        this.renderMessages();
+        return;
+      }
 
       const input = document.getElementById('cdna-chat-input');
       const text = (explicitText !== null ? explicitText : (input ? input.value : '')).trim();
@@ -833,6 +984,7 @@
       this.messages.push({ role: 'user', content: text });
       this.renderMessages();
       this.saveHistory();
+      this.updateInputState();
 
       // Show typing indicator
       this.showTypingIndicator();
@@ -871,10 +1023,12 @@
         const data = await res.json();
         this.hideTypingIndicator();
 
-        let reply = data?.reply || '抱歉，目前連線稍有延遲，請您稍後再試。';
+        const isEn = getWidgetLang() === 'en';
+        let reply = data?.reply || (isEn ? 'Sorry, connection timed out. Please try again later.' : '抱歉，目前連線稍有延遲，請您稍後再試。');
         if (data?.sources && data.sources.length > 0) {
           const sourceTitles = data.sources.map(s => `《${s.title}》`).join(', ');
-          reply += `\n\n*📚 Nguồn tham khảo: ${sourceTitles}*`;
+          const label = isEn ? 'Sources' : '參考來源';
+          reply += `\n\n*📚 ${label}: ${sourceTitles}*`;
         }
         
         // Execute Typewriter Stream Effect
@@ -883,9 +1037,10 @@
       } catch (err) {
         console.error('[Chat Widget Error]:', err);
         this.hideTypingIndicator();
+        const isEn = getWidgetLang() === 'en';
         this.messages.push({
           role: 'assistant',
-          content: '⚠️ 無法連線至 AI 伺服器，請檢查網路連線後重試！'
+          content: isEn ? '⚠️ Unable to connect to AI server. Please check your network and try again!' : '⚠️ 無法連線至 AI 伺服器，請檢查網路連線後重試！'
         });
         this.renderMessages();
         this.saveHistory();

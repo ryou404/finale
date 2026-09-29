@@ -18,7 +18,7 @@ function buildSystemPrompt({ contextText = '', currentPage = '', userInfo = null
 
 【核心原則】：
 1. 語氣專業、清晰、親切、誠懇。
-2. 預設以「繁體中文（台灣）」回覆；若使用者使用越南文 (Tiếng Việt) 或英文提問，請自然以相應語言親切作答。
+2. 預設以「繁體中文（台灣）」回覆；若使用者使用英文 (English) 提問，請以專業、流暢之英文親切作答。
 3. 嚴格基於所提供的「知識庫檢索內容」與「工具調用結果」作答。如果知識庫中沒有相關資訊且無法透過工具獲取，請誠實告知，切勿憑空捏造。
 4. 嚴格遵守資料隔離與隱私安全，絕對不向任何人透露其他使用者的資料。
 
@@ -28,6 +28,15 @@ function buildSystemPrompt({ contextText = '', currentPage = '', userInfo = null
 - **科系適配 (lab_recommendation.html)**：靜宜資工、資管、AI 三大系所適配度與教授實驗室導覽。
 - **個人檔案 (profile.html)**：管理學歷、技能武器庫、歷史履歷典藏庫。
 - **學習資源 (resource_library.html)**：資訊領域技能樹、學習地圖、認證指南。
+
+【靜宜大學課程與選課查詢準則（極重要）】：
+1. 精準對應選課代號與系所：
+   - 當使用者詢問特定「選課代號」（例如 1776、1711）或指定「系所」（人工智慧 AI / 資工 CS / 資管 IM）時，必須嚴格依據檢索到的該代號資料回答。
+   - 回答必須包含：課程名稱、選課代號、授課教師、上課班級、時間地點（星期幾、第幾節、教室）、主要教科書及作者/出版社。
+2. 嚴格杜絕代號混淆與幻覺：
+   - 切勿在知識庫中存在該代號時，自作聰明斷定使用者記錯代號（例如絕對不能將 1776 擅自更換為 1711）！
+   - 若不同系所開設同名課程（例如 AI 系與資工系皆有開授「網頁前端程式設計」），必須按使用者指定的「選課代號」或「班級」給出正確對應的課程，不可張冠李戴。
+   - 若檢索內容確實無該代號，請誠實說明暫無該代號資料，切勿隨意指定其他課程代替。
 `;
 
   if (userId) {
@@ -47,7 +56,7 @@ ${userInfo?.grade ? `- 年級: ${userInfo.grade}` : ''}
   }
 
   if (contextText && contextText.trim().length > 0) {
-    prompt += `\n\n【檢索到的相關知識庫文檔 (RAG Context)】：\n${contextText}\n\n請優先引用上述知識庫文檔回答使用者的問題。`;
+    prompt += `\n\n【檢索到的相關知識庫文檔 (RAG Context)】：\n${contextText}\n\n請務必優先且忠實引用上述知識庫文檔回答使用者的問題。`;
   }
 
   return prompt;
@@ -70,19 +79,19 @@ async function processRagChat({ messages = [], userId = null, currentPage = '', 
   const lastUserMsgObj = [...messages].reverse().find(m => m.role === 'user');
   const userQuery = lastUserMsgObj ? lastUserMsgObj.content : '';
 
-  // 2. Perform RAG Vector Search
+  // 2. Perform RAG Hybrid Search
   let retrievedChunks = [];
   try {
     if (userQuery && userQuery.trim().length > 0) {
       retrievedChunks = await searchSimilarChunks({
         query: userQuery,
         userId: userId,
-        limit: 4,
-        minScore: 0.5
+        limit: 7,
+        minScore: 0.3
       });
     }
   } catch (searchErr) {
-    console.warn('[RAG Chat] Vector search warning:', searchErr.message);
+    console.warn('[RAG Chat] Hybrid search warning:', searchErr.message);
   }
 
   // 3. Assemble context from retrieved chunks
@@ -90,7 +99,7 @@ async function processRagChat({ messages = [], userId = null, currentPage = '', 
   const sources = [];
   if (retrievedChunks.length > 0) {
     contextText = retrievedChunks
-      .map((c, i) => `[Tài liệu ${i + 1}]: 《${c.title}》\n${c.text}`)
+      .map((c, i) => `[知識庫文檔 ${i + 1} / Document ${i + 1}]: 《${c.title}》\n${c.text}`)
       .join('\n\n---\n\n');
 
     for (const c of retrievedChunks) {
@@ -221,25 +230,42 @@ async function processRagChat({ messages = [], userId = null, currentPage = '', 
  * Fallback response when LLM service is offline or not configured
  */
 function generateOfflineFallback({ userQuery = '', retrievedChunks = [], userId = null, userInfo = null, error = null }) {
-  let fallbackReply = '您好！我是 **CareerDNA AI 智能助手**。😊\n\n';
+  const isEnglish = /[a-zA-Z]{4,}/.test(userQuery) && !/[\u4e00-\u9fa5]/.test(userQuery);
+
+  let fallbackReply = isEnglish
+    ? 'Hello! I am the **CareerDNA AI Career Advisor**. 😊\n\n'
+    : '您好！我是 **CareerDNA AI 智能助手**。😊\n\n';
 
   if (error && error.includes('SHOPAIKEY_API_KEY')) {
-    fallbackReply += '> ⚠️ **Hệ thống**: Quản trị viên chưa cấu hình `SHOPAIKEY_API_KEY` trong file `.env`.\n\n';
+    fallbackReply += isEnglish
+      ? '> ⚠️ **System Notice**: `SHOPAIKEY_API_KEY` is not yet configured in `.env`.\n\n'
+      : '> ⚠️ **系統提示**: 管理員尚未配置 `SHOPAIKEY_API_KEY`。\n\n';
   }
 
   if (retrievedChunks.length > 0) {
-    fallbackReply += '📚 **Tôi đã tìm thấy một số tài liệu liên quan trong hệ thống:**\n\n';
+    fallbackReply += isEnglish
+      ? '📚 **Relevant knowledge documents found in the system:**\n\n'
+      : '📚 **為您找到以下相關知識庫文檔：**\n\n';
     retrievedChunks.forEach((c, idx) => {
       fallbackReply += `**${idx + 1}. ${c.title}**\n${c.text.slice(0, 200)}...\n\n`;
     });
-    fallbackReply += '👉 Bạn có thể tham khảo trực tiếp các tài liệu trên hoặc kiểm tra mục **學習資源 (resource_library.html)**.';
+    fallbackReply += isEnglish
+      ? '👉 You may refer to the documents above or explore **Learning Resources (resource_library.html)**.'
+      : '👉 您可直接參閱上述內容，或前往 **學習資源庫 (resource_library.html)** 查看完整資訊。';
   } else {
-    fallbackReply += '我可以協助您：\n' +
-      '1. **AI 履歷健檢與生成**：前往 [AI 履歷健檢](career_fit_v2.html)，一鍵診斷並生成符合 ATS 標準的履歷。\n' +
-      '2. **Holland 職涯測驗**：於 [品牌測驗](brand_test.html) 探索 RIASEC 六大職業性格。\n' +
-      '3. **科系適配與實驗室**：於 [科系適配](lab_recommendation.html) 探索靜宜資工、資管、AI 三大系所。\n' +
-      '4. **個人檔案與歷史履歷**：於 [個人檔案](profile.html) 隨時查閱歷史生成的履歷。\n\n' +
-      '請輸入您的問題，我會為您提供指引！';
+    fallbackReply += isEnglish
+      ? 'I can assist you with:\n' +
+        '1. **AI Resume Diagnosis**: Visit [AI Resume Fit](career_fit_v2.html) for ATS optimization and A4 PDF export.\n' +
+        '2. **Holland RIASEC Assessment**: Discover your career personality at [Brand Test](brand_test.html).\n' +
+        '3. **Department & Lab Guidance**: Explore Providence CS, IM, and AI programs at [Lab Recommendation](lab_recommendation.html).\n' +
+        '4. **Personal Dossier**: Review your saved resumes and skill profile at [Profile](profile.html).\n\n' +
+        'Please enter your question, and I will be delighted to guide you!'
+      : '我可以協助您：\n' +
+        '1. **AI 履歷健檢與生成**：前往 [AI 履歷健檢](career_fit_v2.html)，一鍵診斷並生成符合 ATS 標準的履歷。\n' +
+        '2. **Holland 職涯測驗**：於 [品牌測驗](brand_test.html) 探索 RIASEC 六大職業性格。\n' +
+        '3. **科系適配與實驗室**：於 [科系適配](lab_recommendation.html) 探索靜宜資工、資管、AI 三大系所。\n' +
+        '4. **個人檔案與歷史履歷**：於 [個人檔案](profile.html) 隨時查閱歷史生成的履歷。\n\n' +
+        '請輸入您的問題，我會為您提供指引！';
   }
 
   return {

@@ -98,7 +98,7 @@ router.post('/ingest', async (req, res) => {
       if (!adminUid) {
         return res.status(403).json({
           status: 'error',
-          message: 'Chỉ quản trị viên (Admin) mới có quyền thêm tài liệu kiến thức chung (scope=public).'
+          message: '僅系統管理員 (Admin) 有權新增公用知識庫文件。/ Only administrators can add public knowledge base documents.'
         });
       }
       const adminUser = await User.findOne({
@@ -107,11 +107,11 @@ router.post('/ingest', async (req, res) => {
         isActive: { $ne: false }
       });
       if (!adminUser) {
-        return res.status(403).json({ status: 'error', message: 'Tài khoản không đủ quyền quản trị viên.' });
+        return res.status(403).json({ status: 'error', message: '權限不足：需要系統管理員權限。/ Admin privileges required.' });
       }
     } else {
       if (!requestUserId) {
-        return res.status(401).json({ status: 'error', message: 'Cần đăng nhập để nạp tài liệu cá nhân.' });
+        return res.status(401).json({ status: 'error', message: '請先登入以管理個人專屬文件。/ Please login to upload private documents.' });
       }
       targetUserId = String(requestUserId);
     }
@@ -127,12 +127,12 @@ router.post('/ingest', async (req, res) => {
 
     res.json({
       status: 'ok',
-      message: `Đã nạp thành công tài liệu "${result.title}" vào cơ sở dữ liệu Vector Search.`,
+      message: `成功導入文件 "${result.title}" 至向量資料庫。/ Document "${result.title}" successfully ingested.`,
       data: result
     });
   } catch (err) {
     console.error('[API /api/rag/ingest Error]:', err);
-    res.status(500).json({ status: 'error', message: 'Lỗi nạp tài liệu: ' + err.message });
+    res.status(500).json({ status: 'error', message: '文檔導入失敗 / Ingestion error: ' + err.message });
   }
 });
 
@@ -143,7 +143,7 @@ router.post('/ingest', async (req, res) => {
 router.post('/upload-file', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ status: 'error', message: 'Vui lòng chọn file tải lên.' });
+      return res.status(400).json({ status: 'error', message: '請選擇欲上傳之文件檔案。/ Please select a file to upload.' });
     }
 
     const { scope = 'public', title } = req.body || {};
@@ -155,11 +155,11 @@ router.post('/upload-file', upload.single('file'), async (req, res) => {
 
     if (finalScope === 'public') {
       if (!adminUid) {
-        return res.status(403).json({ status: 'error', message: 'Chỉ Admin mới được upload tài liệu public.' });
+        return res.status(403).json({ status: 'error', message: '僅管理員可上傳公用知識庫文件。/ Only admin can upload public documents.' });
       }
     } else {
       if (!requestUserId) {
-        return res.status(401).json({ status: 'error', message: 'Cần đăng nhập để upload tài liệu riêng.' });
+        return res.status(401).json({ status: 'error', message: '請先登入以管理個人專屬文件。/ Please login to upload private documents.' });
       }
       targetUserId = String(requestUserId);
     }
@@ -181,12 +181,12 @@ router.post('/upload-file', upload.single('file'), async (req, res) => {
 
     res.json({
       status: 'ok',
-      message: `Đã nạp file "${result.title}" thành công.`,
+      message: `成功導入檔案 "${result.title}"。/ File "${result.title}" successfully ingested.`,
       data: result
     });
   } catch (err) {
     console.error('[API /api/rag/upload-file Error]:', err);
-    res.status(500).json({ status: 'error', message: 'Lỗi xử lý file: ' + err.message });
+    res.status(500).json({ status: 'error', message: '檔案處理失敗 / File error: ' + err.message });
   }
 });
 
@@ -239,7 +239,7 @@ router.delete('/documents/:docId', async (req, res) => {
     const result = await deleteDocument(docId, requestUserId, isAdmin);
     res.json({
       status: 'ok',
-      message: `Đã xóa tài liệu và ${result.deletedChunks} đoạn vector tương ứng.`,
+      message: `已成功刪除文檔及對應之 ${result.deletedChunks} 筆向量切片。/ Document and ${result.deletedChunks} chunks deleted.`,
       data: result
     });
   } catch (err) {
