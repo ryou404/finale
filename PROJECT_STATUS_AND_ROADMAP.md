@@ -76,6 +76,12 @@
 - **寬度與字距舒適升級**：側邊欄由預設 `w-64` (256px) 拓寬至 `md:w-72 lg:w-80` (288px ~ 320px)，按鈕內距升級為 `px-3.5 md:px-4 py-2.5 md:py-3`，解決 `CLOUDFLARE R2 STORAGE` 與 `RAG KNOWLEDGE BASE` 等長字串緊繃擠壓的問題。
 - **色彩 100% 協調一致**：移除 RAG 腦部圖標之綠色樣式 (`text-emerald-600`) 與 R2 橙色標籤，全數統一為標準 Cyber-Brutalist Klein Blue (`bg-klein/10 text-klein` 標籤邊框與階層式圖標)，確保 8 大管理模組色彩一致、層次分明。
 
+### 8. 多用戶會話隔離與跨帳號防洩漏架構 (Multi-User Chat Isolation & Anti-Leak Protection)
+徹底解決使用者切換帳號或登出時對話歷史外洩與身分混淆問題：
+- **前端 UID 動態會話儲存**：在 [`static/chat-widget.js`](file:///j:/ThoBeo/finale/static/chat-widget.js) 中將歷史儲存鍵動態綁定用戶 UID（`cdna_chat_history_v3_${uid}`）。
+- **登入/登出全域廣播聯動**：在 [`static/db-client.js`](file:///j:/ThoBeo/finale/static/db-client.js) 的 `setCurrentUser` 與 `logout` 中發送 `cdna:auth-changed` 事件，Widget 自動重整對話上下文，杜絕前一帳號私密諮詢資料留存。
+- **後端身分強一致性驗證**：在 [`src/services/ragChatService.js`](file:///j:/ThoBeo/finale/src/services/ragChatService.js) 中依據驗證之 `userId` 自 MongoDB 直讀真實用戶檔案注入 System Prompt，並設定嚴格身分隔離規則，防止 LLM 被舊對話歷史牽引產生身分幻覺。
+
 ---
 
 ## 📁 三、 核心檔案結構對照 (System Architecture Map)

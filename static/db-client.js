@@ -175,6 +175,9 @@
     if (!user) {
       localStorage.removeItem(STORAGE_KEYS.USER);
       refreshNavbar();
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cdna:auth-changed', { detail: { user: null, uid: null } }));
+      }
       return;
     }
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
@@ -185,6 +188,9 @@
     if (user.department || user.dept) localStorage.setItem(STORAGE_KEYS.DEPT, user.department || user.dept);
     if (user.grade) localStorage.setItem(STORAGE_KEYS.GRADE, user.grade);
     refreshNavbar();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('cdna:auth-changed', { detail: { user, uid: effectiveUid } }));
+    }
   }
 
   if (typeof document !== 'undefined') {
@@ -852,6 +858,9 @@
       localStorage.removeItem(STORAGE_KEYS.UID);
       localStorage.removeItem(STORAGE_KEYS.NAME);
       refreshNavbar();
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cdna:auth-changed', { detail: { user: null, uid: null } }));
+      }
     },
 
     // 1. Get Complete User Profile from MongoDB Atlas

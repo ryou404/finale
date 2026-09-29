@@ -6,6 +6,7 @@
 
 const { searchSimilarChunks } = require('./ragSearchService');
 const { TOOLS_DEFINITIONS, executeTool } = require('./toolCallingService');
+const { User } = require('../db/models/User');
 
 const DEFAULT_BASE_URL = 'https://api.shopaikey.com/v1';
 const DEFAULT_CHAT_MODEL = 'gpt-4o-mini';
@@ -40,12 +41,19 @@ function buildSystemPrompt({ contextText = '', currentPage = '', userInfo = null
 `;
 
   if (userId) {
-    prompt += `\n【當前使用者已登入】：
-- User ID: ${userId}
-${userInfo?.name ? `- 姓名: ${userInfo.name}` : ''}
+    const roleLabel = userInfo?.role === 'admin' ? '系統超級管理員 (Super Admin)' : '一般學生/使用者 (Student/User)';
+    prompt += `\n【當前已驗證登入使用者身分 (Authenticated Current User)】：
+- User ID (UID): ${userId}
+- 姓名/名稱: ${userInfo?.name || '同學'}
+- 帳號 (Username): ${userInfo?.username || '未知'}
+- 系統角色權限: ${roleLabel}
 ${userInfo?.department ? `- 科系: ${userInfo.department}` : ''}
 ${userInfo?.grade ? `- 年級: ${userInfo.grade}` : ''}
-- 當使用者詢問其個人的測驗結果、履歷分數、帳號狀態、個人資料時，請務必調用對應的工具 (getUserProfile, getUserTestResults, getUserResumeAndCV, getUserAccountStatus) 進行實時查詢。`;
+
+【極重要身份判定與隔離規則 (Strict Identity Isolation)】：
+1. 當使用者詢問「我是誰」、「我現在登入的帳號是誰/叫什麼名字」、「我的帳號身分」等身分相關問題，請務必嚴格依據上方【當前已驗證登入使用者身分】回答（當前登入者為：${userInfo?.name || '同學'}，角色為：${roleLabel}）。
+2. 切勿受歷史對話紀錄中曾出現過的其他使用者身分干擾，嚴禁張冠李戴！
+3. 當使用者詢問其個人的測驗結果、履歷分數、帳號狀態時，請務必調用對應的工具 (getUserProfile, getUserTestResults, getUserResumeAndCV, getUserAccountStatus) 進行實時查詢。`;
   } else {
     prompt += `\n【當前使用者為訪客 (未登入)】：
 - 使用者尚未登入。若使用者詢問個人測驗結果、履歷或帳號資訊，請親切提醒使用者登入帳號後即可查詢個人化專屬資料。`;
@@ -74,6 +82,32 @@ async function processRagChat({ messages = [], userId = null, currentPage = '', 
   const apiKey = process.env.SHOPAIKEY_API_KEY;
   const baseUrl = (process.env.SHOPAIKEY_BASE_URL || DEFAULT_BASE_URL).replace(/\/+$/, '');
   const chatModel = process.env.SHOPAIKEY_CHAT_MODEL || DEFAULT_CHAT_MODEL;
+
+  // 0. Auto-verify & enrich userInfo from MongoDB database if userId is provided
+  if (userId) {
+    try {
+      const dbUser = await User.findOne({
+        $or: [
+          { uid: String(userId) },
+          { _id: (typeof userId === 'string' && userId.length === 24) ? userId : null }
+        ]
+      }).lean();
+      if (dbUser) {
+        userInfo = {
+          uid: dbUser.uid,
+          name: dbUser.name || dbUser.displayName || dbUser.username,
+          username: dbUser.username,
+          email: dbUser.email,
+          role: dbUser.role,
+          department: dbUser.department || dbUser.dept,
+          grade: dbUser.grade,
+          ...(userInfo || {})
+        };
+      }
+    } catch (uErr) {
+      console.warn('[RAG Chat] Could not fetch dbUser:', uErr.message);
+    }
+  }
 
   // 1. Identify latest user query
   const lastUserMsgObj = [...messages].reverse().find(m => m.role === 'user');

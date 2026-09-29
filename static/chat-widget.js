@@ -10,7 +10,7 @@
   if (typeof window === 'undefined') return;
   if (window.CareerDNA_ChatWidget) return; // Prevent duplicate instantiation
 
-  const STORAGE_KEY = 'cdna_chat_history_v2';
+  const STORAGE_PREFIX = 'cdna_chat_history_v3_';
   const OPEN_STATE_KEY = 'cdna_chat_is_open';
   const SIZE_KEY = 'cdna_chat_size_v1';
   const MAX_SESSION_MESSAGES = 16; // Limit session to 16 messages (~8 dialogue turns) to optimize context and prevent drift
@@ -47,7 +47,41 @@
       this.isStreaming = false;
       this.activeStreamTimeout = null;
       this.messages = [];
+      this.currentUid = this.getCurrentUid();
       this.init();
+    }
+
+    getCurrentUid() {
+      try {
+        if (window.CareerDNA_DB && typeof window.CareerDNA_DB.getCurrentUser === 'function') {
+          const u = window.CareerDNA_DB.getCurrentUser();
+          if (u && (u.uid || u._id || u.id)) return String(u.uid || u._id || u.id);
+        }
+        const userRaw = localStorage.getItem('careerDNA_user');
+        if (userRaw) {
+          const u = JSON.parse(userRaw);
+          if (u && (u.uid || u._id || u.id)) return String(u.uid || u._id || u.id);
+        }
+        const directUid = localStorage.getItem('cdna_uid');
+        if (directUid) return String(directUid);
+      } catch (e) {}
+      return 'guest';
+    }
+
+    getStorageKey() {
+      const uid = this.getCurrentUid();
+      return `${STORAGE_PREFIX}${uid}`;
+    }
+
+    checkUserSession() {
+      const uid = this.getCurrentUid();
+      if (uid !== this.currentUid) {
+        console.log(`[ChatWidget] User session switched (${this.currentUid} -> ${uid}). Isolating chat context.`);
+        this.currentUid = uid;
+        this.messages = [];
+        this.loadHistory();
+        this.updateInputState();
+      }
     }
 
     init() {
@@ -642,7 +676,7 @@
 
     loadHistory() {
       try {
-        const saved = sessionStorage.getItem(STORAGE_KEY);
+        const saved = sessionStorage.getItem(this.getStorageKey());
         if (saved) {
           this.messages = JSON.parse(saved);
         }
@@ -684,7 +718,7 @@
 
     saveHistory() {
       try {
-        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(this.messages));
+        sessionStorage.setItem(this.getStorageKey(), JSON.stringify(this.messages));
       } catch (e) {}
     }
 
@@ -817,6 +851,17 @@
           }
         });
       }
+
+      // Strict User Identity Isolation: Listen to login/logout/user switch events
+      window.addEventListener('cdna:auth-changed', () => {
+        this.checkUserSession();
+      });
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'careerDNA_user' || e.key === 'cdna_uid') {
+          this.checkUserSession();
+        }
+      });
     }
 
     bindResizeEvents() {
@@ -889,6 +934,7 @@
     }
 
     openChat() {
+      this.checkUserSession();
       this.isOpen = true;
       sessionStorage.setItem(OPEN_STATE_KEY, 'true');
       const win = document.getElementById('cdna-chat-window');
@@ -917,8 +963,13 @@
     }
 
     clearHistory(skipConfirm = false) {
-      if (!skipConfirm && !confirm('確定要開啟新的對話嗎？目前的對話紀錄將會重置。\n(Bạn có muốn bắt đầu một đoạn chat mới không?)')) return;
-      sessionStorage.removeItem(STORAGE_KEY);
+      const isEn = getWidgetLang() === 'en';
+      const confirmMsg = isEn 
+        ? 'Start a new conversation? Current chat history will be reset.' 
+        : '確定要開啟新的對話嗎？目前的對話紀錄將會重置。';
+      if (!skipConfirm && !confirm(confirmMsg)) return;
+
+      sessionStorage.removeItem(this.getStorageKey());
       this.messages = [];
       this.loadHistory();
       this.renderMessages();
@@ -935,6 +986,7 @@
       const input = document.getElementById('cdna-chat-input');
       const sendBtn = document.getElementById('cdna-chat-send-btn');
       const badge = document.getElementById('cdna-session-badge');
+      const isEn = getWidgetLang() === 'en';
 
       if (badge) {
         badge.textContent = `${this.messages.length}/${MAX_SESSION_MESSAGES}`;
@@ -953,10 +1005,14 @@
       if (input) {
         if (isLimitReached) {
           input.disabled = true;
-          input.placeholder = 'Đã đạt giới hạn phiên chat. Vui lòng bấm Bắt đầu đoạn chat mới...';
+          input.placeholder = isEn 
+            ? 'Conversation limit reached. Please click restart icon to begin new chat...' 
+            : '已達對話上限，請點擊上方重置按鈕開啟新對話...';
         } else {
           input.disabled = false;
-          input.placeholder = '詢問平台功能、生成履歷、探索科系...';
+          input.placeholder = isEn 
+            ? 'Ask about platform features, resume review, courses...' 
+            : '詢問平台功能、生成履歷、探索科系...';
         }
       }
 
@@ -966,6 +1022,7 @@
     }
 
     async sendMessage(explicitText = null) {
+      this.checkUserSession();
       if (this.isThinking || this.isStreaming) return;
       if (this.messages.length >= MAX_SESSION_MESSAGES) {
         this.renderMessages();
@@ -990,21 +1047,22 @@
       this.showTypingIndicator();
 
       try {
-        const userInfo = window.CVTemplates ? window.CVTemplates.collectUserData() : {};
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        let userInfo = {};
+        if (window.CareerDNA_DB && typeof window.CareerDNA_DB.getCurrentUser === 'function') {
+          userInfo = window.CareerDNA_DB.getCurrentUser() || {};
+        }
+        if (!userInfo.name) {
+          try {
+            const userRaw = localStorage.getItem('careerDNA_user');
+            if (userRaw) userInfo = JSON.parse(userRaw);
+          } catch(e) {}
+        }
+        if (window.CVTemplates && typeof window.CVTemplates.collectUserData === 'function') {
+          userInfo = { ...userInfo, ...window.CVTemplates.collectUserData() };
+        }
 
-        // Retrieve current authenticated user UID
-        let currentUid = null;
-        try {
-          const userRaw = localStorage.getItem('careerDNA_user');
-          if (userRaw) {
-            const u = JSON.parse(userRaw);
-            currentUid = u.uid || u._id || u.id;
-          }
-          if (!currentUid) {
-            currentUid = localStorage.getItem('cdna_uid');
-          }
-        } catch(e) {}
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const currentUid = this.getCurrentUid() !== 'guest' ? this.getCurrentUid() : null;
 
         const res = await fetch('/api/rag/chat', {
           method: 'POST',
