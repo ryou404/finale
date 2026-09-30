@@ -237,56 +237,38 @@
                 </section>
 
                 <!-- Section 02: Practical & Extracurricular Experience -->
+                <!-- Section 02: Extracurricular Experience -->
                 <section class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2">
                     <div class="border-b border-klein/10 pb-4 mb-4">
                         <div class="h-2"></div>
                         <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
                             <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">02</span>
-                            實務與課外經歷
+                            課外經歷 (Extracurricular Experience)
                         </h2>
                     </div>
+                    <p class="font-mono text-xs text-klein/50 mb-3">* 請勾選您已累積的實習、競賽或專案經歷，作為職場實戰力加分依據（最高 20 分）。</p>
                     <div id="experience-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <!-- Populated by renderExperiences() -->
                     </div>
                 </section>
 
-                <!-- Section 03: Profile Weapons & Skills -->
+                <!-- Section 03: Resume Draft & Career Goals -->
                 <section class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-3">
-                    <div class="flex justify-between items-center border-b border-klein/10 pb-4 mb-4">
-                        <div>
-                            <div class="h-2"></div>
-                            <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
-                                <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">03</span>
-                                專屬武器庫 (擅長工具)
-                            </h2>
-                        </div>
-                        <a href="profile.html" class="hover-spring font-mono text-xs font-bold text-klein bg-klein/5 hover:bg-klein hover:text-white border border-klein/20 px-3 py-1.5 transition-all">
-                            管理技能 ➔
-                        </a>
-                    </div>
-                    <p class="font-mono text-xs text-klein/50 mb-3">* 系統已從個人檔案同步技能標籤，為履歷關鍵字額外加權。</p>
-                    <div id="skills-display-container" class="flex flex-wrap gap-2 min-h-[36px] items-center">
-                        <!-- Populated by renderSkills() -->
-                    </div>
-                </section>
-
-                <!-- Section 04: Resume Draft & PDF Material -->
-                <section class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-4">
                     <div class="border-b border-klein/10 pb-4 mb-4">
                         <div class="h-2"></div>
                         <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
-                            <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">04</span>
-                            履歷生成素材
+                            <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">03</span>
+                            求職目標與自述草稿 (Career Goals / Bio)
                         </h2>
                     </div>
-                    <p class="font-body text-xs text-klein/70 mb-4">請提供自我介紹草稿或上傳現有履歷 PDF，AI 顧問將重構為 STAR / XYZ 高維度履歷。</p>
+                    <p class="font-body text-xs text-klein/70 mb-4">請提供求職方向、自我介紹或專案摘要，規則引擎將自動結合 UCAN 職能與修課紀錄排版為 STAR / XYZ 高規 A4 履歷。</p>
                     
                     <div class="space-y-4">
                         <div>
                             <label class="block font-mono text-xs font-bold uppercase tracking-wider text-klein mb-2">
                                 求職目標與簡介草稿 (Career Goals / Bio)
                             </label>
-                            <textarea id="resume-draft-input" class="w-full h-28 p-3 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-xs" placeholder="例如：我想應徵後端工程師實習，在校期間使用 Node.js 與 MySQL 完成期末電商專題..."></textarea>
+                            <textarea id="resume-draft-input" class="w-full h-28 p-3 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-xs" placeholder="例如：我想應徵軟體工程師實習，在校期間修習資料庫與演算法，具備專案實作經驗，希望朝向全端或後端開發發展..."></textarea>
                         </div>
 
                         <div>
@@ -306,13 +288,9 @@
 
                 <!-- Action Button Cluster -->
                 <div class="space-y-3">
-                    <button onclick="window.App.generateStaticReport()" id="generate-static-btn" class="hover-spring w-full py-4 bg-white hover:bg-klein hover:text-white border border-klein text-klein font-heading font-bold text-base uppercase tracking-wider flex items-center justify-center gap-3 group transition-all">
-                        <i class="fa-solid fa-chart-line text-sm group-hover:scale-110 transition-transform"></i>
-                        <span>執行靜態綜合戰力分析 (Rule Engine)</span>
-                    </button>
-                    <button onclick="window.App.calculateAndGenerate()" id="generate-btn" class="hover-spring w-full py-4 bg-klein text-white border border-klein font-heading font-bold text-base uppercase tracking-wider flex items-center justify-center gap-3 group">
-                        <i class="fa-solid fa-wand-magic-sparkles text-sm group-hover:rotate-12 transition-transform"></i>
-                        <span>✨ AI 深度健檢與生成 (Gemini LLM)</span>
+                    <button onclick="window.App.calculateAndGenerate()" id="generate-btn" class="hover-spring w-full py-4 bg-klein text-white border border-klein font-heading font-bold text-base uppercase tracking-wider flex items-center justify-center gap-3 group shadow-md hover:shadow-xl transition-all">
+                        <i class="fa-solid fa-file-signature text-base group-hover:scale-110 transition-transform"></i>
+                        <span>🚀 立即產生專業 A4 履歷與戰力診斷報告</span>
                     </button>
                 </div>
 
@@ -339,7 +317,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div class="border border-klein/10 p-3 bg-klein/[0.02]">
                                 <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
-                                    <span>專業學分 (Prog)</span>
+                                    <span>專業學程 (40%)</span>
                                     <span><span id="live-prog-score">0</span> / 40</span>
                                 </div>
                                 <div class="w-full bg-klein/10 h-1.5">
@@ -349,28 +327,28 @@
 
                             <div class="border border-klein/10 p-3 bg-klein/[0.02]">
                                 <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
-                                    <span>實務經歷 (Exp)</span>
-                                    <span><span id="live-exp-score">0</span> / 40</span>
+                                    <span>實務課群 (40%)</span>
+                                    <span><span id="live-prac-score">0</span> / 40</span>
                                 </div>
                                 <div class="w-full bg-klein/10 h-1.5">
-                                    <div id="live-exp-bar" class="bg-cobalt h-1.5 transition-all duration-500" style="width: 0%"></div>
+                                    <div id="live-prac-bar" class="bg-cobalt h-1.5 transition-all duration-500" style="width: 0%"></div>
                                 </div>
                             </div>
 
                             <div class="border border-klein/10 p-3 bg-klein/[0.02]">
                                 <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
-                                    <span>技能標籤 (Skill)</span>
-                                    <span><span id="live-skill-score">0</span> / 20</span>
+                                    <span>課外經歷 (20%)</span>
+                                    <span><span id="live-exp-score">0</span> / 20</span>
                                 </div>
                                 <div class="w-full bg-klein/10 h-1.5">
-                                    <div id="live-skill-bar" class="bg-emerald-600 h-1.5 transition-all duration-500" style="width: 0%"></div>
+                                    <div id="live-exp-bar" class="bg-emerald-600 h-1.5 transition-all duration-500" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Live Advice Feedback Note -->
                         <div id="live-recommendation" class="font-mono text-xs text-klein/70 bg-klein/5 border border-klein/10 p-3">
-                            請勾選左側修課紀錄、經歷與技能，系統將即時試算您的就業競爭力！
+                            請勾選左側修課紀錄與課外經歷，系統將即時試算您的就業競爭力！
                         </div>
                     </div>
 
@@ -610,10 +588,10 @@
         };
 
         const EXPERIENCES = [
-            { id: 'exp_intern', name: '企業實習 / 產學合作 (大四極重要)', score: 20, icon: '💼' },
-            { id: 'exp_compete', name: '專業競賽 (獲獎或入圍)', score: 15, icon: '🏆' },
-            { id: 'exp_project', name: '專案實作 / 畢業專題', score: 10, icon: '🚀' },
-            { id: 'exp_leader', name: '社團幹部 / 黑客松參與', score: 5, icon: '👥' }
+            { id: 'exp_intern', name: '企業實習 / 產學合作 (大四極重要)', score: 8, icon: '💼' },
+            { id: 'exp_compete', name: '專業競賽 (黑客松/專題競賽獲獎或入圍)', score: 6, icon: '🏆' },
+            { id: 'exp_project', name: '專案實作 / 期末大型與畢業專題', score: 4, icon: '🚀' },
+            { id: 'exp_leader', name: '社團幹部 / 跨領域活動組織參與', score: 2, icon: '👥' }
         ];
 
         window.App = {
@@ -622,7 +600,6 @@
                 selectedCourses: new Set(), 
                 selectedExps: new Set(), 
                 grade: '大三', 
-                skills: [], 
                 dept: '' 
             },
 
@@ -633,10 +610,6 @@
                 try {
                     this.renderExperiences();
                 } catch(e) { console.error('[CareerDNA] renderExperiences error:', e); }
-                
-                try {
-                    this.renderSkills();
-                } catch(e) { console.error('[CareerDNA] renderSkills error:', e); }
                 
                 // Check for saved local state
                 const savedDept = localStorage.getItem('cdna_department');
@@ -900,57 +873,116 @@
                 this.switchTrackDirect(cur.track);
             },
 
+            getCourseBadges(courseName) {
+                let badges = [];
+                let ucanData = null;
+                try {
+                    const raw = localStorage.getItem('ucan_dna_result');
+                    if (raw) ucanData = JSON.parse(raw);
+                } catch(e){}
+
+                const grade = this.state.grade || '大三';
+
+                // 1. 大一/大二基礎奠基標記
+                const foundationCourses = [
+                    '計算機概論', '程式設計(一)', '程式設計(二)', '資料結構', 
+                    '資料庫系統', '作業系統', '演算法概論', '計算機網路', 
+                    '資訊數學', '線性代數', '邏輯設計'
+                ];
+                if ((grade === '大一' || grade === '大二') && foundationCourses.some(fc => courseName.includes(fc))) {
+                    badges.push('<span class="ml-1 text-[9px] font-mono px-1.5 py-0.2 bg-amber-50 text-amber-800 border border-amber-300 font-bold">🌱 大一/二奠基</span>');
+                }
+
+                // 2. UCAN 專業職能路徑推薦
+                if (ucanData && ucanData.profPathway) {
+                    const pathway = ucanData.profPathway;
+                    const pathwayMap = {
+                        '軟體開發': ['程式設計', '資料結構', '演算法', '網頁前端', '動態網頁', '系統分析', '軟體實作', '行動應用'],
+                        '資料科學與分析': ['Python', '大數據', '資料倉儲', '機器學習', '深度學習', '資料庫', '智慧資料', '商業智慧'],
+                        '人工智慧技術應用': ['人工智慧', 'Python', '機器學習', '深度學習', '電腦視覺', '智慧製造', '影像處理'],
+                        '資訊安全': ['資訊安全', '安全程式', '系統安全', '網路安全', '計算機網路', 'Linux'],
+                        '網路與系統維運': ['計算機網路', '系統與網路管理', '雲端技術', 'Linux', '網路安全', '物聯網'],
+                        '企業資源規劃': ['企業資源規劃', 'ERP', '財務會計', '人力資源', 'ABAP', '商業智慧', '專案管理']
+                    };
+
+                    const keywords = pathwayMap[pathway] || [];
+                    if (keywords.some(kw => courseName.includes(kw))) {
+                        badges.push('<span class="ml-1 text-[9px] font-mono px-1.5 py-0.2 bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold">🎯 UCAN推薦</span>');
+                    }
+                }
+
+                // 3. UCAN 共通職能弱項補強標記
+                if (ucanData && ucanData.commonComps) {
+                    const comps = Object.entries(ucanData.commonComps);
+                    const weakComp = comps.find(([name, data]) => data.pr < 50);
+                    if (weakComp) {
+                        const weakName = weakComp[0];
+                        const weakMap = {
+                            '科技應用': ['Python', '資訊', '物聯網', '雲端', '行動應用'],
+                            '問題解決': ['演算法', '資料結構', '系統分析', '程式設計'],
+                            '創新': ['互動設計', '動態網頁', '人工智慧', '專案實作'],
+                            '團隊合作': ['專案實作', '專案管理', '系統分析與設計'],
+                            '持續學習': ['進階', '機器學習', '深度學習']
+                        };
+                        const weakKws = weakMap[weakName] || [];
+                        if (weakKws.some(kw => courseName.includes(kw)) && !badges.some(b => b.includes('UCAN推薦'))) {
+                            badges.push(`<span class="ml-1 text-[9px] font-mono px-1.5 py-0.2 bg-blue-50 text-blue-800 border border-blue-300 font-bold">💡 補強:${weakName}</span>`);
+                        }
+                    }
+                }
+
+                return badges.join('');
+            },
+
             renderPrograms(dataList, goalCredits) {
                 const requiredCourses = goalCredits / 3;
-                document.getElementById('programs-container').innerHTML = dataList.map(prog => `
+                const recBanner = `
+                    <div class="mb-3 p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11px] font-mono flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i>
+                        <span>已自動標記適合選修的課程：<strong class="text-emerald-800">🎯 UCAN推薦</strong>、<strong class="text-amber-800">🌱 大一/二奠基</strong>、<strong class="text-blue-800">💡 弱項補強</strong></span>
+                    </div>`;
+
+                document.getElementById('programs-container').innerHTML = recBanner + dataList.map(prog => `
                     <div class="border border-klein/10 p-4 bg-white crosshair-corner">
                         <div class="flex justify-between items-center mb-3">
                             <h3 class="font-heading font-black text-klein text-sm uppercase">${prog.name}</h3>
                             <span id="badge-${prog.id}" class="text-xs font-mono font-bold px-2.5 py-1 bg-klein/5 text-klein border border-klein/15" data-goal="${requiredCourses}">0 / ${requiredCourses} 門</span>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            ${prog.courses.map(course => `
-                                <label class="cursor-pointer">
-                                    <input type="checkbox" class="peer sr-only" value="${course}" data-prog="${prog.id}" onchange="window.App.toggleCourse(this)">
-                                    <div class="px-3 py-1.5 text-xs font-mono font-semibold border border-klein/20 text-klein/80 peer-checked:bg-klein peer-checked:text-white peer-checked:border-klein hover:border-klein transition-all">
-                                        ${course}
-                                    </div>
-                                </label>
-                            `).join('')}
+                            ${prog.courses.map(course => {
+                                const badges = this.getCourseBadges(course);
+                                return `
+                                    <label class="cursor-pointer">
+                                        <input type="checkbox" class="peer sr-only" value="${course}" data-prog="${prog.id}" onchange="window.App.toggleCourse(this)">
+                                        <div class="px-3 py-1.5 text-xs font-mono font-semibold border border-klein/20 text-klein/80 peer-checked:bg-klein peer-checked:text-white peer-checked:border-klein hover:border-klein transition-all flex items-center flex-wrap">
+                                            <span>${course}</span>
+                                            ${badges}
+                                        </div>
+                                    </label>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                 `).join('');
             },
-              renderExperiences() {
-                  const container = document.getElementById('experience-container');
-                  container.innerHTML = EXPERIENCES.map(exp => `
-                      <label class="cursor-pointer block">
-                          <input type="checkbox" class="peer sr-only" value="${exp.id}" onchange="window.App.toggleExp('${exp.id}')">
-                          <div class="flex items-center gap-3 p-3.5 border border-klein/10 bg-white hover-spring peer-checked:bg-klein peer-checked:text-white text-klein transition-all">
-                              <span class="text-xl shrink-0">${exp.icon}</span>
-                              <div class="flex-1 min-w-0">
-                                  <div class="font-heading font-bold text-xs uppercase truncate">${exp.name}</div>
-                                  <div class="text-[10px] font-mono opacity-70">戰力點數 +${exp.score}</div>
-                              </div>
-                              <div class="w-4 h-4 border border-klein/30 flex items-center justify-center shrink-0 [.peer:checked~div_&]:border-white [.peer:checked~div_&]:bg-white">
-                                  <svg class="w-2.5 h-2.5 opacity-0 [.peer:checked~div_&]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                              </div>
-                          </div>
-                      </label>
-                  `).join('');
-              },
-
-
-            renderSkills() {
-                const container = document.getElementById('skills-display-container');
-                if (!this.state.skills || this.state.skills.length === 0) {
-                    container.innerHTML = '<span class="text-xs font-mono text-klein/40 italic">尚未裝備任何武器，建議前往「個人檔案」挑選，可大幅提升綜合戰力！</span>';
-                } else {
-                    container.innerHTML = this.state.skills.map(skill => 
-                        `<span class="px-3 py-1 bg-klein/5 text-klein border border-klein/20 font-mono text-xs font-bold">${skill}</span>`
-                    ).join('');
-                }
-                this.updateLiveScore();
+            
+            renderExperiences() {
+                const container = document.getElementById('experience-container');
+                container.innerHTML = EXPERIENCES.map(exp => `
+                    <label class="cursor-pointer block">
+                        <input type="checkbox" class="peer sr-only" value="${exp.id}" onchange="window.App.toggleExp('${exp.id}')">
+                        <div class="flex items-center gap-3 p-3.5 border border-klein/10 bg-white hover-spring peer-checked:bg-klein peer-checked:text-white text-klein transition-all">
+                            <span class="text-xl shrink-0">${exp.icon}</span>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-heading font-bold text-xs uppercase truncate">${exp.name}</div>
+                                <div class="text-[10px] font-mono opacity-70">戰力權重 +${exp.score} 分</div>
+                            </div>
+                            <div class="w-4 h-4 border border-klein/30 flex items-center justify-center shrink-0 [.peer:checked~div_&]:border-white [.peer:checked~div_&]:bg-white">
+                                <svg class="w-2.5 h-2.5 opacity-0 [.peer:checked~div_&]:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                        </div>
+                    </label>
+                `).join('');
             },
 
             toggleCourse(checkbox) {
@@ -983,10 +1015,27 @@
             },
 
             updateLiveScore() {
-                let totalUniqueCredits = this.state.selectedCourses.size * 3;
-                let goalCredits = 12;
-                let programScore = Math.min(40, Math.floor((totalUniqueCredits / goalCredits) * 40));
-                if (isNaN(programScore)) programScore = 0;
+                const dept = this.state.dept || localStorage.getItem('cdna_department') || 'IM';
+                const progGroup = ACADEMIC_DATA.program[dept] || ACADEMIC_DATA.program.IM;
+                const progGoalCredits = progGroup.goal || 15;
+                let maxProgCredits = 0;
+                progGroup.data.forEach(prog => {
+                    const count = prog.courses.filter(c => this.state.selectedCourses.has(c)).length;
+                    const cr = count * 3;
+                    if (cr > maxProgCredits) maxProgCredits = cr;
+                });
+                const progScore = Math.min(40, Math.round((maxProgCredits / progGoalCredits) * 40));
+
+                const pracData = ACADEMIC_DATA.practical;
+                const pracGoalCredits = pracData.goal || 9;
+                const practicalCoursesTaken = new Set();
+                pracData.data.forEach(cluster => {
+                    cluster.courses.forEach(c => {
+                        if (this.state.selectedCourses.has(c)) practicalCoursesTaken.add(c);
+                    });
+                });
+                const pracCredits = practicalCoursesTaken.size * 3;
+                const pracScore = Math.min(40, Math.round((pracCredits / pracGoalCredits) * 40));
 
                 let expScore = 0;
                 EXPERIENCES.forEach(exp => {
@@ -994,18 +1043,17 @@
                         expScore += exp.score;
                     }
                 });
-                expScore = Math.min(40, expScore);
+                expScore = Math.min(20, expScore);
 
-                let skillScore = Math.min(20, (this.state.skills?.length || 0) * 4);
-                const totalScore = programScore + expScore + skillScore;
+                const totalScore = Math.min(100, progScore + pracScore + expScore);
 
                 const liveTotal = document.getElementById('live-total-score');
                 const liveProgScore = document.getElementById('live-prog-score');
                 const liveProgBar = document.getElementById('live-prog-bar');
+                const livePracScore = document.getElementById('live-prac-score');
+                const livePracBar = document.getElementById('live-prac-bar');
                 const liveExpScore = document.getElementById('live-exp-score');
                 const liveExpBar = document.getElementById('live-exp-bar');
-                const liveSkillScore = document.getElementById('live-skill-score');
-                const liveSkillBar = document.getElementById('live-skill-bar');
                 const recText = document.getElementById('live-recommendation');
 
                 if (liveTotal) {
@@ -1014,29 +1062,33 @@
                 }
                 
                 if (liveProgScore) {
-                    liveProgScore.innerText = programScore;
-                    liveProgBar.style.width = `${(programScore / 40) * 100}%`;
+                    liveProgScore.innerText = progScore;
+                    if (liveProgBar) liveProgBar.style.width = `${(progScore / 40) * 100}%`;
+                }
+                if (livePracScore) {
+                    livePracScore.innerText = pracScore;
+                    if (livePracBar) livePracBar.style.width = `${(pracScore / 40) * 100}%`;
                 }
                 if (liveExpScore) {
                     liveExpScore.innerText = expScore;
-                    liveExpBar.style.width = `${(expScore / 40) * 100}%`;
-                }
-                if (liveSkillScore) {
-                    liveSkillScore.innerText = skillScore;
-                    liveSkillBar.style.width = `${(skillScore / 20) * 100}%`;
+                    if (liveExpBar) liveExpBar.style.width = `${(expScore / 20) * 100}%`;
                 }
 
                 if (recText) {
                     if (totalScore === 0) {
-                        recText.innerText = "請勾選左側修課紀錄、經歷與技能，系統將即時試算您的就業競爭力！";
-                    } else if (totalScore < 30) {
-                        recText.innerHTML = "💡 <strong>系統建議：</strong>履歷基礎尚待加強。建議優先補足核心專業必修，並累積專題實作！";
-                    } else if (totalScore < 60) {
-                        recText.innerHTML = "💡 <strong>系統建議：</strong>基礎穩固！若能爭取企業實習或專業競賽得獎，將大幅增加錄取率！";
+                        recText.innerText = "請勾選左側修課紀錄與課外經歷，系統將即時試算您的就業競爭力！";
+                    } else if (progScore < 20 && pracScore < 20) {
+                        recText.innerHTML = "💡 <strong>系統建議：</strong>學術地基尚待奠定！建議優先選修 1 個專業學程與 3 門實務課群（9 學分）。";
+                    } else if (progScore < 20) {
+                        recText.innerHTML = "📚 <strong>系統建議：</strong>專業學程進度偏低，建議集中修滿所屬學程的核心課程以取得認證！";
+                    } else if (pracScore < 20) {
+                        recText.innerHTML = "🛠️ <strong>系統建議：</strong>實務課群學分未達 9 學分，多選修跨領域應用實務課群能大幅增加實戰戰力！";
+                    } else if (expScore < 8) {
+                        recText.innerHTML = "💼 <strong>系統建議：</strong>課外實戰經歷偏少！若能爭取企業實習、參與黑客松或期末大型專題，履歷將更具說服力！";
                     } else if (totalScore < 80) {
-                        recText.innerHTML = "✨ <strong>系統建議：</strong>戰力優異！繼續累積專業技能標籤，並執行下方 AI 深度健檢。";
+                        recText.innerHTML = "✨ <strong>系統建議：</strong>整體戰力優良！學程與課群佈局完整，現在即可點擊下方按鈕生成專業 A4 履歷！";
                     } else {
-                        recText.innerHTML = "🔥 <strong>系統建議：</strong>頂尖戰力！您的履歷已經具備極高的市場競爭力，現在即可生成完整報告！";
+                        recText.innerHTML = "🔥 <strong>系統建議：</strong>頂尖戰力！您的學程認證、實務跨域與課外經歷極為亮眼，已具備極高的市場競爭力！";
                     }
                 }
             },
@@ -1057,61 +1109,65 @@
             async calculateAndGenerate(isSilent = false) {
                 if (this.state.selectedCourses.size === 0 && this.state.selectedExps.size === 0) {
                     if (!isSilent) {
-                        alert("⚠️ 資料不足\n\n請至少勾選一項「修課紀錄」或「實務經歷」。\n技能、修課與經歷皆會影響您的最終 AI 診斷！");
+                        alert("⚠️ 資料不足\n\n請至少勾選一項「修課紀錄」或「課外經歷」，系統才能進行戰力試算與生成履歷！");
                     }
                     return;
                 }
 
-                const trackData = this.state.track === 'program'
-                    ? (ACADEMIC_DATA.program[this.state.dept || 'default'] || ACADEMIC_DATA.program.default)
-                    : ACADEMIC_DATA[this.state.track];
-                const goalCredits = trackData.goal;
-                
+                const dept = this.state.dept || localStorage.getItem('cdna_department') || 'IM';
+                const progGroup = ACADEMIC_DATA.program[dept] || ACADEMIC_DATA.program.IM;
+                const progGoalCredits = progGroup.goal || 15;
                 let maxProgCredits = 0;
-                let bestProgName = '';
+                let bestProg = null;
                 
-                if (this.state.track === 'practical') {
-                    let totalUniqueCredits = 0;
-                    const countedCourses = new Set();
-                    
-                    trackData.data.forEach(prog => {
-                        prog.courses.forEach(courseName => {
-                            if (this.state.selectedCourses.has(courseName) && !countedCourses.has(courseName)) {
-                                totalUniqueCredits += 3;
-                                countedCourses.add(courseName);
-                            }
-                        });
-                    });
-                    maxProgCredits = totalUniqueCredits;
-                    bestProgName = "實務能力綜合評量";
-                } else {
-                    trackData.data.forEach(prog => {
-                        const credits = Array.from(this.state.selectedCourses).filter(c => prog.courses.includes(c)).length * 3;
-                        if (credits > maxProgCredits) { maxProgCredits = credits; bestProgName = prog.name; }
-                    });
+                progGroup.data.forEach(prog => {
+                    const count = prog.courses.filter(c => this.state.selectedCourses.has(c)).length;
+                    const cr = count * 3;
+                    if (cr > maxProgCredits) {
+                        maxProgCredits = cr;
+                        bestProg = prog;
+                    }
+                });
+                if (!bestProg && progGroup.data.length > 0) {
+                    bestProg = progGroup.data[0];
                 }
+                const bestProgName = bestProg ? bestProg.name : "專業學程";
+                const progScore = Math.min(40, Math.round((maxProgCredits / progGoalCredits) * 40));
 
-                let programScore = Math.min(40, Math.floor((maxProgCredits / goalCredits) * 40));
+                const pracData = ACADEMIC_DATA.practical;
+                const pracGoalCredits = pracData.goal || 9;
+                const practicalCoursesTaken = new Set();
+                const matchedPracClusters = [];
+                pracData.data.forEach(cluster => {
+                    const matchedInCluster = cluster.courses.filter(c => this.state.selectedCourses.has(c));
+                    if (matchedInCluster.length > 0) {
+                        matchedPracClusters.push({ name: cluster.name, count: matchedInCluster.length, courses: matchedInCluster });
+                    }
+                    matchedInCluster.forEach(c => practicalCoursesTaken.add(c));
+                });
+                const pracCredits = practicalCoursesTaken.size * 3;
+                const pracScore = Math.min(40, Math.round((pracCredits / pracGoalCredits) * 40));
 
                 let expScore = 0;
-                let hasInternship = false;
                 EXPERIENCES.forEach(exp => {
                     if (this.state.selectedExps.has(exp.id)) {
                         expScore += exp.score;
-                        if (exp.id === 'exp_intern') hasInternship = true;
                     }
                 });
-                expScore = Math.min(40, expScore);
+                expScore = Math.min(20, expScore);
 
-                let skillScore = Math.min(20, (this.state.skills?.length || 0) * 4);
-                const totalScore = programScore + expScore + skillScore;
+                const totalScore = Math.min(100, progScore + pracScore + expScore);
 
+                // Update real-time score display
+                this.updateLiveScore();
+
+                // Sync to Firebase if user is authenticated
                 if (currentUser) {
                     try {
                         const resultData = {
                             selectedCourses: Array.from(this.state.selectedCourses),
                             selectedExps: Array.from(this.state.selectedExps),
-                            scores: { total: totalScore, program: programScore, exp: expScore, skill: skillScore },
+                            scores: { total: totalScore, program: progScore, practical: pracScore, exp: expScore },
                             updatedAt: new Date().toISOString()
                         };
 
@@ -1134,11 +1190,29 @@
                 const btn = document.getElementById('generate-btn');
                 if (btn) {
                     btn.disabled = true;
-                    btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-sm"></i> <span>AI 深度健檢中...</span>`;
+                    btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-sm"></i> <span>A4 履歷生成與戰力診斷中...</span>`;
                 }
 
-                this.generateSmartReport(this.state.grade, totalScore, bestProgName, maxProgCredits, goalCredits, expScore, hasInternship, skillScore);
-                
+                // Deterministic frontend rule-based generation
+                const result = this.generateRuleBasedResume({
+                    dept,
+                    grade: this.state.grade || '大三',
+                    progScore,
+                    pracScore,
+                    expScore,
+                    totalScore,
+                    bestProgName,
+                    maxProgCredits,
+                    progGoalCredits,
+                    pracCredits,
+                    pracGoalCredits,
+                    matchedPracClusters,
+                    selectedCourses: Array.from(this.state.selectedCourses),
+                    selectedExps: Array.from(this.state.selectedExps)
+                });
+
+                this.renderResultUI(result);
+
                 if (!isSilent) {
                     setTimeout(() => {
                         const aiPanel = document.getElementById('ai-result-panel');
@@ -1159,273 +1233,301 @@
             },
 
             async generateStaticReport(isSilent = false) {
-    let ucanText = "無 UCAN 數據";
-    try {
-        const u = JSON.parse(localStorage.getItem('ucan_dna_result'));
-        if(u) ucanText = `優勢職能: ${u.profPathway} (PR ${u.profPr})`;
-    } catch(e) {}
-
-                try {
-                    if (this.state.selectedCourses.size === 0 && this.state.selectedExps.size === 0) {
-                        if (!isSilent) {
-                            alert("⚠️ 資料不足\n\n請至少勾選一項「修課紀錄」或「實務經歷」。");
-                        }
-                        return;
-                    }
-
-                    let totalUniqueCredits = this.state.selectedCourses.size * 3;
-                    let goalCredits = 12;
-                    let programScore = Math.min(40, Math.floor((totalUniqueCredits / goalCredits) * 40));
-                    if (isNaN(programScore)) programScore = 0;
-
-                    let expScore = 0;
-                    let hasInternship = false;
-                    EXPERIENCES.forEach(exp => {
-                        if (this.state.selectedExps.has(exp.id)) {
-                            expScore += exp.score;
-                            if (exp.id === 'exp_intern') hasInternship = true;
-                        }
-                    });
-                    expScore = Math.min(40, expScore);
-
-                    let skillScore = Math.min(20, (this.state.skills?.length || 0) * 4);
-                    const totalScore = programScore + expScore + skillScore;
-
-                    let analysisText = `<strong>目前的履歷戰力 (${totalScore}分)：</strong><br>`;
-                    let actionItems = [];
-                    let quantScore = 0;
-                    let compScore = 0;
-                    let kwScore = 0;
-
-                    if (totalScore < 40) {
-                        analysisText += "您的履歷目前較為單薄，若要應徵相關職務，可能較難在第一關履歷篩選中脫穎而出。建議先穩固基本盤，並積極參與課外專案。";
-                        quantScore = 20; compScore = 25; kwScore = 30;
-                    } else if (totalScore < 75) {
-                        analysisText += "您的履歷已經有了基本雛形，具備一定的競爭力！但若能補足部分特定經歷或實務成果，將會更吸睛。";
-                        quantScore = 55; compScore = 60; kwScore = 65;
-                    } else {
-                        analysisText += "戰力非常優異！您的履歷各項指標都很均衡，是相當有競爭力的候選人，可以準備投遞心儀的職缺了。";
-                        quantScore = 85; compScore = 80; kwScore = 90;
-                    }
-
-                    if (this.state.dept === 'CS') {
-                        actionItems.push("💻 【資工作戰方針】建議將課堂程式作業整理至 GitHub 並附上 Readme，同時開始熟悉 LeetCode 解題維持演算法手感。");
-                    } else if (this.state.dept === 'IM') {
-                        actionItems.push("📊 【資管作戰方針】除了展示程式能力，強烈建議在履歷中強調您在專案中的「跨部門溝通」或「專案管理 (如 Scrum)」經驗。");
-                    } else if (this.state.dept === 'AI') {
-                        actionItems.push("🤖 【AI 系作戰方針】建議多參加 Kaggle 競賽，或在履歷中具體展示您模型訓練的成果與數據指標（如 Accuracy, F1-score）。");
-                    } else {
-                        actionItems.push("🎯 【一般建議】請務必將課堂所學轉換為具體的作品集，讓面試官能實際看到您的產出。");
-                    }
-
-                    if (!this.state.skills || this.state.skills.length === 0) {
-                        actionItems.push("🚨 【致命劣勢】您尚未新增任何「技術標籤」。在自動化履歷篩選 (ATS) 中這非常吃虧，請立刻前往個人檔案擴充技能！");
-                        kwScore = Math.max(0, kwScore - 30);
-                    } else if (this.state.skills.length < 3) {
-                        actionItems.push(`💡 【技能擴充】目前的標籤 (${(this.state.skills || []).join(', ')}) 有點單薄，建議針對目標職缺多自學並擴充至 3-5 項核心技能。`);
-                    } else {
-                        actionItems.push("✅ 【技能佈局】標籤數量充足。撰寫經歷時，請務必『具體寫出』是如何應用這些技能的 (如: 使用 Vue.js 實作前端...)。");
-                        kwScore = Math.min(100, kwScore + 10);
-                    }
-
-                    if (!hasInternship) {
-                        actionItems.push("💡 【實務經歷】業界極度看重實習經驗。若時間允許，強烈建議在畢業前爭取至少一份相關企業實習。");
-                        quantScore = Math.max(0, quantScore - 15);
-                    } else {
-                        actionItems.push("✅ 【實務亮點】您具備業界實習經驗！請務必在履歷中寫出實習期間的「量化成果」(例如：優化了多少效能、處理了多少筆資料)。");
-                        quantScore = Math.min(100, quantScore + 20);
-                    }
-
-                    if (programScore < 20) {
-                        actionItems.push("📚 【學業扎根】目前專業學分完成度偏低，建議下學期優先將系上核心或實務課程修滿，打好地基。");
-                    }
-
-                    const draftText = document.getElementById('resume-draft-input').value.trim() || '無';
-                    const expNames = Array.from(this.state.selectedExps).map(id => {
-                        const found = EXPERIENCES.find(e => e.id === id);
-                        return found ? found.name : id;
-                    }).join(', ') || '無';
-
-                    const resumeMarkdown = `### 個人簡介
-(本報告由本地靜態規則引擎生成)
-
-### 專業技能
-${(this.state.skills || []).join(', ') || '尚未建立'}
-
-### 實務經驗與修課紀錄
-- 實務經驗：${expNames}
-- 已修課程：${Array.from(this.state.selectedCourses).join(', ') || '無'} (${this.state.selectedCourses.size} 門)
-
-### 原始草稿參考
-${draftText}`;
-
-                    const result = {
-                        quantifiability: quantScore,
-                        completeness: compScore,
-                        keywordRelevance: kwScore,
-                        analysis: analysisText,
-                        actionItems: actionItems,
-                        resumeMarkdown: resumeMarkdown
-                    };
-
-                    this.renderResultUI(result);
-
-                    if (!isSilent) {
-                        setTimeout(() => {
-                            const aiPanel = document.getElementById('ai-result-panel');
-                            if (aiPanel) aiPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }, 50);
-                    }
-                } catch (e) {
-                    console.error('Static Report Error:', e);
-                    alert('Error generating static report: ' + e.message);
-                }
+                return this.calculateAndGenerate(isSilent);
             },
 
-            
-    async generateSmartReport(grade, totalScore, bestProgName, maxProgCredits, goalCredits, expScore, hasInternship, skillScore) {
-        // --- UCAN DATA INJECTION ---
-        let ucanText = "未提供 UCAN 數據";
-        let dept = localStorage.getItem('cdna_department') || this.state.dept || '未知科系';
-        try {
-            const ucanLocal = localStorage.getItem('ucan_dna_result');
-            if(ucanLocal) {
-                const u = JSON.parse(ucanLocal);
-                let compString = Object.keys(u.commonComps).map(k => `${k}(PR ${u.commonComps[k].pr})`).join(', ');
-                ucanText = `【UCAN 核心職能】${u.primaryHolland}型。\n【共通職能強度】${compString}\n【專業職能對接】${u.profPathway} (PR ${u.profPr})`;
-                
-                // Override department based on UCAN if not strictly set
-                if (!this.state.dept) {
-                    if (['軟體開發', '網路與系統維運'].includes(u.profPathway)) dept = 'CS';
-                    else if (['資料科學與分析', '資訊安全'].includes(u.profPathway)) dept = 'AI';
-                    else dept = 'IM';
-                }
-            }
-        } catch(e) { console.error("UCAN parse error", e); }
-        // ---------------------------
+            async generateSmartReport(grade, totalScore, bestProgName, maxProgCredits, goalCredits, expScore, hasInternship, skillScore) {
+                return this.calculateAndGenerate(false);
+            },
 
-                document.getElementById('ai-result-panel').classList.remove('hidden');
-                const aiContent = document.getElementById('ai-content');
-                aiContent.innerHTML = `<div class="animate-pulse flex space-x-4 py-4">
-                    <div class="flex-1 space-y-3">
-                        <div class="h-3 bg-klein/10 w-3/4"></div>
-                        <div class="h-3 bg-klein/10"></div>
-                        <div class="h-3 bg-klein/10 w-5/6"></div>
-                    </div>
-                </div>`;
+            generateRuleBasedResume(data) {
+                const {
+                    dept, grade, progScore, pracScore, expScore, totalScore,
+                    bestProgName, maxProgCredits, progGoalCredits,
+                    pracCredits, pracGoalCredits, matchedPracClusters,
+                    selectedCourses, selectedExps
+                } = data;
 
-                const draftText = document.getElementById('resume-draft-input').value.trim() || '未提供草稿';
-                const holland = localStorage.getItem('cdna_primary_holland') || '未知';
-                
-                // Map courses and experiences from state sets
-                const courses = Array.from(this.state.selectedCourses).join(', ') || '無';
-                const experiences = Array.from(this.state.selectedExps).map(id => {
-                    const found = EXPERIENCES.find(e => e.id === id);
-                    return found ? found.name : id;
-                }).join(', ') || '無';
-                const skills = (this.state.skills || []).join(', ') || '無';
-                
-                const PU_LOCAL_KNOWLEDGE = {
-                    "CS": "靜宜資工近期產學合作重點：光寶科技、台積電先修學程。校友多從事：後端工程師、資安防禦。推薦實驗室：物聯網應用實驗室、網路安全實驗室。",
-                    "IM": "靜宜資管近期產學合作重點：鼎新電腦ERP、國泰金控數據分析。校友多從事：系統分析師(SA)、敏捷專案管理。推薦實驗室：大數據決策實驗室。",
-                    "AI": "靜宜人工智慧系近期產學合作重點：工研院智慧製造、醫學影像辨識。校友多從事：資料科學家、AI演算法工程師。推薦實驗室：電腦視覺與深度學習實驗室。"
-                };
-                const localContext = PU_LOCAL_KNOWLEDGE[dept] || PU_LOCAL_KNOWLEDGE["CS"];
-                
-                const aiPrompt = `作為靜宜大學資訊學院的專屬職涯顧問與資深人資，請根據以下學生的狀態，與靜宜在地的產業趨勢，進行「履歷維度檢核」並「直接重寫履歷」。
+                const deptNames = { CS: '資訊工程學系', IM: '資訊管理學系', AI: '人工智慧學系' };
+                const deptFullName = deptNames[dept] || '資訊學院';
 
-【靜宜大學在地產業背景資訊】
-${localContext}
-
-【學生背景】
-- 年級：${grade}
-- 科系：${dept} (請根據在地背景提供針對性建議)
-- 實務經驗與修課紀錄：已修 ${courses}、參與 ${experiences}
-- 技能武器庫：${skills}
-- 使用者自我介紹草稿：${draftText}
-
-【UCAN 官方職能診斷數據 (關鍵依據！)】
-${ucanText}
-*(請務必參考上述 PR 值！若共通職能 PR>67，表示優勢，請在履歷中強調；若專業職能 PR<34，請在建議中強烈推薦相關修課)*
-
-請以 JSON 格式回傳評估結果，務必包含以下結構：
-{
-  "quantifiability": 50,
-  "completeness": 60,
-  "keywordRelevance": 70,
-  "analysis": "整體分析與具體的職位對接建議 (HTML 格式，使用 <strong> 與 <br>)",
-  "actionItems": [
-     "具體行動建議 1 (針對履歷的改進)", 
-     "畢業專題戰略指引 (根據 UCAN 數據推薦的專題方向)",
-     "學業適配警示與修課建議 (根據 UCAN PR 值，具體推薦校內應修的課程名稱)"
-  ],
-  "resumeMarkdown": "在此撰寫一份排版專業的 Markdown 履歷。請將課程、實務經歷、技能，結合 UCAN 職能優勢，擴寫成流暢的個人簡介與經歷列表。不要寫在 code block 裡。"
-}
-注意：
-1. 評分與建議請以「大學生/應屆畢業生」的合理標準出發。
-2. 針對學生的能力缺口，請務必在 actionItems 中給出具體的「校內課程修課建議」。
-3. 請只輸出 JSON 格式，不要包含任何 markdown code block 圍欄。`;//
-
-                this.currentManualPrompt = aiPrompt;
-
+                // Read UCAN data
+                let ucan = null;
                 try {
-                    let apiKey = localStorage.getItem('gemini_api_key');
-                    if (!apiKey) {
-                        this.openManualMode();
-                        return;
-                    }
-                    apiKey = apiKey.trim();
+                    const raw = localStorage.getItem('ucan_dna_result');
+                    if (raw) ucan = JSON.parse(raw);
+                } catch(e){}
 
-                    const inputArray = [{ type: 'text', text: aiPrompt }];
-                    if (this.pdfBase64) {
-                        inputArray.push({
-                            type: 'document',
-                            mime_type: 'application/pdf',
-                            data: this.pdfBase64
-                        });
-                    }
+                // Read student name
+                let studentName = '靜宜資訊學士候選人';
+                if (currentUser && currentUser.displayName) studentName = currentUser.displayName;
+                else if (ucan && ucan.student && ucan.student.name) studentName = ucan.student.name;
+                else {
+                    const localName = localStorage.getItem('cdna_student_name');
+                    if (localName) studentName = localName;
+                }
 
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/interactions?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            model: 'gemini-3.6-flash',
-                            input: inputArray,
-                            generation_config: { temperature: 0.3, max_output_tokens: 4096 }
-                        })
-                    });
+                // Target pathway / job title
+                let targetJob = '全端 / 後端軟體工程師';
+                if (dept === 'IM') targetJob = '系統分析師 (SA) / 專案管理師 (PM) / 商業數據分析師';
+                if (dept === 'AI') targetJob = 'AI 演算法工程師 / 資料科學家 (Data Scientist)';
+                if (ucan && ucan.profPathway) {
+                    const pwMap = {
+                        '軟體開發': '軟體工程師 (Software Engineer)',
+                        '資料科學與分析': '商業數據分析師 / 資料科學家',
+                        '人工智慧技術應用': 'AI 演算法與應用工程師',
+                        '資訊安全': '資訊安全工程師 / 滲透測試專員',
+                        '網路與系統維運': '雲端架構 / 系統網路維運工程師 (DevOps/SRE)',
+                        '企業資源規劃': 'ERP 系統顧問 / 業務流程分析師 (SAP/鼎新)'
+                    };
+                    if (pwMap[ucan.profPathway]) targetJob = pwMap[ucan.profPathway];
+                }
 
-                    if (!response.ok) {
-                        if (response.status === 429) {
-                            console.warn("API 額度已耗盡，自動切換至手動模式");
-                            this.openManualMode();
-                            return;
-                        }
-                        throw new Error(`API Error: ${response.status}`);
-                    }
+                // Calculate ATS Metrics
+                const hasIntern = selectedExps.includes('exp_intern');
+                const hasCompete = selectedExps.includes('exp_compete') || selectedExps.includes('exp_hackathon');
+                const hasProj = selectedExps.includes('exp_project') || selectedExps.includes('exp_proj');
+                const hasLeader = selectedExps.includes('exp_leader') || selectedExps.includes('exp_cert');
 
-                    const data = await response.json();
-                    let jsonText = '';
-                    const outputStep = data.steps?.find(s => s.type === 'model_output');
-                    if (outputStep && outputStep.content) {
-                        const textBlock = outputStep.content.find(c => c.type === 'text');
-                        if (textBlock) jsonText = textBlock.text;
-                    }
-                    
-                    jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-                    const result = JSON.parse(jsonText);
-                    
-                    this.renderResultUI(result);
+                let quant = 45;
+                if (hasIntern) quant += 25;
+                if (hasCompete) quant += 15;
+                if (hasProj) quant += 10;
+                if (hasLeader) quant += 5;
+                quant = Math.min(95, Math.max(40, quant));
 
-                } catch (err) {
-                    console.error(err);
-                    aiContent.innerHTML = `<div class="text-flame-orange font-bold text-xs p-3 border border-flame-orange/20 bg-flame-orange/5">AI 解析失敗，請稍後再試或使用手動模式。<br>(${err.message})</div>`;
-                    const btn = document.getElementById('generate-btn');
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-sm"></i> <span>✨ AI 深度健檢與生成 (Gemini LLM)</span>`;
+                let comp = 40;
+                comp += Math.round((progScore / 40) * 30);
+                comp += Math.round((pracScore / 40) * 20);
+                const draftText = document.getElementById('resume-draft-input')?.value.trim() || '';
+                if (draftText.length > 20) comp += 10;
+                comp = Math.min(98, Math.max(45, comp));
+
+                let kw = 50;
+                kw += Math.min(30, selectedCourses.length * 4);
+                if (ucan) kw += 15;
+                kw = Math.min(95, Math.max(50, kw));
+
+                // Generate Analysis HTML
+                let levelBadge = '⭐ 基礎扎根期 (Level 1)';
+                let levelDesc = '目前正在建立資訊核心地基，建議積極選修系上專業學程與跨領域實務課群，並嘗試進行個人課後專案實作。';
+                if (totalScore >= 80) {
+                    levelBadge = '🔥 S級 頂尖戰力 (Top Competency)';
+                    levelDesc = '恭喜！您的專業學程佈局嚴謹、實務課群跨域實作紮實，且擁有出色的課外經歷，在就業市場上已具備極高的錄取優勢！';
+                } else if (totalScore >= 60) {
+                    levelBadge = '✨ A級 實務就業即戰力 (Solid Practitioner)';
+                    levelDesc = '表現優異！專業學程與實務課群皆有穩定累積，若能將專案成果進一步以量化指標（STAR/XYZ）展現於履歷中，將更具說服力！';
+                } else if (totalScore >= 40) {
+                    levelBadge = '💡 B級 潛力養成期 (Promising Candidate)';
+                    levelDesc = '已建立基本專業學分架構！建議針對實務課群與專案實作進行重點強化，積極爭取企業實習或黑客松競賽經驗。';
+                }
+
+                let ucanNote = '';
+                if (ucan) {
+                    ucanNote = `<br>🎯 <strong>UCAN 職能比對：</strong>優勢路徑為「<strong>${ucan.profPathway || '資訊科技'}</strong>」(PR ${ucan.profPr || 75})，Holland 碼「<strong>${ucan.hollandCode || ucan.primaryHolland || 'I'}</strong>」。本履歷已依此核心優勢深度對齊。`;
+                }
+
+                const analysisHtml = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between border-b border-klein/10 pb-2">
+                            <span class="font-heading font-black text-sm uppercase text-klein tracking-wide">${levelBadge}</span>
+                            <span class="font-mono text-xs font-bold text-klein">戰力總分：${totalScore} / 100</span>
+                        </div>
+                        <p class="text-xs leading-relaxed text-klein/80">${levelDesc}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 font-mono text-[11px] pt-1">
+                            <div class="p-2 bg-klein/5 border border-klein/10">
+                                <span class="block text-klein/60 font-bold">專業學程 (40%)</span>
+                                <span class="text-klein font-bold">${progScore} 分（${maxProgCredits}/${progGoalCredits}學分）</span>
+                            </div>
+                            <div class="p-2 bg-cobalt/5 border border-cobalt/10">
+                                <span class="block text-cobalt/60 font-bold">實務課群 (40%)</span>
+                                <span class="text-cobalt font-bold">${pracScore} 分（${pracCredits}/${pracGoalCredits}學分）</span>
+                            </div>
+                            <div class="p-2 bg-emerald-50 border border-emerald-200">
+                                <span class="block text-emerald-700/60 font-bold">課外經歷 (20%)</span>
+                                <span class="text-emerald-800 font-bold">${expScore} 分（已取得認證）</span>
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-klein/70 border-t border-klein/10 pt-2">
+                            📌 <strong>學程聚焦：</strong>主要修習【${bestProgName}】。${ucanNote}
+                        </div>
+                    </div>
+                `;
+
+                // Generate Action Items
+                const actionItems = [];
+                if (progScore < 30) {
+                    actionItems.push(`🎯 【專業學程攻頂】您在「${bestProgName}」已累積 ${maxProgCredits} 學分，距離 15 學分門檻尚差 ${Math.max(0, progGoalCredits - maxProgCredits)} 學分。建議下學期集中選修該學程指定選修課程，取得校級正式學程證書！`);
+                } else {
+                    actionItems.push(`✅ 【專業學程達標】您在「${bestProgName}」已完成 ${maxProgCredits} 學分，已達成或接近學程標準！建議在履歷第一段直接列出學程認證，加深人資信任度。`);
+                }
+
+                if (pracScore < 30) {
+                    actionItems.push(`🛠️ 【實務課群跨域】目前實務課群累積 ${pracCredits} 學分（目標 9 學分）。建議選修「智慧雲端應用」、「大數據商務」等實務課群，落實跨領域專題應用！`);
+                } else {
+                    actionItems.push(`✅ 【實務課群充沛】實務課群已累積 ${pracCredits} 學分，展現了兼具理論與技術實踐的跨域能力，在履歷中可特別強調多元實作。`);
+                }
+
+                if (!hasIntern) {
+                    actionItems.push(`💼 【企業實習加分】業界人資評選履歷最看重實習經驗。強烈建議報名資訊學院與光寶科技、台積電先修學程或在地軟體園區之產學實習！`);
+                } else {
+                    actionItems.push(`🌟 【實習成果量化】您具備企業實習經歷！請務必在面試與履歷中強調具體產出與數字指標（如：優化了多少 API 回應速度、處理幾萬筆資料）。`);
+                }
+
+                if (!hasProj) {
+                    actionItems.push(`💻 【專案成果整理】建議將系上課程作業或期末專題整理成 GitHub 儲存庫，撰寫完整的 README.md 與架構圖，作為可見的程式碼作品集！`);
+                }
+
+                if (ucan && ucan.commonComps) {
+                    const weakComp = Object.entries(ucan.commonComps).find(([_, v]) => v.pr < 50);
+                    if (weakComp) {
+                        actionItems.push(`💡 【UCAN 弱項補強】您的共通職能「${weakComp[0]}」(PR ${weakComp[1].pr}) 稍低，建議多參與跨系分組專題或黑客松，強化協作溝通與問題解決能力！`);
                     }
                 }
+
+                // Derive Technical Skills & Stack
+                const techSkillsList = [];
+                const devTools = ['Git / GitHub', 'VS Code'];
+                const systemArchitectures = [];
+
+                if (selectedCourses.some(c => c.includes('程式設計') || c.includes('Python'))) techSkillsList.push('Python', '物件導向程式設計 (OOP)');
+                if (selectedCourses.some(c => c.includes('Java'))) techSkillsList.push('Java', 'JVM 架構');
+                if (selectedCourses.some(c => c.includes('網頁') || c.includes('前端'))) techSkillsList.push('HTML5 / CSS3', 'JavaScript (ES6+)', 'RESTful API 串接');
+                if (selectedCourses.some(c => c.includes('資料庫') || c.includes('SQL'))) {
+                    techSkillsList.push('SQL 語法與資料庫設計');
+                    systemArchitectures.push('關聯式資料庫 (PostgreSQL / MySQL)', 'ER Model 規格化');
+                }
+                if (selectedCourses.some(c => c.includes('資料結構') || c.includes('演算法'))) {
+                    systemArchitectures.push('核心資料結構 (樹/圖/雜湊表)', '演算法複雜度分析 (Big-O)');
+                }
+                if (selectedCourses.some(c => c.includes('網路') || c.includes('Linux'))) {
+                    systemArchitectures.push('Linux 系統指令與伺服器架構', 'TCP/IP 網路協定');
+                    devTools.push('Linux / Docker');
+                }
+                if (selectedCourses.some(c => c.includes('人工智慧') || c.includes('機器學習') || c.includes('深度學習'))) {
+                    techSkillsList.push('機器學習演算法', 'PyTorch / Scikit-learn', '模型評估與數據預處理');
+                }
+                if (selectedCourses.some(c => c.includes('ERP') || c.includes('企業資源規劃'))) {
+                    systemArchitectures.push('企業資源規劃 (ERP)', '商業流程分析 (BPMN)');
+                }
+                if (selectedCourses.some(c => c.includes('系統分析'))) {
+                    systemArchitectures.push('UML 系統建模', '敏捷軟體開發 (Agile/Scrum)');
+                }
+
+                if (techSkillsList.length === 0) techSkillsList.push('Python / 核心程式設計', '資料庫基礎操作', '演算法與邏輯思維');
+                if (systemArchitectures.length === 0) systemArchitectures.push('關聯式資料庫架構', '軟體工程與模組化開發');
+
+                // Generate STAR Experience Entries
+                const expEntries = [];
+                if (hasIntern) {
+                    expEntries.push(`### 🏢 企業實習 / 產學合作 (Software Engineering Intern)
+- **情境 (Situation)**：參與軟體研發團隊進行核心業務模組開發與系統維護工作。
+- **任務 (Task)**：負責後端 API 開發、資料庫查詢優化以及自動化單元測試撰寫。
+- **行動 (Action)**：運用模組化架構實作 RESTful API，落實 Git Flow 分支管理與 Code Review 流程；主導資料庫 Index 建立與 SQL 查詢改寫。
+- **成果 (Result)**：有效降低後端查詢延遲約 **25%**，並成功協助交付上線 2 項新功能模組，提升日常資料批次處理穩定性。`);
+                }
+
+                if (hasCompete) {
+                    expEntries.push(`### 🏆 專業競賽 (黑客松 / 全國專題競賽獲獎或入圍)
+- **情境 (Situation)**：參與全國大專校院資訊創新應用競賽或校外黑客松，限時 36 小時由零到一產出可落地之軟體原型 (MVP)。
+- **任務 (Task)**：負責核心商業邏輯實作、即時資料處理管線與雲端服務部署。
+- **行動 (Action)**：在極短時間內與跨領域組員完成需求收斂，快速搭建前端互動 UI 與後端串接，克服資料整合瓶頸。
+- **成果 (Result)**：在數十組參賽團隊中成功入圍決賽，充分展現高度抗壓性、快速學習未知技術與敏捷團隊協作能力。`);
+                }
+
+                if (hasProj) {
+                    const projTitle = dept === 'IM' ? '智能商務決策與營運管理系統' : dept === 'AI' ? '智慧深度學習瑕疵辨識與推論平台' : '高併發微服務分散式系統架構實作';
+                    expEntries.push(`### 🚀 專案實作 / 期末大型與畢業專題：${projTitle}
+- **情境 (Situation)**：針對產業實務需求，團隊 4 人進行為期一年的完整軟體工程生命週期開發。
+- **任務 (Task)**：擔任核心系統架構與後端開發負責人，主導系統分析、資料庫綱要設計與第三方 API 整合。
+- **行動 (Action)**：融合所修習之「${selectedCourses.slice(0, 3).join('」、「') || '專業學程課程'}」，以敏捷開發 (Scrum) 節奏每兩週交付 Sprint 成果，建立完善之 API 規格文件與測試覆蓋。
+- **成果 (Result)**：專案順利通過靜宜大學資訊學院專題成果展評審，榮獲院級前 **15%** 優等肯定，並將核心程式碼開源維護於 GitHub。`);
+                }
+
+                if (hasLeader) {
+                    expEntries.push(`### 👥 社團幹部 / 跨領域活動組織與專案協調 (Leadership & Coordination)
+- **情境 (Situation)**：擔任學生組織幹部或跨系專案活動籌備組長。
+- **任務 (Task)**：主導多場技術研習活動之策劃、跨部門資源協調與進度控管。
+- **行動 (Action)**：落實敏捷分工與任務追蹤，主動建立跨部門溝通機制並即時排除突發問題。
+- **成果 (Result)**：活動參與率提升超過 **40%**，展現優良之跨領域協作、問題解決與團隊領導能力。`);
+                }
+
+                if (expEntries.length === 0) {
+                    expEntries.push(`### 💻 課堂大型期末專題實作 (Course Project)
+- **情境 (Situation)**：修習「${selectedCourses.slice(0, 2).join('」與「') || '專業必修課程'}」期間之分組期末專案。
+- **任務 (Task)**：負責核心資料邏輯設計與前端互動介面開發。
+- **行動 (Action)**：將課堂所學之演算法與資料庫概念付諸實踐，完成前後端串接並撰寫技術說明文件。
+- **成果 (Result)**：順利完成期末專案口頭發表與系統 Live Demo，取得 90 分以上優異課程成績。`);
+                }
+
+                // Format UCAN Strengths
+                let ucanStrengthsText = '持續學習 (Continuous Learning)、問題解決 (Problem Solving)、邏輯思考 (Logical Reasoning)';
+                if (ucan && ucan.commonComps) {
+                    const topComps = Object.entries(ucan.commonComps)
+                        .sort((a, b) => b[1].pr - a[1].pr)
+                        .slice(0, 3)
+                        .map(([name, data]) => `${name} (PR ${data.pr})`);
+                    if (topComps.length > 0) ucanStrengthsText = topComps.join('、');
+                }
+
+                // Summary / Intro text
+                let introText = draftText;
+                if (!introText) {
+                    introText = `我是靜宜大學${deptFullName}${grade}學生，立志朝向【${targetJob}】領域深耕發展。在學期間專注修習【${bestProgName}】並結合資訊學院實務課群跨域實作，已建立紮實的系統分析、程式設計與資料庫架構能力。UCAN 職業核心路徑對接為「${ucan ? ucan.profPathway : '資訊科技研發'}」，具備出色的學習韌性與工程思維，期許能將所學專業轉化為企業商業價值的驅動力。`;
+                }
+
+                // Construct full A4 Markdown Resume
+                const resumeMarkdown = `# ${studentName} (Candidate for ${targetJob})
+
+**靜宜大學 (Providence University) 資訊學院 ${deptFullName} ｜ ${grade}在學**  
+📍 台灣 台中市 ｜ 📧 聯絡信箱：student@pu.edu.tw ｜ 🌐 GitHub / Portfolio：github.com/pu-student
+
+---
+
+## 📌 個人簡歷與求職目標 (Career Summary & Objective)
+${introText}
+
+---
+
+## 🎓 學歷與學程認證 (Education & Program Certification)
+**靜宜大學 (Providence University)** ｜ 資訊學院 ${deptFullName} (${grade}在學)
+- **專業學程認證**：【${bestProgName}】— 已修畢 **${maxProgCredits}** / ${progGoalCredits} 學分（進度 ${Math.round((maxProgCredits/progGoalCredits)*100)}%）
+- **實務課群認證**：【資訊學院應用實務課群】— 已修畢 **${pracCredits}** / ${pracGoalCredits} 學分
+- **UCAN 職涯對接**：專業路徑【${ucan ? ucan.profPathway : '軟體開發'}】(PR ${ucan ? ucan.profPr : 75}) ｜ Holland 代碼【${ucan ? (ucan.hollandCode || ucan.primaryHolland) : 'I'}】
+
+---
+
+## 🛠️ 專業核心能力清單 (Core Competencies & Technical Arsenal)
+- **核心程式語言與技術**：${techSkillsList.join('、')}
+- **系統架構與工程方法**：${systemArchitectures.join('、')}
+- **開發工具與部署環境**：${devTools.join('、')}
+- **UCAN 共通優勢職能**：${ucanStrengthsText}
+
+---
+
+## 💼 專案與課外實戰經歷 (Key Projects & Practical Experience - STAR Format)
+${expEntries.join('\n\n')}
+
+---
+
+## 📚 重點修課紀錄 (Academic Coursework Milestones)
+- **專業核心修課 (${selectedCourses.length} 門)**：
+  ${selectedCourses.map(c => `\`${c}\``).join('  ') || '尚未勾選課程'}
+- **跨域實務課群**：
+  ${matchedPracClusters.map(cl => `*${cl.name}* (${cl.courses.join(', ')})`).join('； ') || '智慧雲端應用、大數據商務應用'}
+
+---
+*(本履歷由 CareerDNA 靜宜大學在地職涯導航系統根據三軌學制與 UCAN 測驗數據規則化排版生成)*
+`;
+
+                return {
+                    quantifiability: quant,
+                    completeness: comp,
+                    keywordRelevance: kw,
+                    analysis: analysisHtml,
+                    actionItems: actionItems,
+                    resumeMarkdown: resumeMarkdown
+                };
             },
 
             renderResultUI(result) {
@@ -1467,7 +1569,7 @@ ${ucanText}
                 aiContent.innerHTML = html;
                 
                 const resumeOutput = document.getElementById('resume-output');
-                const resumeHtml = marked.parse(result.resumeMarkdown || '*AI 未能生成履歷*');
+                const resumeHtml = marked.parse(result.resumeMarkdown || '*系統未能生成履歷*');
                 resumeOutput.innerHTML = `<div class="prose max-w-none text-klein font-body leading-relaxed" id="pdf-content">${resumeHtml}</div>`;
                 
                 document.getElementById('resume-preview-panel').classList.remove('hidden');
@@ -1475,7 +1577,7 @@ ${ucanText}
                 const btn = document.getElementById('generate-btn');
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-sm"></i> <span>✨ AI 深度健檢與生成 (Gemini LLM)</span>`;
+                    btn.innerHTML = `<i class="fa-solid fa-file-signature text-base group-hover:scale-110 transition-transform"></i> <span>🚀 立即產生專業 A4 履歷與戰力診斷報告</span>`;
                 }
             },
 
@@ -1574,23 +1676,64 @@ ${ucanText}
 
             downloadPDF() {
                 const element = document.getElementById('pdf-content');
-                if (!element) return;
+                if (!element) {
+                    alert('找不到履歷內容，請先點擊產生履歷！');
+                    return;
+                }
+
+                // Create a styled off-screen printable container attached to the document body
+                // IMPORTANT: html2canvas requires the element to be in the DOM with measurable width and height!
+                const printContainer = document.createElement('div');
+                printContainer.id = 'print-a4-temp-container';
+                printContainer.style.position = 'fixed';
+                printContainer.style.left = '-9999px';
+                printContainer.style.top = '0';
+                printContainer.style.width = '750px';
+                printContainer.style.backgroundColor = '#ffffff';
+                printContainer.style.color = '#1e293b';
+                printContainer.style.padding = '36px 40px';
+                printContainer.style.fontFamily = "'Noto Sans TC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif";
+                printContainer.style.fontSize = '13px';
+                printContainer.style.lineHeight = '1.65';
+                printContainer.style.zIndex = '-9999';
+
+                // Add print-specific styles for A4 export to ensure beautiful typesetting
+                printContainer.innerHTML = `
+                    <style>
+                        #print-a4-temp-container h1 { font-size: 22px; font-weight: 800; color: #002fa7; border-bottom: 2px solid #002fa7; padding-bottom: 6px; margin: 0 0 10px 0; }
+                        #print-a4-temp-container h2 { font-size: 15px; font-weight: 700; color: #002fa7; border-left: 3px solid #002fa7; padding-left: 8px; margin: 16px 0 8px 0; }
+                        #print-a4-temp-container h3 { font-size: 13px; font-weight: 700; color: #1e3a8a; margin: 10px 0 4px 0; }
+                        #print-a4-temp-container p { font-size: 12px; margin: 0 0 6px 0; color: #1e293b; }
+                        #print-a4-temp-container ul { list-style-type: disc; margin-left: 18px; margin-bottom: 8px; font-size: 12px; color: #1e293b; }
+                        #print-a4-temp-container li { margin-bottom: 3px; }
+                        #print-a4-temp-container strong { color: #002fa7; font-weight: 700; }
+                        #print-a4-temp-container code { background: #f1f5f9; padding: 2px 4px; border-radius: 3px; font-family: monospace; font-size: 11px; }
+                        #print-a4-temp-container hr { border: none; border-top: 1px solid #cbd5e1; margin: 12px 0; }
+                    </style>
+                    ${element.innerHTML}
+                `;
+
+                document.body.appendChild(printContainer);
 
                 const opt = {
-                    margin:       15,
-                    filename:     'CareerDNA_Resume.pdf',
+                    margin:       [10, 10, 10, 10],
+                    filename:     'CareerDNA_A4_Resume.pdf',
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true },
+                    html2canvas:  { scale: 2, useCORS: true, logging: false },
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
                 
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = element.innerHTML;
-                tempDiv.style.fontFamily = "'Noto Sans TC', 'Inter', sans-serif";
-                tempDiv.style.color = "#002fa7";
-                tempDiv.style.fontSize = "14px";
-                
-                html2pdf().set(opt).from(tempDiv).save();
+                html2pdf().set(opt).from(printContainer).save().then(() => {
+                    if (document.body.contains(printContainer)) {
+                        document.body.removeChild(printContainer);
+                    }
+                }).catch(err => {
+                    console.error('PDF export error:', err);
+                    if (document.body.contains(printContainer)) {
+                        document.body.removeChild(printContainer);
+                    }
+                    alert('PDF 匯出失敗：' + (err.message || err));
+                });
             }
         };
 
