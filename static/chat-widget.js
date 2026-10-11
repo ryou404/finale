@@ -18,7 +18,7 @@
   // Bilingual Quick Prompts (Traditional Chinese & English)
   const QUICK_PROMPTS_ZH = [
     { label: '🎯 CareerDNA 平台介紹', text: '請介紹 CareerDNA 平台的核心功能與特色？' },
-    { label: '📚 推薦課程 & PDF Export', text: '請根據我的職涯方向推薦適合修讀的課程，並說明如何匯出標準 A4 PDF？' },
+    { label: '📚 推薦課程', text: '請根據我的職涯方向推薦適合修讀的課程' },
     { label: '🏫 靜宜資院三系導覽', text: '請介紹靜宜大學資訊學院（資工、資管、人工智慧）的專業特色與研究方向？' }
   ];
 
