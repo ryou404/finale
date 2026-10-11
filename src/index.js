@@ -16,6 +16,7 @@ const { connectDB } = require('./db/connection');
 const apiRoutes = require('./routes/apiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const ragChatRoutes = require('./routes/ragChatRoutes');
+const courseRoutes = require('./routes/courseRoutes');
 const { runAllSeeds } = require('./db/seed');
 const { MasterOrchestrator } = require('./agents/masterOrchestrator');
 const { mockStudentIM, mockStudentCS, mockQuickDraft } = require('./data/mockStudentPayload');
@@ -32,6 +33,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Mount MongoDB Atlas API Routes
+app.use('/api/courses', courseRoutes);
 app.use('/api', apiRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/rag', ragChatRoutes);

@@ -199,6 +199,18 @@
             <!-- ================= LEFT COLUMN: Inputs & Curriculum (5 Cols) ================= -->
             <div class="lg:col-span-5 space-y-8">
                 
+                <!-- Section 00: Recommended Courses (from Brand Test / UCAN) -->
+                <section id="recommended-courses-section" class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1">
+                    <div class="border-b border-klein/10 pb-4 mb-4">
+                        <div class="h-2"></div>
+                        <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
+                            <span class="w-6 h-6 bg-emerald-600 text-white text-xs font-mono font-bold flex items-center justify-center"><i class="fa-solid fa-graduation-cap"></i></span>
+                            推薦課程 (Recommended Courses)
+                        </h2>
+                    </div>
+                    <div id="recommended-courses-body"></div>
+                </section>
+
                 <!-- Section 01: Course Radar & Checklist -->
                 <section class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1">
                     <div class="flex justify-between items-start mb-4 border-b border-klein/10 pb-4">
@@ -856,6 +868,7 @@
 
                 this.renderPrograms(trackData.data, trackData.goal);
                 this.restoreSelections(true);
+                this.renderRecommendedCourses();
             },
 
             setupTrackUI(grade) {
@@ -871,6 +884,21 @@
                 const cur = config[grade] || config['大三'];
                 this.state.grade = grade;
                 this.switchTrackDirect(cur.track);
+            },
+
+            renderRecommendedCourses() {
+                const el = document.getElementById('recommended-courses-body');
+                if (!el || !window.CourseRec) return;
+                window.CourseRec.render(el, {
+                    dept: this.state.dept,
+                    grade: this.state.grade,
+                    onDeptChange: (d) => {
+                        this.state.dept = d;
+                        if (currentUser) {
+                            setDoc(doc(db, "users", currentUser.uid), { dept: d }, { merge: true }).catch(console.error);
+                        }
+                    }
+                });
             },
 
             getCourseBadges(courseName) {
@@ -1742,6 +1770,7 @@ ${expEntries.join('\n\n')}
         document.addEventListener('DOMContentLoaded', () => window.App.init());
     </script>
     <!-- CareerDNA AI Chatbot Assistant Widget -->
+    <script src="static/course-recommend.js"></script>
     <script src="static/chat-widget.js"></script>
 </body>
 </html>
