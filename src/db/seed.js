@@ -11,7 +11,7 @@ const { User } = require('./models/User');
 const { Resource } = require('./models/Resource');
 const { Professor } = require('./models/Professor');
 const Category = require('./models/Category');
-const { connectDB } = require('./connection');
+const { connectDB, isOfflineActive } = require('./connection');
 
 const DEFAULT_CATEGORIES = [
   { categoryId: 'cat_academic', name: '學科資源', nameEn: 'Academic', icon: '📚', order: 1, description: '課堂教材、演算法、程式語言與期中期末筆記' },
@@ -401,7 +401,7 @@ async function seedCategories(force = false) {
  * Master Seed Function
  */
 async function runAllSeeds(options = {}) {
-  if (mongoose.connection.readyState !== 1) {
+  if (mongoose.connection.readyState !== 1 && !isOfflineActive()) {
     console.log('[Seeder] Skipped: MongoDB is not connected.');
     return { status: 'skipped', message: 'MongoDB not connected' };
   }

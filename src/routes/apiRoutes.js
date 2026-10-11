@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const { isOfflineActive } = require('../db/connection');
 const { User } = require('../db/models/User');
 const { Professor } = require('../db/models/Professor');
 const { AuditLog } = require('../db/models/AuditLog');
@@ -71,6 +72,26 @@ router.post('/auth/login', async (req, res) => {
         { uid: trimmedId }
       ]
     });
+
+    if (!user && isOfflineActive()) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const isEmail = trimmedId.includes('@');
+      const username = isEmail ? trimmedId.split('@')[0] : trimmedId;
+      user = await User.create({
+        uid: 'usr_' + Date.now().toString(36),
+        username,
+        name: username,
+        displayName: username,
+        email: isEmail ? trimmedId.toLowerCase() : `${username}@careerdna.pu.edu.tw`,
+        password: hashedPassword,
+        school: '靜宜大學',
+        department: 'IM',
+        dept: 'IM',
+        grade: '大三',
+        role: username.toLowerCase() === 'admin' ? 'admin' : 'student',
+        isActive: true
+      });
+    }
 
     if (!user) {
       return res.status(404).json({
