@@ -33,15 +33,38 @@ function pick(section, label) {
   return m ? m[1].trim() : '';
 }
 
-function extractIntro(section) {
-  const m = section.match(/###\s*課程簡介\s*\r?\n([\s\S]*?)(?:\r?\n###\s|$)/);
+function extractSectionText(section, heading) {
+  const m = section.match(new RegExp('###\\s*' + heading + '\\s*\\r?\\n([\\s\\S]*?)(?:\\r?\\n###\\s|\\r?\\n---|$)'));
   if (!m) return '';
-  let text = m[1].replace(/\r/g, '').trim();
-  // Drop generic general-education boilerplate
+  return m[1].replace(/\r/g, '').trim();
+}
+
+function extractIntro(section) {
+  let text = extractSectionText(section, '課程簡介');
+  if (!text) return { short: '', full: '' };
   text = text.split(/\n\s*共同暨通識課程教育目標/)[0].trim();
-  text = text.replace(/\s*\n+\s*/g, ' ');
-  if (text.length > 140) text = text.slice(0, 140).replace(/[，、；,;\s]+$/, '') + '…';
-  return text;
+  const full = text;
+  const flat = text.replace(/\s*\n+\s*/g, ' ');
+  const short = flat.length > 140 ? flat.slice(0, 140).replace(/[，、；,;\s]+$/, '') + '…' : flat;
+  return { short, full };
+}
+
+function extractWeeklySchedule(section) {
+  const raw = extractSectionText(section, '授課進度與內容');
+  if (!raw) return [];
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.startsWith('|'));
+  const rows = [];
+  for (let i = 0; i < lines.length; i++) {
+    const cells = lines[i].split('|').slice(1, -1).map(c => c.trim());
+    if (cells.length < 2) continue;
+    if (cells[0] === '週次' || /^-+$/.test(cells[0])) continue;
+    rows.push({
+      week: cells[0],
+      topic: cells[1] || '',
+      note: cells[2] || ''
+    });
+  }
+  return rows;
 }
 
 function loadCatalog() {
@@ -71,6 +94,7 @@ function loadCatalog() {
       const creditRaw = pick(sec, '學分數/實習時數');
       const credits = parseFloat(creditRaw) || 0;
       const type = pick(sec, '修別');
+      const introObj = extractIntro(sec);
 
       const key = `${dept}|${year}|${name}`;
       if (map.has(key)) continue;
@@ -83,7 +107,16 @@ function loadCatalog() {
         type,
         required: /必修/.test(type),
         credits,
-        intro: extractIntro(sec)
+        creditRaw,
+        teacher: pick(sec, '授課教師'),
+        className: classGrade,
+        schedule: pick(sec, '時間地點'),
+        language: pick(sec, '課程授課語言'),
+        textbook: extractSectionText(sec, '主要教科書及其他參考書'),
+        grading: extractSectionText(sec, '評分方式及比重'),
+        intro: introObj.short,
+        fullIntro: introObj.full,
+        weeklySchedule: extractWeeklySchedule(sec)
       });
     }
   }

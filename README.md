@@ -1,4 +1,4 @@
-﻿# CareerDNA Engine - AI 履歷健檢與職涯導航系統
+# CareerDNA Engine - AI 履歷健檢與職涯導航系統
 
 ![CareerDNA](https://img.shields.io/badge/CareerDNA-v2026-002fa7) ![Node.js](https://img.shields.io/badge/Node.js-18+-green) ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
 
@@ -74,3 +74,22 @@ npm start
 
 客觀信度：直接採用靜宜大學大一新生必測之 教育部 UCAN 平台診斷數據（6 大職業性格、8 大共通職能、資訊專業職能 PR 值）。
 依序修課：摒棄憑空捏造的選課推薦，改為對接校內真實課綱的能力指標，為大一、大二學生規劃階梯式修課路徑。
+
+- **[2026-10-12] 全站視覺光譜升級、課表互動預覽與體驗優化**：
+  1. **🎨 全站視覺色彩系統升級（克萊茵藍同色相清透光譜 Monochromatic Luminous）**：
+     - 導入 Impeccable 設計規範，解決原本純雙色（`#002FA7` + `#FFFFFF`）長期觀看易產生視覺單調與疲勞的問題。
+     - 採用五階同色相清透光譜：`#002FA7`（國際克萊茵藍主體）、`#1F50CD`（皇家亮藍中繼互動色）、`#1E3A8A`（深群青舒適長文閱讀色）、`#EBF2FF` / `#C7DCFF`（清透冰晶填色與結構線）、以及 `#F8FAFF` 極淨冰白畫布襯托 `#FFFFFF` 純白卡片，兼顧品牌辨識度與極致乾淨度。
+  2. **📅 AI 履歷健檢「推薦課程」新增互動預覽與 18 週完整課表彈窗 (`career_fit.html` / `static/course-recommend.js`)**：
+     - 推薦課程卡片直接顯示授課教師與上課時間地點。
+     - **滑鼠靠近（Hover）**：自動展開該課程的「教學目標摘要、評分比重標籤、前 4 週課綱重點預覽」。
+     - **滑鼠點擊（Click）**：跳出完整課表詳細資訊 Modal，內含學分/必選修/上課時段、視覺化評分比重進度條、核心能力指標，以及完整 **18 週課程進度時間軸**。
+  3. **⚖️ 個人品牌定位報告排版對稱重構 (`brand_test.html`)**：
+     - 將原本左一右四極度不對稱的報告版面，重構為 **左 3 卡（社群經營策略、品牌行動卡片、30/60/90 天成長計畫）× 右 3 卡（Holland 性格維度分析、UCAN 職能紅綠燈、Top 5 天賦優勢）** 的 6:6 雙欄等高對齊版面。
+     - 30/60/90 天行動計畫與社群發文靈感支援 Checkbox 勾選完成狀態（自動記憶於 `localStorage`），並支援乾淨的 A4 雙頁 PDF 匯出。
+     - 移除導覽列測試用的 `DEMO MODE` 按鈕與首頁 Logo 下方無意義裝飾小字。
+  4. **👤 個人檔案精簡與本地端離線登入支援 (`profile.html` / `src/db/offlineAdapter.js`)**：
+     - 移除個人檔案頁面多餘的「專屬專業技能與擅長工具」區塊，聚焦於個人學籍資訊、Cloudflare R2 頭像上傳與儲存的履歷紀錄。
+     - 新增本地端離線 JSON 資料庫轉接器 (`src/db/offlineAdapter.js`)，當本地開發未連線雲端 MongoDB 時可自動無縫切換，支援本地端直接註冊與登入測試。
+  5. **🧹 專案結構整理**：
+     - 將散落於根目錄的參考圖片歸檔至 `docs/reference_images/`，課綱轉換腳本移至 `scripts/generate_courses_data.py`，保持專案根目錄整潔。
+

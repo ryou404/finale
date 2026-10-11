@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW" class="scroll-smooth bg-white text-klein">
 <head>
     <meta charset="UTF-8">
@@ -15,9 +15,13 @@
             theme: {
                 extend: {
                     colors: {
-                        klein: '#002fa7',
+                        klein: '#002FA7',
                         'deep-klein': '#001a5e',
-                        cobalt: '#1a4ec4',
+                        cobalt: '#1F50CD',
+                        sapphire: '#3B6BF0',
+                        ice: '#EBF2FF',
+                        iceBorder: '#C7DCFF',
+                        canvas: '#F8FAFF',
                         'electric-blue': '#00e5ff',
                         'flame-orange': '#ff4500'
                     },
@@ -33,35 +37,36 @@
     </script>
     <style>
         html, body {
-            background-color: #ffffff;
-            color: #002fa7;
+            background-color: #F8FAFF;
+            color: #002FA7;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             overflow-x: hidden;
         }
         .hover-spring { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .hover-spring:hover { transform: translateY(-3px); }
         .course-card {
-            border: 1px solid rgba(0, 47, 167, 0.15);
+            background-color: #FFFFFF;
+            border: 1px solid #C7DCFF;
             transition: all 0.3s ease;
             cursor: pointer;
         }
         .course-card:hover {
-            box-shadow: 0 10px 30px -10px rgba(0, 47, 167, 0.1);
-            border-color: rgba(0, 47, 167, 0.4);
+            box-shadow: 0 14px 28px -12px rgba(15, 23, 42, 0.12);
+            border-color: #1F50CD;
             transform: translateY(-4px);
         }
         
         /* Markdown Styles */
-        .prose-klein h3 { font-size: 1.25rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(0,47,167,0.1); padding-bottom: 0.5rem; }
-        .prose-klein p { margin-bottom: 1rem; line-height: 1.7; color: rgba(0,47,167,0.8); }
+        .prose-klein h3 { font-size: 1.25rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid #C7DCFF; padding-bottom: 0.5rem; }
+        .prose-klein p { margin-bottom: 1rem; line-height: 1.7; color: #1E3A8A; }
         .prose-klein ul, .prose-klein ol { margin-bottom: 1rem; padding-left: 1.5rem; }
         .prose-klein ul { list-style-type: disc; }
         .prose-klein ol { list-style-type: decimal; }
         .prose-klein li { margin-bottom: 0.25rem; }
-        .prose-klein strong { font-weight: 700; color: #002fa7; }
+        .prose-klein strong { font-weight: 700; color: #002FA7; }
         .prose-klein table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
-        .prose-klein th, .prose-klein td { border: 1px solid rgba(0,47,167,0.1); padding: 0.5rem; text-align: left; }
-        .prose-klein th { background-color: rgba(0,47,167,0.05); font-weight: 700; }
+        .prose-klein th, .prose-klein td { border: 1px solid #C7DCFF; padding: 0.5rem; text-align: left; }
+        .prose-klein th { background-color: #EBF2FF; font-weight: 700; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">

@@ -25,9 +25,13 @@
             theme: {
                 extend: {
                     colors: {
-                        klein: '#002fa7',
+                        klein: '#002FA7',
                         'deep-klein': '#001a5e',
-                        cobalt: '#1a4ec4',
+                        cobalt: '#1F50CD',
+                        sapphire: '#3B6BF0',
+                        ice: '#EBF2FF',
+                        iceBorder: '#C7DCFF',
+                        canvas: '#F8FAFF',
                         'electric-blue': '#00e5ff',
                         'flame-orange': '#ff4500'
                     },
@@ -44,8 +48,8 @@
     
     <style>
         body {
-            background-color: #ffffff;
-            color: #002fa7;
+            background-color: #F8FAFF;
+            color: #002FA7;
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             overflow-x: hidden;
         }
@@ -71,7 +75,7 @@
         }
         .hover-spring:hover {
             transform: translateY(-6px) scale(1.01) !important;
-            box-shadow: 0 30px 60px -15px rgba(0, 47, 167, 0.08) !important;
+            box-shadow: 0 22px 44px -18px rgba(15, 23, 42, 0.14) !important;
             z-index: 50;
         }
 
@@ -82,7 +86,7 @@
         .crosshair-corner::before, .crosshair-corner::after {
             content: '+';
             position: absolute;
-            color: rgba(0, 47, 167, 0.3);
+            color: #1F50CD;
             font-family: monospace;
             font-size: 1rem;
             line-height: 1;
@@ -91,15 +95,16 @@
         .crosshair-corner::before { top: -8px; left: -4px; }
         .crosshair-corner::after { bottom: -8px; right: -4px; }
 
-        /* Outline Display Typography */        .outline-text {
-            color: #ffffff;
-            -webkit-text-stroke: 1.5px #002fa7;
+        /* Outline Display Typography */
+        .outline-text {
+            color: #EBF2FF;
+            -webkit-text-stroke: 2px #002FA7;
             paint-order: stroke fill;
             transition: all 0.4s ease;
         }
         .outline-text:hover {
-            color: #002fa7;
-            -webkit-text-stroke: 1.5px transparent;
+            color: #1F50CD;
+            -webkit-text-stroke: 2px #002FA7;
         }
 
         /* Brutalist Form Controls */
