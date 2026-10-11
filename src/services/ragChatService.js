@@ -7,14 +7,102 @@
 const { searchSimilarChunks } = require('./ragSearchService');
 const { TOOLS_DEFINITIONS, executeTool } = require('./toolCallingService');
 const { User } = require('../db/models/User');
+const { KnowledgeChunk } = require('../db/models/KnowledgeChunk');
 
 const DEFAULT_BASE_URL = 'https://api.shopaikey.com/v1';
 const DEFAULT_CHAT_MODEL = 'gpt-4o-mini';
 
+const YEAR_CHARS = ['', '一', '二', '三', '四'];
+const VI_YEAR_WORDS = { 'nhất': 1, 'nhat': 1, 'hai': 2, 'ba': 3, 'tư': 4, 'tu': 4 };
+
+function toYearNum(s) {
+  if (!s) return 0;
+  const str = String(s).toLowerCase();
+  if (/^[1-4]$/.test(str)) return parseInt(str, 10);
+  const idx = YEAR_CHARS.indexOf(str);
+  if (idx > 0) return idx;
+  return VI_YEAR_WORDS[str] || 0;
+}
+
+/**
+ * Detect "course recommendation by year/department" intent.
+ * Returns { dept, years: number[] } or null.
+ */
+function detectCurriculumIntent(query = '') {
+  const q = String(query).toLowerCase();
+  const isRec = /gợi ý|goi y|推薦|推荐|建議|建议|recommend|suggest|môn học|mon hoc|適合修|課程/.test(q);
+  if (!isRec) return null;
+
+  let dept = null;
+  if (/phần mềm|phan mem|軟體|資工|\bcs\b|công nghệ thông tin|kĩ thuật|kỹ thuật|software/.test(q)) dept = 'CS';
+  if (/trí tuệ nhân tạo|人工智慧|\bai\b/.test(q)) dept = 'AI';
+  if (/資管|\bim\b|quản trị thông tin|information management/.test(q)) dept = 'IM';
+  if (!dept) return null;
+
+  let years = [];
+  let m = q.match(/(\d)\s*năm\s*đầu|前\s*([一二三四1-4])\s*年|first\s*(\d)\s*years?/);
+  if (m) {
+    const n = toYearNum(m[1] || m[2] || m[3]);
+    for (let i = 1; i <= n; i++) years.push(i);
+  } else if (/toàn bộ|cả 4 năm|4 năm|四年|all years/.test(q)) {
+    years = [1, 2, 3, 4];
+  } else {
+    const re = /năm\s*(nhất|nhat|hai|ba|tư|tu|[1-4])\b|大([一二三四])|([一二三四])年級|year\s*([1-4])/g;
+    let x;
+    while ((x = re.exec(q)) !== null) {
+      const y = toYearNum(x[1] || x[2] || x[3] || x[4]);
+      if (y && !years.includes(y)) years.push(y);
+    }
+  }
+  if (years.length === 0) years = [1, 2, 3, 4];
+  return { dept, years };
+}
+
+/**
+ * Build an authoritative course-name list grouped by year from the knowledge base.
+ */
+async function buildCurriculumContext({ dept, years }) {
+  try {
+    const docs = await KnowledgeChunk.find({
+      'metadata.department': dept,
+      'metadata.courseName': { $ne: null },
+      'metadata.classGrade': { $ne: null }
+    }).select('metadata.courseName metadata.classGrade metadata.courseType').lean();
+
+    const byYear = {};
+    for (const d of docs) {
+      const md = d.metadata || {};
+      const cg = md.classGrade || '';
+      const ym = cg.match(/(?:資工|資管|人工智慧|AI|IM|CS)\s*([一二三四])/) || cg.match(/([一二三四])/);
+      if (!ym) continue;
+      const y = toYearNum(ym[1]);
+      if (!y || !years.includes(y)) continue;
+      const name = (md.courseName || '').trim();
+      if (!name) continue;
+      const required = /必修/.test(md.courseType || '');
+      byYear[y] = byYear[y] || new Map();
+      const prev = byYear[y].get(name);
+      byYear[y].set(name, prev || required);
+    }
+
+    const lines = [];
+    for (const y of years) {
+      const map = byYear[y];
+      if (!map || map.size === 0) continue;
+      const names = [...map.entries()].sort((a, b) => (b[1] ? 1 : 0) - (a[1] ? 1 : 0)).map(e => e[0]);
+      lines.push(`第 ${y} 年（大${YEAR_CHARS[y]}）：${names.join('、')}`);
+    }
+    return lines.join('\n');
+  } catch (e) {
+    console.warn('[RAG Chat] Curriculum lookup warning:', e.message);
+    return '';
+  }
+}
+
 /**
  * Build rich system prompt for CareerDNA RAG Chatbot
  */
-function buildSystemPrompt({ contextText = '', currentPage = '', userInfo = null, userId = null }) {
+function buildSystemPrompt({ contextText = '', currentPage = '', userInfo = null, userId = null, curriculumText = '' }) {
   let prompt = `你是「CareerDNA AI 智能職涯與知識助手」- 專為靜宜大學（Providence University）資訊學院（資工系、資管系、人工智慧系）打造的 AI 導航與問答系統。
 
 【核心原則】：
@@ -22,6 +110,7 @@ function buildSystemPrompt({ contextText = '', currentPage = '', userInfo = null
 2. 預設以「繁體中文（台灣）」回覆；若使用者使用英文 (English) 提問，請以專業、流暢之英文親切作答。
 3. 嚴格基於所提供的「知識庫檢索內容」與「工具調用結果」作答。如果知識庫中沒有相關資訊且無法透過工具獲取，請誠實告知，切勿憑空捏造。
 4. 嚴格遵守資料隔離與隱私安全，絕對不向任何人透露其他使用者的資料。
+5. 【課程輸出格式（最高優先，覆蓋其他規則）】：只要使用者是在「推薦／建議／gợi ý／recommend／suggest」課程或詢問「適合修哪些課」，回答只能是簡短的課程名稱清單，每行一個，格式如「- 程式設計」。嚴禁輸出：選課代號、授課教師、上課班級、時間地點、修別、學分數、課程簡介、教科書、參考來源。可在開頭加一句簡短說明，結尾加一句邀請使用者詢問某門課詳細資訊即可。
 
 【平台架構與功能】：
 - **AI 履歷健檢與生成 (career_fit_v2.html)**：結合 Golden Triangle ATS 人資檢核標準、Micro-STAR (STAR-L) 原則與 Google XYZ 量化公式，提供 Classic, Modern, Minimal 3 種 A4 履歷樣式並支援匯出 PDF。
@@ -33,7 +122,9 @@ function buildSystemPrompt({ contextText = '', currentPage = '', userInfo = null
 【靜宜大學課程與選課查詢準則（極重要）】：
 1. 精準對應選課代號與系所：
    - 當使用者詢問特定「選課代號」（例如 1776、1711）或指定「系所」（人工智慧 AI / 資工 CS / 資管 IM）時，必須嚴格依據檢索到的該代號資料回答。
-   - 回答必須包含：課程名稱、選課代號、授課教師、上課班級、時間地點（星期幾、第幾節、教室）、主要教科書及作者/出版社。
+    - 【推薦課程】：當使用者要求推薦／建議課程時，只列「課程名稱」，嚴禁附上選課代號、教師、時間、教室、學分、修別、簡介、教科書，也不要加上任何「參考來源／文件名稱」。
+    - 僅當使用者明確詢問某門課或某選課代號的詳細資訊時，才提供：課程名稱、選課代號、授課教師、上課班級、時間地點（星期幾、第幾節、教室）、主要教科書及作者/出版社。
+    - 任何回答都不要列出知識庫檔案名稱或「Sources／參考來源」。
 2. 嚴格杜絕代號混淆與幻覺：
    - 切勿在知識庫中存在該代號時，自作聰明斷定使用者記錯代號（例如絕對不能將 1776 擅自更換為 1711）！
    - 若不同系所開設同名課程（例如 AI 系與資工系皆有開授「網頁前端程式設計」），必須按使用者指定的「選課代號」或「班級」給出正確對應的課程，不可張冠李戴。
@@ -64,7 +155,11 @@ ${userInfo?.grade ? `- 年級: ${userInfo.grade}` : ''}
   }
 
   if (contextText && contextText.trim().length > 0) {
-    prompt += `\n\n【檢索到的相關知識庫文檔 (RAG Context)】：\n${contextText}\n\n請務必優先且忠實引用上述知識庫文檔回答使用者的問題。`;
+    prompt += `\n\n【檢索到的相關知識庫文檔 (RAG Context)】：\n${contextText}\n\n請務必優先且忠實引用上述知識庫文檔回答使用者的問題。\n（注意：若是推薦／建議課程，文檔中的教師、時間、教室、學分、簡介等細節一律不要輸出，只列課程名稱。）`;
+  }
+
+  if (curriculumText && curriculumText.trim().length > 0) {
+    prompt += `\n\n【系統依年級彙整之完整課程名稱清單（權威資料，推薦課程時以此為準）】：\n${curriculumText}\n\n請依照上述各「年級」分組，逐年列出課程名稱（每年各一個小標題，使用者要求幾年就必須涵蓋每一年，不可只回答其中一年）。每年挑選約 6~10 門代表性課程，優先必修課；只輸出名稱，不含任何其他細節。\n【輸出排版（Markdown）】：開頭一句簡短說明；每一年用「### 🎓 大X（第 X 年）」作標題；其下每門課一行，格式「- **課程名稱**」（課程名稱粗體，行與行之間不要空行）；各年之間只空一行；結尾一句邀請使用者詢問某門課詳細資訊。`;
   }
 
   return prompt;
@@ -149,7 +244,12 @@ async function processRagChat({ messages = [], userId = null, currentPage = '', 
   }
 
   // 5. Build system prompt & message payload
-  const systemPrompt = buildSystemPrompt({ contextText, currentPage, userInfo, userId });
+  let curriculumText = '';
+  const curIntent = detectCurriculumIntent(userQuery);
+  if (curIntent) {
+    curriculumText = await buildCurriculumContext(curIntent);
+  }
+  const systemPrompt = buildSystemPrompt({ contextText, currentPage, userInfo, userId, curriculumText });
   const formattedMessages = [
     { role: 'system', content: systemPrompt },
     ...messages.slice(-8).map(m => ({

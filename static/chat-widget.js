@@ -18,15 +18,13 @@
   // Bilingual Quick Prompts (Traditional Chinese & English)
   const QUICK_PROMPTS_ZH = [
     { label: '🎯 CareerDNA 平台介紹', text: '請介紹 CareerDNA 平台的核心功能與特色？' },
-    { label: '📝 如何生成與匯出履歷', text: '如何使用 AI 健檢生成履歷並匯出標準 A4 PDF？' },
-    { label: '🧭 何謂 Holland 職涯測驗', text: '請說明 Holland RIASEC 職涯測驗如何幫助學生探索方向？' },
+    { label: '📚 推薦課程', text: '請根據我的職涯方向推薦適合修讀的課程' },
     { label: '🏫 靜宜資院三系導覽', text: '請介紹靜宜大學資訊學院（資工、資管、人工智慧）的專業特色與研究方向？' }
   ];
 
   const QUICK_PROMPTS_EN = [
     { label: '🎯 Platform Features', text: 'What are the core features and capabilities of CareerDNA?' },
-    { label: '📝 AI Resume & PDF Export', text: 'How do I use AI resume diagnosis and export standard A4 PDF?' },
-    { label: '🧭 Holland RIASEC Test', text: 'How does the Holland RIASEC test guide students in career discovery?' },
+    { label: '📚 推薦課程', text: 'Which courses do you recommend for my career goals' },
     { label: '🏫 Providence CS College', text: 'Can you introduce the specialties and research in Providence University College of Computing?' }
   ];
 
@@ -64,7 +62,7 @@
         }
         const directUid = localStorage.getItem('cdna_uid');
         if (directUid) return String(directUid);
-      } catch (e) {}
+      } catch (e) { }
       return 'guest';
     }
 
@@ -355,12 +353,34 @@
         }
 
         /* Markdown in AI bubble */
-        .cdna-msg-bubble p { margin: 0 0 8px 0; }
+        .cdna-msg-bubble p { margin: 0 0 6px 0; line-height: 1.55; }
         .cdna-msg-bubble p:last-child { margin-bottom: 0; }
         .cdna-msg-bubble strong { color: #002fa7; font-weight: 700; }
         .cdna-user-msg .cdna-msg-bubble strong { color: #ffffff; }
-        .cdna-msg-bubble ul, .cdna-msg-bubble ol { margin: 6px 0 8px 18px; padding: 0; }
-        .cdna-msg-bubble li { margin-bottom: 4px; }
+        .cdna-msg-bubble ul, .cdna-msg-bubble ol { margin: 4px 0 8px 0; padding-left: 20px; }
+        .cdna-msg-bubble ul { list-style: none; padding-left: 4px; }
+        .cdna-msg-bubble ul li { position: relative; padding-left: 16px; }
+        .cdna-msg-bubble ul li::before {
+          content: '';
+          position: absolute;
+          left: 2px;
+          top: 0.62em;
+          width: 6px;
+          height: 6px;
+          background: #002fa7;
+        }
+        .cdna-msg-bubble li { margin: 0 0 3px 0; line-height: 1.5; }
+        .cdna-msg-bubble .cdna-md-h {
+          margin: 12px 0 6px 0;
+          padding: 3px 0 3px 10px;
+          border-left: 3px solid #002fa7;
+          background: #f0f4ff;
+          color: #002fa7;
+          font-weight: 800;
+          font-size: 13.5px;
+          line-height: 1.4;
+        }
+        .cdna-msg-bubble .cdna-md-h:first-child { margin-top: 2px; }
         .cdna-msg-bubble code {
           background: #f1f5f9;
           padding: 2px 5px;
@@ -713,13 +733,13 @@
             win.style.height = height + 'px';
           }
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     saveHistory() {
       try {
         sessionStorage.setItem(this.getStorageKey(), JSON.stringify(this.messages));
-      } catch (e) {}
+      } catch (e) { }
     }
 
     renderMessages() {
@@ -770,42 +790,70 @@
 
     formatMarkdown(text) {
       if (!text) return '';
-      let html = text
+      let src = text
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
 
-      // Parse Markdown Tables
+      // Extract Markdown tables into placeholders
+      const tables = [];
       const tableRegex = /((?:\|[^\n]+\|\r?\n)((?:\|[-:\s|]+\|\r?\n))((?:\|[^\n]+\|\r?\n?)+))/g;
-      html = html.replace(tableRegex, (match, header, separator, body) => {
+      src = src.replace(tableRegex, (match, header, separator, body) => {
         const headerCells = header.trim().split('|').filter(c => c.trim() !== '').map(c => `<th>${c.trim()}</th>`).join('');
         const bodyRows = body.trim().split('\n').map(row => {
           const cells = row.trim().split('|').filter(c => c.trim() !== '').map(c => `<td>${c.trim()}</td>`).join('');
           return `<tr>${cells}</tr>`;
         }).join('');
-        return `<div class="cdna-table-wrapper"><table class="cdna-table"><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table></div>`;
+        tables.push(`<div class="cdna-table-wrapper"><table class="cdna-table"><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table></div>`);
+        return `\n@@TABLE${tables.length - 1}@@\n`;
       });
 
-      // Headers (### Header)
-      html = html.replace(/^###\s+(.+)/gm, '<h4 style="font-weight: 700; font-size: 13.5px; margin: 10px 0 4px 0; color: #002fa7;">$1</h4>');
-      html = html.replace(/^##\s+(.+)/gm, '<h3 style="font-weight: 800; font-size: 14px; margin: 12px 0 5px 0; color: #002fa7;">$1</h3>');
+      const inline = (s) => s
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(?!\s)(.+?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
 
-      // Bold **text**
-      html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      // Italic *text*
-      html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-      // Inline code `text`
-      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-      // Markdown links [text](url)
-      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-      // Lists
-      html = html.replace(/^[-*•]\s+(.+)/gm, '<li>$1</li>');
-      html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-      // Paragraphs & Line breaks
-      html = html.replace(/\n\n/g, '</p><p>');
-      html = html.replace(/\n/g, '<br>');
+      const lines = src.split(/\r?\n/);
+      const out = [];
+      let listType = null; // 'ul' | 'ol'
+      let para = [];
 
-      return `<p>${html}</p>`;
+      const flushPara = () => {
+        if (para.length) { out.push(`<p>${para.join('<br>')}</p>`); para = []; }
+      };
+      const closeList = () => {
+        if (listType) { out.push(`</${listType}>`); listType = null; }
+      };
+
+      for (const rawLine of lines) {
+        const line = rawLine.trim();
+        let m;
+        if (!line) { flushPara(); closeList(); continue; }
+        if ((m = line.match(/^@@TABLE(\d+)@@$/))) {
+          flushPara(); closeList(); out.push(tables[parseInt(m[1], 10)]); continue;
+        }
+        if ((m = line.match(/^#{1,6}\s+(.+)/))) {
+          flushPara(); closeList();
+          out.push(`<div class="cdna-md-h">${inline(m[1])}</div>`); continue;
+        }
+        if ((m = line.match(/^[-*\u2022]\s+(.+)/))) {
+          flushPara();
+          if (listType !== 'ul') { closeList(); out.push('<ul>'); listType = 'ul'; }
+          out.push(`<li>${inline(m[1])}</li>`); continue;
+        }
+        if ((m = line.match(/^\d+[.)]\s+(.+)/))) {
+          flushPara();
+          if (listType !== 'ol') { closeList(); out.push('<ol>'); listType = 'ol'; }
+          out.push(`<li>${inline(m[1])}</li>`); continue;
+        }
+        closeList();
+        para.push(inline(line));
+      }
+      flushPara();
+      closeList();
+
+      return out.join('');
     }
 
     bindEvents() {
@@ -905,7 +953,7 @@
             if (width && height) {
               localStorage.setItem(SIZE_KEY, JSON.stringify({ width, height }));
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       };
     }
@@ -964,8 +1012,8 @@
 
     clearHistory(skipConfirm = false) {
       const isEn = getWidgetLang() === 'en';
-      const confirmMsg = isEn 
-        ? 'Start a new conversation? Current chat history will be reset.' 
+      const confirmMsg = isEn
+        ? 'Start a new conversation? Current chat history will be reset.'
         : '確定要開啟新的對話嗎？目前的對話紀錄將會重置。';
       if (!skipConfirm && !confirm(confirmMsg)) return;
 
@@ -1005,13 +1053,13 @@
       if (input) {
         if (isLimitReached) {
           input.disabled = true;
-          input.placeholder = isEn 
-            ? 'Conversation limit reached. Please click restart icon to begin new chat...' 
+          input.placeholder = isEn
+            ? 'Conversation limit reached. Please click restart icon to begin new chat...'
             : '已達對話上限，請點擊上方重置按鈕開啟新對話...';
         } else {
           input.disabled = false;
-          input.placeholder = isEn 
-            ? 'Ask about platform features, resume review, courses...' 
+          input.placeholder = isEn
+            ? 'Ask about platform features, resume review, courses...'
             : '詢問平台功能、生成履歷、探索科系...';
         }
       }
@@ -1055,7 +1103,7 @@
           try {
             const userRaw = localStorage.getItem('careerDNA_user');
             if (userRaw) userInfo = JSON.parse(userRaw);
-          } catch(e) {}
+          } catch (e) { }
         }
         if (window.CVTemplates && typeof window.CVTemplates.collectUserData === 'function') {
           userInfo = { ...userInfo, ...window.CVTemplates.collectUserData() };
@@ -1066,7 +1114,7 @@
 
         const res = await fetch('/api/rag/chat', {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             ...(currentUid ? { 'x-user-id': currentUid } : {})
           },
@@ -1083,12 +1131,8 @@
 
         const isEn = getWidgetLang() === 'en';
         let reply = data?.reply || (isEn ? 'Sorry, connection timed out. Please try again later.' : '抱歉，目前連線稍有延遲，請您稍後再試。');
-        if (data?.sources && data.sources.length > 0) {
-          const sourceTitles = data.sources.map(s => `《${s.title}》`).join(', ');
-          const label = isEn ? 'Sources' : '參考來源';
-          reply += `\n\n*📚 ${label}: ${sourceTitles}*`;
-        }
-        
+
+
         // Execute Typewriter Stream Effect
         this.typewriterStream(reply);
 

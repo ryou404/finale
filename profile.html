@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW" class="scroll-smooth bg-white text-klein">
 <head>
     <meta charset="UTF-8">
@@ -446,6 +446,21 @@
                         </div>
 
                     </form>
+                </div>
+
+                <!-- ================= RECOMMENDED COURSES CARD ================= -->
+                <div class="p-4 sm:p-8 md:p-12 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2 max-w-full overflow-hidden">
+                    <div class="border-b border-klein/10 pb-6 mb-6">
+                        <div class="h-2"></div>
+                        <h2 class="font-heading font-black text-xl sm:text-2xl uppercase tracking-tight text-klein flex items-center gap-2.5">
+                            <i class="fa-solid fa-graduation-cap text-klein"></i>
+                            <span>推薦課程 (Recommended Courses)</span>
+                        </h2>
+                        <p class="font-mono text-xs text-klein/60 mt-1">
+                            依您的系所、年級與 UCAN 品牌測驗結果，顯示適合修讀的課程資訊。
+                        </p>
+                    </div>
+                    <div id="profile-recommended-courses"></div>
                 </div>
 
                 <!-- ================= AI RESUME ARCHIVE & HISTORY CARD ================= -->
@@ -1025,6 +1040,16 @@
                 } else {
                     container.innerHTML = pills.join('');
                 }
+                this.renderRecommendedCourses(data);
+            },
+
+            renderRecommendedCourses(data = {}) {
+                const el = document.getElementById('profile-recommended-courses');
+                if (!el || !window.CourseRec) return;
+                window.CourseRec.render(el, {
+                    dept: data.department || data.dept || localStorage.getItem('cdna_department'),
+                    grade: data.grade || localStorage.getItem('cdna_grade') || '大三'
+                });
             },
 
             // ==========================================
@@ -1391,6 +1416,7 @@
     </script>
 
     <!-- CareerDNA AI Chatbot Assistant Widget -->
+    <script src="static/course-recommend.js"></script>
     <script src="static/chat-widget.js"></script>
 </body>
 </html>
