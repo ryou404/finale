@@ -1,4 +1,4 @@
-# 🚀 CAREERDNA // TỔNG QUAN HỆ THỐNG & KIẾN TRÚC TOÀN DIỆN
+﻿# 🚀 CAREERDNA // TỔNG QUAN HỆ THỐNG & KIẾN TRÚC TOÀN DIỆN
 > **Providence University (靜宜大學) AI Career Exploration & Multi-Agent Resume Optimization Platform**  
 > *Hệ thống Định hướng Nghề nghiệp, Trắc nghiệm Holland RIASEC và Tối ưu hóa CV theo chuẩn Golden Triangle ATS với Kiến trúc Multi-Agent AI.*
 
@@ -90,7 +90,7 @@
 - **Tích hợp Gallup Strengths**: Đưa ra Top 3 thế mạnh vượt trội và lộ trình hành động 30 - 60 - 90 ngày.
 - **Đồng bộ Cloud Atlas**: Tự động lưu trữ lịch sử trắc nghiệm vào cơ sở dữ liệu `career.users`.
 
-### 3.4. 科系適配 - Định Hướng Chuyên Ngành & Lab Nghiên Cứu ([`lab_recommendation.html`](file:///j:/ThoBeo/finale/lab_recommendation.html))
+### 3.4. 系所推薦 - Định Hướng Chuyên Ngành & Lab Nghiên Cứu ([`lab_recommendation.html`](file:///j:/ThoBeo/finale/lab_recommendation.html))
 - **Chẩn đoán Phù hợp Khoa**: Đánh giá mức độ tương thích giữa tính cách học thuật và 3 khoa chính: **CS (Khoa học máy tính)**, **IM (Hệ thống thông tin)**, **AI (Trí tuệ nhân tạo)**.
 - **Danh Bạ Phòng Lab & Giáo Sư Hướng Dẫn**: Kết nối dữ liệu thực tế từ collection `professors`, hiển thị hướng nghiên cứu, email liên hệ, văn phòng và các dự án trọng điểm.
 
@@ -320,7 +320,7 @@ npm start
 - 👤 **Hồ sơ cá nhân & Đổi Avatar**: [http://localhost:3001/profile.html](http://localhost:3001/profile.html)
 - 📝 **AI 履歷健檢 (ATS Resume Audit)**: [http://localhost:3001/career_fit_v2.html](http://localhost:3001/career_fit_v2.html)
 - 🧭 **品牌測驗 (Holland RIASEC)**: [http://localhost:3001/brand_test.html](http://localhost:3001/brand_test.html)
-- 🔬 **科系適配 (Lab Navigator)**: [http://localhost:3001/lab_recommendation.html](http://localhost:3001/lab_recommendation.html)
+- 🔬 **系所推薦 (Lab Navigator)**: [http://localhost:3001/lab_recommendation.html](http://localhost:3001/lab_recommendation.html)
 - 📚 **學習資源 (Resource Archive)**: [http://localhost:3001/resource_library.html](http://localhost:3001/resource_library.html)
 
 ---

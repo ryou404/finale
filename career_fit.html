@@ -134,23 +134,22 @@
     <!-- Global Navigation Bar -->
     <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
         <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-4 group">
-                <div class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
+            <a href="index.html" class="flex items-center gap-2 sm:gap-4 group shrink-0">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-base sm:text-xl group-hover:bg-klein group-hover:text-white transition-all">
                     <i class="fa-solid fa-bolt"></i>
                 </div>
-
                 <div class="flex flex-col">
-                    <span class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
-                    <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">USER_PROFILE // V2026</span>
+                    <span class="font-syne font-extrabold text-lg sm:text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    <span class="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-klein/40 -mt-0.5 sm:-mt-1 hidden sm:block">RESUME_ANALYSIS // v2026</span>
                 </div>
             </a>
             
             <div class="hidden md:flex items-center gap-8">
-                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
-                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
                 <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
-                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">系所推薦</a>
+                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">課程資料庫</a>
+                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
             </div>
 
             <div>
@@ -177,7 +176,7 @@
             
             <!-- Grade Switcher Dropdown -->
             <div class="relative min-w-[240px] shrink-0">
-                <label class="block font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40 mb-1.5">GRADE_TRACK // 年級視角</label>
+                <label class="block font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40 mb-1.5">年級</label>
                 <div class="relative">
                     <select id="grade-selector" onchange="window.App.changeGrade(this.value)" class="w-full px-4 py-3 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-xs font-bold uppercase tracking-wider appearance-none cursor-pointer">
                         <option value="大一">大一 / 大二 (基礎打底期)</option>
@@ -201,27 +200,26 @@
                 
                 <!-- Section 01: Course Radar & Checklist -->
                 <section class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1">
-                    <div class="flex justify-between items-start mb-4 border-b border-klein/10 pb-4">
+                    <div class="flex justify-between items-center mb-4 border-b border-klein/10 pb-4">
                         <div>
-                            <div class="h-2"></div>
                             <h2 id="course-section-title" class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
                                 <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">01</span>
                                 修課檢測雷達
                             </h2>
                         </div>
-                        <span id="course-goal" class="font-mono text-xs font-bold px-3 py-1 bg-klein/5 border border-klein/20 text-klein">目標: -- 學分</span>
+                        <span id="course-goal" class="font-mono text-xs font-bold px-3 py-1 bg-klein/5 border border-klein/20 text-klein mt-1">目標: -- 學分</span>
                     </div>
                     
                     <!-- Quick Track Switcher Tabs -->
                     <div class="flex border border-klein/10 bg-klein/[0.02] p-1 gap-1 mb-4">
-                        <button type="button" onclick="window.App.switchTrackDirect('core')" id="tab-track-core" class="flex-1 py-1.5 px-2 font-mono font-bold text-[11px] uppercase tracking-wider text-klein/60 hover:text-klein transition-all">
-                            核心必修
+                        <button type="button" onclick="window.App.switchTrackDirect('program')" id="tab-track-program" class="flex-1 py-1.5 px-2 font-mono font-bold text-[11px] uppercase tracking-wider text-klein/60 hover:text-klein transition-all">
+                            專業學程
                         </button>
                         <button type="button" onclick="window.App.switchTrackDirect('practical')" id="tab-track-practical" class="flex-1 py-1.5 px-2 font-mono font-bold text-[11px] uppercase tracking-wider text-klein/60 hover:text-klein transition-all">
                             實務課群
                         </button>
-                        <button type="button" onclick="window.App.switchTrackDirect('program')" id="tab-track-program" class="flex-1 py-1.5 px-2 font-mono font-bold text-[11px] uppercase tracking-wider text-klein/60 hover:text-klein transition-all">
-                            專業學程
+                        <button type="button" onclick="window.App.switchTrackDirect('core')" id="tab-track-core" class="flex-1 py-1.5 px-2 font-mono font-bold text-[11px] uppercase tracking-wider text-klein/60 hover:text-klein transition-all">
+                            核心必修
                         </button>
                     </div>
 
@@ -252,40 +250,6 @@
                     </div>
                 </section>
 
-                <!-- Section 03: Resume Draft & Career Goals -->
-                <section class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-3">
-                    <div class="border-b border-klein/10 pb-4 mb-4">
-                        <div class="h-2"></div>
-                        <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
-                            <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">03</span>
-                            求職目標與自述草稿 (Career Goals / Bio)
-                        </h2>
-                    </div>
-                    <p class="font-body text-xs text-klein/70 mb-4">請提供求職方向、自我介紹或專案摘要，規則引擎將自動結合 UCAN 職能與修課紀錄排版為 STAR / XYZ 高規 A4 履歷。</p>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block font-mono text-xs font-bold uppercase tracking-wider text-klein mb-2">
-                                求職目標與簡介草稿 (Career Goals / Bio)
-                            </label>
-                            <textarea id="resume-draft-input" class="w-full h-28 p-3 bg-white border border-klein/20 focus:border-klein text-klein font-mono text-xs" placeholder="例如：我想應徵軟體工程師實習，在校期間修習資料庫與演算法，具備專案實作經驗，希望朝向全端或後端開發發展..."></textarea>
-                        </div>
-
-                        <div>
-                            <label class="block font-mono text-xs font-bold uppercase tracking-wider text-klein mb-2">
-                                或上傳現有履歷 PDF (選填)
-                            </label>
-                            <div class="flex items-center gap-3">
-                                <label class="hover-spring cursor-pointer bg-klein/5 hover:bg-klein hover:text-white text-klein border border-klein/20 px-4 py-2 font-mono text-xs font-bold tracking-wider transition-all">
-                                    <i class="fa-solid fa-file-pdf mr-1"></i> 上傳 PDF
-                                    <input type="file" id="resume-pdf-upload" accept="application/pdf" class="hidden" onchange="window.App.handlePdfUpload(event)">
-                                </label>
-                                <span id="pdf-upload-status" class="font-mono text-xs text-klein/60">尚未上傳檔案</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
                 <!-- Action Button Cluster -->
                 <div class="space-y-3">
                     <button onclick="window.App.calculateAndGenerate()" id="generate-btn" class="hover-spring w-full py-4 bg-klein text-white border border-klein font-heading font-bold text-base uppercase tracking-wider flex items-center justify-center gap-3 group shadow-md hover:shadow-xl transition-all">
@@ -302,14 +266,12 @@
                     
                     <!-- Live Telemetry Scorecard Box -->
                     <div class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1">
-                        <div class="flex justify-between items-center border-b border-klein/10 pb-4 mb-6">
-                            <div>
-                                <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40">TELEMETRY // REALTIME_STATS</span>
-                                <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">即時戰力儀表板</h3>
+                        <div class="flex justify-between items-end border-b border-klein/10 pb-4 mb-6">
+                            <div class="mb-1">
+                                <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">儀表板</h3>
                             </div>
                             <div class="text-right">
-                                <span class="font-mono text-[10px] uppercase text-klein/50 block">TOTAL SCORE</span>
-                                <span id="live-total-score" class="font-syne font-black text-3xl md:text-4xl text-klein">0</span>
+                                <span id="live-total-score" class="font-syne font-black text-4xl text-klein leading-none">0</span>
                             </div>
                         </div>
 
@@ -348,51 +310,7 @@
 
                         <!-- Live Advice Feedback Note -->
                         <div id="live-recommendation" class="font-mono text-xs text-klein/70 bg-klein/5 border border-klein/10 p-3">
-                            請勾選左側修課紀錄與課外經歷，系統將即時試算您的就業競爭力！
-                        </div>
-                    </div>
-
-                    <!-- 3-Axis ATS Dimension Progress Bars -->
-                    <div class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2">
-                        <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40">AUDIT // ATS_GOLDEN_TRIANGLE</span>
-                        <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6">AI 履歷三大維度檢核</h3>
-                        
-                        <div class="space-y-6">
-                            <!-- Dimension 1: Execution -->
-                            <div>
-                                <div class="flex justify-between font-mono text-xs font-bold mb-1.5">
-                                    <span class="text-klein">專案具體度 (Execution / XYZ Metric)</span>
-                                    <span id="score-quant" class="text-klein">0%</span>
-                                </div>
-                                <div class="w-full bg-klein/10 h-2">
-                                    <div id="bar-quant" class="bg-klein h-2 transition-all duration-1000" style="width: 0%"></div>
-                                </div>
-                                <p class="font-body text-[11px] text-klein/60 mt-1">是否有具體說明實作細節與開發規模（如：頁面數、資料筆數、使用之技術工具）？</p>
-                            </div>
-
-                            <!-- Dimension 2: Contribution -->
-                            <div>
-                                <div class="flex justify-between font-mono text-xs font-bold mb-1.5">
-                                    <span class="text-cobalt">角色貢獻度 (Contribution / STAR Role)</span>
-                                    <span id="score-comp" class="text-cobalt">0%</span>
-                                </div>
-                                <div class="w-full bg-klein/10 h-2">
-                                    <div id="bar-comp" class="bg-cobalt h-2 transition-all duration-1000" style="width: 0%"></div>
-                                </div>
-                                <p class="font-body text-[11px] text-klein/60 mt-1">分組報告或專題中，是否清楚交代「個人」負責的模組架構與具體產出？</p>
-                            </div>
-
-                            <!-- Dimension 3: Fundamentals -->
-                            <div>
-                                <div class="flex justify-between font-mono text-xs font-bold mb-1.5">
-                                    <span class="text-emerald-700">基礎潛力值 (Fundamentals / ATS Keywords)</span>
-                                    <span id="score-kw" class="text-emerald-700">0%</span>
-                                </div>
-                                <div class="w-full bg-klein/10 h-2">
-                                    <div id="bar-kw" class="bg-emerald-600 h-2 transition-all duration-1000" style="width: 0%"></div>
-                                </div>
-                                <p class="font-body text-[11px] text-klein/60 mt-1">是否展現紮實的核心學科知識與學習熱忱，而非盲目堆砌流行術語？</p>
-                            </div>
+                            
                         </div>
                     </div>
 
@@ -403,7 +321,7 @@
                                 <i class="fa-solid fa-compass animate-spin" style="animation-duration: 8s;"></i>
                             </div>
                             <div>
-                                <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40">OUTPUT // ADVISORY_REPORT</span>
+                                <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40"></span>
                                 <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">AI 職涯顧問導航報告</h3>
                             </div>
                         </div>
@@ -419,7 +337,7 @@
                                 <span class="font-mono text-xs font-bold text-klein uppercase tracking-wider flex items-center gap-2">
                                     <i class="fa-solid fa-file-lines"></i> AI 智能履歷預覽 (A4 Standard)
                                 </span>
-                                <button onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2">
+                                <button onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2" id="pdf-export-btn">
                                     <i class="fa-solid fa-download"></i> 匯出 PDF
                                 </button>
                             </div>
@@ -493,7 +411,7 @@
     <!-- Global Footer -->
     <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
         <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-            &copy; 2026 Providence University // CareerDNA Engine
+            
         </div>
         <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
             <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
@@ -530,11 +448,22 @@
         // --- 靜宜大學在地化課綱資料庫 (三軌制) ---
         const ACADEMIC_DATA = {
             core: {
-                title: "專業核心必修檢測", goal: 12, // 大一/大二看基礎
-                data: [
-                    { id: 'core_prog', name: '程式與邏輯基礎', courses: ['計算機概論', '程式設計(一)', '程式設計(二)', '資料結構'] },
-                    { id: 'core_sys', name: '系統與資料基礎', courses: ['資料庫系統', '作業系統', '演算法概論', '計算機網路'] }
-                ]
+                CS: {
+                    title: "資工系 專業核心必修", goal: 15,
+                    data: [ { id: 'core_cs', name: '資工系 必修課程', courses: ["個別研究(一)", "專案實作(二)", "演算法概論", "研究方法", "科技英文(一)", "程式設計", "網路通訊概論", "線性代數", "英文(一)", "計算機概論(一)", "計算機概論(一)(合授課程)", "計算機組織學", "論文研討(一)", "資料結構", "資訊數學(一)", "進階演算法", "運動健康與素養(基礎體育)", "邏輯設計", "高等人工智慧學", "高等管理資訊系統"] } ]
+                },
+                IM: {
+                    title: "資管系 專業核心必修", goal: 15,
+                    data: [ { id: 'core_im', name: '資管系 必修課程', courses: ["個別研究(一)", "專案實作(二)", "研究方法", "科技英文(一)", "程式設計", "管理學", "系統分析與設計", "統計學(一)", "經濟學", "網路通訊概論", "英文(一)", "計算機概論(一)", "論文研討(一)", "資料結構", "資管生涯講座", "資訊數學(一)", "軟體設計與開發", "運動健康與素養(基礎體育)", "高等管理資訊系統"] } ]
+                },
+                AI: {
+                    title: "人工智慧系 專業核心必修", goal: 15,
+                    data: [ { id: 'core_ai', name: '人工智慧系 必修課程', courses: ["人工智慧概論", "個別研究(一)", "專案實作(二)(合授課程)", "搜尋方法與推論邏輯", "數位作品實作(二)(合授課程)", "數位媒體設計", "數位設計基礎", "研究方法", "科技英文(一)", "程式設計", "系統分析與設計", "網路通訊概論", "網頁前端程式設計", "英文(一)", "計算機概論(一)", "論文研討(一)", "資料結構", "運動健康與素養(基礎體育)", "高等人工智慧學"] } ]
+                },
+                default: {
+                    title: "專業核心必修 (尚未綁定科系)", goal: 15,
+                    data: [ { id: 'core_default', name: '請先進行品牌測驗以載入科系', courses: [] } ]
+                }
             },
             practical: {
                 title: "實務課群雷達", goal: 9, // 大三看實務課群(9學分)
@@ -727,7 +656,7 @@
 
                 const deptNames = { CS: '資訊工程學系', IM: '資訊管理學系', AI: '人工智慧學系' };
                 this.showToast(`已切換至「${deptNames[newDept] || newDept}」專屬學程！`);
-                this.setupTrackUI('大四');
+                this.switchTrackDirect(this.state.track);
             },
 
             resetDept() {
@@ -828,9 +757,9 @@
                 if (sub) sub.innerText = curInfo.sub;
 
                 let trackData;
-                if (trackKey === 'program') {
+                if (trackKey === 'program' || trackKey === 'core') {
                     const deptKey = this.state.dept || 'default';
-                    trackData = ACADEMIC_DATA.program[deptKey] || ACADEMIC_DATA.program.default;
+                    trackData = ACADEMIC_DATA[trackKey][deptKey] || ACADEMIC_DATA[trackKey].default;
                 } else {
                     trackData = ACADEMIC_DATA[trackKey];
                 }
@@ -839,7 +768,7 @@
                 document.getElementById('course-goal').innerText = `目標: ${trackData.goal} 學分`;
 
                 const pickerContainer = document.getElementById('dept-picker-container');
-                if (trackKey === 'program') {
+                if (trackKey === 'program' || trackKey === 'core') {
                     pickerContainer.innerHTML = `
                         <div class="mb-4 p-3 border border-klein/20 bg-klein/[0.02]">
                             <label class="block font-mono text-xs font-bold uppercase tracking-wider text-klein mb-1.5">選擇就讀系所 (靜宜大學)</label>
@@ -1076,7 +1005,7 @@
 
                 if (recText) {
                     if (totalScore === 0) {
-                        recText.innerText = "請勾選左側修課紀錄與課外經歷，系統將即時試算您的就業競爭力！";
+                        recText.innerText = "";
                     } else if (progScore < 20 && pracScore < 20) {
                         recText.innerHTML = "💡 <strong>系統建議：</strong>學術地基尚待奠定！建議優先選修 1 個專業學程與 3 門實務課群（9 學分）。";
                     } else if (progScore < 20) {
@@ -1251,6 +1180,9 @@
                 const deptNames = { CS: '資訊工程學系', IM: '資訊管理學系', AI: '人工智慧學系' };
                 const deptFullName = deptNames[dept] || '資訊學院';
 
+                // Save selected courses for resource_library.html linkage
+                localStorage.setItem('cdna_selected_courses', JSON.stringify(Array.from(selectedCourses)));
+
                 // Read UCAN data
                 let ucan = null;
                 try {
@@ -1359,7 +1291,7 @@
                 if (progScore < 30) {
                     actionItems.push(`🎯 【專業學程攻頂】您在「${bestProgName}」已累積 ${maxProgCredits} 學分，距離 15 學分門檻尚差 ${Math.max(0, progGoalCredits - maxProgCredits)} 學分。建議下學期集中選修該學程指定選修課程，取得校級正式學程證書！`);
                 } else {
-                    actionItems.push(`✅ 【專業學程達標】您在「${bestProgName}」已完成 ${maxProgCredits} 學分，已達成或接近學程標準！建議在履歷第一段直接列出學程認證，加深人資信任度。`);
+                    actionItems.push(`✅ 【專業學程達標】您在「${bestProgName}」已完成 ${maxProgCredits} 學分，已達成或接近學程標準！建議在履歷第一段直接列出學程認證，加深人資信任度。<a href="resource_library.html" target="_blank" class="ml-1 inline-flex items-center gap-1 font-bold text-klein underline hover:text-blue-700">瀏覽進階課程 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>`);
                 }
 
                 if (pracScore < 30) {
@@ -1379,9 +1311,10 @@
                 }
 
                 if (ucan && ucan.commonComps) {
-                    const weakComp = Object.entries(ucan.commonComps).find(([_, v]) => v.pr < 50);
+                    const weakComp = Object.entries(ucan.commonComps).sort((a,b)=>a[1].pr - b[1].pr)[0]; // get weakest
                     if (weakComp) {
-                        actionItems.push(`💡 【UCAN 弱項補強】您的共通職能「${weakComp[0]}」(PR ${weakComp[1].pr}) 稍低，建議多參與跨系分組專題或黑客松，強化協作溝通與問題解決能力！`);
+                        const kw = weakComp[0].includes('溝通') ? '軟體工程' : (weakComp[0].includes('創新') ? '創新' : '實務');
+                        actionItems.push(`💡 【UCAN 弱項補強】系統偵測到您的共通職能「${weakComp[0]}」(PR ${weakComp[1].pr}) 相對較弱。建議在下學期優先安排專案導向或實務課程來強化此能力。<a href="resource_library.html?search=${kw}" target="_blank" class="ml-1 inline-flex items-center gap-1 font-bold text-klein underline hover:text-blue-700">查閱推薦課程 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>`);
                     }
                 }
 
@@ -1420,44 +1353,34 @@
                 // Generate STAR Experience Entries
                 const expEntries = [];
                 if (hasIntern) {
-                    expEntries.push(`### 🏢 企業實習 / 產學合作 (Software Engineering Intern)
-- **情境 (Situation)**：參與軟體研發團隊進行核心業務模組開發與系統維護工作。
-- **任務 (Task)**：負責後端 API 開發、資料庫查詢優化以及自動化單元測試撰寫。
-- **行動 (Action)**：運用模組化架構實作 RESTful API，落實 Git Flow 分支管理與 Code Review 流程；主導資料庫 Index 建立與 SQL 查詢改寫。
-- **成果 (Result)**：有效降低後端查詢延遲約 **25%**，並成功協助交付上線 2 項新功能模組，提升日常資料批次處理穩定性。`);
+                    expEntries.push(`### 🏢 企業實習 / 產學合作 ｜ 軟體研發實習生 (2025.07 - 2026.01)
+- **職責與任務**：參與核心業務模組開發，負責後端 RESTful API 實作、資料庫查詢調校與單元測試。
+- **量化實績 (STAR)**：運用模組化架構降低後端查詢延遲約 **25%**，交付上線 2 項新功能模組，提升日常處理穩定性。`);
                 }
 
                 if (hasCompete) {
-                    expEntries.push(`### 🏆 專業競賽 (黑客松 / 全國專題競賽獲獎或入圍)
-- **情境 (Situation)**：參與全國大專校院資訊創新應用競賽或校外黑客松，限時 36 小時由零到一產出可落地之軟體原型 (MVP)。
-- **任務 (Task)**：負責核心商業邏輯實作、即時資料處理管線與雲端服務部署。
-- **行動 (Action)**：在極短時間內與跨領域組員完成需求收斂，快速搭建前端互動 UI 與後端串接，克服資料整合瓶頸。
-- **成果 (Result)**：在數十組參賽團隊中成功入圍決賽，充分展現高度抗壓性、快速學習未知技術與敏捷團隊協作能力。`);
+                    expEntries.push(`### 🏆 專業競賽成果 ｜ 全國資訊創新應用競賽 / 黑客松 (2025.10 - 2025.11)
+- **競賽情境**：限時 36 小時由零到一產出可落地軟體原型 (MVP)，負責核心邏輯實作與雲端服務部署。
+- **量化實績 (STAR)**：在數十組參賽隊伍中入圍決賽，展現高抗壓性、快速掌握未知技術與敏捷團隊協作能力。`);
                 }
 
                 if (hasProj) {
-                    const projTitle = dept === 'IM' ? '智能商務決策與營運管理系統' : dept === 'AI' ? '智慧深度學習瑕疵辨識與推論平台' : '高併發微服務分散式系統架構實作';
-                    expEntries.push(`### 🚀 專案實作 / 期末大型與畢業專題：${projTitle}
-- **情境 (Situation)**：針對產業實務需求，團隊 4 人進行為期一年的完整軟體工程生命週期開發。
-- **任務 (Task)**：擔任核心系統架構與後端開發負責人，主導系統分析、資料庫綱要設計與第三方 API 整合。
-- **行動 (Action)**：融合所修習之「${selectedCourses.slice(0, 3).join('」、「') || '專業學程課程'}」，以敏捷開發 (Scrum) 節奏每兩週交付 Sprint 成果，建立完善之 API 規格文件與測試覆蓋。
-- **成果 (Result)**：專案順利通過靜宜大學資訊學院專題成果展評審，榮獲院級前 **15%** 優等肯定，並將核心程式碼開源維護於 GitHub。`);
+                    const projTitle = dept === 'IM' ? '智能商務決策與營運管理系統' : dept === 'AI' ? '智慧深度學習瑕疵辨識與推論平台' : '微服務分散式架構與雲端應用系統';
+                    expEntries.push(`### 🚀 畢業專題 / 大型核心專案 ｜ ${projTitle} (2025.09 - 2026.06)
+- **職責與分工**：擔任核心系統架構與後端負責人，主導系統分析、資料庫綱要設計與 API 規格制定。
+- **量化實績 (STAR)**：每兩週交付 Sprint 成果，榮獲靜宜大學資訊學院專題成果展院級前 **15%** 優等肯定。`);
                 }
 
                 if (hasLeader) {
-                    expEntries.push(`### 👥 社團幹部 / 跨領域活動組織與專案協調 (Leadership & Coordination)
-- **情境 (Situation)**：擔任學生組織幹部或跨系專案活動籌備組長。
-- **任務 (Task)**：主導多場技術研習活動之策劃、跨部門資源協調與進度控管。
-- **行動 (Action)**：落實敏捷分工與任務追蹤，主動建立跨部門溝通機制並即時排除突發問題。
-- **成果 (Result)**：活動參與率提升超過 **40%**，展現優良之跨領域協作、問題解決與團隊領導能力。`);
+                    expEntries.push(`### 👥 組織幹部與專案協調 ｜ 資訊技術研習活動籌備組長 (2024.09 - 2025.06)
+- **職責與分工**：主導多場跨系技術研討會與工作坊之策劃、資源協調與時程控管。
+- **量化實績 (STAR)**：活動滿意度達 92%，參與人數增長 **40%**，展現優良跨領域協作、問題解決與溝通領導力。`);
                 }
 
                 if (expEntries.length === 0) {
-                    expEntries.push(`### 💻 課堂大型期末專題實作 (Course Project)
-- **情境 (Situation)**：修習「${selectedCourses.slice(0, 2).join('」與「') || '專業必修課程'}」期間之分組期末專案。
-- **任務 (Task)**：負責核心資料邏輯設計與前端互動介面開發。
-- **行動 (Action)**：將課堂所學之演算法與資料庫概念付諸實踐，完成前後端串接並撰寫技術說明文件。
-- **成果 (Result)**：順利完成期末專案口頭發表與系統 Live Demo，取得 90 分以上優異課程成績。`);
+                    expEntries.push(`### 💻 課堂大型期末專題 ｜ ${selectedCourses.slice(0, 2).join(' 與 ') || '專業核心課程'} 實作專題 (2025.09 - 2026.01)
+- **職責與分工**：負責核心資料邏輯設計、RESTful API 串接與前端互動介面開發。
+- **量化實績 (STAR)**：完成前後端串接並撰寫技術說明文件，順利完成 Live Demo 取得 90 分以上優異成績。`);
                 }
 
                 // Format UCAN Strengths
@@ -1470,54 +1393,70 @@
                     if (topComps.length > 0) ucanStrengthsText = topComps.join('、');
                 }
 
-                // Summary / Intro text
-                let introText = draftText;
-                if (!introText) {
-                    introText = `我是靜宜大學${deptFullName}${grade}學生，立志朝向【${targetJob}】領域深耕發展。在學期間專注修習【${bestProgName}】並結合資訊學院實務課群跨域實作，已建立紮實的系統分析、程式設計與資料庫架構能力。UCAN 職業核心路徑對接為「${ucan ? ucan.profPathway : '資訊科技研發'}」，具備出色的學習韌性與工程思維，期許能將所學專業轉化為企業商業價值的驅動力。`;
+                // Construct full A4 Markdown Resume strictly aligned with "五元三要" (一信、二資、三歷、四專、五傳)
+                const gradTimeline = (grade === '大四' || grade === '碩士') ? '2023.09 入學・預計 2027.06 畢業' : '在學中（修讀學士學位）';
+                
+                // 一信：求職自薦信 (Cover Letter)
+                let coverLetterContent = draftText;
+                if (!coverLetterContent) {
+                    coverLetterContent = `我是 **${studentName}**，就讀靜宜大學${deptFullName} ${grade}學生，主要技術方向為 ${techSkillsList.slice(0, 3).join('、') || '軟體工程與資料庫系統'}。在校期間專攻【${bestProgName}】，並在大型專題中以核心業務邏輯開發、後端 RESTful API 實作與資料庫查詢優化為主要分工，曾與跨領域組員協同完成資料庫優化與前後端串接。熟悉 Git 版本控制與敏捷開發流程，希望透過本次應徵【${targetJob}】職位，將所學之工程實力投入專案開發中，並持續累積實務經驗，期待能與貴公司更進一步交流！`;
                 }
 
-                // Construct full A4 Markdown Resume
-                const resumeMarkdown = `# ${studentName} (Candidate for ${targetJob})
+                const resumeMarkdown = `# ${studentName}
+### 🎯 應徵職務：${targetJob}
 
-**靜宜大學 (Providence University) 資訊學院 ${deptFullName} ｜ ${grade}在學**  
-📍 台灣 台中市 ｜ 📧 聯絡信箱：student@pu.edu.tw ｜ 🌐 GitHub / Portfolio：github.com/pu-student
-
----
-
-## 📌 個人簡歷與求職目標 (Career Summary & Objective)
-${introText}
+**二資 ｜ 個人基本資料 (Personal Profile)**  
+- **教育背景**：靜宜大學 (Providence University) 資訊學院 ${deptFullName} ｜ ${grade}在學（${gradTimeline}）  
+- **聯絡資訊**：0912-345-678 ｜ student@pu.edu.tw ｜ 台灣 台中市沙鹿區  
+- **專業連結**：[GitHub 程式碼倉庫](https://github.com/pu-student) ｜ [線上作品集展示](https://pu-student.dev)
 
 ---
 
-## 🎓 學歷與學程認證 (Education & Program Certification)
-**靜宜大學 (Providence University)** ｜ 資訊學院 ${deptFullName} (${grade}在學)
-- **專業學程認證**：【${bestProgName}】— 已修畢 **${maxProgCredits}** / ${progGoalCredits} 學分（進度 ${Math.round((maxProgCredits/progGoalCredits)*100)}%）
-- **實務課群認證**：【資訊學院應用實務課群】— 已修畢 **${pracCredits}** / ${pracGoalCredits} 學分
-- **UCAN 職涯對接**：專業路徑【${ucan ? ucan.profPathway : '軟體開發'}】(PR ${ucan ? ucan.profPr : 75}) ｜ Holland 代碼【${ucan ? (ucan.hollandCode || ucan.primaryHolland) : 'I'}】
+## 一信 ｜ 求職自薦信 (Cover Letter)
+${coverLetterContent}
 
 ---
 
-## 🛠️ 專業核心能力清單 (Core Competencies & Technical Arsenal)
-- **核心程式語言與技術**：${techSkillsList.join('、')}
-- **系統架構與工程方法**：${systemArchitectures.join('、')}
-- **開發工具與部署環境**：${devTools.join('、')}
-- **UCAN 共通優勢職能**：${ucanStrengthsText}
+## 四專 ｜ 專業專長與證照 (Skills & Credentials)
+- **核心程式開發 (Core Programming)**：
+  - 具備物件導向 (OOP) 與模組化思維，熟練使用 **${techSkillsList.slice(0, 2).join('、') || 'Python / Java'}** 開發系統功能。
+  - 能參考架構規格撰寫清晰、可維護之業務邏輯，並進行輸入防護與資料格式驗證。
+- **資料庫與系統架構 (Database & Architecture)**：
+  - 熟悉 SQL 語法與關聯式資料庫設計（PostgreSQL / MySQL），能進行 ER Model 綱要規劃、Index 索引建立與 CRUD 查詢調校。
+  - 理解 ${systemArchitectures.join('、') || '軟體工程與模組化架構'}，具備系統分析與模組分工經驗。
+- **測試與協作工具 (Testing & Collaboration)**：
+  - 使用 Postman 進行 RESTful API 回應檢查、狀態碼測試與資料格式驗證。
+  - 熟練運用 **Git / GitHub** 進行分支管理 (Branching)、提交規範 (Commit message) 與團隊 Code Review 協同開發。
+- **證照與學程認證 (Certifications & Accreditations)**：
+  - 靜宜大學校級【${bestProgName}】專業學程認證（已修畢 ${maxProgCredits} / ${progGoalCredits} 學分）
+  - 靜宜大學資訊學院【跨領域應用實務課群】認證（已修畢 ${pracCredits} / ${pracGoalCredits} 學分）
+  - 教育部 UCAN 專業職能【${ucan ? ucan.profPathway : '資訊科技'}】深度對標（PR ${ucan ? ucan.profPr : 75}）
 
 ---
 
-## 💼 專案與課外實戰經歷 (Key Projects & Practical Experience - STAR Format)
+## 三歷 ｜ 專案實作與經歷 (Project Experience - STAR Format)
 ${expEntries.join('\n\n')}
+
+<div class="html2pdf__page-break"></div>
+
+## 五傳 ｜ 完整自傳 (Autobiography - 我是誰・我會什麼・我想做什麼)
+### 1. 【我是誰】個人背景與特質
+我是靜宜大學${deptFullName}的${grade}學生。求學期間秉持探究底層邏輯的精神，在資訊核心課程與專業學程中穩紮穩打。在教育部 UCAN 共通職能檢測中，展現出【${ucanStrengthsText}】等突出優勢特質，具備高度自主學習熱忱、邏輯思維清晰，能在面對未知技術時迅速拆解問題並找到解法。
+
+### 2. 【我會什麼】核心專長與實戰成果
+在校期間深入修習【${bestProgName}】，並在「${selectedCourses.slice(0, 3).join('」、「') || '專業必修課程'}」等實務課程中落實軟體工程生命週期。我具備獨立設計 RESTful API、規劃資料庫綱要與排除系統 Bug 的能力；在專案協同上，我重視跨組溝通與責任邊界，能用清晰易懂的語言與團隊對齊規格，並以 Git 確保程式碼交付品質。
+
+### 3. 【我想做什麼】求職動機與職缺連結
+立志投身於【${targetJob}】領域。我深知產業需要的是不僅能動手寫 code，更能理解業務痛點、穩定交付高品質系統的工程人才。貴公司的研發方向與文化非常吸引我，我期望能運用自身紮實的技術底子與團隊協作成績，迅速融入開發節奏、為專案創造實質產值，並在產業前輩的指導下持續精進，成為團隊不可或缺的堅實戰力。
 
 ---
 
 ## 📚 重點修課紀錄 (Academic Coursework Milestones)
-- **專業核心修課 (${selectedCourses.length} 門)**：
-  ${selectedCourses.map(c => `\`${c}\``).join('  ') || '尚未勾選課程'}
-- **跨域實務課群**：
-  ${matchedPracClusters.map(cl => `*${cl.name}* (${cl.courses.join(', ')})`).join('； ') || '智慧雲端應用、大數據商務應用'}
+- **專業核心修課 (${selectedCourses.length} 門)**：${selectedCourses.map(c => `\`${c}\``).join('  ') || '尚未勾選課程'}
+- **跨域實務課群**：${matchedPracClusters.map(cl => `*${cl.name}* (${cl.courses.join(', ')})`).join('； ') || '智慧雲端應用、大數據商務應用'}
 
 ---
-*(本履歷由 CareerDNA 靜宜大學在地職涯導航系統根據三軌學制與 UCAN 測驗數據規則化排版生成)*
+*(本履歷格式嚴格依據企業人資「五元三要（一信、二資、三歷、四專、五傳）」黃金規格，結合 UCAN 測驗數據與三軌學制自動生成)*
 `;
 
                 return {
@@ -1534,13 +1473,7 @@ ${expEntries.join('\n\n')}
                 document.getElementById('ai-result-panel').classList.remove('hidden');
                 const aiContent = document.getElementById('ai-content');
                 
-                this.animateScore('score-quant', result.quantifiability);
-                document.getElementById('bar-quant').style.width = `${result.quantifiability}%`;
-                this.animateScore('score-comp', result.completeness);
-                document.getElementById('bar-comp').style.width = `${result.completeness}%`;
-                this.animateScore('score-kw', result.keywordRelevance);
-                document.getElementById('bar-kw').style.width = `${result.keywordRelevance}%`;
-
+                                                                                                
                 let html = `<div class="mb-6 p-4 border border-klein/10 bg-klein/[0.02]">${result.analysis}</div>`;
                 
                 if (result.actionItems && result.actionItems.length > 0) {
@@ -1681,34 +1614,37 @@ ${expEntries.join('\n\n')}
                     return;
                 }
 
-                // Create a styled off-screen printable container attached to the document body
-                // IMPORTANT: html2canvas requires the element to be in the DOM with measurable width and height!
+                // 1. Temporarily save scroll position and scroll to (0,0) to prevent html2canvas offset bug
+                const scrollY = window.scrollY;
+                window.scrollTo(0, 0);
+
+                // 2. Create dedicated temporary print container attached at top: 0, left: 0
                 const printContainer = document.createElement('div');
                 printContainer.id = 'print-a4-temp-container';
-                printContainer.style.position = 'fixed';
-                printContainer.style.left = '-9999px';
+                printContainer.style.position = 'absolute';
                 printContainer.style.top = '0';
-                printContainer.style.width = '750px';
+                printContainer.style.left = '0';
+                printContainer.style.width = '794px'; // Standard A4 width in px at 96 DPI
                 printContainer.style.backgroundColor = '#ffffff';
-                printContainer.style.color = '#1e293b';
-                printContainer.style.padding = '36px 40px';
-                printContainer.style.fontFamily = "'Noto Sans TC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif";
-                printContainer.style.fontSize = '13px';
-                printContainer.style.lineHeight = '1.65';
-                printContainer.style.zIndex = '-9999';
+                printContainer.style.zIndex = '999999';
+                printContainer.style.padding = '24px 30px';
+                printContainer.style.boxSizing = 'border-box';
 
-                // Add print-specific styles for A4 export to ensure beautiful typesetting
                 printContainer.innerHTML = `
                     <style>
-                        #print-a4-temp-container h1 { font-size: 22px; font-weight: 800; color: #002fa7; border-bottom: 2px solid #002fa7; padding-bottom: 6px; margin: 0 0 10px 0; }
-                        #print-a4-temp-container h2 { font-size: 15px; font-weight: 700; color: #002fa7; border-left: 3px solid #002fa7; padding-left: 8px; margin: 16px 0 8px 0; }
-                        #print-a4-temp-container h3 { font-size: 13px; font-weight: 700; color: #1e3a8a; margin: 10px 0 4px 0; }
-                        #print-a4-temp-container p { font-size: 12px; margin: 0 0 6px 0; color: #1e293b; }
-                        #print-a4-temp-container ul { list-style-type: disc; margin-left: 18px; margin-bottom: 8px; font-size: 12px; color: #1e293b; }
+                        #print-a4-temp-container * { box-sizing: border-box; }
+                        #print-a4-temp-container h1 { font-size: 24px; font-weight: 900; color: #0f172a; text-align: center; margin: 0 0 6px 0; letter-spacing: 1px; }
+                        #print-a4-temp-container h3:first-of-type, #print-a4-temp-container h1 + h3 { text-align: center; font-size: 13px; font-weight: 700; color: #002fa7; background: #f0f4ff; border: 1px solid #c7d2fe; max-width: 520px; margin: 0 auto 12px auto; padding: 4px 12px; border-radius: 4px; }
+                        #print-a4-temp-container h2 { font-size: 13.5px; font-weight: 800; color: #002fa7; border-bottom: 2px solid #002fa7; padding-bottom: 3px; margin: 12px 0 6px 0; letter-spacing: 0.5px; page-break-after: avoid; }
+                        #print-a4-temp-container h3 { font-size: 12px; font-weight: 700; color: #0f172a; margin: 8px 0 3px 0; }
+                        #print-a4-temp-container p { font-size: 11px; margin: 0 0 5px 0; line-height: 1.5; color: #334155; text-align: justify; }
+                        #print-a4-temp-container ul { list-style-type: disc; margin-left: 16px; margin-bottom: 6px; font-size: 11px; line-height: 1.5; color: #334155; }
                         #print-a4-temp-container li { margin-bottom: 3px; }
-                        #print-a4-temp-container strong { color: #002fa7; font-weight: 700; }
-                        #print-a4-temp-container code { background: #f1f5f9; padding: 2px 4px; border-radius: 3px; font-family: monospace; font-size: 11px; }
-                        #print-a4-temp-container hr { border: none; border-top: 1px solid #cbd5e1; margin: 12px 0; }
+                        #print-a4-temp-container strong { color: #0f172a; font-weight: 700; }
+                        #print-a4-temp-container a { color: #002fa7; text-decoration: underline; font-weight: 600; }
+                        #print-a4-temp-container code { background: #f8fafc; padding: 1px 4px; border-radius: 3px; font-family: 'Consolas', monospace; font-size: 10px; color: #002fa7; border: 1px solid #e2e8f0; }
+                        #print-a4-temp-container hr { border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0; }
+                        .html2pdf__page-break { page-break-before: always !important; break-before: page !important; margin: 0 !important; padding: 0 !important; display: block; height: 1px; }
                     </style>
                     ${element.innerHTML}
                 `;
@@ -1716,21 +1652,58 @@ ${expEntries.join('\n\n')}
                 document.body.appendChild(printContainer);
 
                 const opt = {
-                    margin:       [10, 10, 10, 10],
+                    margin:       [8, 8, 8, 8],
                     filename:     'CareerDNA_A4_Resume.pdf',
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, logging: false },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    html2canvas:  { 
+                        scale: 2, 
+                        useCORS: true, 
+                        logging: false,
+                        scrollY: 0,
+                        scrollX: 0,
+                        windowWidth: 794
+                    },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak:    { mode: ['css', 'legacy'] }
                 };
-                
+
                 html2pdf().set(opt).from(printContainer).save().then(() => {
                     if (document.body.contains(printContainer)) {
                         document.body.removeChild(printContainer);
                     }
+                    window.scrollTo(0, scrollY);
+                    
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-check"></i> 匯出成功';
+                        btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                        btn.classList.add('!bg-green-600', '!border-green-600');
+                        setTimeout(() => {
+                            btn.innerHTML = '<i class="fa-solid fa-download"></i> 匯出 PDF';
+                            btn.classList.remove('!bg-green-600', '!border-green-600');
+                        }, 3000);
+                    }
+                    
+                    // Show Toast
+                    const toast = document.createElement('div');
+                    toast.className = 'bg-green-600 rounded-lg text-white px-5 py-3 shadow-2xl flex items-center gap-3 transition-all duration-500 pointer-events-auto transform translate-y-0 opacity-100 font-body text-sm font-medium';
+                    toast.innerHTML = '<i class="fa-solid fa-circle-check text-lg"></i> 已成功匯出 2 頁 A4 企業標準履歷';
+                    document.getElementById('toast-container').appendChild(toast);
+                    setTimeout(() => {
+                        toast.classList.add('opacity-0', 'translate-y-2');
+                        setTimeout(() => toast.remove(), 500);
+                    }, 4000);
+                    
                 }).catch(err => {
                     console.error('PDF export error:', err);
                     if (document.body.contains(printContainer)) {
                         document.body.removeChild(printContainer);
+                    }
+                    window.scrollTo(0, scrollY);
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-download"></i> 匯出 PDF';
+                        btn.classList.remove('opacity-70', 'cursor-not-allowed');
                     }
                     alert('PDF 匯出失敗：' + (err.message || err));
                 });
@@ -1743,5 +1716,9 @@ ${expEntries.join('\n\n')}
     </script>
     <!-- CareerDNA AI Chatbot Assistant Widget -->
     <script src="static/chat-widget.js"></script>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    
 </body>
 </html>

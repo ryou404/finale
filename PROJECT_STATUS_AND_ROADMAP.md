@@ -1,4 +1,4 @@
-# CareerDNA 專案現況與未來開發路線圖 (Project Status & Roadmap)
+﻿# CareerDNA 專案現況與未來開發路線圖 (Project Status & Roadmap)
 
 **最後更新時間**：2026-09-29  
 **專案名稱**：CareerDNA - 靜宜大學基於 UCAN 數據驅動之多智能體職涯導航與 RAG 知識庫系統  

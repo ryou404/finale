@@ -1,4 +1,4 @@
-# CareerDNA - 系統全面升級與功能演進手冊 (System Upgrade & Changelog)
+﻿# CareerDNA - 系統全面升級與功能演進手冊 (System Upgrade & Changelog)
 
 **版本 (Version)**: 2.2.0  
 **更新日期 (Date)**: 2026/08/29  
@@ -139,7 +139,7 @@
 - 自動將 Markdown Table 轉換為具備橫向滾動容器 (`.cdna-table-wrapper`) 之標準 HTML 表格，徹底避免欄位過多造成版面破裂。
 
 ### 7.5. 專屬知識庫與繁體中文預設 (`/api/ai/chat`)
-- 設定 AI 為「CareerDNA AI 智能助手」，全面採用繁體中文（繁體中文），專注於平台功能指引、科系適配與履歷技巧，去除專題與論文等字詞。
+- 設定 AI 為「CareerDNA AI 智能助手」，全面採用繁體中文（繁體中文），專注於平台功能指引、系所推薦與履歷技巧，去除專題與論文等字詞。
 
 ---
 
@@ -173,7 +173,7 @@
 | `DELETE`| `/api/users/:uid/resume/:resumeId` | 刪除典藏庫中特定一筆歷史履歷紀錄 |
 | `POST` | `/api/users/:uid/brand` | 儲存 Holland RIASEC 品牌測驗結果 |
 | `GET` | `/api/users/:uid/brand` | 取得最新 Holland RIASEC 測驗結果 |
-| `POST` | `/api/users/:uid/lab` | 儲存科系適配與實驗室諮詢推薦結果 |
+| `POST` | `/api/users/:uid/lab` | 儲存系所推薦與實驗室諮詢推薦結果 |
 | `POST` | `/api/ai/chat` | 全局 AI 智能助手問答對話 (DeepSeek) |
 | `GET` | `/api/professors` | 取得靜宜大學資訊各系所教授與實驗室列表 |
 | `GET` | `/api/r2/status` | 檢測 Cloudflare R2 雲端儲存槽連線健康狀態 |

@@ -401,6 +401,10 @@ async function seedCategories(force = false) {
  * Master Seed Function
  */
 async function runAllSeeds(options = {}) {
+  if (mongoose.connection.readyState !== 1) {
+    console.log('[Seeder] Skipped: MongoDB is not connected.');
+    return { status: 'skipped', message: 'MongoDB not connected' };
+  }
   try {
     await seedAdminUser(options.admin);
     await seedCategories(options.forceCategories);

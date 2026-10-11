@@ -266,7 +266,7 @@ function deterministicResumeBuilder(profileResult, payload) {
   const tools = ["Git / GitHub", "Postman", "MySQL Workbench", "UML System Modeling", "VS Code"];
 
   const deptStr = String(persona.department || "");
-  const summary = `具備紮實 ${deptStr === "CS" ? "資訊工程" : "資訊管理"} 與軟體開發背景之 ${targetRole}。精通關聯式資料庫設計與前後端 Web 系統開發，具備 Micro-STAR 與 Google XYZ 實作思維。擁有獨立構建系統與團隊敏捷協同之實戰經驗。`;
+  const summary = `${deptStr === "CS" ? "資工系" : "資管系"}背景，目標是成為 ${targetRole}。熟悉關聯式資料庫與前後端開發，能獨立架設網站，也有跑過敏捷開發的團隊合作經驗。`;
 
   const gradeStr = String(persona.grade || "大三");
   const emailPrefix = String(studentName).toLowerCase().replace(/\s+/g, '_');
@@ -407,15 +407,15 @@ function deterministicATSAuditor(resumeResult, profileResult, targetRole = "全�
   else if (overallScore >= 70) grade = "B";
   else grade = "C";
 
-  const quantifiabilityBreakdown = `經歷中精準融入量化數據（如 200+ 筆商品、30% 延遲縮減、4 人小組協同），充分符合 Google XYZ 數據說服力原則。`;
-  const completenessBreakdown = `每條專案經歷均具備清晰的 Situation、Task、Action、Result 四段式 Micro-STAR 結構，責任邊界明確。`;
-  const keywordRelevanceBreakdown = `具備基礎 ${detectedTechStack.slice(0, 4).join(" / ")} 等核心技術，但缺乏 ${missingTechStack.slice(0, 3).join(" / ")} 等企業級進階關鍵字。`;
+  const quantifiabilityBreakdown = `專案經驗裡有寫出具體的量化數據（例如 200+ 筆商品、減少 30% 延遲、4 人團隊），符合 Google XYZ 的寫法。`;
+  const completenessBreakdown = `每一項專案都有用 Micro-STAR 結構寫出 Situation、Task、Action 和 Result，也清楚交代了你負責的部分。`;
+  const keywordRelevanceBreakdown = `已經具備 ${detectedTechStack.slice(0, 4).join(" / ")} 這些核心技術，但還缺少 ${missingTechStack.slice(0, 3).join(" / ")} 這類業界實戰常看的技能。`;
 
-  const auditSummary = `履歷在 Micro-STAR 結構完整度 (${completeness}分) 與 Google XYZ 量化性 (${quantifiability}分) 表現優異，整體 ATS 健檢獲得 ${overallScore} 分 (${grade})。建議補齊缺失的企業級技術堆疊 (${missingTechStack.slice(0, 3).join(", ")}) 以突破大廠初篩門檻。`;
+  const auditSummary = `這份履歷的 Micro-STAR 結構 (${completeness}分) 和 Google XYZ 量化指標 (${quantifiability}分) 都很完整，整體 ATS 評分為 ${overallScore} 分 (${grade})。如果能補上 ${missingTechStack.slice(0, 3).join(", ")} 這些業界常用的技術，會更容易通過第一關篩選。`;
 
   const atsFlaggedWarnings = [
-    `缺少容器化與雲端部署標籤 (${missingTechStack.filter(s => s.includes("Docker") || s.includes("Cloud")).join(" / ") || "Docker / GCP"})，可能在現代 DevOps 篩選中被降權。`,
-    `缺少自動化單元測試指標 (${missingTechStack.filter(s => s.includes("Testing") || s.includes("CI/CD")).join(" / ") || "Jest / CI/CD"})，建議於專案補上測試覆蓋率實績。`
+    `履歷裡沒看到容器化或雲端部署的經驗 (${missingTechStack.filter(s => s.includes("Docker") || s.includes("Cloud")).join(" / ") || "Docker / GCP"})，現在很多公司會看重這點，容易在初步篩選時吃虧。`,
+    `少了自動化單元測試的經驗 (${missingTechStack.filter(s => s.includes("Testing") || s.includes("CI/CD")).join(" / ") || "Jest / CI/CD"})，建議可以在專案裡加上測試覆蓋率的數據。`
   ];
 
   return {

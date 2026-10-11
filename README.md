@@ -1,4 +1,4 @@
-# CareerDNA Engine - AI 履歷健檢與職涯導航系統
+﻿# CareerDNA Engine - AI 履歷健檢與職涯導航系統
 
 ![CareerDNA](https://img.shields.io/badge/CareerDNA-v2026-002fa7) ![Node.js](https://img.shields.io/badge/Node.js-18+-green) ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
 

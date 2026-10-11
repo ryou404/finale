@@ -161,22 +161,22 @@
         <!-- Global Cyber-Brutalist Navbar -->
         <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
             <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
-                <a href="index.html" class="flex items-center gap-4 group">
-                    <div class="w-10 h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-xl group-hover:bg-klein group-hover:text-white transition-all">
-                        <i class="fa-solid fa-bolt"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-syne font-extrabold text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
-                        <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-klein/40 -mt-1">BRAND_POSITIONING // v2026</span>
-                    </div>
-                </a>
+                <a href="index.html" class="flex items-center gap-2 sm:gap-4 group shrink-0">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-base sm:text-xl group-hover:bg-klein group-hover:text-white transition-all">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-syne font-extrabold text-lg sm:text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    <span class="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-klein/40 -mt-0.5 sm:-mt-1 hidden sm:block">BRAND_POSITIONING // v2026</span>
+                </div>
+            </a>
                 
                 <div class="hidden md:flex items-center gap-8">
-                    <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
-                    <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
                     <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">品牌測驗</a>
-                    <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">科系適配</a>
-                    <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">學習資源</a>
+                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">系所推薦</a>
+                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">課程資料庫</a>
+                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -199,12 +199,7 @@
 
                 <div class="relative z-10 w-full flex flex-col gap-6 md:gap-8 pt-4">
                     
-                    <div class="reveal-up">
-                        <span class="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-[0.3em] uppercase text-klein/60 border border-klein/20 px-3 py-1 bg-white">
-                            <span class="w-2 h-2 bg-klein"></span>
-                            SYS // BRAND_POSITIONING_PROTOCOL
-                        </span>
-                    </div>
+                    
 
                     <h1 class="font-syne font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-[5.8rem] leading-[0.95] tracking-tight uppercase reveal-up reveal-delay-1 flex flex-col gap-2">
                         <span class="text-klein block">探索你的</span>
@@ -224,9 +219,9 @@
                         </button>
                         
                         <!-- UCAN Modal Trigger -->
-                        <button id="btn-import-ucan" onclick="window.app.promptUCAN()" class="hover-spring border border-klein/20 hover:border-klein bg-transparent hover:bg-klein/5 text-klein font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 transition-all rounded-none">
-                            <i class="fa-solid fa-file-import text-klein/50 group-hover:text-klein transition-colors duration-400"></i>
-                            匯入 UCAN 測驗
+                        <button id="btn-import-ucan" onclick="window.app.start(); setTimeout(() => window.app.switchImportMode('manual'), 100);" class="hover-spring border border-klein/20 hover:border-klein bg-transparent hover:bg-klein/5 text-klein font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 transition-all rounded-none">
+                            <i class="fa-solid fa-pen-to-square text-klein/50 group-hover:text-klein transition-colors duration-400"></i>
+                            手動輸入資料
                         </button>
 
                         <!-- Authenticated History Trigger (Unhidden via JS) -->
@@ -247,7 +242,7 @@
         <!-- Global Footer -->
         <footer class="border-t border-klein/10 p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-white max-w-[1400px] mx-auto w-full">
             <div class="font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
-                © 2026 Providence University // CareerDNA Engine
+                
             </div>
             <div class="flex items-center gap-6 font-mono text-klein/40 text-xs tracking-[0.3em] uppercase">
                 <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> STATUS: ONLINE</span>
@@ -445,7 +440,7 @@
             
             <!-- 1. Hero Brand Canvas Panel -->
             <div class="lg:col-span-12 p-8 md:p-12 bg-white border border-klein/10 crosshair-corner relative overflow-hidden">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-klein/10 pb-6 mb-8 gap-2">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-klein/10 pb-6 mb-8 gap-2">
                     <div>
                         <span class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 uppercase">ASSESSMENT PROTOCOL // CAREER_DNA_V2</span>
                         <h2 class="font-heading font-black text-3xl md:text-4xl uppercase tracking-tight text-klein mt-1">My Brand Canvas 品牌定位報告</h2>
@@ -744,44 +739,44 @@
                 'R': { 
                     name: 'GitHub / 技術部落格', 
                     role: '技術實踐者 (Builder)',
-                    strategy: '「Show, Don\'t Tell」。你的代碼就是最好的履歷。專注於開源貢獻與技術難點的解決紀錄，讓獵頭直接看到你的實力。',
-                    bio: '👨‍💻 [語言] Developer | 熱愛造輪子與解決 [特定領域] 問題 | 正在研究 [新技術]',
-                    content: ['分享一個你最近解決的 Bug 及其底層原理', '重構一段舊代碼的前後對比 (Before/After)', '參與開源專案的 PR 紀錄或 Side Project 開發日誌']
+                    strategy: '「Show, Don\'t Tell」代碼實證。**核心目標：** 透過公開 Commit 與清楚的 README，建立技術可信度並吸引軟體獵頭搜尋。**排程建議：** 保持每週至少 2 次有意義的 Commit，並每月發表 1 篇技術 Debug 複盤。',
+                    bio: '👨‍💻 後端 / 系統開發者 ｜ 靜宜大學資訊系 ｜ 專注高併發與資料庫優化 ｜ 開發日誌與專案連結：[附上個人 GitHub Repo 連結]',
+                    content: ['【Debug 複盤】：記錄一次實際解決的 Memory Leak 或 SQL 慢查詢問題，寫出排查步驟與解決對比 (Before/After)', '【開源貢獻與 PR】：記錄參與開源專案或課堂大型專題的架構重構紀錄，展示代碼規範與單元測試覆蓋率', '【Side Project 開發日誌】：分享自製工具/API 的實作動機、技術選型原因與雲端部署流程']
                 },
                 'I': { 
                     name: 'Medium / 技術專欄', 
                     role: '知識領袖 (Thought Leader)',
-                    strategy: '建立「領域權威感」。將複雜的技術或趨勢拆解為易懂的分析文章，展現深度思考能力，吸引尋找高階人才的企業。',
-                    bio: '🔍 [領域] Researcher | 擅長數據分析與趨勢洞察 | 寫作是為了釐清思考',
-                    content: ['針對某個新技術趨勢的深度分析報告', '學習某個硬核知識的筆記與心智圖', '比較不同解決方案優缺點的評測文']
+                    strategy: '建立「深度技術思考權威」。**核心目標：** 將複雜算法或資料分析流程轉化為結構化文章，建立技術專業影響力。**排程建議：** 每隔兩週發布 1 篇深度技術分析，並同步分享至 LinkedIn 或 iThome。',
+                    bio: '🔍 資料分析與演算法探索者 ｜ 擅長複雜問題拆解與模型評估 ｜ 閱讀我的技術筆記：[附上 Medium / 專欄連結]',
+                    content: ['【演算法/模型實測】：評測 2 種不同模型或資料庫解決方案的效能對比，附上實測數據圖表與分析結論', '【硬核學習筆記】：拆解一個複雜技術（如 Docker 底層原理、分散式鎖機制），附結構化心智圖', '【產業數據洞察報告】：以公開資料集（如政府開放資料）進行探索性資料分析 (EDA) 並提出商業建議']
                 },
                 'A': { 
                     name: 'Behance / Instagram', 
                     role: '風格創作者 (Creator)',
-                    strategy: '「視覺化你的思考」。不只是放完成圖，更要展示草圖、發想過程與設計理念，讓業主看到你的美感與解決問題的創意。',
-                    bio: '🎨 Designer & Creator | 用視覺說故事 | [風格關鍵字] 愛好者',
-                    content: ['從草稿到完稿的縮時影片 (Reels)', '拆解一個設計作品背後的設計心理學', '分享你的靈感來源與素材庫']
+                    strategy: '視覺化成果與流程展現。**核心目標：** 建立個人視覺品牌公信力，累積作品知名度與實習/接案機會。**排程建議：** 每週 1 篇多圖「介面專案拆解 (Carousel)」+ 1 支「Figma 縮時 (Reels)」，自介放作品集導流連結。',
+                    bio: '🎨 UI/UX & 前端設計師 ｜ 靜宜資院 ｜ 專注使用者體驗與直覺互動 ｜ 最新作品集與 Prototype：[附上 Linktree / Behance 連結]',
+                    content: ['【30 秒縮時 Reels】：記錄從紙本 Wireframe 草稿到 Figma 高保真原型的設計演化，搭配 #UIUX #DesignProcess 標籤', '【體驗痛點重構圖文】：挑選常用校園或商業產品，發表「我如何改善它 3 個操作痛點」的改版前後對照', '【設計規範與元件庫】：公開個人的色彩計畫、Typography 字級規範與可複用元件設計，展現模組化能力']
                 },
                 'S': { 
-                    name: 'LinkedIn / Podcast', 
+                    name: 'LinkedIn / 技術社群', 
                     role: '社群連結者 (Connector)',
-                    strategy: '「人脈即資產」。分享團隊合作經驗、訪談業界前輩，或舉辦讀書會。展現你的軟實力與影響力，這對 PM 或業務職位極有幫助。',
-                    bio: '🤝 Community Builder | 熱衷於 [領域] 交流與分享 | [社群名稱] 發起人',
-                    content: ['分享一次團隊衝突的解決經驗與反思', '訪談一位業界前輩的心得筆記', '舉辦線下/線上活動的幕後花絮']
+                    strategy: '建立跨領域人脈與軟實力影響力。**核心目標：** 與 50+ 產業前輩建立連結，展現溝通協調與團隊合作成果。**排程建議：** 每週發表 1 篇活動/專題反思，每月主動聯繫 2 位學長姐或業界前輩請益。',
+                    bio: '🤝 資訊人・社群共學推動者 ｜ 擅長跨部門溝通與敏捷專案協同 ｜ 正在尋找技術實習機會 ｜ 歡迎交流：[附上個人 LinkedIn 連結]',
+                    content: ['【跨組協作經驗復盤】：分享專題或黑客松中如何協調團隊意見分歧、成功推動專案按時交付的心得', '【前輩訪談/研討會筆記】：整理參加技術研討會（如 COSCUP、SITCON）或請益學長姐後的 3 點職涯精華', '【讀書會/共學幕後花絮】：記錄發起小組讀書會或課後技術討論的過程，展現正向團隊影響力']
                 },
                 'E': { 
                     name: 'LinkedIn / 個人官網', 
                     role: '商業推動者 (Driver)',
-                    strategy: '「打造專業形象」。關注產業動態，發表對商業模式的看法。展現你的領導潛力與商業嗅覺，吸引管理職或儲備幹部計畫的目光。',
-                    bio: '🚀 Aspiring PM/Entrepreneur | 專注於 [產業] 創新與成長 | 解決問題的人',
-                    content: ['分析一個你喜歡的產品的商業模式', '分享你設定目標並達成過程的復盤 (Review)', '對產業新聞的個人觀點與預測']
+                    strategy: '塑造商業價值與專案領導形象。**核心目標：** 吸引獵頭、PM 職缺與儲備幹部計畫目光，展現商業嗅覺與目標達成力。**排程建議：** 每兩週發表 1 篇產品分析或專案里程碑回顧。',
+                    bio: '🚀 專案管理 (PM) & 商業分析 ｜ 擅長產品需求拆解與團隊推進 ｜ 查看我的專案成果：[附上個人官網 / Notion 總覽連結]',
+                    content: ['【商業模式分析】：拆解一項知名科技產品的商業變現模式與使用者留存策略', '【專案復盤 (Post-mortem)】：分享身為組長如何帶領 4 人小組在時限內達成 MVP 開發的時程管理工具與心得', '【科技趨勢觀點】：對當週關鍵科技新聞（如 AI 落地應用）提出個人觀察與未來預測']
                 },
                 'C': { 
-                    name: 'Notion / Gumroad', 
+                    name: 'Notion / 專業作品庫', 
                     role: '流程優化師 (Optimizer)',
-                    strategy: '「結構化輸出」。分享你的筆記模板、SOP 或效率工具。展現條理分明與高執行力，這是所有高效率團隊都夢寐以求的特質。',
-                    bio: '⚡ Efficiency Enthusiast | 擅長流程優化與知識管理 | [工具] 重度使用者',
-                    content: ['分享你的專案管理模板或讀書筆記模板', '如何優化某個工作流程的 Before/After', '整理一份新手入門 [領域] 的資源包']
+                    strategy: '展現流程優化、品質紀律與條理化輸出。**核心目標：** 展現 SOP 建立與測試規範能力，吸引重視交付品質的 QA、資料庫或 DevOps 團隊。**排程建議：** 每月整理 1 份高品質模板或流程優化指南。',
+                    bio: '⚡ 流程優化與 QA 品質專員 ｜ 重視規範、自動化與交付品質 ｜ 我的知識庫與流程模板：[附上 Notion 公開頁面連結]',
+                    content: ['【工作流程優化 Before/After】：展示如何將原本混亂的專案檔案或測試流程，改造成清晰的標準化 SOP', '【測試案例 (Test Case) 範本】：分享針對某電商購物車或登入模組撰寫的完整測試情境與邊界條件檢查表', '【新手友善入門工具包】：整理一份資訊領域某技術（如 SQL 指令、Git 常用指令）的高效率自查清單 (Cheat Sheet)']
                 }
             },
             actionCards: {
@@ -1574,15 +1569,26 @@
         const roleInfo = DATA.roles[primaryHolland] || DATA.roles['R'];
         const planEl = document.getElementById('action-plan-timeline');
         if (planEl) {
-            planEl.innerHTML = roleInfo.plan.map(p => `
-                <div class="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
-                    <div class="w-full sm:w-28 font-mono font-bold text-klein/60 text-xs mt-1 shrink-0">${p.d}</div>
-                    <div>
+            planEl.innerHTML = roleInfo.plan.map((p, idx) => {
+                const storageKey = `careerDNA-brand-plan-${primaryHolland}-${idx}`;
+                const isChecked = localStorage.getItem(storageKey) === 'true';
+                return `
+                <div class="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6 group">
+                    <div class="w-full sm:w-28 font-mono font-bold text-klein/60 text-xs mt-1 shrink-0 flex items-center gap-2">
+                        <input type="checkbox" 
+                            class="w-4 h-4 rounded border-klein/30 text-klein focus:ring-klein cursor-pointer transition-colors"
+                            ${isChecked ? 'checked' : ''}
+                            onchange="localStorage.setItem('${storageKey}', this.checked); this.closest('.group').querySelector('div:last-child').classList.toggle('opacity-50', this.checked); this.closest('.group').querySelector('div:last-child').classList.toggle('line-through', this.checked);"
+                        >
+                        ${p.d}
+                    </div>
+                    <div class="transition-all duration-300 ${isChecked ? 'opacity-50 line-through' : ''}">
                         <h4 class="font-bold text-klein text-sm mb-1">${p.t}</h4>
                         <p class="text-sm font-body text-klein/70">${p.c}</p>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // Social Media Strategy
@@ -1594,11 +1600,34 @@
                     <span class="font-bold text-lg text-klein">${pInfo.name}</span>
                     <span class="text-xs bg-klein/10 px-2 py-1 text-klein font-bold uppercase tracking-wider">${pInfo.role}</span>
                 </div>
-                <p class="text-sm font-body text-klein/80 mb-6">${pInfo.strategy}</p>
+                <p class="text-sm font-body text-klein/80 mb-4">${pInfo.strategy}</p>
                 <div class="bg-klein/5 p-4 border-l-2 border-klein/30 mb-4">
                     <div class="text-xs font-bold text-klein/50 mb-1 uppercase tracking-wider">Bio (自介草稿)</div>
                     <div class="text-sm font-mono font-bold text-klein">${pInfo.bio}</div>
                 </div>
+                ${pInfo.content && pInfo.content.length > 0 ? `
+                    <div class="mt-4 pt-3 border-t border-klein/10">
+                        <div class="text-xs font-bold text-klein/60 mb-2 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb text-amber-500"></i> 推薦發文靈感 (實作題目)
+                        </div>
+                        <ul class="space-y-2 text-xs font-body text-klein/80">
+                            ${pInfo.content.map((c, idx) => {
+                                const storageKey = `careerDNA-brand-social-${primaryHolland}-${idx}`;
+                                const isChecked = localStorage.getItem(storageKey) === 'true';
+                                return `
+                                <li class="flex items-start gap-2 bg-klein/[0.03] p-2.5 border border-klein/10 group transition-all duration-300 ${isChecked ? 'opacity-50' : ''}">
+                                    <input type="checkbox" 
+                                        class="w-4 h-4 mt-0.5 rounded border-klein/30 text-klein focus:ring-klein cursor-pointer shrink-0"
+                                        ${isChecked ? 'checked' : ''}
+                                        onchange="localStorage.setItem('${storageKey}', this.checked); this.closest('li').classList.toggle('opacity-50', this.checked); this.nextElementSibling.classList.toggle('line-through', this.checked);"
+                                    >
+                                    <span class="leading-relaxed ${isChecked ? 'line-through' : ''}">${c}</span>
+                                </li>
+                                `;
+                            }).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
             `;
         }
 
@@ -1610,15 +1639,91 @@
     },
 
     downloadPDF() {
-        const element = document.getElementById('view-result');
+        const element = document.getElementById('report-container');
+        if (!element) return;
+        
+        const btn = document.getElementById('btn-export-pdf');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 產生中...';
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+        }
+
+        const scrollY = window.scrollY;
+        window.scrollTo(0, 0);
+
+        const printContainer = document.createElement('div');
+        printContainer.id = 'print-a4-temp-container';
+        printContainer.style.position = 'absolute';
+        printContainer.style.top = '0';
+        printContainer.style.left = '0';
+        printContainer.style.width = '1024px'; // Force lg breakpoint for tailwind
+        printContainer.style.backgroundColor = '#ffffff';
+        printContainer.style.zIndex = '999999';
+        printContainer.style.padding = '30px';
+        
+        // Clone the report container
+        const clone = element.cloneNode(true);
+        // Remove lg: constrain to force grid on 1024px container
+        clone.className = clone.className.replace('grid-cols-1', 'grid-cols-12').replace('lg:grid-cols-12', '');
+        
+        printContainer.appendChild(clone);
+        document.body.appendChild(printContainer);
+
         const opt = {
-            margin: 0,
-            filename: 'CareerDNA_UCAN_Brand_Report.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            margin:       [0.3, 0, 0.3, 0],
+            filename:     'CareerDNA_UCAN_Brand_Report.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                scrollY: 0,
+                scrollX: 0,
+                windowWidth: 1024
+            },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
-        html2pdf().set(opt).from(element).save();
+
+        html2pdf().set(opt).from(printContainer).save().then(() => {
+            if (document.body.contains(printContainer)) {
+                document.body.removeChild(printContainer);
+            }
+            window.scrollTo(0, scrollY);
+            
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> 匯出成功';
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                btn.classList.add('!bg-green-600', '!border-green-600');
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> 下載完整報告 (PDF)';
+                    btn.classList.remove('!bg-green-600', '!border-green-600');
+                }, 3000);
+            }
+            
+            // Show Toast
+            const toast = document.createElement('div');
+            toast.className = 'bg-green-600 rounded-lg text-white px-5 py-3 shadow-2xl flex items-center gap-3 transition-all duration-500 pointer-events-auto transform translate-y-0 opacity-100 font-body text-sm font-medium';
+            toast.innerHTML = '<i class="fa-solid fa-circle-check text-lg"></i> 已成功匯出品牌定位報告';
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+            
+        }).catch(err => {
+            window.scrollTo(0, scrollY);
+            if (document.body.contains(printContainer)) {
+                document.body.removeChild(printContainer);
+            }
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> 下載完整報告 (PDF)';
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+            alert('PDF 匯出失敗：' + (err.message || err));
+        });
     },
 
     copyText(id, isInput = false) {
@@ -1668,5 +1773,9 @@ window.app.init();
 
     <!-- CareerDNA AI Chatbot Assistant Widget -->
     <script src="static/chat-widget.js"></script>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    
 </body>
 </html>
