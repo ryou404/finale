@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW" class="scroll-smooth bg-white text-klein">
 <head>
     <meta charset="UTF-8">
@@ -97,7 +97,6 @@
                 </div>
                 <div class="flex flex-col">
                     <span class="font-syne font-extrabold text-sm sm:text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
-                    <span class="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-klein/40 -mt-0.5 sm:-mt-1 hidden sm:block">SYS // ERROR_ROUTING</span>
                 </div>
             </a>
             
@@ -134,21 +133,21 @@
             <div class="absolute bottom-0 left-0 w-full h-[1px] bg-klein/10"></div>
             
             <div id="message" class="flex flex-col items-center gap-4 sm:gap-6">
-                <div class="font-mono text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-flame-orange border border-flame-orange/30 px-3 py-1 bg-flame-orange/5 flex items-center gap-2">
-                    <span class="w-2 h-2 bg-flame-orange animate-ping"></span>
-                    SYS // HTTP_404_PAGE_NOT_FOUND
+                <div class="font-mono text-xs font-bold tracking-wider uppercase text-flame-orange border border-flame-orange/30 px-3 py-1 bg-flame-orange/5 flex items-center gap-2">
+                    <span class="w-2 h-2 bg-flame-orange rounded-full"></span>
+                    找不到網頁 (404 Not Found)
                 </div>
                 
                 <h1 class="font-syne font-extrabold text-6xl sm:text-8xl md:text-[10rem] text-klein leading-[0.9] tracking-tight uppercase select-none">
                     4<span class="outline-text">0</span>4
                 </h1>
                 
-                <h2 class="font-heading font-black text-lg sm:text-2xl md:text-4xl text-klein uppercase tracking-tight break-words">
-                    TARGET NODE UNRESOLVED // 頁面未配置
+                <h2 class="font-heading font-black text-lg sm:text-2xl md:text-3xl text-klein tracking-tight break-words">
+                    很抱歉，找不到您所尋找的頁面
                 </h2>
                 
                 <p class="font-body text-klein/70 text-sm sm:text-base md:text-lg max-w-xl leading-relaxed">
-                    您所請求的資源節點不存在或已被系統重新編組。請確認目標路徑，或返回 CareerDNA 核心控制台。
+                    您所請求的頁面不存在或已被移除。請確認網址是否正確，或返回 CareerDNA 首頁。
                 </p>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full max-w-xl mt-4 sm:mt-6">
@@ -163,26 +162,8 @@
                     </a>
                 </div>
                 
-                <div class="mt-6 sm:mt-8 border border-klein/10 p-4 sm:p-5 w-full max-w-xl text-left bg-klein/[0.02] crosshair-corner">
-                    <h3 class="font-mono text-[10px] sm:text-xs font-bold text-klein uppercase tracking-tight sm:tracking-[0.2em] mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-terminal"></i> DIAGNOSTIC_READOUT:
-                    </h3>
-                    <p class="font-mono text-[10px] sm:text-[11px] text-klein/70 leading-relaxed break-all">
-                        HTTP_STATUS: 404 Not Found<br>
-                        CLIENT_IP: RESOLVED<br>
-                        GATEWAY: CareerDNA Edge Router v2026<br>
-                        TIMESTAMP: <span id="log-time"></span>
-                    </p>
-                </div>
             </div>
         </div>
     </main>
-
-    
-
-    <script>
-        const logTime = document.getElementById('log-time');
-        if (logTime) logTime.textContent = new Date().toISOString();
-    </script>
 </body>
 </html>

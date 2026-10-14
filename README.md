@@ -93,3 +93,12 @@ npm start
   5. **🧹 專案結構整理**：
      - 將散落於根目錄的參考圖片歸檔至 `docs/reference_images/`，課綱轉換腳本移至 `scripts/generate_courses_data.py`，保持專案根目錄整潔。
 
+
+- **[2026-10-14] 全面去化偽科技裝飾標籤與確立 UI 極簡規範 (/impeccable × /learn)**：
+  1. **全站移除無意義裝飾性文字與偽遙測標籤**：
+     - `index.html`：徹底清除架構區塊無意義的 `01 / 02 / 03` 序號、英文裝飾標籤（`ATS AUDIT`、`UCAN × HOLLAND`、`CS · IM · AI`）、副標徽章（`三大職涯模組・資料跨頁自動連動`）及底部次級小字（`五元三要評分`、`30/60/90 行動表`、`教授實驗室媒合`），使卡片聚焦核心內容與引導。
+     - 全站導覽列（Navbar）：全面移除 Logo 底下的冗餘小字（`BRAND_POSITIONING // v2026`、`RESUME_ANALYSIS // v2026`、`ACADEMIC_LAB // v2026`、`COURSE_LIBRARY // v2026`、`USER_PROFILE // v2026` 等）。
+     - 全站頁尾（Footer）與介面彈窗：移除虛構的假遙測（`STATUS: ONLINE`、`LATENCY: <12ms`、`SYS // ...` 假黑客代碼），替換為標準極簡版權宣告。
+     - `404.html`：簡化為自然流暢的台灣繁體中文提示，移除偽終端機診斷讀數。
+  2. **確立持久化專案設計規範 (`.agent/rules/no-meaningless-decorative-text.md`)**：
+     - 正式導入工作區規範，杜絕未來任何代理人或模組擴充時產生 AI 裝飾性廢字、假系統代碼與虛擬遙測，確保全站貫徹克萊茵藍高質感極簡風格。
