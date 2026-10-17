@@ -79,21 +79,77 @@
             z-index: 50;
         }
 
-        /* Brutalist Crosshairs */
+        /* Brutalist Crosshairs (Cleaned - No '+' symbols) */
         .crosshair-corner {
             position: relative;
         }
-        .crosshair-corner::before, .crosshair-corner::after {
-            content: '+';
-            position: absolute;
-            color: #1F50CD;
-            font-family: monospace;
-            font-size: 1rem;
-            line-height: 1;
-            pointer-events: none;
+
+        /* Resume Sheet Paper Typography */
+        .resume-sheet h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #002FA7;
+            border-bottom: 2px solid #002FA7;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
         }
-        .crosshair-corner::before { top: -8px; left: -4px; }
-        .crosshair-corner::after { bottom: -8px; right: -4px; }
+        .resume-sheet h2 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #002FA7;
+            border-bottom: 1px solid rgba(0, 47, 167, 0.2);
+            padding-bottom: 0.35rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .resume-sheet h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1F50CD;
+            margin-top: 1rem;
+            margin-bottom: 0.4rem;
+        }
+        .resume-sheet p {
+            font-size: 0.8125rem;
+            line-height: 1.75;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+        }
+        .resume-sheet ul {
+            list-style-type: disc;
+            padding-left: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .resume-sheet li {
+            font-size: 0.8125rem;
+            line-height: 1.65;
+            color: #1e293b;
+            margin-bottom: 0.35rem;
+        }
+        .resume-sheet hr {
+            border: none;
+            border-top: 1px dashed rgba(0, 47, 167, 0.25);
+            margin: 1.25rem 0;
+        }
+        .resume-sheet strong {
+            color: #0f172a;
+            font-weight: 700;
+        }
+        .resume-sheet a {
+            color: #002FA7;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        .resume-sheet code {
+            background: #f8fafc;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Chakra Petch', monospace;
+            font-size: 0.75rem;
+            color: #002FA7;
+            border: 1px solid #cbd5e1;
+        }
 
         /* Outline Display Typography */
         .outline-text {
@@ -165,7 +221,7 @@
     </nav>
 
     <!-- Header Title Banner (Hero Display) -->
-    <section class="max-w-[1400px] mx-auto border-x border-klein/10 px-6 md:px-12 pt-28 pb-10 crosshair-corner">
+    <section class="max-w-[1400px] mx-auto border-x border-klein/10 px-6 md:px-12 pt-28 pb-10">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-klein/10 pb-8 reveal-up">
             <div>
 
@@ -203,7 +259,7 @@
             <div class="lg:col-span-5 space-y-8">
                 
                 <!-- Section 00: Recommended Courses (from Brand Test / UCAN) -->
-                <section id="recommended-courses-section" class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1">
+                <section id="recommended-courses-section" class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-1">
                     <div class="border-b border-klein/10 pb-4 mb-4">
                         <div class="h-2"></div>
                         <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
@@ -215,7 +271,7 @@
                 </section>
 
                 <!-- Section 01: Course Radar & Checklist -->
-                <section class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1">
+                <section class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-1">
                     <div class="flex justify-between items-center mb-4 border-b border-klein/10 pb-4">
                         <div>
                             <h2 id="course-section-title" class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
@@ -252,7 +308,7 @@
 
                 <!-- Section 02: Practical & Extracurricular Experience -->
                 <!-- Section 02: Extracurricular Experience -->
-                <section class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2">
+                <section class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-2">
                     <div class="border-b border-klein/10 pb-4 mb-4">
                         <div class="h-2"></div>
                         <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
@@ -281,7 +337,7 @@
                 <div class="sticky top-24 space-y-6">
                     
                     <!-- Live Telemetry Scorecard Box -->
-                    <div class="p-6 md:p-8 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-1">
+                    <div class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-1">
                         <div class="flex justify-between items-end border-b border-klein/10 pb-4 mb-6">
                             <div class="mb-1">
                                 <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">儀表板</h3>
@@ -331,7 +387,7 @@
                     </div>
 
                     <!-- AI Consultant Results & Action Items Panel -->
-                    <div id="ai-result-panel" class="p-6 md:p-8 bg-white border border-klein crosshair-corner hidden transition-all duration-500">
+                    <div id="ai-result-panel" class="p-6 md:p-8 bg-white border border-klein hidden transition-all duration-500">
                         <div class="flex items-center gap-3 mb-4 border-b border-klein/10 pb-4">
                             <div class="w-8 h-8 bg-klein text-white flex items-center justify-center font-mono text-sm">
                                 <i class="fa-solid fa-compass animate-spin" style="animation-duration: 8s;"></i>
@@ -348,19 +404,27 @@
                         </div>
                         
                         <!-- A4 Markdown Resume Preview Panel -->
-                        <div id="resume-preview-panel" class="hidden border-t border-klein/10 pt-6 mt-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="font-mono text-xs font-bold text-klein uppercase tracking-wider flex items-center gap-2">
-                                    <i class="fa-solid fa-file-lines"></i> AI 智能履歷預覽 (A4 Standard)
-                                </span>
-                                <button onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2" id="pdf-export-btn">
-                                    <i class="fa-solid fa-download"></i> 匯出 PDF
-                                </button>
+                        <div id="resume-preview-panel" class="hidden border-t border-klein/10 pt-8 mt-8">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                                <div>
+                                    <span class="font-mono text-[10px] font-bold text-klein/50 uppercase tracking-[0.2em] block">GENERATED ARTIFACT</span>
+                                    <h4 class="font-heading font-black text-lg text-klein uppercase tracking-tight flex items-center gap-2">
+                                        <i class="fa-solid fa-file-lines text-klein"></i> 企業標準 A4 履歷預覽 (A4 Standard)
+                                    </h4>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="window.App.copyResumeMarkdown()" class="hover-spring bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3.5 flex items-center gap-1.5 transition-all" title="複製 Markdown 格式">
+                                        <i class="fa-solid fa-copy"></i> 複製內容
+                                    </button>
+                                    <button type="button" onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2 shadow-sm" id="pdf-export-btn">
+                                        <i class="fa-solid fa-download"></i> 匯出 PDF
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- A4 Preview Paper Sheet -->
-                            <div id="resume-output" class="bg-white border border-klein/20 p-6 md:p-8 max-h-[500px] overflow-y-auto text-klein/90 leading-relaxed font-body">
-                                <!-- Populated with marked.js HTML inside #pdf-content -->
+                            <div id="resume-output" class="bg-white border border-klein/20 p-6 md:p-10 max-h-[600px] overflow-y-auto shadow-sm text-klein/90 leading-relaxed font-body">
+                                <!-- Populated with parseMarkdownSafe HTML inside #pdf-content -->
                             </div>
                         </div>
                     </div>
@@ -373,7 +437,7 @@
 
     <!-- Offline / Rate-Limited Fallback Modal -->
     <div id="manual-ai-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white max-w-2xl w-full border border-klein/30 shadow-2xl p-6 md:p-8 crosshair-corner reveal-up is-visible">
+        <div class="bg-white max-w-2xl w-full border border-klein/30 shadow-2xl p-6 md:p-8 reveal-up is-visible">
             
             <div class="flex items-center justify-between border-b border-klein/10 pb-4 mb-6">
                 <div>
@@ -586,9 +650,12 @@
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         currentUser = user;
-                        document.getElementById('nav-user-info').classList.remove('hidden');
-                        document.getElementById('nav-user-name').innerText = user.displayName || 'User';
-                        document.getElementById('nav-user-avatar').innerText = (user.displayName || 'U').charAt(0).toUpperCase();
+                        const navInfo = document.getElementById('nav-user-info');
+                        if (navInfo) navInfo.classList.remove('hidden');
+                        const navName = document.getElementById('nav-user-name');
+                        if (navName) navName.innerText = user.displayName || 'User';
+                        const navAvatar = document.getElementById('nav-user-avatar');
+                        if (navAvatar) navAvatar.innerText = (user.displayName || 'U').charAt(0).toUpperCase();
 
                         await this.loadUserData(user.uid);
                     } else {
@@ -704,7 +771,8 @@
                         
                         if (!hasDeptFromUrl && data.grade && (data.grade !== this.state.grade || isFirstLoad)) {
                             this.state.grade = data.grade;
-                            document.getElementById('nav-user-grade').innerText = data.grade;
+                            const navGrade = document.getElementById('nav-user-grade');
+                            if (navGrade) navGrade.innerText = data.grade;
                             const selector = document.getElementById('grade-selector');
                             if (selector) selector.value = data.grade === '大二' ? '大一' : (data.grade === '碩士' ? '大四' : data.grade);
                             if (data.dept && !this.state.dept) {
@@ -869,8 +937,8 @@
 
                 // 3. UCAN 共通職能弱項補強標記
                 if (ucanData && ucanData.commonComps) {
-                    const comps = Object.entries(ucanData.commonComps);
-                    const weakComp = comps.find(([name, data]) => data.pr < 50);
+                    const comps = Object.entries(ucanData.commonComps).filter(([_, d]) => d);
+                    const weakComp = comps.find(([name, data]) => (data?.pr ?? data ?? 100) < 50);
                     if (weakComp) {
                         const weakName = weakComp[0];
                         const weakMap = {
@@ -899,7 +967,7 @@
                     </div>`;
 
                 document.getElementById('programs-container').innerHTML = recBanner + dataList.map(prog => `
-                    <div class="border border-klein/10 p-4 bg-white crosshair-corner">
+                    <div class="border border-klein/10 p-4 bg-white">
                         <div class="flex justify-between items-center mb-3">
                             <h3 class="font-heading font-black text-klein text-sm uppercase">${prog.name}</h3>
                             <span id="badge-${prog.id}" class="text-xs font-mono font-bold px-2.5 py-1 bg-klein/5 text-klein border border-klein/15" data-goal="${requiredCourses}">0 / ${requiredCourses} 門</span>
@@ -1149,31 +1217,40 @@
                     btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-sm"></i> <span>A4 履歷生成與戰力診斷中...</span>`;
                 }
 
-                // Deterministic frontend rule-based generation
-                const result = this.generateRuleBasedResume({
-                    dept,
-                    grade: this.state.grade || '大三',
-                    progScore,
-                    pracScore,
-                    expScore,
-                    totalScore,
-                    bestProgName,
-                    maxProgCredits,
-                    progGoalCredits,
-                    pracCredits,
-                    pracGoalCredits,
-                    matchedPracClusters,
-                    selectedCourses: Array.from(this.state.selectedCourses),
-                    selectedExps: Array.from(this.state.selectedExps)
-                });
+                try {
+                    // Deterministic frontend rule-based generation
+                    const result = this.generateRuleBasedResume({
+                        dept,
+                        grade: this.state.grade || '大三',
+                        progScore,
+                        pracScore,
+                        expScore,
+                        totalScore,
+                        bestProgName,
+                        maxProgCredits,
+                        progGoalCredits,
+                        pracCredits,
+                        pracGoalCredits,
+                        matchedPracClusters,
+                        selectedCourses: Array.from(this.state.selectedCourses),
+                        selectedExps: Array.from(this.state.selectedExps)
+                    });
 
-                this.renderResultUI(result);
+                    this.renderResultUI(result);
 
-                if (!isSilent) {
-                    setTimeout(() => {
-                        const aiPanel = document.getElementById('ai-result-panel');
-                        if (aiPanel) aiPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }, 50);
+                    if (!isSilent) {
+                        setTimeout(() => {
+                            const aiPanel = document.getElementById('ai-result-panel');
+                            if (aiPanel) aiPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 50);
+                    }
+                } catch (err) {
+                    console.error('[CareerDNA] calculateAndGenerate error:', err);
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = `<i class="fa-solid fa-file-signature text-base group-hover:scale-110 transition-transform"></i> <span>🚀 立即產生專業 A4 履歷與戰力診斷報告</span>`;
+                    }
+                    this.showToast('產生履歷時發生異常，請重試！');
                 }
             },
 
@@ -1313,35 +1390,106 @@
                     </div>
                 `;
 
-                // Generate Action Items
+                // Generate Structured Action Items (Human-toned & High Scannability)
                 const actionItems = [];
                 if (progScore < 30) {
-                    actionItems.push(`🎯 【專業學程攻頂】您在「${bestProgName}」已累積 ${maxProgCredits} 學分，距離 15 學分門檻尚差 ${Math.max(0, progGoalCredits - maxProgCredits)} 學分。建議下學期集中選修該學程指定選修課程，取得校級正式學程證書！`);
+                    const diffCredits = Math.max(0, progGoalCredits - maxProgCredits);
+                    actionItems.push({
+                        category: '專業學程',
+                        tagColor: 'blue',
+                        icon: 'fa-solid fa-graduation-cap',
+                        title: `鎖定「${bestProgName}」修滿 15 學分認證`,
+                        desc: `目前已累積 ${maxProgCredits} 學分，距離取得校級學程認證尚差 ${diffCredits} 學分。建議下學期集中選修該學程指定課程，畢業時能多拿一張校級正式學程證書，在履歷首頁直接展現專業主線！`,
+                        actionText: '查閱學程選修',
+                        actionUrl: 'resource_library.html?track=program'
+                    });
                 } else {
-                    actionItems.push(`✅ 【專業學程達標】您在「${bestProgName}」已完成 ${maxProgCredits} 學分，已達成或接近學程標準！建議在履歷第一段直接列出學程認證，加深人資信任度。<a href="resource_library.html" target="_blank" class="ml-1 inline-flex items-center gap-1 font-bold text-klein underline hover:text-blue-700">瀏覽進階課程 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>`);
+                    actionItems.push({
+                        category: '專業學程',
+                        tagColor: 'blue',
+                        icon: 'fa-solid fa-circle-check',
+                        title: `「${bestProgName}」已達標，直接列為履歷主打亮點`,
+                        desc: `您在「${bestProgName}」已完成 ${maxProgCredits} 學分，已達成或接近學程標準！建議在履歷第一段個人簡介直接寫出學程認證，加深人資信任度。`,
+                        actionText: '瀏覽進階延伸課',
+                        actionUrl: 'resource_library.html'
+                    });
                 }
 
                 if (pracScore < 30) {
-                    actionItems.push(`🛠️ 【實務課群跨域】目前實務課群累積 ${pracCredits} 學分（目標 9 學分）。建議選修「智慧雲端應用」、「大數據商務」等實務課群，落實跨領域專題應用！`);
+                    const diffPrac = Math.max(0, pracGoalCredits - pracCredits);
+                    actionItems.push({
+                        category: '實務課群',
+                        tagColor: 'indigo',
+                        icon: 'fa-solid fa-cubes',
+                        title: `補強跨域實務學分（目標 9 學分，尚差 ${diffPrac} 學分）`,
+                        desc: `目前實務課群累積 ${pracCredits} 學分。建議選修「智慧雲端應用」、「大數據商務」等實務課群，並將期末專案整理為具體成果，落實跨領域技術應用！`,
+                        actionText: '探索實務課群',
+                        actionUrl: 'resource_library.html?track=practical'
+                    });
                 } else {
-                    actionItems.push(`✅ 【實務課群充沛】實務課群已累積 ${pracCredits} 學分，展現了兼具理論與技術實踐的跨域能力，在履歷中可特別強調多元實作。`);
+                    actionItems.push({
+                        category: '實務課群',
+                        tagColor: 'indigo',
+                        icon: 'fa-solid fa-circle-check',
+                        title: `實務課群學分充沛，展現跨域整合實戰力`,
+                        desc: `實務課群已累積 ${pracCredits} 學分，兼具理論與技術實踐。在履歷與面試中可特別強調多元技術棧的協同串接經驗。`,
+                        actionText: null,
+                        actionUrl: null
+                    });
                 }
 
                 if (!hasIntern) {
-                    actionItems.push(`💼 【企業實習加分】業界人資評選履歷最看重實習經驗。強烈建議報名資訊學院與光寶科技、台積電先修學程或在地軟體園區之產學實習！`);
+                    actionItems.push({
+                        category: '職場實習',
+                        tagColor: 'amber',
+                        icon: 'fa-solid fa-briefcase',
+                        title: `爭取企業實習或產學合作機會`,
+                        desc: `人資審閱新鮮人履歷最看重實習紀錄。強烈建議報名資訊學院與業界企業（如台積電先修、光寶科技或在地軟體園區）的實習職缺，提早累積業界研發經驗。`,
+                        actionText: null,
+                        actionUrl: null
+                    });
                 } else {
-                    actionItems.push(`🌟 【實習成果量化】您具備企業實習經歷！請務必在面試與履歷中強調具體產出與數字指標（如：優化了多少 API 回應速度、處理幾萬筆資料）。`);
+                    actionItems.push({
+                        category: '職場實習',
+                        tagColor: 'emerald',
+                        icon: 'fa-solid fa-chart-line',
+                        title: `以 STAR / XYZ 原則量化實習產出`,
+                        desc: `您已具備企業實習經歷！請務必在面試與履歷中強調具體成果數字（如：API 延遲降低多少 %、處理幾萬筆即時數據、提升系統穩定度），避免流水帳敘述。`,
+                        actionText: null,
+                        actionUrl: null
+                    });
                 }
 
                 if (!hasProj) {
-                    actionItems.push(`💻 【專案成果整理】建議將系上課程作業或期末專題整理成 GitHub 儲存庫，撰寫完整的 README.md 與架構圖，作為可見的程式碼作品集！`);
+                    actionItems.push({
+                        category: '專案作品',
+                        tagColor: 'cyan',
+                        icon: 'fa-solid fa-laptop-code',
+                        title: `建立 GitHub 程式碼倉庫與作品集展示`,
+                        desc: `建議將系上重要課堂專題或大型期末成果整理成 GitHub 儲存庫，附上系統架構圖與清楚的 README.md，讓人資第一眼就能檢視你的程式碼撰寫風格！`,
+                        actionText: null,
+                        actionUrl: null
+                    });
                 }
 
                 if (ucan && ucan.commonComps) {
-                    const weakComp = Object.entries(ucan.commonComps).sort((a,b)=>a[1].pr - b[1].pr)[0]; // get weakest
-                    if (weakComp) {
-                        const kw = weakComp[0].includes('溝通') ? '軟體工程' : (weakComp[0].includes('創新') ? '創新' : '實務');
-                        actionItems.push(`💡 【UCAN 弱項補強】系統偵測到您的共通職能「${weakComp[0]}」(PR ${weakComp[1].pr}) 相對較弱。建議在下學期優先安排專案導向或實務課程來強化此能力。<a href="resource_library.html?search=${kw}" target="_blank" class="ml-1 inline-flex items-center gap-1 font-bold text-klein underline hover:text-blue-700">查閱推薦課程 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>`);
+                    const comps = Object.entries(ucan.commonComps).filter(([_, d]) => d);
+                    if (comps.length > 0) {
+                        const sorted = comps.sort((a,b) => (a[1]?.pr ?? a[1] ?? 50) - (b[1]?.pr ?? b[1] ?? 50));
+                        const weakComp = sorted[0];
+                        const prVal = weakComp[1]?.pr ?? weakComp[1] ?? 0;
+                        if (prVal < 50) {
+                            const kw = weakComp[0].includes('溝通') ? '軟體工程' : (weakComp[0].includes('創新') ? '創新' : '實務');
+                            actionItems.push({
+                                category: '職能補強',
+                                tagColor: 'purple',
+                                icon: 'fa-solid fa-lightbulb',
+                                title: `補強 UCAN 共通職能「${weakComp[0]}」(PR ${prVal})`,
+                                desc: `系統偵測到您的「${weakComp[0]}」相對偏弱。建議在下學期的分組專案或期末專題中主動擔任該面向角色，或選修推薦課程以全方位平衡職場戰力。`,
+                                actionText: '查閱推薦補強課程',
+                                actionUrl: `resource_library.html?search=${encodeURIComponent(kw)}`
+                            });
+                        }
                     }
                 }
 
@@ -1496,44 +1644,206 @@ ${expEntries.join('\n\n')}
                 };
             },
 
+            parseMarkdownSafe(md) {
+                if (!md) return '<p class="text-klein/50 italic">系統未能生成履歷內容</p>';
+                if (typeof window !== 'undefined' && window.marked) {
+                    try {
+                        if (typeof window.marked.parse === 'function') {
+                            return window.marked.parse(md);
+                        } else if (typeof window.marked === 'function') {
+                            return window.marked(md);
+                        }
+                    } catch (e) {
+                        console.warn('[CareerDNA] marked.parse failed, using fallback parser:', e);
+                    }
+                }
+                return this.fallbackMarkdownParser(md);
+            },
+
+            fallbackMarkdownParser(md) {
+                if (!md) return '';
+                let html = md
+                    .replace(/<div class="html2pdf__page-break"><\/div>/g, '___PAGE_BREAK___')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/___PAGE_BREAK___/g, '<div class="html2pdf__page-break"></div>');
+
+                // Headings
+                html = html.replace(/^### (.*$)/gim, '<h3 class="text-base font-bold text-klein mt-4 mb-2">$1</h3>');
+                html = html.replace(/^## (.*$)/gim, '<h2 class="text-lg font-bold text-klein border-b border-klein/20 pb-1 mt-6 mb-3">$1</h2>');
+                html = html.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-black text-klein border-b-2 border-klein pb-2 mb-4">$1</h1>');
+
+                // Horizontal Rules
+                html = html.replace(/^---$/gim, '<hr class="my-4 border-dashed border-klein/20" />');
+
+                // Bold & Italics
+                html = html.replace(/\*\*\*(.*?)\*\*\*/gim, '<strong><em>$1</em></strong>');
+                html = html.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-klein">$1</strong>');
+                html = html.replace(/\*(.*?)\*/gim, '<em class="text-klein/80">$1</em>');
+
+                // Inline Code
+                html = html.replace(/`([^`]+)`/gim, '<code class="bg-klein/5 text-klein px-1.5 py-0.5 rounded font-mono text-[11px] border border-klein/10">$1</code>');
+
+                // Links
+                html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank" class="text-klein underline hover:text-blue-700 font-semibold">$1</a>');
+
+                // Lists and Paragraphs
+                const lines = html.split('\n');
+                let inList = false;
+                let processed = [];
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const listMatch = line.match(/^\s*-\s+(.*)$/);
+                    if (listMatch) {
+                        if (!inList) {
+                            processed.push('<ul class="list-disc pl-5 my-2 space-y-1">');
+                            inList = true;
+                        }
+                        processed.push(`<li class="text-xs text-klein/90 leading-relaxed">${listMatch[1]}</li>`);
+                    } else {
+                        if (inList) {
+                            processed.push('</ul>');
+                            inList = false;
+                        }
+                        if (line.trim().length > 0 && !line.startsWith('<h') && !line.startsWith('<hr') && !line.startsWith('<div')) {
+                            processed.push(`<p class="text-xs text-klein/90 leading-relaxed my-2">${line}</p>`);
+                        } else {
+                            processed.push(line);
+                        }
+                    }
+                }
+                if (inList) processed.push('</ul>');
+                return processed.join('\n');
+            },
+
+            copyResumeMarkdown() {
+                if (!this.lastResumeMarkdown) {
+                    alert('尚未產生履歷內容！');
+                    return;
+                }
+                navigator.clipboard.writeText(this.lastResumeMarkdown).then(() => {
+                    this.showToast('已成功複製 A4 履歷 Markdown 內容！');
+                }).catch(() => {
+                    const dummy = document.createElement('textarea');
+                    dummy.value = this.lastResumeMarkdown;
+                    document.body.appendChild(dummy);
+                    dummy.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(dummy);
+                    this.showToast('已成功複製 A4 履歷 Markdown 內容！');
+                });
+            },
+
             renderResultUI(result) {
                 document.getElementById('ai-result-panel').classList.remove('hidden');
                 const aiContent = document.getElementById('ai-content');
+                this.lastResumeMarkdown = result.resumeMarkdown || '';
                 
-                                                                                                
-                let html = `<div class="mb-6 p-4 border border-klein/10 bg-klein/[0.02]">${result.analysis}</div>`;
+                let html = `<div class="mb-6 p-5 border border-klein/15 bg-klein/[0.02] shadow-sm">${result.analysis}</div>`;
                 
                 if (result.actionItems && result.actionItems.length > 0) {
-                    html += `<div class="border border-klein/20 p-4 bg-white crosshair-corner">
-                        <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-xs"></i> Action Items (下一步行動建議)
-                        </h4>
-                        <ul class="space-y-2.5">`;
+                    html += `
+                    <div class="border border-klein/15 p-5 md:p-6 bg-white shadow-sm mb-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-klein/10 pb-3 mb-4">
+                            <div>
+                                <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
+                                    <i class="fa-solid fa-compass text-klein"></i> 下一步具體行動建議 (Action Items)
+                                </h4>
+                                <p class="text-[11px] text-klein/60 font-body mt-0.5">針對您目前的學分累積與經歷差距，整理出最具效益的補強順序</p>
+                            </div>
+                            <span class="inline-block px-2.5 py-0.5 font-mono text-[11px] font-bold text-klein/70 bg-klein/5 border border-klein/10 self-start sm:self-auto">
+                                ${result.actionItems.length} 項策略
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                    `;
+
                     result.actionItems.forEach(item => {
-                        const isCourseRec = item.includes('修') || item.includes('課') || item.includes('學程');
-                        if (isCourseRec) {
-                            html += `<li class="text-xs text-klein flex items-start gap-2.5 bg-klein/5 p-3 border border-klein/15">
-                                <span class="text-base shrink-0">📚</span>
-                                <div>
-                                    <span class="text-klein font-mono font-bold text-[10px] uppercase tracking-wider mb-0.5 block">三軌制修課導航建議</span>
-                                    ${item}
-                                </div>
-                            </li>`;
+                        let category = '行動建議';
+                        let tagColor = 'blue';
+                        let icon = 'fa-solid fa-arrow-right';
+                        let title = '';
+                        let desc = '';
+                        let actionText = null;
+                        let actionUrl = null;
+
+                        if (typeof item === 'object') {
+                            category = item.category || '行動建議';
+                            tagColor = item.tagColor || 'blue';
+                            icon = item.icon || 'fa-solid fa-arrow-right';
+                            title = item.title || '';
+                            desc = item.desc || '';
+                            actionText = item.actionText;
+                            actionUrl = item.actionUrl;
                         } else {
-                            html += `<li class="text-xs text-klein/80 flex items-start gap-2"><span class="text-klein font-bold font-mono">▪</span> ${item}</li>`;
+                            const text = String(item);
+                            if (text.includes('專業學程')) { category = '專業學程'; tagColor = 'blue'; icon = 'fa-solid fa-graduation-cap'; }
+                            else if (text.includes('實務課群')) { category = '實務課群'; tagColor = 'indigo'; icon = 'fa-solid fa-cubes'; }
+                            else if (text.includes('實習')) { category = '職場實習'; tagColor = 'amber'; icon = 'fa-solid fa-briefcase'; }
+                            else if (text.includes('專案')) { category = '專案作品'; tagColor = 'cyan'; icon = 'fa-solid fa-laptop-code'; }
+                            else if (text.includes('UCAN')) { category = '職能補強'; tagColor = 'purple'; icon = 'fa-solid fa-lightbulb'; }
+                            
+                            const parts = text.replace(/^[🎯🛠️💼🌟💻💡✅\s*▪]+/g, '').split('】');
+                            title = parts[0].replace('【', '') || '行動重點';
+                            desc = parts[1] || text;
                         }
+
+                        const colorClasses = {
+                            blue: { badge: 'bg-blue-50 text-blue-700 border-blue-200' },
+                            indigo: { badge: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+                            amber: { badge: 'bg-amber-50 text-amber-800 border-amber-200' },
+                            emerald: { badge: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
+                            cyan: { badge: 'bg-cyan-50 text-cyan-800 border-cyan-200' },
+                            purple: { badge: 'bg-purple-50 text-purple-800 border-purple-200' }
+                        };
+                        const c = colorClasses[tagColor] || colorClasses.blue;
+
+                        html += `
+                        <div class="border border-klein/10 bg-klein/[0.01] hover:bg-white hover:border-klein/30 hover:shadow-md transition-all p-4 flex flex-col justify-between">
+                            <div>
+                                <div class="mb-2">
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded border ${c.badge}">
+                                        <i class="${icon} text-[9px]"></i> ${category}
+                                    </span>
+                                </div>
+                                <h5 class="font-heading font-bold text-xs text-klein mb-1.5 leading-snug">${title}</h5>
+                                <p class="text-[11px] text-klein/75 font-body leading-relaxed">${desc}</p>
+                            </div>
+                            ${actionText && actionUrl ? `
+                                <div class="mt-3 pt-2 border-t border-klein/5 flex justify-end">
+                                    <a href="${actionUrl}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-klein hover:text-blue-700 underline underline-offset-2">
+                                        <span>${actionText}</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                                    </a>
+                                </div>
+                            ` : ''}
+                        </div>
+                        `;
                     });
-                    html += `</ul></div>`;
+
+                    html += `</div></div>`;
                 }
 
                 aiContent.innerHTML = html;
                 
-                const resumeOutput = document.getElementById('resume-output');
-                const resumeHtml = marked.parse(result.resumeMarkdown || '*系統未能生成履歷*');
-                resumeOutput.innerHTML = `<div class="prose max-w-none text-klein font-body leading-relaxed" id="pdf-content">${resumeHtml}</div>`;
-                
-                document.getElementById('resume-preview-panel').classList.remove('hidden');
-                
+                // Safely and guaranteed unhide resume preview panel
+                try {
+                    const resumePreview = document.getElementById('resume-preview-panel');
+                    if (resumePreview) {
+                        resumePreview.classList.remove('hidden');
+                    }
+                    
+                    const resumeOutput = document.getElementById('resume-output');
+                    if (resumeOutput) {
+                        const resumeHtml = this.parseMarkdownSafe(result.resumeMarkdown || '*系統未能生成履歷*');
+                        resumeOutput.innerHTML = `<div class="resume-sheet font-body leading-relaxed" id="pdf-content">${resumeHtml}</div>`;
+                    }
+                } catch (e) {
+                    console.error('[CareerDNA] Error displaying resume preview:', e);
+                }
+
                 const btn = document.getElementById('generate-btn');
                 if (btn) {
                     btn.disabled = false;
