@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareerDNA | 資訊系所推薦探索與實驗室導航</title>
+    <title>CareerDNA | 資訊系所推薦探索</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,10 +14,10 @@
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Google Fonts: Syne, Inter, Noto Sans TC, Chakra Petch, JetBrains Mono -->
+    <!-- Google Fonts: Sora, DM Sans, Noto Sans TC, Chakra Petch, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&amp;family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Sora:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -29,16 +29,20 @@
                         cobalt: '#1F50CD',
                         sapphire: '#3B6BF0',
                         ice: '#EBF2FF',
+                        iceMid: '#DCE8FF',
                         iceBorder: '#C7DCFF',
                         canvas: '#F8FAFF',
+                        inkBody: '#1E3A8A',
+                        inkMuted: '#3B63C4',
                         'electric-blue': '#00e5ff',
                         'flame-orange': '#ff4500'
                     },
                     fontFamily: {
-                        syne: ['"Syne"', 'sans-serif'],
-                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
-                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
-                        mono: ['"Chakra Petch"', '"JetBrains Mono"', 'monospace']
+                        sora: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        syne: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        heading: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['"Sora"', 'Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
                     }
                 }
             }
@@ -46,10 +50,24 @@
     </script>
     
     <style>
+        :root {
+            --klein-primary: #002FA7;
+            --klein-cobalt: #1F50CD;
+            --klein-sapphire: #3B6BF0;
+            --ice-surface: #EBF2FF;
+            --ice-hover: #DCE8FF;
+            --ice-border: #C7DCFF;
+            --canvas-bg: #F8FAFF;
+            --band-bg: #F2F6FF;
+            --card-white: #FFFFFF;
+            --ink-body: #1E3A8A;
+            --ink-muted: #3B63C4;
+        }
+
         html, body {
             background-color: #F8FAFF;
             color: #002FA7;
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            font-family: 'Sora', 'DM Sans', 'Noto Sans TC', sans-serif;
             max-width: 100vw;
             overflow-x: hidden !important;
             position: relative;
@@ -84,21 +102,10 @@
             z-index: 50;
         }
 
-        /* Brutalist Crosshairs */
+        /* Brutalist Corner Container (plus marks removed for visual calm) */
         .crosshair-corner {
             position: relative;
         }
-        .crosshair-corner::before, .crosshair-corner::after {
-            content: '+';
-            position: absolute;
-            color: #1F50CD;
-            font-family: monospace;
-            font-size: 0.85rem;
-            line-height: 1;
-            pointer-events: none;
-        }
-        .crosshair-corner::before { top: 2px; left: 2px; }
-        .crosshair-corner::after { bottom: 2px; right: 2px; }
 
         /* Outline Display Typography */
         .outline-text {
@@ -137,9 +144,6 @@
     </style>
 </head>
 <body class="overflow-x-hidden pb-24 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
-    <script>
-        if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-    </script>
 
     <!-- Global Top Navigation Bar -->
     <nav class="fixed top-0 left-0 right-0 w-full z-40 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
@@ -156,7 +160,7 @@
             <!-- Desktop Nav Links (Hidden on Mobile) -->
             <div class="hidden md:flex items-center gap-6 lg:gap-8 whitespace-nowrap">
                 <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">履歷健檢</a>
                 <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1 transition-colors">系所推薦</a>
                 <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">課程資料庫</a>
                 <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
@@ -184,7 +188,7 @@
     <!-- Mobile Fixed Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
         <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">品牌測驗</a>
-        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">AI 履歷健檢</a>
+        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">履歷健檢</a>
         <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein border-b-2 border-klein pb-0.5 px-2 py-1 transition-colors shrink-0">系所推薦</a>
         <a href="resource_library.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">課程資料庫</a>
         <a href="profile.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">個人檔案</a>
@@ -201,17 +205,17 @@
                 <div class="flex justify-end items-center border-b border-klein/10 pb-4 sm:pb-6">
                     <div class="font-mono text-[10px] sm:text-xs text-klein/60 flex items-center gap-1.5 sm:gap-2 bg-klein/5 px-2.5 sm:px-3 py-1 sm:py-1.5 border border-klein/10">
                         <i class="fa-solid fa-circle-info text-klein"></i>
-                        <span>免責聲明：本測試為探索參考工具，非學校官方實驗室分發依據。</span>
+                        <span>免責聲明：本測試為探索參考工具，非學校官方系所分發依據。</span>
                     </div>
                 </div>
 
                 <!-- Hero Header -->
                 <div class="space-y-4 sm:space-y-6 pt-2">
                     <h1 class="font-heading font-black text-3xl sm:text-5xl md:text-6xl tracking-tight uppercase text-klein">
-                        資訊科系適配探索
+                        資訊系所推薦探索
                     </h1>
                     <p class="font-body text-sm sm:text-base md:text-xl text-klein/70 max-w-3xl leading-relaxed">
-                        不知道自己適合資工、資管還是人工智慧？只需 2 分鐘回答 6 題情境選擇，系統就會根據你的偏好，推薦最適合你的靜宜大學資訊系所與研究實驗室。
+                        不知道自己適合資工、資管還是人工智慧？只需 2 分鐘回答 6 題情境選擇，系統就會根據你的偏好，推薦最適合你的靜宜大學資訊系所。
                     </p>
                 </div>
 
@@ -254,7 +258,7 @@
                 <!-- Start CTA Button -->
                 <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
                     <button onclick="LabApp.start()" class="hover-spring bg-klein text-white font-heading font-black text-base sm:text-lg md:text-xl tracking-wider uppercase px-8 sm:px-12 py-4 sm:py-5 flex items-center justify-center gap-3 sm:gap-4 group cursor-pointer w-full sm:w-auto">
-                        <span>開始適配探索</span>
+                        <span>開始系所推薦探索</span>
                         <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>
                     </button>
                     <div class="font-mono text-[10px] sm:text-xs tracking-tight sm:tracking-[0.2em] text-klein/50 uppercase flex items-center gap-2 sm:gap-3">
@@ -294,7 +298,7 @@
                     
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 border-b border-klein/10 pb-4 sm:pb-6 mb-6 sm:mb-8">
                         <div class="font-mono uppercase text-xs font-bold text-klein/70">
-                            適配分析結果
+                            系所推薦分析結果
                         </div>
                         <span class="font-mono text-xs text-klein/50">靜宜大學資訊學院</span>
                     </div>
@@ -306,8 +310,8 @@
                         </div>
                         
                         <div class="space-y-1.5 sm:space-y-2">
-                            <div class="font-mono text-xs font-bold tracking-wider text-klein/60 uppercase">最佳適配推薦</div>
-                            <h1 id="result-title" class="font-syne font-black text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-klein uppercase tracking-tight break-words">
+                            <div class="font-mono text-xs font-bold tracking-wider text-klein/60 uppercase">最佳系所推薦</div>
+                            <h1 id="result-title" class="font-heading font-black text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-klein uppercase tracking-tight break-words">
                                 分析中...
                             </h1>
                         </div>
@@ -321,23 +325,21 @@
                     <!-- Score Spectrum / Compatibility Distribution -->
                     <div class="border-t border-klein/10 pt-6 sm:pt-8 mb-8 sm:mb-10">
                         <h3 class="font-mono text-xs font-bold tracking-wider text-klein/70 mb-4">
-                            各系所適配度分佈
+                            各系所推薦契合度分佈
                         </h3>
                         <div id="score-spectrum-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                             <!-- Populated dynamically -->
                         </div>
                     </div>
 
-                    <!-- Recommended Research Laboratories -->
-                    <div class="border border-klein/10 bg-klein/[0.02] p-5 sm:p-8 crosshair-corner mb-8 sm:mb-10">
-                        <div class="flex items-center gap-2.5 sm:gap-3 mb-4 sm:mb-6">
-                            <i class="fa-solid fa-microchip text-klein text-lg sm:text-xl"></i>
-                            <h3 class="font-heading font-black text-lg sm:text-xl md:text-2xl uppercase tracking-tight text-klein">
-                                推薦實驗室與研究發展方向
-                            </h3>
-                        </div>
-                        <ul id="result-labs" class="space-y-3 sm:space-y-4 font-body text-sm sm:text-base text-klein/80">
-                            <!-- Populated by showResult() -->
+                    <!-- Recommended Labs Section -->
+                    <div class="border-t border-klein/10 pt-6 sm:pt-8 mb-8 sm:mb-10">
+                        <h3 class="font-mono text-xs font-bold tracking-wider text-klein/70 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-flask text-klein"></i>
+                            <span>推薦探索實驗室 (RECOMMENDED LABS)</span>
+                        </h3>
+                        <ul id="result-labs" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Populated dynamically by showResult() -->
                         </ul>
                     </div>
 
@@ -565,8 +567,27 @@
                 if (quizScreen) quizScreen.classList.add('hidden');
                 if (resultScreen) resultScreen.classList.remove('hidden');
 
-                // Calculate Winner
-                const winner = Object.keys(this.scores).reduce((a, b) => this.scores[a] > this.scores[b] ? a : b);
+                // Calculate Highest Score & Detect Ties Fairly
+                const maxScore = Math.max(...Object.values(this.scores));
+                const topDepts = Object.keys(this.scores).filter(k => this.scores[k] === maxScore);
+                
+                let winner = topDepts[0];
+                const isTie = topDepts.length > 1;
+
+                if (isTie) {
+                    // Smart tie-breaker: check user's saved department or Holland code from brand test
+                    const savedDept = localStorage.getItem('cdna_department');
+                    const savedHolland = localStorage.getItem('cdna_primary_holland');
+                    if (savedDept && topDepts.includes(savedDept)) {
+                        winner = savedDept;
+                    } else if (savedHolland) {
+                        if (savedHolland === 'R' && topDepts.includes('CS')) winner = 'CS';
+                        else if (savedHolland === 'I' && topDepts.includes('AI')) winner = 'AI';
+                        else if (savedHolland === 'E' && topDepts.includes('IM')) winner = 'IM';
+                        else if (savedHolland === 'A' && topDepts.includes('AI')) winner = 'AI';
+                        else if (savedHolland === 'C' && topDepts.includes('IM')) winner = 'IM';
+                    }
+                }
                 const data = RESULTS[winner];
 
                 const titleEl = document.getElementById('result-title');
@@ -576,7 +597,14 @@
                 if (iconEl) iconEl.innerText = data.icon;
 
                 const descEl = document.getElementById('result-desc');
-                if (descEl) descEl.innerText = data.desc;
+                if (descEl) {
+                    if (isTie) {
+                        const tiedTitles = topDepts.map(k => RESULTS[k].title.split(' ')[0]).join(' 與 ');
+                        descEl.innerHTML = `${data.desc}<br><span class="inline-block mt-3 px-3 py-1.5 bg-blue-50 border border-blue-200 text-xs font-mono font-bold text-klein">✨ 雙領域優勢提示：您在 ${tiedTitles} 獲得相同的高契合度（各 ${maxScore} 題），展現出跨領域整合潛力，建議未來可考慮跨系修課或雙主修！</span>`;
+                    } else {
+                        descEl.innerText = data.desc;
+                    }
+                }
 
                 const labsEl = document.getElementById('result-labs');
                 if (labsEl) labsEl.innerHTML = data.labs.join('');
@@ -626,7 +654,7 @@
                 if (window.CareerDNA_DB) {
                     const effectiveUid = window.CareerDNA_DB.getEffectiveUid(currentUser);
                     window.CareerDNA_DB.saveLabResult(effectiveUid, resultData)
-                        .then(() => console.log("✅ [MongoDB Atlas] 實驗室推薦結果已同步！"))
+                        .then(() => console.log("✅ [MongoDB Atlas] 系所推薦結果已同步！"))
                         .catch(err => console.error("❌ [MongoDB Atlas] 同步失敗:", err));
                 }
 

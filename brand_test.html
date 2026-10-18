@@ -11,11 +11,17 @@
     
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- DOMPurify -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+
+    <!-- CareerDNA MongoDB Atlas Client -->
+    <script src="static/db-client.js"></script>
     
-    <!-- Google Fonts: Syne, Inter, Noto Sans TC, Chakra Petch, JetBrains Mono -->
+    <!-- Google Fonts: Sora, Noto Sans TC, Chakra Petch, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&amp;family=Inter:wght@300;400;500;700;900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Syne:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Sora:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -27,26 +33,42 @@
                         cobalt: '#1F50CD',
                         sapphire: '#3B6BF0',
                         ice: '#EBF2FF',
+                        iceMid: '#DCE8FF',
                         iceBorder: '#C7DCFF',
                         canvas: '#F8FAFF',
-                        'electric-blue': '#00e5ff',
-                        'flame-orange': '#ff4500'
+                        inkBody: '#1E3A8A',
+                        inkMuted: '#3B63C4'
                     },
                     fontFamily: {
-                        syne: ['"Syne"', 'sans-serif'],
-                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
-                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
-                        mono: ['"Chakra Petch"', '"JetBrains Mono"', 'monospace']
+                        sora: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        syne: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        heading: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['"Sora"', 'Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
                     }
                 }
             }
         }
     </script>
     <style>
+        :root {
+            --klein-primary: #002FA7;
+            --klein-cobalt: #1F50CD;
+            --klein-sapphire: #3B6BF0;
+            --ice-surface: #EBF2FF;
+            --ice-hover: #DCE8FF;
+            --ice-border: #C7DCFF;
+            --canvas-bg: #F8FAFF;
+            --band-bg: #F2F6FF;
+            --card-white: #FFFFFF;
+            --ink-body: #1E3A8A;
+            --ink-muted: #3B63C4;
+        }
+
         body {
             background-color: #F8FAFF;
             color: #002FA7;
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            font-family: 'Sora', 'DM Sans', 'Noto Sans TC', sans-serif;
             overflow-x: hidden;
         }
 
@@ -75,21 +97,10 @@
             z-index: 50;
         }
 
-        /* Brutalist Crosshairs */
+        /* Clean Architectural Container (No '+' symbols) */
         .crosshair-corner {
             position: relative;
         }
-        .crosshair-corner::before, .crosshair-corner::after {
-            content: '+';
-            position: absolute;
-            color: #1F50CD;
-            font-family: monospace;
-            font-size: 1rem;
-            line-height: 1;
-            pointer-events: none;
-        }
-        .crosshair-corner::before { top: -8px; left: -4px; }
-        .crosshair-corner::after { bottom: -8px; right: -4px; }
 
         /* Outline Display Typography */
         .outline-text {
@@ -165,30 +176,54 @@
 
         <!-- Global Cyber-Brutalist Navbar -->
         <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
-            <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+            <div class="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 h-16 sm:h-20 flex items-center justify-between">
                 <a href="index.html" class="flex items-center gap-2 sm:gap-4 group shrink-0">
-                <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-base sm:text-xl group-hover:bg-klein group-hover:text-white transition-all">
-                    <i class="fa-solid fa-bolt"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="font-syne font-extrabold text-lg sm:text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
-                </div>
-            </a>
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-base sm:text-xl group-hover:bg-klein group-hover:text-white transition-all">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-syne font-extrabold text-lg sm:text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                    </div>
+                </a>
                 
                 <div class="hidden md:flex items-center gap-8">
                     <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">品牌測驗</a>
-                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
-                <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">系所推薦</a>
-                <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">課程資料庫</a>
-                <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
+                    <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">履歷健檢</a>
+                    <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">系所推薦</a>
+                    <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">課程資料庫</a>
+                    <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
+                <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+                    <a href="index.html" class="hidden sm:flex font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors items-center gap-2">
                         <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
                     </a>
+                    <div id="nav-auth-section" class="flex items-center gap-2 sm:gap-3 border-l border-klein/10 pl-2 sm:pl-4 shrink-0">
+                        <button id="nav-login-btn"
+                            onclick="window.CareerDNA_DB && window.CareerDNA_DB.showAuthModal((u) => window.location.reload())"
+                            class="font-mono uppercase text-[11px] sm:text-xs font-bold tracking-wider text-klein bg-[#EBF2FF] hover:text-white hover:bg-klein border border-klein px-2.5 sm:px-4 py-1 sm:py-1.5 transition-all">登入</button>
+                        <div id="nav-user-info" class="hidden flex items-center gap-2 sm:gap-3">
+                            <div class="flex flex-col text-right">
+                                <span id="nav-user-name" class="text-[11px] sm:text-xs font-bold text-klein truncate max-w-[80px] sm:max-w-[120px]"></span>
+                                <button onclick="window.CareerDNA_DB && window.CareerDNA_DB.logout(); window.location.reload();"
+                                    class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
+                            </div>
+                            <div id="nav-user-avatar"
+                                class="w-7 h-7 sm:w-8 sm:h-8 bg-klein text-white flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </nav>
+
+        <!-- Mobile Fixed Bottom Navigation Bar -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
+            <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein border-b-2 border-klein pb-0.5 px-2 py-1 transition-colors shrink-0">品牌測驗</a>
+            <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">履歷健檢</a>
+            <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">系所推薦</a>
+            <a href="resource_library.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">課程資料庫</a>
+            <a href="profile.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">個人檔案</a>
         </nav>
 
         <!-- Hero Canvas -->
@@ -453,7 +488,7 @@
                             <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span id="score-display" class="font-syne font-extrabold text-5xl text-klein tracking-tighter">0</span>
+                            <span id="score-display" class="font-mono font-black text-5xl text-klein tracking-tight">0</span>
                             <span class="font-mono text-[10px] font-bold text-klein/50 uppercase tracking-[0.2em] mt-1">Fit Score</span>
                         </div>
                     </div>
@@ -467,7 +502,7 @@
                         <div id="archetype-desc" class="font-body text-base md:text-lg text-klein/70 mt-3 max-w-3xl leading-relaxed"></div>
                         <div class="mt-6 inline-flex items-center gap-3 font-mono text-sm font-bold text-klein bg-klein/5 px-4 py-2 border border-klein/20">
                             <i class="fa-solid fa-circle-check text-klein"></i>
-                            與您的特質契合度高達 <span id="fit-score-text" class="font-syne font-black text-lg text-klein">0%</span>
+                            與您的特質契合度高達 <span id="fit-score-text" class="font-mono font-bold text-xl text-klein tracking-tight">0%</span>
                         </div>
                     </div>
                 </div>
@@ -495,7 +530,7 @@
                 <!-- 30/60/90 Day Roadmap -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner flex-1">
                     <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> 30/60/90 天成長計畫 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">ROADMAP</span>
+                        <span class="w-2 h-6 bg-klein"></span> <span class="font-mono font-bold tracking-tight">30/60/90</span> 天成長計畫 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">ROADMAP</span>
                     </h3>
                     <div id="action-plan-timeline" class="space-y-4 divide-y divide-klein/10"></div>
                 </div>
@@ -526,7 +561,7 @@
                 <!-- Top 5 Talents -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner flex-1">
                     <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> Top 5 天賦優勢 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">STRENGTHS</span>
+                        <span class="w-2 h-6 bg-klein"></span> <span class="font-mono font-bold tracking-tight">TOP 5</span> 天賦優勢 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">STRENGTHS</span>
                     </h3>
                     <div id="strength-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
@@ -605,21 +640,38 @@
         const db = getFirestore(app);
 
         let currentUser = null;
+        async function fetchLastReportForUser(uid) {
+            try {
+                if (typeof db !== 'undefined' && uid) {
+                    const docSnap = await getDoc(doc(db, "users", uid, "brand_results", "latest"));
+                    if (docSnap.exists()) {
+                        window.app.state.lastReport = docSnap.data();
+                        const btnLast = document.getElementById('btn-load-last');
+                        if (btnLast) btnLast.classList.remove('hidden');
+                        return;
+                    }
+                }
+                if (window.CareerDNA_DB && uid) {
+                    const res = await window.CareerDNA_DB.getBrandData(uid);
+                    if (res && res.brandData) {
+                        window.app.state.lastReport = res.brandData;
+                        const btnLast = document.getElementById('btn-load-last');
+                        if (btnLast) btnLast.classList.remove('hidden');
+                    }
+                }
+            } catch (e) { console.error("Error fetching last report:", e); }
+        }
+
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             if (!user) {
-                console.log("No authenticated user active. Local evaluation available.");
+                if (window.CareerDNA_DB && window.CareerDNA_DB.getCurrentUser()) {
+                    const cUser = window.CareerDNA_DB.getCurrentUser();
+                    fetchLastReportForUser(cUser.uid || cUser._id);
+                }
                 return;
             }
-            console.log("User logged in:", user.email);
-            try {
-                const docSnap = await getDoc(doc(db, "users", user.uid, "brand_results", "latest"));
-                if (docSnap.exists()) {
-                    window.app.state.lastReport = docSnap.data();
-                    const btnLast = document.getElementById('btn-load-last');
-                    if (btnLast) btnLast.classList.remove('hidden');
-                }
-            } catch (e) { console.error("Error fetching last report:", e); }
+            fetchLastReportForUser(user.uid);
         });
 
         const DATA = {
@@ -697,22 +749,7 @@
                     resumeHighlight: "我是一位注重細節、有條理的常規型人才。我享受在規範的流程中確保最高的品質與準確性。在 {請填寫相關課程或專案經驗} 中，我負責 {請填寫測試或資料整理任務}，透過細心檢查，成功 {請填寫量化成果，例如：找出 3 個潛在的嚴重 Bug 或將資料錯誤率降低 90%}。我相信我的耐心與責任感，能在 QA 測試或資料庫管理崗位上成為產品質量的堅實後盾。"
                 }
             },
-            radarMap: [
-                { name: '邏輯分析', keys: ['Analytical', 'Focus', 'I'] }, 
-                { name: '專案執行', keys: ['Achiever', 'Responsibility', 'C'] },
-                { name: '策略思維', keys: ['Strategic', 'E', 'Learner'] }, 
-                { name: '人際溝通', keys: ['Communication', 'Relator', 'S'] },
-                { name: '創新創造', keys: ['Ideation', 'A'] }, 
-                { name: '技術實作', keys: ['R'] }
-            ],
-            radarBenchmarks: {
-                '邏輯分析': { low: '仰賴直覺決策', mid: '能進行基礎數據判讀', high: '具備拆解複雜系統與數據洞察的卓越能力' },
-                '專案執行': { low: '需要明確指令', mid: '能按時完成交付', high: '具備高度當責感，能優化流程並確保高品質產出' },
-                '策略思維': { low: '專注眼前執行', mid: '能規劃短期目標', high: '具備宏觀視野，能預判風險並制定長期佈局' },
-                '人際溝通': { low: '偏好獨立作業', mid: '能進行團隊協作', high: '擅長跨部門溝通與衝突協調，具影響力' },
-                '創新創造': { low: '偏好標準流程', mid: '能提出改良建議', high: '具備突破性思維，能從0到1建構解決方案' },
-                '技術實作': { low: '偏好理論研究', mid: '能操作基礎工具', high: '具備強烈動手實作能力，能將概念轉化為實體' }
-            },
+
             strengthsInfo: {
                 'Strategic': '策略思維', 'Learner': '學習渴望', 'Analytical': '邏輯分析', 'Ideation': '創新思維', 'Communication': '溝通表達',
                 'Achiever': '成就導向', 'Focus': '專注目標', 'Responsibility': '責任紀律', 'Developer': '伯樂特質', 'Relator': '深度交往'
@@ -783,39 +820,6 @@
             }
         };
 
-        const QUESTIONS = [
-            {t:'面對複雜且模糊的專案需求時，我能迅速找出潛在風險與多種應對路徑。(Strategic)', m:'Strategic', cat:'s'},
-            {t:'面對新技術或陌生領域，我會感到興奮並能快速掌握核心概念應用於工作中。(Learner)', m:'Learner', cat:'s'},
-            {t:'在會議中，我習慣要求以數據、邏輯推演或具體證據來佐證決策，而非憑感覺。(Analytical)', m:'Analytical', cat:'s'},
-            {t:'我常能跳脫現有框架，提出讓團隊耳目一新的非傳統解決方案。(Ideation)', m:'Ideation', cat:'s'},
-            {t:'我擅長將複雜的技術語言，轉化為非技術人員也能聽懂的商業價值或故事。(Communication)', m:'Communication', cat:'s'},
-            {t:'我將完成任務視為基本，並習慣主動設定更高的KPI或優化標準來挑戰自己。(Achiever)', m:'Achiever', cat:'s'},
-            {t:'即使在干擾眾多的環境下，我仍能鎖定關鍵目標，長時間維持高效率產出。(Focus)', m:'Focus', cat:'s'},
-            {t:'對於答應的交付期限(Deadline)，我視為絕對承諾，必要時會自主排除萬難完成。(Responsibility)', m:'Responsibility', cat:'s'},
-            {t:'我能敏銳察覺團隊成員的潛力，並樂於提供指導或資源協助他們突破瓶頸。(Developer)', m:'Developer', cat:'s'},
-            {t:'比起表面寒暄，我更擅長與利害關係人建立長期、深度且具信任感的合作關係。(Relator)', m:'Relator', cat:'s'},
-            {t:'當系統或流程出錯時，我本能地會去拆解底層邏輯，找出根本原因(Root Cause)。(Analytical)', m:'Analytical', cat:'s'},
-            {t:'我習慣將大目標拆解為可執行的步驟，並預先規劃時程表與資源配置。(Strategic)', m:'Strategic', cat:'s'},
-            {t:'我將「持續進修」視為職涯必需品，常在下班後主動學習產業新知。(Learner)', m:'Learner', cat:'s'},
-            {t:'我能夠區分任務的輕重緩急，確保資源集中在對組織最有價值的20%事務上。(Focus)', m:'Focus', cat:'s'},
-            {t:'我重視團隊的心理安全感，能在高壓環境下維繫成員間的和諧與士氣。(Relator)', m:'Relator', cat:'s'},
-            {t:'我喜歡操作精密儀器、編寫底層代碼或進行硬體設備的維護與組裝。(R)', m:'R', cat:'h'},
-            {t:'比起抽象的策略討論，我更享受看到自己親手打造的產品實際運作的成就感。(R)', m:'R', cat:'h'},
-            {t:'我喜歡鑽研演算法、數學模型或分析複雜的系統架構，找出最佳化解法。(I)', m:'I', cat:'h'},
-            {t:'遇到未知問題時，我習慣先進行廣泛的資料蒐集與文獻研究，再歸納出結論。(I)', m:'I', cat:'h'},
-            {t:'我對使用者介面(UI)、視覺排版或產品美學有高標準，無法忍受缺乏設計感的產出。(A)', m:'A', cat:'h'},
-            {t:'我不喜歡被既定的SOP綁死，需要能自由發揮創意與個人風格的工作環境。(A)', m:'A', cat:'h'},
-            {t:'我樂於處理「人」的問題，包括輔導他人、解決客戶抱怨或進行教育訓練。(S)', m:'S', cat:'h'},
-            {t:'在跨部門專案中，我常擔任協調者角色，確保各方意見能達成共識。(S)', m:'S', cat:'h'},
-            {t:'我喜歡擔任專案負責人(PM)，帶領團隊衝刺業績或達成專案目標，並對結果負責。(E)', m:'E', cat:'h'},
-            {t:'我具備說服力，樂於向客戶提案或在會議中推銷我的想法與產品價值。(E)', m:'E', cat:'h'},
-            {t:'我擅長建立檔案管理系統，確保資料分類邏輯清晰，方便後續檢索。(C)', m:'C', cat:'h'},
-            {t:'我重視細節與精確度，在執行任務時會嚴格遵守規範與品質標準。(C)', m:'C', cat:'h'},
-            {t:'我會主動參加技術研討會或閱讀論文，以保持在專業領域的領先地位。(I)', m:'I', cat:'h'},
-            {t:'我享受在公開場合演講或進行簡報，展現個人或團隊的成果。(E)', m:'E', cat:'h'},
-            {t:'我無法忍受流程混亂或效率低下的工作方式，會主動尋求優化與標準化。(C)', m:'C', cat:'h'}
-        ];
-
         window.app = {
     state: {
         lastReport: null,
@@ -828,6 +832,132 @@
             commonComps: {},
             prof: {}
         }
+    },
+
+    loadLastReport() {
+        if (!this.state.lastReport) {
+            const localData = localStorage.getItem('ucan_dna_result');
+            if (localData) {
+                try { this.state.lastReport = JSON.parse(localData); } catch (e) {}
+            }
+        }
+        if (!this.state.lastReport) {
+            alert('尚未找到先前的測驗紀錄，請先填寫或匯入資料！');
+            return;
+        }
+        this.switchView('view-result');
+        this.renderReportView(this.state.lastReport);
+    },
+
+    closeUCAN() {
+        const modal = document.getElementById('ucan-modal');
+        if (modal) modal.classList.add('hidden');
+    },
+
+    openUCAN() {
+        const modal = document.getElementById('ucan-modal');
+        if (modal) modal.classList.remove('hidden');
+    },
+
+    submitUCAN() {
+        const input = document.getElementById('ucan-input');
+        const rawCode = input ? input.value.trim().toUpperCase() : '';
+        if (!rawCode) {
+            alert('請輸入您的 UCAN Holland 類型代碼（如：RIA、I、A 等）');
+            return;
+        }
+        
+        const validLetters = ['R', 'I', 'A', 'S', 'E', 'C'];
+        const filteredCode = rawCode.split('').filter(ch => validLetters.includes(ch));
+        if (filteredCode.length === 0) {
+            alert('請輸入有效的 Holland 代碼（R, I, A, S, E, C）');
+            return;
+        }
+
+        const hData = {};
+        validLetters.forEach(k => {
+            hData[k] = { score: 2.5, pr: 40 };
+        });
+
+        filteredCode.slice(0, 3).forEach((k, idx) => {
+            hData[k] = { score: Number((5.0 - idx * 0.6).toFixed(1)), pr: 95 - idx * 10 };
+        });
+
+        const primary = filteredCode[0];
+        const cData = {};
+        this.state.compKeys.forEach(k => {
+            cData[k] = { score: 3.8, pr: 68 };
+        });
+
+        const pPathway = primary === 'R' ? '網路與系統維運' : (primary === 'A' ? '互動多媒體' : (primary === 'E' ? '資訊商務' : '軟體開發'));
+
+        const resultData = {
+            student: {},
+            date: new Date().toLocaleDateString('zh-TW'),
+            holland: hData,
+            hollandCode: filteredCode.join(''),
+            primaryHolland: primary,
+            commonComps: cData,
+            profPathway: pPathway,
+            profScore: 4.0,
+            profPr: 75
+        };
+
+        this.closeUCAN();
+        this.saveAndShowResult(resultData);
+    },
+
+    async saveAndShowResult(resultData) {
+        localStorage.setItem('ucan_dna_result', JSON.stringify(resultData));
+        localStorage.setItem('cdna_primary_holland', resultData.primaryHolland);
+        if (resultData.student?.dept) {
+            let dCode = 'IM';
+            if (resultData.student.dept.includes('資工') || resultData.student.dept.includes('工程')) dCode = 'CS';
+            else if (resultData.student.dept.includes('AI') || resultData.student.dept.includes('人工智慧')) dCode = 'AI';
+            localStorage.setItem('cdna_department', dCode);
+        }
+
+        this.state.lastReport = resultData;
+
+        // Async cloud sync to MongoDB Atlas & Firebase Firestore
+        const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(currentUser) : (currentUser?.uid);
+        
+        // 1. Sync to MongoDB Atlas
+        if (window.CareerDNA_DB && effectiveUid) {
+            try {
+                await window.CareerDNA_DB.saveBrandData(effectiveUid, {
+                    brandData: resultData,
+                    hollandCode: resultData.hollandCode,
+                    primaryHolland: resultData.primaryHolland,
+                    updatedAt: new Date().toISOString()
+                });
+                console.log("✅ 個人品牌分析已同步至 MongoDB Atlas！");
+            } catch (err) {
+                console.warn("MongoDB Atlas 儲存略過：", err);
+            }
+        }
+
+        // 2. Sync to Firebase Firestore
+        if (currentUser && typeof db !== 'undefined') {
+            try {
+                await setDoc(doc(db, "users", currentUser.uid, "brand_results", "latest"), resultData);
+                await setDoc(doc(db, "users", currentUser.uid), {
+                    summary_cache: {
+                        brand: {
+                            updatedAt: new Date().toISOString(),
+                            primaryHolland: resultData.primaryHolland,
+                            hollandCode: resultData.hollandCode
+                        }
+                    }
+                }, { merge: true });
+                console.log("✅ 個人品牌分析已同步至 Firestore 雲端！");
+            } catch (e) {
+                console.warn("Firestore 儲存略過：", e);
+            }
+        }
+
+        this.switchView('view-result');
+        this.renderReportView(resultData);
     },
 
     init() {
@@ -1297,16 +1427,7 @@
         // Save
         localStorage.setItem('ucan_dna_result', JSON.stringify(resultData));
         localStorage.setItem('cdna_primary_holland', resultData.primaryHolland);
-        if (p.student?.dept) {
-            let dCode = 'IM';
-            if (p.student.dept.includes('資工') || p.student.dept.includes('工程')) dCode = 'CS';
-            else if (p.student.dept.includes('AI') || p.student.dept.includes('人工智慧')) dCode = 'AI';
-            localStorage.setItem('cdna_department', dCode);
-        }
-
-        this.state.lastReport = resultData;
-        this.switchView('view-result');
-        this.renderReportView(resultData);
+        this.saveAndShowResult(resultData);
     },
 
     submitUCANManual() {
@@ -1345,12 +1466,7 @@
             profPr: pPr
         };
 
-        localStorage.setItem('ucan_dna_result', JSON.stringify(resultData));
-        localStorage.setItem('cdna_primary_holland', resultData.primaryHolland);
-        this.state.lastReport = resultData;
-        
-        this.switchView('view-result');
-        this.renderReportView(resultData);
+        this.saveAndShowResult(resultData);
     },
 
     renderReportView(data) {
@@ -1472,12 +1588,12 @@
 
         // Holland Dimension Quantitative Benchmarks ( radar-details replacement )
         const hollandMap = {
-            'R': { name: '實用型 (Realistic)', desc: '偏好具體、實用的操作，擅長使用工具與機械。' },
-            'I': { name: '研究型 (Investigative)', desc: '喜歡觀察、分析及解決複雜問題，具備科學探究精神。' },
-            'A': { name: '藝術型 (Artistic)', desc: '富有創意、想像力，偏好非結構化的活動與自我表達。' },
-            'S': { name: '社會型 (Social)', desc: '熱心助人，擅長教導、輔導及與他人互動合作。' },
-            'E': { name: '企業型 (Enterprising)', desc: '具備領導特質，喜歡說服他人並追求組織目標或經濟效益。' },
-            'C': { name: '事務型 (Conventional)', desc: '做事有條理，偏好處理數據、紀錄及遵循明確程序的任務。' }
+            'R': { name: '實用型', en: 'Realistic', desc: '偏好具體、實用的操作，擅長使用工具與機械。' },
+            'I': { name: '研究型', en: 'Investigative', desc: '喜歡觀察、分析及解決複雜問題，具備科學探究精神。' },
+            'A': { name: '藝術型', en: 'Artistic', desc: '富有創意、想像力，偏好非結構化的活動與自我表達。' },
+            'S': { name: '社會型', en: 'Social', desc: '熱心助人，擅長教導、輔導及與他人互動合作。' },
+            'E': { name: '企業型', en: 'Enterprising', desc: '具備領導特質，喜歡說服他人並追求組織目標或經濟效益。' },
+            'C': { name: '事務型', en: 'Conventional', desc: '做事有條理，偏好處理數據、紀錄及遵循明確程序的任務。' }
         };
 
         const radarDetailsEl = document.getElementById('radar-details');
@@ -1494,9 +1610,12 @@
                 radarHTML += `
                     <div class="py-4 first:pt-0 flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-center no-break hover:bg-klein/5 transition-colors p-2">
                         <div class="w-full sm:w-1/3 flex sm:flex-col justify-between items-baseline">
-                            <span class="font-heading font-bold text-klein text-sm md:text-base">${info.name}</span>
+                            <div class="flex items-baseline gap-1.5 flex-wrap">
+                                <span class="font-bold text-klein text-sm md:text-base">${info.name}</span>
+                                <span class="font-mono text-xs text-klein/60 font-semibold">(${info.en})</span>
+                            </div>
                             <div class="flex items-baseline gap-1 mt-1">
-                                <span class="font-syne font-extrabold text-2xl md:text-3xl ${scoreColor}">${score}</span>
+                                <span class="font-mono font-bold text-2xl md:text-3xl ${scoreColor}">${score}</span>
                                 <span class="font-mono text-xs text-klein/40">/12 (PR ${pr})</span>
                             </div>
                         </div>
@@ -1519,7 +1638,10 @@
         if (strengthsEl) {
             strengthsEl.innerHTML = strengthsList.map((s, i) => `
                 <div class="p-4 bg-white border border-klein/15 flex items-center justify-between hover-spring rounded-none">
-                    <span class="font-heading font-bold text-klein text-sm md:text-base">#${i + 1} ${s}</span>
+                    <span class="font-bold text-klein text-sm md:text-base flex items-center">
+                        <span class="font-mono font-bold text-klein/70 mr-2 text-sm">#${i + 1}</span>
+                        <span>${s}</span>
+                    </span>
                     <span class="font-mono text-xs bg-klein/5 border border-klein/20 px-2 py-1 text-klein font-bold">
                         PR ${commonComps[s]?.pr || 0}
                     </span>

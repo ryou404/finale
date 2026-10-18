@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="bg-[#F8FAFF] text-[#002FA7]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerDNA | 字體設計方案即時預覽與評測 (Font Curation Preview)</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Space Grotesk, Plus Jakarta Sans, Sora, Urbanist, JetBrains Mono, Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:ital,wght@0,500;0,700;0,800;1,700&family=Sora:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Urbanist:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        .font-space { font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif; }
+        .font-jakarta { font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif; }
+        .font-sora { font-family: 'Sora', 'Noto Sans TC', sans-serif; }
+        .font-urbanist { font-family: 'Urbanist', 'Noto Sans TC', sans-serif; }
+        .font-mono-jb { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Outline effect */
+        .outline-title {
+            color: #EBF2FF;
+            -webkit-text-stroke: 1.5px #002FA7;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[#F8FAFF] text-[#002FA7] p-6 sm:p-10 md:p-16">
+    <div class="max-w-6xl mx-auto space-y-12">
+        
+        <!-- Header -->
+        <header class="border-b border-[#002FA7]/20 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+                <div class="font-mono-jb text-xs font-bold tracking-[0.25em] text-[#002FA7]/60 uppercase mb-2">
+                    TYPOGRAPHY SELECTION LAB // 專屬字體方案甄選
+                </div>
+                <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-[#002FA7]">
+                    告別平庸：高識別度 × 頂級易讀性 字體提案
+                </h1>
+                <p class="text-sm sm:text-base text-[#002FA7]/70 mt-2 max-w-2xl">
+                    針對目前 <span class="line-through text-red-500 font-mono-jb">Inter / 普通黑體</span> 爛大街、缺乏品牌個性的痛點，為你精選 3 組兼具「強烈先鋒科技感」與「極致舒適閱讀體驗」的頂級字型系統。
+                </p>
+            </div>
+            
+            <a href="brand_test.html" class="inline-flex items-center gap-2 px-4 py-2 border border-[#002FA7]/30 hover:border-[#002FA7] bg-white text-xs font-mono-jb font-bold uppercase tracking-wider text-[#002FA7] transition-all shrink-0">
+                <i class="fa-solid fa-arrow-left"></i> 返回品牌測驗
+            </a>
+        </header>
+
+        <!-- 3 Candidate Options Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- OPTION A: Space Grotesk (Recommended) -->
+            <div class="bg-white border-2 border-[#002FA7] p-6 sm:p-8 flex flex-col justify-between shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-[#002FA7] text-white text-[10px] font-mono-jb uppercase px-3 py-1 font-bold tracking-wider">
+                    RECOMMENDED 首選推薦
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-mono-jb text-[#002FA7]/50 font-bold">方案 A · 先鋒建築科技體</span>
+                        <h2 class="text-2xl font-bold text-[#002FA7] mt-1 font-space">
+                            Space Grotesk
+                        </h2>
+                        <p class="text-xs text-[#002FA7]/70 mt-2 leading-relaxed">
+                            <strong>氣質：</strong>現代科技實驗室、先鋒代碼美學、頂級設計工作室風格。具有獨特精緻的切角與俐落幾何感，絕對跳脫傳統 AI 的平庸感，且數字及符號排版極度穩定規整。
+                        </p>
+                    </div>
+
+                    <!-- Live Sample Block -->
+                    <div class="p-4 bg-[#F2F6FF] border border-[#002FA7]/20 rounded space-y-4">
+                        <div>
+                            <span class="text-[10px] font-mono-jb text-[#002FA7]/50 uppercase tracking-widest block mb-1">主標題預覽 (Hero)</span>
+                            <div class="font-space font-bold text-2xl text-[#002FA7] tracking-tight">
+                                CareerDNA <span class="outline-title font-bold">& AI Resume</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] font-mono-jb text-[#002FA7]/50 uppercase tracking-widest block mb-1">章節數字與標籤 (Headings & Badges)</span>
+                            <div class="font-space font-bold text-lg text-[#002FA7] flex items-center gap-2">
+                                <span class="w-1.5 h-4 bg-[#002FA7]"></span>
+                                30/60/90 天成長計畫
+                            </div>
+                            <div class="mt-2 flex items-center justify-between bg-white p-2.5 border border-[#002FA7]/15">
+                                <span class="font-space font-bold text-sm text-[#002FA7]">#2 創新實踐力</span>
+                                <span class="font-mono-jb text-xs font-bold text-[#002FA7] bg-[#002FA7]/5 px-2 py-0.5 border border-[#002FA7]/20">PR 48</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] font-mono-jb text-[#002FA7]/50 uppercase tracking-widest block mb-1">性格維度與契合度</span>
+                            <div class="font-space font-semibold text-sm text-[#002FA7]">
+                                研究型 (Investigative) <span class="font-mono-jb text-xs text-[#002FA7]/60">9/12</span>
+                            </div>
+                            <div class="text-xs font-space text-[#002FA7]/80 mt-1">
+                                與您的特質契合度高達 <span class="font-mono-jb font-bold text-base text-[#002FA7]">55%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-[#002FA7]/10 flex items-center justify-between">
+                    <span class="text-xs font-mono-jb text-emerald-600 font-bold">強烈個性 ★★★★★</span>
+                    <span class="text-xs font-mono-jb text-emerald-600 font-bold">易讀性 ★★★★★</span>
+                </div>
+            </div>
+
+            <!-- OPTION B: Plus Jakarta Sans -->
+            <div class="bg-white border border-[#002FA7]/20 hover:border-[#002FA7] p-6 sm:p-8 flex flex-col justify-between shadow-md transition-all">
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-mono-jb text-[#002FA7]/50 font-bold">方案 B · 現代新幾何巨匠體</span>
+                        <h2 class="text-2xl font-bold text-[#002FA7] mt-1 font-jakarta">
+                            Plus Jakarta Sans
+                        </h2>
+                        <p class="text-xs text-[#002FA7]/70 mt-2 leading-relaxed">
+                            <strong>氣質：</strong>當代國際科技大廠（如 Stripe / Linear / Figma）偏愛的高端幾何新黑體。比 Inter 溫潤飽滿且筆劃富有張力，擁有極高 x-height，長時間閱讀眼睛最不疲憊。
+                        </p>
+                    </div>
+
+                    <!-- Live Sample Block -->
+                    <div class="p-4 bg-[#F2F6FF] border border-[#002FA7]/20 rounded space-y-4">
+                        <div>
+                            <span class="text-[10px] font-mono-jb text-[#002FA7]/50 uppercase tracking-widest block mb-1">主標題預覽 (Hero)</span>
+                            <div class="font-jakarta font-extrabold text-2xl text-[#002FA7] tracking-tight">
+                                CareerDNA <span class="outline-title font-extrabold">& AI Resume</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] font-mono-jb text-[#002FA7]/50 uppercase tracking-widest block mb-1">章節數字與標籤 (Headings & Badges)</span>
+                            <div class="font-jakarta font-bold text-lg text-[#002FA7] flex items-center gap-2">
+                                <span class="w-1.5 h-4 bg-[#002FA7]"></span>
+                                30/60/90 天成長計畫
+                            </div>
+                            <div class="mt-2 flex items-center justify-between bg-white p-2.5 border border-[#002FA7]/15">
+                                <span class="font-jakarta font-bold text-sm text-[#002FA7]">#2 創新實踐力</span>
+                                <span class="font-mono-jb text-xs font-bold text-[#002FA7] bg-[#002FA7]/5 px-2 py-0.5 border border-[#002FA7]/20">PR 48</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] font-mono-jb text-[#002FA7]/50 uppercase tracking-widest block mb-1">性格維度與契合度</span>
+                            <div class="font-jakarta font-bold text-sm text-[#002FA7]">
+                                研究型 (Investigative) <span class="font-mono-jb text-xs text-[#002FA7]/60">9/12</span>
+                            </div>
+                            <div class="text-xs font-jakarta text-[#002FA7]/80 mt-1">
+                                與您的特質契合度高達 <span class="font-mono-jb font-bold text-base text-[#002FA7]">55%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-[#002FA7]/10 flex items-center justify-between">
+                    <span class="text-xs font-mono-jb text-emerald-600 font-bold">強烈個性 ★★★★☆</span>
+                    <span class="text-xs font-mono-jb text-emerald-600 font-bold">極致易讀 ★★★★★</span>
+                </div>
+            </div>
+
+            <!-- OPTION C: Sora -->
+            <div class="bg-white border border-[#002FA7]/20 hover:border-[#002FA7] p-6 sm:p-8 flex flex-col justify-between shadow-md transition-all">
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-xs font-mono-jb text-[#002FA7]/50 font-bold">方案 C · 賽博硬核未來體</span>
+                        <h2 class="text-2xl font-bold text-[#002FA7] mt-1 font-sora">
+                            Sora
+                        </h2>
+                        <p class="text-xs text-[#002FA7]/70 mt-2 leading-relaxed">
+                            <strong>氣質：</strong>專為前沿數位科技與高密資訊介面打造。字型寬闊大氣，字腔開闊，橫切角銳利，充滿強烈的速度感與力量感，給人權威、不可忽視的視覺衝擊。
+                        </p>
+                    </div>
+
+                    <!-- Live Sample Block -->
+                    <div class="p-4 bg-[#F2F6FF] border border-[#002FA7]/20 rounded space-y-4">
+                        <div>
+                            <span class="text-[10px] font-mono-jb text-[#002FA7]/50 uppercase tracking-widest block mb-1">主標題預覽 (Hero)</span>
+                            <div class="font-sora font-extrabold text-2xl text-[#002FA7] tracking-tight">
+                                CareerDNA <span class="outline-title font-extrabold">& AI Resume</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] font-mono-jb text-[#002FA7]/50 uppercase tracking-widest block mb-1">章節數字與標籤 (Headings & Badges)</span>
+                            <div class="font-sora font-bold text-lg text-[#002FA7] flex items-center gap-2">
+                                <span class="w-1.5 h-4 bg-[#002FA7]"></span>
+                                30/60/90 天成長計畫
+                            </div>
+                            <div class="mt-2 flex items-center justify-between bg-white p-2.5 border border-[#002FA7]/15">
+                                <span class="font-sora font-bold text-sm text-[#002FA7]">#2 創新實踐力</span>
+                                <span class="font-mono-jb text-xs font-bold text-[#002FA7] bg-[#002FA7]/5 px-2 py-0.5 border border-[#002FA7]/20">PR 48</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-[10px] font-mono-jb text-[#002FA7]/50 uppercase tracking-widest block mb-1">性格維度與契合度</span>
+                            <div class="font-sora font-bold text-sm text-[#002FA7]">
+                                研究型 (Investigative) <span class="font-mono-jb text-xs text-[#002FA7]/60">9/12</span>
+                            </div>
+                            <div class="text-xs font-sora text-[#002FA7]/80 mt-1">
+                                與您的特質契合度高達 <span class="font-mono-jb font-bold text-base text-[#002FA7]">55%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-[#002FA7]/10 flex items-center justify-between">
+                    <span class="text-xs font-mono-jb text-emerald-600 font-bold">強烈個性 ★★★★★</span>
+                    <span class="text-xs font-mono-jb text-emerald-600 font-bold">易讀性 ★★★★☆</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Comprehensive Comparison Banner -->
+        <div class="bg-white border border-[#002FA7]/20 p-8 space-y-6">
+            <h3 class="font-mono-jb text-sm font-bold tracking-widest text-[#002FA7] uppercase flex items-center gap-2">
+                <i class="fa-solid fa-layer-group text-[#002FA7]"></i> 總體排版策略解析 (System Architecture)
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#002FA7]/80 leading-relaxed">
+                <div class="p-4 bg-[#F8FAFF] border border-[#002FA7]/10">
+                    <div class="font-bold text-sm text-[#002FA7] mb-2 font-mono-jb">1. 標題與品牌 (Display / Heading)</div>
+                    <p>全面替換市面上氾濫的 Inter / 預設黑體，改採 <strong>Space Grotesk</strong> 或 <strong>Plus Jakarta Sans</strong>，讓網頁一打開就散發出前沿設計工作室與資深工程師產品的精緻氣場。</p>
+                </div>
+                <div class="p-4 bg-[#F8FAFF] border border-[#002FA7]/10">
+                    <div class="font-bold text-sm text-[#002FA7] mb-2 font-mono-jb">2. 正文與繁中 (Body & CJK)</div>
+                    <p>正文保留高清晰度並強化字距微調（Letter-spacing + Tracking），繁體中文以蘋果級 <strong>PingFang TC</strong> 及高字重 <strong>Noto Sans TC</strong> 嚴謹匹配，長文閱讀無壓迫感。</p>
+                </div>
+                <div class="p-4 bg-[#F8FAFF] border border-[#002FA7]/10">
+                    <div class="font-bold text-sm text-[#002FA7] mb-2 font-mono-jb">3. 數據與指標 (Data / Numbers)</div>
+                    <p>全站數字、百分比（55%）、排名（#1~#5）、PR 值全面鎖定 <strong>JetBrains Mono</strong>，保證等寬等高、零幾何形變、科技感十足。</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

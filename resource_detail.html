@@ -8,27 +8,37 @@
     <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Plus+Jakarta+Sans:wght@700;800&family=Syne:wght@700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&amp;family=JetBrains+Mono:wght@400;700;800&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Sora:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS & DOMPurify -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'klein': '#002fa7',
-                        'deep-klein': '#001f70',
+                        klein: '#002FA7',
+                        'deep-klein': '#001a5e',
+                        cobalt: '#1F50CD',
+                        sapphire: '#3B6BF0',
+                        ice: '#EBF2FF',
+                        iceMid: '#DCE8FF',
+                        iceBorder: '#C7DCFF',
+                        canvas: '#F8FAFF',
+                        inkBody: '#1E3A8A',
+                        inkMuted: '#3B63C4',
                         'flame-orange': '#ff4d00',
                         'safety-yellow': '#ffea00',
                         'acid-lime': '#bcf000'
                     },
                     fontFamily: {
-                        'syne': ['Syne', 'sans-serif'],
-                        'heading': ['Plus Jakarta Sans', 'Space Grotesk', 'sans-serif'],
+                        'sora': ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        'syne': ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        'heading': ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
                         'mono': ['JetBrains Mono', 'monospace'],
-                        'body': ['Plus Jakarta Sans', 'sans-serif']
+                        'body': ['"DM Sans"', 'Inter', '"Noto Sans TC"', 'sans-serif']
                     }
                 }
             }
@@ -36,7 +46,24 @@
     </script>
     
     <style>
+        :root {
+            --klein-primary: #002FA7;
+            --klein-cobalt: #1F50CD;
+            --klein-sapphire: #3B6BF0;
+            --ice-surface: #EBF2FF;
+            --ice-hover: #DCE8FF;
+            --ice-border: #C7DCFF;
+            --canvas-bg: #F8FAFF;
+            --band-bg: #F2F6FF;
+            --card-white: #FFFFFF;
+            --ink-body: #1E3A8A;
+            --ink-muted: #3B63C4;
+        }
+
         html, body {
+            background-color: #F8FAFF;
+            color: #1E3A8A;
+            font-family: 'DM Sans', 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
             max-width: 100vw;
             overflow-x: hidden !important;
             position: relative;
@@ -45,7 +72,7 @@
             box-sizing: border-box;
         }
         .bg-cyber-grid {
-            background-color: #f8fafc;
+            background-color: #F8FAFF;
             background-image: 
                 linear-gradient(to right, rgba(0, 47, 167, 0.05) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(0, 47, 167, 0.05) 1px, transparent 1px);
@@ -54,30 +81,12 @@
         .crosshair-corner {
             position: relative;
         }
-        .crosshair-corner::before, .crosshair-corner::after {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            pointer-events: none;
-            z-index: 10;
-        }
-        .crosshair-corner::before {
-            top: -2px; left: -2px;
-            border-top: 2px solid #002fa7;
-            border-left: 2px solid #002fa7;
-        }
-        .crosshair-corner::after {
-            bottom: -2px; right: -2px;
-            border-bottom: 2px solid #002fa7;
-            border-right: 2px solid #002fa7;
-        }
         .hover-spring {
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
         }
         .hover-spring:hover {
             transform: translateY(-2px);
-            box-shadow: 4px 4px 0px 0px #002fa7;
+            box-shadow: 4px 4px 0px 0px #002FA7;
         }
     </style>
 </head>
@@ -105,7 +114,7 @@
                 <a href="resource_library.html" class="px-2.5 sm:px-3 py-1 sm:py-1.5 border border-klein text-klein font-mono text-[10px] sm:text-xs font-bold hover:bg-klein hover:text-white transition-all flex items-center gap-1 sm:gap-1.5">
                     <i class="fa-solid fa-layer-group"></i> <span>全部資源</span>
                 </a>
-                <a href="admin.html" id="static-nav-admin-btn" class="hidden nav-admin-btn px-2.5 sm:px-3 py-1 sm:py-1.5 bg-flame-orange text-white font-mono text-[10px] sm:text-xs font-bold hover:bg-orange-600 transition-all flex items-center gap-1 sm:gap-1.5 shadow-sm">
+                <a href="admin.html" id="static-nav-admin-btn" class="hidden nav-admin-btn px-2.5 sm:px-3 py-1 sm:py-1.5 bg-cobalt text-white font-mono text-[10px] sm:text-xs font-bold hover:bg-klein transition-all flex items-center gap-1 sm:gap-1.5 shadow-sm">
                     <i class="fa-solid fa-shield-halved"></i> <span class="hidden md:inline">管理後台</span>
                 </a>
                 <div id="nav-auth-section" class="flex items-center gap-2 sm:gap-3 border-l border-klein/10 pl-2 sm:pl-3 shrink-0">
@@ -128,7 +137,7 @@
     <!-- Mobile Fixed Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
         <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">品牌測驗</a>
-        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">AI 履歷健檢</a>
+        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">履歷健檢</a>
         <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">系所推薦</a>
         <a href="resource_library.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">課程資料庫</a>
         <a href="profile.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">個人檔案</a>
@@ -219,7 +228,7 @@
                     <!-- Description Card -->
                     <div class="bg-white border-2 border-klein p-6 md:p-8 crosshair-corner space-y-4 shadow-sm">
                         <div class="flex items-center gap-2.5 font-heading font-bold text-sm text-klein uppercase tracking-wider border-b border-klein/10 pb-3">
-                            <i class="fa-solid fa-align-left text-flame-orange"></i> 資源簡介與學習重點 (Overview)
+                            <i class="fa-solid fa-align-left text-cobalt"></i> 資源簡介與學習重點 (Overview)
                         </div>
                         <p id="res-description" class="font-body text-slate-800 text-sm md:text-base leading-relaxed whitespace-pre-line">
                             <!-- Description content -->

@@ -11,14 +11,18 @@
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Google Fonts: Syne, Inter, Noto Sans TC, Chakra Petch, JetBrains Mono -->
+    <!-- Google Fonts: Sora, Noto Sans TC, Chakra Petch, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Sora:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+
+    <!-- CareerDNA MongoDB Atlas Client -->
+    <script src="static/db-client.js"></script>
     
     <script>
         tailwind.config = {
@@ -36,10 +40,11 @@
                         'flame-orange': '#ff4500'
                     },
                     fontFamily: {
-                        syne: ['"Syne"', 'sans-serif'],
-                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
-                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
-                        mono: ['"Chakra Petch"', '"JetBrains Mono"', 'monospace']
+                        sora: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        syne: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        heading: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['"Sora"', 'Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', '"Chakra Petch"', 'monospace']
                     }
                 }
             }
@@ -50,7 +55,7 @@
         body {
             background-color: #F8FAFF;
             color: #002FA7;
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            font-family: 'Sora', 'DM Sans', 'Noto Sans TC', sans-serif;
             overflow-x: hidden;
         }
 
@@ -151,6 +156,66 @@
             border: 1px solid #cbd5e1;
         }
 
+        /* PDF Export & Print Styles */
+        .html2pdf__page-break {
+            page-break-before: always !important;
+            break-before: page !important;
+            display: block !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        #pdf-content h1, #pdf-content h2, #pdf-content h3 {
+            page-break-after: avoid !important;
+            break-after: avoid !important;
+        }
+
+        #pdf-content p, #pdf-content li {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #resume-preview-panel, #resume-preview-panel * {
+                visibility: visible !important;
+            }
+            #resume-preview-panel {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+            }
+            #resume-preview-panel > div:first-child {
+                display: none !important;
+            }
+            #resume-output {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            .html2pdf__page-break {
+                page-break-before: always !important;
+                break-before: page !important;
+                display: block !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 12mm 10mm;
+            }
+        }
+
         /* Outline Display Typography */
         .outline-text {
             color: #EBF2FF;
@@ -187,14 +252,11 @@
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col">
-    <script>
-        if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-    </script>
+<body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col pb-20 md:pb-0">
 
     <!-- Global Navigation Bar -->
     <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
-        <div class="max-w-[1400px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 h-16 sm:h-20 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-2 sm:gap-4 group shrink-0">
                 <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-base sm:text-xl group-hover:bg-klein group-hover:text-white transition-all">
                     <i class="fa-solid fa-bolt"></i>
@@ -206,18 +268,42 @@
             
             <div class="hidden md:flex items-center gap-8">
                 <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">履歷健檢</a>
                 <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">系所推薦</a>
                 <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">課程資料庫</a>
                 <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
             </div>
 
-            <div>
-                <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors flex items-center gap-2">
+            <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+                <a href="index.html" class="hidden sm:flex font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors items-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> 返回首頁
                 </a>
+                <div id="nav-auth-section" class="flex items-center gap-2 sm:gap-3 border-l border-klein/10 pl-2 sm:pl-4 shrink-0">
+                    <button id="nav-login-btn"
+                        onclick="window.CareerDNA_DB && window.CareerDNA_DB.showAuthModal((u) => window.location.reload())"
+                        class="font-mono uppercase text-[11px] sm:text-xs font-bold tracking-wider text-klein bg-[#EBF2FF] hover:text-white hover:bg-klein border border-klein px-2.5 sm:px-4 py-1 sm:py-1.5 transition-all">登入</button>
+                    <div id="nav-user-info" class="hidden flex items-center gap-2 sm:gap-3">
+                        <div class="flex flex-col text-right">
+                            <span id="nav-user-name" class="text-[11px] sm:text-xs font-bold text-klein truncate max-w-[80px] sm:max-w-[120px]"></span>
+                            <button onclick="window.CareerDNA_DB && window.CareerDNA_DB.logout(); window.location.reload();"
+                                class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
+                        </div>
+                        <div id="nav-user-avatar"
+                            class="w-7 h-7 sm:w-8 sm:h-8 bg-klein text-white flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </nav>
+
+    <!-- Mobile Fixed Bottom Navigation Bar -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
+        <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">品牌測驗</a>
+        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein border-b-2 border-klein pb-0.5 px-2 py-1 transition-colors shrink-0">履歷健檢</a>
+        <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">系所推薦</a>
+        <a href="resource_library.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">課程資料庫</a>
+        <a href="profile.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">個人檔案</a>
     </nav>
 
     <!-- Header Title Banner (Hero Display) -->
@@ -284,14 +370,14 @@
                     
                     <!-- Quick Track Switcher Tabs -->
                     <div class="flex border border-klein/10 bg-klein/[0.02] p-1 gap-1 mb-4">
-                        <button type="button" onclick="window.App.switchTrackDirect('program')" id="tab-track-program" class="flex-1 py-1.5 px-2 font-mono font-bold text-[11px] uppercase tracking-wider text-klein/60 hover:text-klein transition-all">
-                            專業學程
+                        <button type="button" onclick="window.App.switchTrackDirect('core')" id="tab-track-core" class="flex-1 py-1.5 px-2 font-mono font-bold text-[11px] uppercase tracking-wider text-klein/60 hover:text-klein transition-all">
+                            核心必修
                         </button>
                         <button type="button" onclick="window.App.switchTrackDirect('practical')" id="tab-track-practical" class="flex-1 py-1.5 px-2 font-mono font-bold text-[11px] uppercase tracking-wider text-klein/60 hover:text-klein transition-all">
                             實務課群
                         </button>
-                        <button type="button" onclick="window.App.switchTrackDirect('core')" id="tab-track-core" class="flex-1 py-1.5 px-2 font-mono font-bold text-[11px] uppercase tracking-wider text-klein/60 hover:text-klein transition-all">
-                            核心必修
+                        <button type="button" onclick="window.App.switchTrackDirect('program')" id="tab-track-program" class="flex-1 py-1.5 px-2 font-mono font-bold text-[11px] uppercase tracking-wider text-klein/60 hover:text-klein transition-all">
+                            專業學程
                         </button>
                     </div>
 
@@ -409,12 +495,15 @@
                                 <div>
                                     <span class="font-mono text-[10px] font-bold text-klein/50 uppercase tracking-[0.2em] block">GENERATED ARTIFACT</span>
                                     <h4 class="font-heading font-black text-lg text-klein uppercase tracking-tight flex items-center gap-2">
-                                        <i class="fa-solid fa-file-lines text-klein"></i> 企業標準 A4 履歷預覽 (A4 Standard)
+                                        <i class="fa-solid fa-file-lines text-klein"></i> A4 履歷預覽
                                     </h4>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <button type="button" onclick="window.App.copyResumeMarkdown()" class="hover-spring bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3.5 flex items-center gap-1.5 transition-all" title="複製 Markdown 格式">
                                         <i class="fa-solid fa-copy"></i> 複製內容
+                                    </button>
+                                    <button type="button" onclick="window.App.printResume()" class="hover-spring bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3 flex items-center gap-1.5 transition-all" title="瀏覽器原生無損列印 / 另存為向量 PDF">
+                                        <i class="fa-solid fa-print"></i> 列印 / 向量 PDF
                                     </button>
                                     <button type="button" onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2 shadow-sm" id="pdf-export-btn">
                                         <i class="fa-solid fa-download"></i> 匯出 PDF
@@ -607,6 +696,13 @@
                 dept: '' 
             },
 
+            debouncedLiveGenerate() {
+                if (this._debounceTimer) clearTimeout(this._debounceTimer);
+                this._debounceTimer = setTimeout(() => {
+                    this.calculateAndGenerate(true);
+                }, 250);
+            },
+
             init() {
                 console.log('[CareerDNA] init() starting...');
                 this.initScrollReveal();
@@ -642,10 +738,58 @@
                     if (gradeSelector) gradeSelector.value = '大四';
                 }
 
+                if (!this.state.dept) {
+                    this.state.dept = 'IM';
+                }
+
+                // Rehydrate saved course and experience selections from localStorage
+                try {
+                    const savedCourses = localStorage.getItem('cdna_selected_courses');
+                    if (savedCourses) {
+                        const parsed = JSON.parse(savedCourses);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            this.state.selectedCourses = new Set(parsed);
+                        }
+                    }
+                    const savedExps = localStorage.getItem('cdna_selected_exps');
+                    if (savedExps) {
+                        const parsedExps = JSON.parse(savedExps);
+                        if (Array.isArray(parsedExps) && parsedExps.length > 0) {
+                            this.state.selectedExps = new Set(parsedExps);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('[CareerDNA] Error restoring local course selections:', e);
+                }
+
+                // If still no courses selected, auto-seed standard foundation courses for the active department
+                if (this.state.selectedCourses.size === 0) {
+                    const seedCoursesMap = {
+                        IM: ['管理學', '系統分析與設計', '資料結構', '軟體設計與開發'],
+                        CS: ['程式設計', '資料結構', '計算機概論(一)', '演算法概論'],
+                        AI: ['人工智慧概論', '程式設計', '網頁前端程式設計', '資料結構']
+                    };
+                    const seeds = seedCoursesMap[this.state.dept] || seedCoursesMap.IM;
+                    seeds.forEach(c => this.state.selectedCourses.add(c));
+                    localStorage.setItem('cdna_selected_courses', JSON.stringify(Array.from(this.state.selectedCourses)));
+                }
+                if (this.state.selectedExps.size === 0) {
+                    this.state.selectedExps.add('exp_project');
+                    localStorage.setItem('cdna_selected_exps', JSON.stringify(Array.from(this.state.selectedExps)));
+                }
+
                 // Initial UI Setup
                 try {
                     this.setupTrackUI(this.state.grade);
                 } catch(e) { console.error('[CareerDNA] setupTrackUI error:', e); }
+
+                // Restore selections into checkbox DOM
+                this.restoreSelections(true);
+
+                // Guaranteed initial generation: A4 resume will immediately be visible on page load!
+                try {
+                    this.calculateAndGenerate(true);
+                } catch(e) { console.error('[CareerDNA] initial resume generation error:', e); }
 
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
@@ -658,8 +802,9 @@
                         if (navAvatar) navAvatar.innerText = (user.displayName || 'U').charAt(0).toUpperCase();
 
                         await this.loadUserData(user.uid);
+                        this.restoreSelections(true);
+                        this.calculateAndGenerate(true);
                     } else {
-                        // User not authenticated; continue in guest mode or redirect
                         console.log('[CareerDNA] Guest mode active');
                     }
                 });
@@ -690,23 +835,35 @@
                     toast.style.transition = 'all 0.5s ease';
                     toast.style.opacity = '0';
                     toast.style.transform = 'translateY(10px)';
-                    setTimeout(() => toast.remove(), 500);
+                    setTimeout(() => {
+                        if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
+                        else if (toast && typeof toast.remove === 'function') toast.remove();
+                    }, 500);
                 }, 4000);
             },
 
             changeGrade(newGrade) {
                 this.state.grade = newGrade;
                 localStorage.setItem('cdna_grade', newGrade);
-                this.state.selectedCourses.clear();
 
-                document.getElementById('ai-result-panel').classList.add('hidden');
-                document.querySelectorAll('#programs-container input[type="checkbox"]').forEach(el => el.checked = false);
+                if (this.state.selectedCourses.size === 0) {
+                    const dept = this.state.dept || 'IM';
+                    const defaultCourses = {
+                        IM: ['管理學', '系統分析與設計', '資料結構'],
+                        CS: ['程式設計', '資料結構', '計算機概論(一)'],
+                        AI: ['人工智慧概論', '程式設計', '網頁前端程式設計']
+                    };
+                    const seeds = defaultCourses[dept] || defaultCourses.IM;
+                    seeds.forEach(c => this.state.selectedCourses.add(c));
+                    localStorage.setItem('cdna_selected_courses', JSON.stringify(Array.from(this.state.selectedCourses)));
+                }
 
                 this.setupTrackUI(newGrade);
+                this.restoreSelections(true);
+                this.calculateAndGenerate(true);
 
                 if (currentUser) {
                     setDoc(doc(db, "users", currentUser.uid), { grade: newGrade }, { merge: true }).catch(console.error);
-                    setDoc(doc(db, "users", currentUser.uid, "resume_data", "latest"), { selectedCourses: [], updatedAt: new Date().toISOString() }, { merge: true });
                 }
 
                 const savedUser = JSON.parse(localStorage.getItem('careerDNA_user') || '{}');
@@ -720,8 +877,20 @@
                 this.state.dept = newDept;
                 localStorage.setItem('cdna_department', newDept);
                 this.state.selectedCourses.clear();
-                document.querySelectorAll('#programs-container input[type="checkbox"]').forEach(el => el.checked = false);
-                document.getElementById('ai-result-panel').classList.add('hidden');
+
+                // Auto-seed recommended foundation courses for the newly selected department
+                const seedCoursesMap = {
+                    IM: ['管理學', '系統分析與設計', '資料結構', '軟體設計與開發'],
+                    CS: ['程式設計', '資料結構', '計算機概論(一)', '演算法概論'],
+                    AI: ['人工智慧概論', '程式設計', '網頁前端程式設計', '資料結構']
+                };
+                const seeds = seedCoursesMap[newDept] || seedCoursesMap.IM;
+                seeds.forEach(c => this.state.selectedCourses.add(c));
+                if (this.state.selectedExps.size === 0) {
+                    this.state.selectedExps.add('exp_project');
+                }
+                localStorage.setItem('cdna_selected_courses', JSON.stringify(Array.from(this.state.selectedCourses)));
+                localStorage.setItem('cdna_selected_exps', JSON.stringify(Array.from(this.state.selectedExps)));
 
                 if (currentUser) {
                     setDoc(doc(db, "users", currentUser.uid), { dept: newDept }, { merge: true }).catch(console.error);
@@ -735,18 +904,19 @@
                 const deptNames = { CS: '資訊工程學系', IM: '資訊管理學系', AI: '人工智慧學系' };
                 this.showToast(`已切換至「${deptNames[newDept] || newDept}」專屬學程！`);
                 this.switchTrackDirect(this.state.track);
+                this.restoreSelections(true);
+                this.calculateAndGenerate(true);
             },
 
             resetDept() {
-                this.state.dept = '';
-                localStorage.removeItem('cdna_department');
-                this.state.selectedCourses.clear();
-                document.querySelectorAll('#programs-container input[type="checkbox"]').forEach(el => el.checked = false);
-                document.getElementById('ai-result-panel').classList.add('hidden');
+                this.state.dept = 'IM';
+                localStorage.setItem('cdna_department', 'IM');
                 if (currentUser) {
-                    setDoc(doc(db, "users", currentUser.uid), { dept: '' }, { merge: true }).catch(console.error);
+                    setDoc(doc(db, "users", currentUser.uid), { dept: 'IM' }, { merge: true }).catch(console.error);
                 }
                 this.setupTrackUI('大四');
+                this.restoreSelections(true);
+                this.calculateAndGenerate(true);
             },
 
             restoreSelections(isSilent = false) {
@@ -791,7 +961,9 @@
 
                         if (data.skills !== undefined) {
                             this.state.skills = data.skills;
-                            this.renderSkills();
+                            if (typeof this.renderSkills === 'function') {
+                                this.renderSkills();
+                            }
                         }
                         
                         this.restoreSelections(true);
@@ -1015,12 +1187,24 @@
                 else this.state.selectedCourses.delete(course);
                 this.updateProgramBadge(checkbox.dataset.prog);
                 this.updateLiveScore();
+
+                try {
+                    localStorage.setItem('cdna_selected_courses', JSON.stringify(Array.from(this.state.selectedCourses)));
+                } catch(e) {}
+
+                this.debouncedLiveGenerate();
             },
 
             toggleExp(id) {
                 if (this.state.selectedExps.has(id)) this.state.selectedExps.delete(id);
                 else this.state.selectedExps.add(id);
                 this.updateLiveScore();
+
+                try {
+                    localStorage.setItem('cdna_selected_exps', JSON.stringify(Array.from(this.state.selectedExps)));
+                } catch(e) {}
+
+                this.debouncedLiveGenerate();
             },
 
             updateProgramBadge(progId) {
@@ -1130,15 +1314,86 @@
                 requestAnimationFrame(step);
             },
 
+            generateDefaultResumeMarkdown(dept, grade) {
+                const deptNames = { CS: '資訊工程學系', IM: '資訊管理學系', AI: '人工智慧學系' };
+                const deptFullName = deptNames[dept] || '資訊學院';
+                let studentName = '靜宜資訊學士候選人';
+                if (currentUser && currentUser.displayName) studentName = currentUser.displayName;
+                else {
+                    const localName = localStorage.getItem('cdna_student_name');
+                    if (localName) studentName = localName;
+                }
+                let targetJob = '全端 / 後端軟體工程師';
+                if (dept === 'IM') targetJob = '系統分析師 (SA) / 專案管理師 (PM) / 商業數據分析師';
+                if (dept === 'AI') targetJob = 'AI 演算法工程師 / 資料科學家 (Data Scientist)';
+
+                return `# ${studentName}
+### 🎯 應徵職務：${targetJob}
+
+**二資 ｜ 個人基本資料 (Personal Profile)**  
+- **教育背景**：靜宜大學 (Providence University) 資訊學院 ${deptFullName} ｜ ${grade || '大三'}在學  
+- **聯絡資訊**：0912-345-678 ｜ student@pu.edu.tw ｜ 台灣 台中市沙鹿區  
+- **專業連結**：[GitHub 程式碼倉庫](https://github.com/pu-student) ｜ [線上作品集展示](https://pu-student.dev)
+
+---
+
+## 一信 ｜ 求職自薦信 (Cover Letter)
+我是 **${studentName}**，就讀靜宜大學${deptFullName} ${grade || '大三'}學生。在校期間專注於核心資訊架構、資料庫綱要規劃與物件導向程式設計，並以敏捷團隊協同完成系統專案為主要實踐。熟悉 Git 版本控制與 RESTful API 串接，希望能應徵【${targetJob}】職位，將所學之工程邏輯轉化為實際專案成果，為團隊創造實質產值！
+
+---
+
+## 四專 ｜ 專業專長與證照 (Skills & Credentials)
+- **核心程式開發 (Core Programming)**：
+  - 具備物件導向 (OOP) 與模組化思維，熟練使用 Python / Java 進行系統開發。
+  - 能參考架構規格撰寫清晰、可維護之業務邏輯，並進行輸入防護與資料格式驗證。
+- **資料庫與系統架構 (Database & Architecture)**：
+  - 熟悉 SQL 語法與關聯式資料庫設計（PostgreSQL / MySQL），能進行 ER Model 綱要規劃與 CRUD 查詢調校。
+  - 理解軟體工程與模組化架構，具備系統分析與模組分工經驗。
+- **測試與協作工具 (Testing & Collaboration)**：
+  - 使用 Postman 進行 RESTful API 回應檢查與資料格式驗證。
+  - 熟練運用 **Git / GitHub** 進行分支管理 (Branching) 與團隊協同開發。
+
+---
+
+<div class="html2pdf__page-break"></div>
+
+## 三歷 ｜ 專案實作與經歷 (Project Experience - STAR Format)
+### 💻 核心專業必修實作 ｜ 系統整合與資料庫專題 (2025.09 - 2026.01)
+- **職責與分工**：負責核心業務邏輯設計、RESTful API 串接與前端互動介面開發。
+- **量化實績 (STAR)**：完成前後端串接並撰寫技術規格說明文件，順利完成 Live Demo 成果展演。
+
+## 五傳 ｜ 完整自傳 (Autobiography - 我是誰・我會什麼・我想做什麼)
+### 1. 【我是誰】個人背景與特質
+我是靜宜大學${deptFullName}的${grade || '大三'}學生。求學期間秉持探究底層邏輯的精神，在資訊核心課程中穩紮穩打，具備高度自主學習熱忱、邏輯思維清晰，能在面對未知技術時迅速拆解問題並找到解法。
+
+### 2. 【我會什麼】核心專長與實戰成果
+在校期間深入修習系上專業必修與跨領域實務課群，具備獨立設計 RESTful API、規劃資料庫綱要與排除系統 Bug 的能力；在專案協同上，我重視跨組溝通與責任邊界，能以 Git 確保程式碼交付品質。
+
+### 3. 【我想做什麼】求職動機與職缺連結
+立志投身於【${targetJob}】領域。我深知產業需要的是不僅能動手寫 code，更能理解業務痛點、穩定交付高品質系統的工程人才。我期望能運用自身紮實的技術底子與團隊協作成績，迅速融入開發節奏、為專案創造實質產值！
+
+---
+*(本履歷格式嚴格依據企業人資「五元三要（一信、二資、三歷、四專、五傳）」黃金規格自動生成)*
+`;
+            },
+
             async calculateAndGenerate(isSilent = false) {
+                const dept = this.state.dept || localStorage.getItem('cdna_department') || 'IM';
+                
+                // Defensive: If no courses and no exps are selected, populate recommended defaults for the department
+                // so the user is NEVER blocked by an empty state!
                 if (this.state.selectedCourses.size === 0 && this.state.selectedExps.size === 0) {
-                    if (!isSilent) {
-                        alert("⚠️ 資料不足\n\n請至少勾選一項「修課紀錄」或「課外經歷」，系統才能進行戰力試算與生成履歷！");
-                    }
-                    return;
+                    const seedCoursesMap = {
+                        IM: ['管理學', '系統分析與設計', '資料結構'],
+                        CS: ['程式設計', '資料結構', '計算機概論(一)'],
+                        AI: ['人工智慧概論', '程式設計', '網頁前端程式設計']
+                    };
+                    const seeds = seedCoursesMap[dept] || seedCoursesMap.IM;
+                    seeds.forEach(c => this.state.selectedCourses.add(c));
+                    this.state.selectedExps.add('exp_project');
+                    this.restoreSelections(true);
                 }
 
-                const dept = this.state.dept || localStorage.getItem('cdna_department') || 'IM';
                 const progGroup = ACADEMIC_DATA.program[dept] || ACADEMIC_DATA.program.IM;
                 const progGoalCredits = progGroup.goal || 15;
                 let maxProgCredits = 0;
@@ -1185,40 +1440,15 @@
                 // Update real-time score display
                 this.updateLiveScore();
 
-                // Sync to Firebase if user is authenticated
-                if (currentUser) {
-                    try {
-                        const resultData = {
-                            selectedCourses: Array.from(this.state.selectedCourses),
-                            selectedExps: Array.from(this.state.selectedExps),
-                            scores: { total: totalScore, program: progScore, practical: pracScore, exp: expScore },
-                            updatedAt: new Date().toISOString()
-                        };
-
-                        const batch = writeBatch(db);
-                        const historyRef = doc(collection(db, "users", currentUser.uid, "history_resume"));
-                        batch.set(historyRef, resultData);
-
-                        const userRef = doc(db, "users", currentUser.uid);
-                        batch.set(userRef, {
-                            summary_cache: { resume: { updatedAt: resultData.updatedAt, totalScore: resultData.scores.total } }
-                        }, { merge: true });
-
-                        await batch.commit();
-                        console.log("✅ 履歷健檢結果已同步至雲端！");
-                    } catch (e) {
-                        console.error("❌ 儲存失敗", e);
-                    }
-                }
-
                 const btn = document.getElementById('generate-btn');
-                if (btn) {
+                if (btn && !isSilent) {
                     btn.disabled = true;
                     btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-sm"></i> <span>A4 履歷生成與戰力診斷中...</span>`;
                 }
 
+                // Deterministic frontend rule-based generation (Render UI immediately so user never waits)
+                let generatedResult = null;
                 try {
-                    // Deterministic frontend rule-based generation
                     const result = this.generateRuleBasedResume({
                         dept,
                         grade: this.state.grade || '大三',
@@ -1236,6 +1466,7 @@
                         selectedExps: Array.from(this.state.selectedExps)
                     });
 
+                    generatedResult = result;
                     this.renderResultUI(result);
 
                     if (!isSilent) {
@@ -1246,12 +1477,77 @@
                     }
                 } catch (err) {
                     console.error('[CareerDNA] calculateAndGenerate error:', err);
+                    // Resilient fallback: guaranteed display of baseline A4 resume
+                    generatedResult = {
+                        quantifiability: 75,
+                        completeness: 80,
+                        keywordRelevance: 75,
+                        analysis: '<div class="p-3 bg-amber-50 text-amber-900 border border-amber-200 text-xs">系統已為您載入安全基線履歷模型。</div>',
+                        actionItems: [],
+                        resumeMarkdown: this.generateDefaultResumeMarkdown(dept, this.state.grade || '大三')
+                    };
+                    this.renderResultUI(generatedResult);
+                } finally {
                     if (btn) {
                         btn.disabled = false;
                         btn.innerHTML = `<i class="fa-solid fa-file-signature text-base group-hover:scale-110 transition-transform"></i> <span>🚀 立即產生專業 A4 履歷與戰力診斷報告</span>`;
                     }
-                    this.showToast('產生履歷時發生異常，請重試！');
                 }
+
+                // Background asynchronous sync to MongoDB Atlas (CareerDNA_DB) and Firebase Firestore
+                (async () => {
+                    const deptNames = { CS: '資訊工程學系', IM: '資訊管理學系', AI: '人工智慧學系' };
+                    const deptFullName = deptNames[dept] || '資訊學院';
+                    const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(currentUser) : (currentUser?.uid);
+
+                    const resumePayload = {
+                        title: `${deptFullName} ${this.state.grade || '大三'} 智能履歷`,
+                        templateId: 'modern',
+                        selectedCourses: Array.from(this.state.selectedCourses),
+                        selectedExps: Array.from(this.state.selectedExps),
+                        scores: { total: totalScore, program: progScore, practical: pracScore, exp: expScore },
+                        metrics: {
+                            quantifiability: generatedResult?.quantifiability || 85,
+                            completeness: generatedResult?.completeness || Math.min(100, Math.round(totalScore)),
+                            keywordRelevance: generatedResult?.keywordRelevance || 80
+                        },
+                        targetRole: `${deptFullName} 專業技術人才`,
+                        analysis: generatedResult?.analysis || '',
+                        actionItems: generatedResult?.actionItems || [],
+                        resumeMarkdown: generatedResult?.resumeMarkdown || '',
+                        formattedResumeMarkdown: generatedResult?.resumeMarkdown || '',
+                        updatedAt: new Date().toISOString()
+                    };
+
+                    // 1. Sync to MongoDB Atlas (for profile.html archive)
+                    if (window.CareerDNA_DB && effectiveUid) {
+                        try {
+                            await window.CareerDNA_DB.saveResumeData(effectiveUid, resumePayload);
+                            console.log("✅ 履歷健檢結果已同步至 MongoDB Atlas 典藏庫！");
+                        } catch (err) {
+                            console.warn("MongoDB Atlas 儲存略過：", err);
+                        }
+                    }
+
+                    // 2. Sync to Firebase Firestore
+                    if (currentUser && typeof db !== 'undefined') {
+                        try {
+                            const batch = writeBatch(db);
+                            const historyRef = doc(collection(db, "users", currentUser.uid, "history_resume"));
+                            batch.set(historyRef, resumePayload);
+
+                            const userRef = doc(db, "users", currentUser.uid);
+                            batch.set(userRef, {
+                                summary_cache: { resume: { updatedAt: resumePayload.updatedAt, totalScore: resumePayload.scores.total } }
+                            }, { merge: true });
+
+                            await batch.commit();
+                            console.log("✅ 履歷健檢結果已同步至 Firestore 雲端！");
+                        } catch (e) {
+                            console.warn("Firestore 雲端儲存略過：", e);
+                        }
+                    }
+                })();
             },
 
             animateScore(id, target) {
@@ -1472,24 +1768,34 @@
                     });
                 }
 
-                if (ucan && ucan.commonComps) {
-                    const comps = Object.entries(ucan.commonComps).filter(([_, d]) => d);
-                    if (comps.length > 0) {
-                        const sorted = comps.sort((a,b) => (a[1]?.pr ?? a[1] ?? 50) - (b[1]?.pr ?? b[1] ?? 50));
-                        const weakComp = sorted[0];
-                        const prVal = weakComp[1]?.pr ?? weakComp[1] ?? 0;
-                        if (prVal < 50) {
-                            const kw = weakComp[0].includes('溝通') ? '軟體工程' : (weakComp[0].includes('創新') ? '創新' : '實務');
-                            actionItems.push({
-                                category: '職能補強',
-                                tagColor: 'purple',
-                                icon: 'fa-solid fa-lightbulb',
-                                title: `補強 UCAN 共通職能「${weakComp[0]}」(PR ${prVal})`,
-                                desc: `系統偵測到您的「${weakComp[0]}」相對偏弱。建議在下學期的分組專案或期末專題中主動擔任該面向角色，或選修推薦課程以全方位平衡職場戰力。`,
-                                actionText: '查閱推薦補強課程',
-                                actionUrl: `resource_library.html?search=${encodeURIComponent(kw)}`
+                if (ucan && ucan.commonComps && typeof ucan.commonComps === 'object') {
+                    try {
+                        const comps = Object.entries(ucan.commonComps).filter(([_, d]) => d != null);
+                        if (comps.length > 0) {
+                            const sorted = comps.sort((a,b) => {
+                                const prA = (typeof a[1] === 'object' && a[1] !== null) ? (a[1].pr ?? a[1].score ?? 50) : (typeof a[1] === 'number' ? a[1] : 50);
+                                const prB = (typeof b[1] === 'object' && b[1] !== null) ? (b[1].pr ?? b[1].score ?? 50) : (typeof b[1] === 'number' ? b[1] : 50);
+                                return prA - prB;
                             });
+                            const weakComp = sorted[0];
+                            if (weakComp) {
+                                const prVal = (typeof weakComp[1] === 'object' && weakComp[1] !== null) ? (weakComp[1].pr ?? weakComp[1].score ?? 0) : (typeof weakComp[1] === 'number' ? weakComp[1] : 0);
+                                if (prVal < 50) {
+                                    const kw = weakComp[0].includes('溝通') ? '軟體工程' : (weakComp[0].includes('創新') ? '創新' : '實務');
+                                    actionItems.push({
+                                        category: '職能補強',
+                                        tagColor: 'purple',
+                                        icon: 'fa-solid fa-lightbulb',
+                                        title: `補強 UCAN 共通職能「${weakComp[0]}」(PR ${prVal})`,
+                                        desc: `系統偵測到您的「${weakComp[0]}」相對偏弱。建議在下學期的分組專案或期末專題中主動擔任該面向角色，或選修推薦課程以全方位平衡職場戰力。`,
+                                        actionText: '查閱推薦補強課程',
+                                        actionUrl: `resource_library.html?search=${encodeURIComponent(kw)}`
+                                    });
+                                }
+                            }
                         }
+                    } catch (e) {
+                        console.warn('[CareerDNA] Error processing weak UCAN comp:', e);
                     }
                 }
 
@@ -1558,14 +1864,26 @@
 - **量化實績 (STAR)**：完成前後端串接並撰寫技術說明文件，順利完成 Live Demo 取得 90 分以上優異成績。`);
                 }
 
-                // Format UCAN Strengths
+                // Format UCAN Strengths safely
                 let ucanStrengthsText = '持續學習 (Continuous Learning)、問題解決 (Problem Solving)、邏輯思考 (Logical Reasoning)';
-                if (ucan && ucan.commonComps) {
-                    const topComps = Object.entries(ucan.commonComps)
-                        .sort((a, b) => b[1].pr - a[1].pr)
-                        .slice(0, 3)
-                        .map(([name, data]) => `${name} (PR ${data.pr})`);
-                    if (topComps.length > 0) ucanStrengthsText = topComps.join('、');
+                if (ucan && ucan.commonComps && typeof ucan.commonComps === 'object') {
+                    try {
+                        const validEntries = Object.entries(ucan.commonComps).filter(([_, d]) => d != null);
+                        if (validEntries.length > 0) {
+                            const sorted = validEntries.sort((a, b) => {
+                                const prB = (typeof b[1] === 'object' && b[1] !== null) ? (b[1].pr ?? b[1].score ?? 0) : (typeof b[1] === 'number' ? b[1] : 0);
+                                const prA = (typeof a[1] === 'object' && a[1] !== null) ? (a[1].pr ?? a[1].score ?? 0) : (typeof a[1] === 'number' ? a[1] : 0);
+                                return prB - prA;
+                            });
+                            const topComps = sorted.slice(0, 3).map(([name, data]) => {
+                                const pr = (typeof data === 'object' && data !== null) ? (data.pr ?? data.score) : data;
+                                return pr ? `${name} (PR ${pr})` : name;
+                            });
+                            if (topComps.length > 0) ucanStrengthsText = topComps.join('、');
+                        }
+                    } catch (e) {
+                        console.warn('[CareerDNA] Error formatting UCAN commonComps:', e);
+                    }
                 }
 
                 // Construct full A4 Markdown Resume strictly aligned with "五元三要" (一信、二資、三歷、四專、五傳)
@@ -1609,10 +1927,10 @@ ${coverLetterContent}
 
 ---
 
+<div class="html2pdf__page-break"></div>
+
 ## 三歷 ｜ 專案實作與經歷 (Project Experience - STAR Format)
 ${expEntries.join('\n\n')}
-
-<div class="html2pdf__page-break"></div>
 
 ## 五傳 ｜ 完整自傳 (Autobiography - 我是誰・我會什麼・我想做什麼)
 ### 1. 【我是誰】個人背景與特質
@@ -1645,19 +1963,29 @@ ${expEntries.join('\n\n')}
             },
 
             parseMarkdownSafe(md) {
-                if (!md) return '<p class="text-klein/50 italic">系統未能生成履歷內容</p>';
+                if (!md || typeof md !== 'string' || md.trim().length === 0) {
+                    md = this.generateDefaultResumeMarkdown(this.state.dept || 'IM', this.state.grade || '大三');
+                }
+                let rawHtml = '';
                 if (typeof window !== 'undefined' && window.marked) {
                     try {
                         if (typeof window.marked.parse === 'function') {
-                            return window.marked.parse(md);
+                            rawHtml = window.marked.parse(md);
                         } else if (typeof window.marked === 'function') {
-                            return window.marked(md);
+                            rawHtml = window.marked(md);
                         }
                     } catch (e) {
                         console.warn('[CareerDNA] marked.parse failed, using fallback parser:', e);
+                        rawHtml = this.fallbackMarkdownParser(md);
                     }
+                } else {
+                    rawHtml = this.fallbackMarkdownParser(md);
                 }
-                return this.fallbackMarkdownParser(md);
+
+                if (typeof window !== 'undefined' && window.DOMPurify) {
+                    return window.DOMPurify.sanitize(rawHtml);
+                }
+                return rawHtml;
             },
 
             fallbackMarkdownParser(md) {
@@ -1837,7 +2165,8 @@ ${expEntries.join('\n\n')}
                     
                     const resumeOutput = document.getElementById('resume-output');
                     if (resumeOutput) {
-                        const resumeHtml = this.parseMarkdownSafe(result.resumeMarkdown || '*系統未能生成履歷*');
+                        const rawMd = result.resumeMarkdown || this.generateDefaultResumeMarkdown(this.state.dept || 'IM', this.state.grade || '大三');
+                        const resumeHtml = this.parseMarkdownSafe(rawMd);
                         resumeOutput.innerHTML = `<div class="resume-sheet font-body leading-relaxed" id="pdf-content">${resumeHtml}</div>`;
                     }
                 } catch (e) {
@@ -1944,72 +2273,59 @@ ${expEntries.join('\n\n')}
                 }
             },
 
-            downloadPDF() {
+            printResume() {
+                const element = document.getElementById('pdf-content');
+                if (!element) {
+                    alert('找不到履歷內容，請先點擊產生履歷！');
+                    return;
+                }
+                window.print();
+            },
+
+            async downloadPDF() {
                 const element = document.getElementById('pdf-content');
                 if (!element) {
                     alert('找不到履歷內容，請先點擊產生履歷！');
                     return;
                 }
 
-                // 1. Temporarily save scroll position and scroll to (0,0) to prevent html2canvas offset bug
-                const scrollY = window.scrollY;
-                window.scrollTo(0, 0);
+                const btn = document.getElementById('pdf-export-btn');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> 匯出中...';
+                    btn.classList.add('opacity-70', 'cursor-not-allowed');
+                }
 
-                // 2. Create dedicated temporary print container attached at top: 0, left: 0
-                const printContainer = document.createElement('div');
-                printContainer.id = 'print-a4-temp-container';
-                printContainer.style.position = 'absolute';
-                printContainer.style.top = '0';
-                printContainer.style.left = '0';
-                printContainer.style.width = '794px'; // Standard A4 width in px at 96 DPI
-                printContainer.style.backgroundColor = '#ffffff';
-                printContainer.style.zIndex = '999999';
-                printContainer.style.padding = '24px 30px';
-                printContainer.style.boxSizing = 'border-box';
+                const resumeOutput = document.getElementById('resume-output');
+                const prevMaxH = resumeOutput ? resumeOutput.style.maxHeight : '';
+                const prevOverflow = resumeOutput ? resumeOutput.style.overflow : '';
+                if (resumeOutput) {
+                    resumeOutput.style.maxHeight = 'none';
+                    resumeOutput.style.overflow = 'visible';
+                }
 
-                printContainer.innerHTML = `
-                    <style>
-                        #print-a4-temp-container * { box-sizing: border-box; }
-                        #print-a4-temp-container h1 { font-size: 24px; font-weight: 900; color: #0f172a; text-align: center; margin: 0 0 6px 0; letter-spacing: 1px; }
-                        #print-a4-temp-container h3:first-of-type, #print-a4-temp-container h1 + h3 { text-align: center; font-size: 13px; font-weight: 700; color: #002fa7; background: #f0f4ff; border: 1px solid #c7d2fe; max-width: 520px; margin: 0 auto 12px auto; padding: 4px 12px; border-radius: 4px; }
-                        #print-a4-temp-container h2 { font-size: 13.5px; font-weight: 800; color: #002fa7; border-bottom: 2px solid #002fa7; padding-bottom: 3px; margin: 12px 0 6px 0; letter-spacing: 0.5px; page-break-after: avoid; }
-                        #print-a4-temp-container h3 { font-size: 12px; font-weight: 700; color: #0f172a; margin: 8px 0 3px 0; }
-                        #print-a4-temp-container p { font-size: 11px; margin: 0 0 5px 0; line-height: 1.5; color: #334155; text-align: justify; }
-                        #print-a4-temp-container ul { list-style-type: disc; margin-left: 16px; margin-bottom: 6px; font-size: 11px; line-height: 1.5; color: #334155; }
-                        #print-a4-temp-container li { margin-bottom: 3px; }
-                        #print-a4-temp-container strong { color: #0f172a; font-weight: 700; }
-                        #print-a4-temp-container a { color: #002fa7; text-decoration: underline; font-weight: 600; }
-                        #print-a4-temp-container code { background: #f8fafc; padding: 1px 4px; border-radius: 3px; font-family: 'Consolas', monospace; font-size: 10px; color: #002fa7; border: 1px solid #e2e8f0; }
-                        #print-a4-temp-container hr { border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0; }
-                        .html2pdf__page-break { page-break-before: always !important; break-before: page !important; margin: 0 !important; padding: 0 !important; display: block; height: 1px; }
-                    </style>
-                    ${element.innerHTML}
-                `;
-
-                document.body.appendChild(printContainer);
+                const dept = this.state.dept || 'IM';
+                const grade = this.state.grade || '大三';
+                const filename = `CareerDNA_${dept}_${grade}_A4_Resume.pdf`;
 
                 const opt = {
-                    margin:       [8, 8, 8, 8],
-                    filename:     'CareerDNA_A4_Resume.pdf',
+                    margin:       [10, 10, 10, 10],
+                    filename:     filename,
                     image:        { type: 'jpeg', quality: 0.98 },
                     html2canvas:  { 
                         scale: 2, 
                         useCORS: true, 
                         logging: false,
                         scrollY: 0,
-                        scrollX: 0,
-                        windowWidth: 794
+                        scrollX: 0
                     },
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak:    { mode: ['css', 'legacy'] }
+                    pagebreak:    { mode: 'css' }
                 };
 
-                html2pdf().set(opt).from(printContainer).save().then(() => {
-                    if (document.body.contains(printContainer)) {
-                        document.body.removeChild(printContainer);
-                    }
-                    window.scrollTo(0, scrollY);
-                    
+                try {
+                    await html2pdf().set(opt).from(element).save();
+
                     if (btn) {
                         btn.disabled = false;
                         btn.innerHTML = '<i class="fa-solid fa-check"></i> 匯出成功';
@@ -2020,30 +2336,31 @@ ${expEntries.join('\n\n')}
                             btn.classList.remove('!bg-green-600', '!border-green-600');
                         }, 3000);
                     }
-                    
+
                     // Show Toast
                     const toast = document.createElement('div');
                     toast.className = 'bg-green-600 rounded-lg text-white px-5 py-3 shadow-2xl flex items-center gap-3 transition-all duration-500 pointer-events-auto transform translate-y-0 opacity-100 font-body text-sm font-medium';
-                    toast.innerHTML = '<i class="fa-solid fa-circle-check text-lg"></i> 已成功匯出 2 頁 A4 企業標準履歷';
-                    document.getElementById('toast-container').appendChild(toast);
+                    toast.innerHTML = '<i class="fa-solid fa-circle-check text-lg"></i> 已成功匯出 A4 履歷 PDF';
+                    const toastContainer = document.getElementById('toast-container') || document.body;
+                    toastContainer.appendChild(toast);
                     setTimeout(() => {
                         toast.classList.add('opacity-0', 'translate-y-2');
                         setTimeout(() => toast.remove(), 500);
                     }, 4000);
-                    
-                }).catch(err => {
+                } catch (err) {
                     console.error('PDF export error:', err);
-                    if (document.body.contains(printContainer)) {
-                        document.body.removeChild(printContainer);
-                    }
-                    window.scrollTo(0, scrollY);
                     if (btn) {
                         btn.disabled = false;
                         btn.innerHTML = '<i class="fa-solid fa-download"></i> 匯出 PDF';
                         btn.classList.remove('opacity-70', 'cursor-not-allowed');
                     }
                     alert('PDF 匯出失敗：' + (err.message || err));
-                });
+                } finally {
+                    if (resumeOutput) {
+                        resumeOutput.style.maxHeight = prevMaxH;
+                        resumeOutput.style.overflow = prevOverflow;
+                    }
+                }
             }
         };
 

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth bg-[#F9FAFB] text-slate-800">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerDNA | 極簡工作台 (Zen Workspace)</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- html2pdf.js for Client-Side PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- FontAwesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Inter & Noto Sans TC (統一字體系統，消除字型混亂) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        klein: '#002FA7',
+                        'klein-dark': '#001E6C',
+                        surface: '#FFFFFF',
+                        canvas: '#F9FAFB'
+                    },
+                    fontFamily: {
+                        sans: ['"Inter"', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #F9FAFB;
+            color: #1E293B; /* Slate-800: 高可讀性深石墨灰 */
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 擬真 A4 紙張：純白、大器、無滾動條束縛 */
+        .a4-paper {
+            width: 100%;
+            max-width: 820px;
+            min-height: 1100px;
+            background: #FFFFFF;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+        }
+
+        /* 標籤過渡 */
+        .tab-transition {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- 頂部導航列：極簡清爽，以「模式切換」為核心 -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-6 py-3">
+        <div class="max-w-[1500px] mx-auto flex items-center justify-between">
+            
+            <!-- 品牌 Logo -->
+            <a href="index.html" class="flex items-center gap-2.5">
+                <span class="w-7 h-7 bg-klein text-white font-mono font-bold text-xs flex items-center justify-center rounded">
+                    DNA
+                </span>
+                <span class="font-bold text-base tracking-tight text-slate-900">CareerDNA</span>
+            </a>
+
+            <!-- 中央模式分段控制器 (Segmented Switcher)：徹底解決介面雜亂的核心！ -->
+            <div class="inline-flex p-1 bg-slate-100 rounded-lg border border-slate-200/60 font-medium text-xs">
+                <button type="button" onclick="window.App.switchView('inputs')" id="btn-view-inputs" class="tab-transition px-4 py-1.5 rounded-md text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-list-check mr-1.5 opacity-70"></i> 1. 修課檢測
+                </button>
+                <button type="button" onclick="window.App.switchView('workspace')" id="btn-view-workspace" class="tab-transition px-4 py-1.5 rounded-md bg-white text-slate-900 shadow-2xs font-bold">
+                    <i class="fa-solid fa-file-lines mr-1.5 text-klein"></i> 2. 顧問報告與 A4 履歷
+                </button>
+            </div>
+
+            <!-- 右側動作按鈕 -->
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="window.App.copyResumeMarkdown()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded shadow-2xs transition-colors">
+                    <i class="fa-regular fa-copy text-slate-400"></i> 複製內容
+                </button>
+                <button type="button" onclick="window.App.downloadPDF()" id="pdf-export-btn" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-klein hover:bg-klein-dark rounded shadow-sm transition-all">
+                    <i class="fa-solid fa-file-arrow-down"></i> 匯出 PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ========================================================================= -->
+    <!-- 視圖 1：專注修課與經歷勾選 (Input Form View) - 不再擠在報告上方！               -->
+    <!-- ========================================================================= -->
+    <main id="view-inputs" class="hidden flex-grow max-w-[1040px] mx-auto w-full px-6 py-10">
+        
+        <div class="mb-8">
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight mb-1.5">
+                步驟一：盤點您的在校修課與實務經歷
+            </h1>
+            <p class="text-sm text-slate-500">
+                勾選已修畢之專業課程與課外實績，系統將自動比對靜宜學程標準，並為您產生專屬的 STAR 履歷。
+            </p>
+        </div>
+
+        <!-- 基本設定條 (年級、系所、目標職缺) -->
+        <div class="bg-white border border-slate-200/80 rounded-xl p-5 mb-8 shadow-2xs">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">目前年級</label>
+                    <select id="grade-selector" onchange="window.App.changeGrade(this.value)" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium focus:border-klein focus:bg-white outline-none">
+                        <option value="大一">大一 / 大二 (基礎打底期)</option>
+                        <option value="大三" selected>大三 (實務應用期)</option>
+                        <option value="大四">大四 / 畢業 (就業收割期)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">就讀系所 (靜宜大學)</label>
+                    <select id="dept-selector" onchange="window.App.changeDept(this.value)" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium focus:border-klein focus:bg-white outline-none">
+                        <option value="CS" selected>資訊工程學系 (CS)</option>
+                        <option value="IM">資訊管理學系 (IM)</option>
+                        <option value="AI">人工智慧學系 (AI)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">預計求職目標</label>
+                    <select id="target-role-selector" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium focus:border-klein focus:bg-white outline-none">
+                        <option value="全端 / 後端軟體工程師" selected>全端 / 後端軟體工程師</option>
+                        <option value="前端 / UI/UX 工程師">前端 / UI/UX 工程師</option>
+                        <option value="AI 演算法與資料科學家">AI 演算法與資料科學家</option>
+                        <option value="系統維運與雲端 DevOps">系統維運與雲端 DevOps</option>
+                        <option value="專案經理 (PM) / 系統分析師">專案經理 (PM) / 系統分析師</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 課程檢測大區塊 -->
+        <div class="bg-white border border-slate-200/80 rounded-xl p-6 sm:p-8 mb-8 shadow-2xs">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                <div>
+                    <h2 id="course-section-title" class="text-base font-bold text-slate-900">修課檢測雷達</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">點擊切換課程類型，勾選已及格課程</p>
+                </div>
+                <span id="course-goal" class="self-start sm:self-auto font-mono text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-md">目標: 15 學分</span>
+            </div>
+
+            <!-- 分頁切換鈕：嚴格依使用者指定順序（核心必修 -> 實務課群 -> 專業學程） -->
+            <div class="flex p-1 bg-slate-100/80 rounded-lg border border-slate-200/60 mb-6 font-medium text-xs">
+                <button type="button" onclick="window.App.switchTrackDirect('core')" id="tab-track-core" class="flex-1 py-2 rounded-md transition-all">
+                    核心必修
+                </button>
+                <button type="button" onclick="window.App.switchTrackDirect('practical')" id="tab-track-practical" class="flex-1 py-2 rounded-md transition-all">
+                    實務課群
+                </button>
+                <button type="button" onclick="window.App.switchTrackDirect('program')" id="tab-track-program" class="flex-1 py-2 rounded-md transition-all">
+                    專業學程
+                </button>
+            </div>
+
+            <!-- Checkbox 清單 -->
+            <div id="programs-container" class="space-y-4"></div>
+        </div>
+
+        <!-- 課外實務經歷 -->
+        <div class="bg-white border border-slate-200/80 rounded-xl p-6 sm:p-8 mb-10 shadow-2xs">
+            <h2 class="text-base font-bold text-slate-900 mb-1">課外實戰經歷 (加分項目)</h2>
+            <p class="text-xs text-slate-500 mb-5">企業實習與專案產出能大幅提升履歷在 HR 系統的初審通過率</p>
+            <div id="experience-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
+        </div>
+
+        <!-- 底部大行動列：確認完成並生成 -->
+        <div class="sticky bottom-6 bg-slate-900/95 backdrop-blur-md text-white rounded-xl p-4 sm:p-5 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="text-center sm:text-left">
+                    <span class="text-xs text-slate-400 font-mono block">即時戰力試算</span>
+                    <span class="text-2xl font-black font-mono text-white"><span id="form-live-score">86</span> <span class="text-xs font-normal text-slate-400">/ 100</span></span>
+                </div>
+                <div class="h-8 w-px bg-slate-800 hidden sm:block"></div>
+                <div class="text-xs text-slate-300 hidden md:block">
+                    已勾選課程與經歷已就緒，隨時可產生正式職涯報告與 A4 履歷
+                </div>
+            </div>
+
+            <button type="button" onclick="window.App.generateAndGoWorkspace()" class="px-6 py-3 bg-klein hover:bg-blue-600 text-white font-bold text-sm rounded-lg shadow-md transition-all flex items-center justify-center gap-2">
+                <span>檢視顧問報告與 A4 履歷</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+        </div>
+
+    </main>
+
+
+    <!-- ========================================================================= -->
+    <!-- 視圖 2：純淨工作台 (Zen Workspace) - 真正左右並排，無任何多餘雜物！        -->
+    <!-- ========================================================================= -->
+    <main id="view-workspace" class="flex-grow max-w-[1500px] mx-auto w-full px-6 py-8">
+        
+        <!-- 兩欄大器並排 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- 左側：職涯戰力診斷與行動建議 (佔 5 欄) -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- 1. 戰力總評級卡片 (極簡深灰排版，拿掉彩虹色) -->
+                <div class="bg-white border border-slate-200/80 rounded-xl p-6 shadow-2xs">
+                    <div class="flex items-start justify-between border-b border-slate-100 pb-5 mb-5">
+                        <div>
+                            <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                                COMPETENCY AUDIT
+                            </span>
+                            <h2 id="ws-badge" class="text-xl font-bold text-slate-900">
+                                S 級 頂尖戰力 (Top Candidate)
+                            </h2>
+                        </div>
+                        <div class="text-right">
+                            <span id="ws-score" class="text-3xl font-black font-mono text-slate-900 tracking-tight">86</span>
+                            <span class="text-xs text-slate-400 font-mono">/ 100</span>
+                        </div>
+                    </div>
+
+                    <p id="ws-desc" class="text-xs text-slate-600 leading-relaxed mb-6">
+                        恭喜！您的專業學程佈局嚴謹，實務課群跨域實作紮實，且擁有出色的專案與課外經歷，在新鮮人就業市場上已具備極高的錄取優勢！
+                    </p>
+
+                    <!-- 三大向度條列進度表 (極簡細線) -->
+                    <div class="space-y-3.5 text-xs">
+                        <div>
+                            <div class="flex justify-between text-slate-700 font-medium mb-1.5">
+                                <span>專業學程累積 (40%)</span>
+                                <span id="ws-prog-text" class="font-bold text-slate-900 font-mono">36 / 40 分</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <div id="ws-prog-bar" class="h-full bg-slate-900 rounded-full transition-all duration-500" style="width: 90%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-700 font-medium mb-1.5">
+                                <span>實務課群跨域 (40%)</span>
+                                <span id="ws-prac-text" class="font-bold text-slate-900 font-mono">32 / 40 分</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <div id="ws-prac-bar" class="h-full bg-slate-900 rounded-full transition-all duration-500" style="width: 80%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-700 font-medium mb-1.5">
+                                <span>課外實戰經歷 (20%)</span>
+                                <span id="ws-exp-text" class="font-bold text-slate-900 font-mono">18 / 20 分</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <div id="ws-exp-bar" class="h-full bg-slate-900 rounded-full transition-all duration-500" style="width: 90%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <span id="ws-student-meta">靜宜大學 資工系 大三</span>
+                        <button type="button" onclick="window.App.switchView('inputs')" class="text-klein hover:underline font-semibold flex items-center gap-1">
+                            <span>修改修課勾選</span>
+                            <i class="fa-solid fa-angle-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. 下一步行動建議 (乾淨單欄堆疊，無徽章噪音) -->
+                <div>
+                    <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 mb-3 px-1">
+                        RECOMMENDED ACTIONS // 關鍵補強指引
+                    </h3>
+                    
+                    <div id="ws-action-container" class="space-y-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 右側：擬真純白 A4 履歷 (佔 7 欄，舒展大器無滾動條) -->
+            <div class="lg:col-span-7">
+                
+                <div class="flex items-center justify-between pb-2.5 mb-3 px-1 text-xs">
+                    <span class="font-mono text-slate-400 font-medium">A4 RESUME PREVIEW // 企業標準格式</span>
+                    <span class="text-slate-500">標準紙張比例 · 支援一鍵 PDF 匯出</span>
+                </div>
+
+                <!-- A4 紙張本體 -->
+                <div class="a4-paper mx-auto p-10 sm:p-14 text-slate-800">
+                    <div id="resume-output" class="text-slate-700 leading-relaxed">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- 頁尾說明 -->
+    <footer class="mt-auto py-6 border-t border-slate-200/60 text-center text-xs text-slate-400 font-mono">
+        CareerDNA Multi-Agent Resume System · Zen Workspace Mode
+    </footer>
+
+
+    <!-- ========================================================================= -->
+    <!-- 核心應用程式腳本 (保留 100% 相同功能，但帶來極致純淨的介面體驗)              -->
+    <!-- ========================================================================= -->
+    <script>
+        const ACADEMIC_DATA = {
+            core: {
+                CS: {
+                    title: "資工系 核心必修課程", goal: 15,
+                    data: [ { id: 'core_cs', name: '必修核心課程', courses: ["程式設計", "資料結構", "演算法概論", "計算機組織學", "網路通訊概論", "線性代數", "邏輯設計", "計算機概論(一)"] } ]
+                },
+                IM: {
+                    title: "資管系 核心必修課程", goal: 15,
+                    data: [ { id: 'core_im', name: '必修核心課程', courses: ["程式設計", "資料結構", "系統分析與設計", "管理學", "統計學(一)", "網路通訊概論", "軟體設計與開發"] } ]
+                },
+                AI: {
+                    title: "人工智慧系 核心必修課程", goal: 15,
+                    data: [ { id: 'core_ai', name: '必修核心課程', courses: ["人工智慧概論", "程式設計", "資料結構", "搜尋方法與推論邏輯", "系統分析與設計", "網頁前端程式設計"] } ]
+                }
+            },
+            practical: {
+                title: "實務課群模組 (9 學分)", goal: 9,
+                data: [
+                    { id: 'prac_net', name: '網路管理課群', courses: ['計算機網路', '系統與網路管理', '網路安全', '網路通訊協定', '網路系統建構實務'] },
+                    { id: 'prac_iot', name: '物聯網應用課群', courses: ['互動設計入門', '互動式微控原理與應用', '行動物聯網', '嵌入式微控制器與物聯網實作'] },
+                    { id: 'prac_ai', name: '人工智慧(AI)課群', courses: ['人工智慧', '機器學習', '智慧醫療', '深度學習'] },
+                    { id: 'prac_mobile', name: '行動軟體課群', courses: ['行動應用軟體開發', '人機介面與使用者經驗設計', '網站系統實作'] },
+                    { id: 'prac_sec', name: '資訊安全課群', courses: ['資訊安全概論', '資訊安全管理', '安全程式設計', '系統安全'] },
+                    { id: 'prac_commerce', name: '行動商務與雲端', courses: ['網路行銷', '行動電子商務', '資料庫系統實作', '雲端技術與應用'] }
+                ]
+            },
+            program: {
+                CS: {
+                    title: "專業學程認證 (15 學分)", goal: 15,
+                    data: [
+                        { id: 'prog_soft', name: '資訊軟體學程 (推薦)', courses: ['網頁前端程式設計', '動態網頁設計', '進階資料結構', '資料庫管理', '資訊軟體實作', '系統分析與設計', '演算法概論'] },
+                        { id: 'prog_net', name: '網路智慧學程', courses: ['人工智慧', '計算機網路', '資訊安全導論', 'Linux系統與網路管理', '行動物聯網'] }
+                    ]
+                },
+                IM: {
+                    title: "專業學程認證 (15 學分)", goal: 15,
+                    data: [
+                        { id: 'prog_soft', name: '資訊軟體學程', courses: ['網頁前端程式設計', '動態網頁設計', '進階資料結構', '資訊軟體實作', '系統分析與設計'] },
+                        { id: 'prog_erp', name: '智慧企業學程 (ERP)', courses: ['企業資源規劃', '運籌管理資訊系統', '財務會計資訊系統', 'ABAP程式設計', '專案管理'] }
+                    ]
+                },
+                AI: {
+                    title: "專業學程認證 (15 學分)", goal: 15,
+                    data: [
+                        { id: 'prog_ai_app', name: '人工智慧應用學程', courses: ['人工智慧概論', 'Python程式設計', '機器學習', '深度學習', '雲端技術與應用'] }
+                    ]
+                }
+            }
+        };
+
+        const EXPERIENCES = [
+            { id: 'exp_intern', name: '企業實習 / 產學合作 (大四極推薦)', score: 8, icon: '💼' },
+            { id: 'exp_compete', name: '專業競賽 (黑客松/校內外專題賽事)', score: 6, icon: '🏆' },
+            { id: 'exp_project', name: '大型期末專案 / 畢業大專專題', score: 4, icon: '🚀' },
+            { id: 'exp_leader', name: '社團幹部 / 技術研討會參與', score: 2, icon: '👥' }
+        ];
+
+        window.App = {
+            state: {
+                currentView: 'workspace', // 'inputs' 或 'workspace'
+                track: 'core',
+                selectedCourses: new Set(['程式設計', '資料結構', '計算機網路', '網頁前端程式設計', '系統分析與設計', '資料庫系統實作']),
+                selectedExps: new Set(['exp_intern', 'exp_project']),
+                grade: '大三',
+                dept: 'CS'
+            },
+
+            init() {
+                this.renderExperiences();
+                this.switchTrackDirect(this.state.track);
+                this.updateLiveScore();
+                this.generateReportAndResume();
+            },
+
+            // 雙視圖切換：徹底終結雜亂
+            switchView(viewName) {
+                this.state.currentView = viewName;
+                const viewInputs = document.getElementById('view-inputs');
+                const viewWorkspace = document.getElementById('view-workspace');
+                const btnInputs = document.getElementById('btn-view-inputs');
+                const btnWorkspace = document.getElementById('btn-view-workspace');
+
+                if (viewName === 'inputs') {
+                    viewInputs.classList.remove('hidden');
+                    viewWorkspace.classList.add('hidden');
+
+                    btnInputs.className = "tab-transition px-4 py-1.5 rounded-md bg-white text-slate-900 shadow-2xs font-bold";
+                    btnWorkspace.className = "tab-transition px-4 py-1.5 rounded-md text-slate-600 hover:text-slate-900";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    viewInputs.classList.add('hidden');
+                    viewWorkspace.classList.remove('hidden');
+
+                    btnWorkspace.className = "tab-transition px-4 py-1.5 rounded-md bg-white text-slate-900 shadow-2xs font-bold";
+                    btnInputs.className = "tab-transition px-4 py-1.5 rounded-md text-slate-600 hover:text-slate-900";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            },
+
+            generateAndGoWorkspace() {
+                this.generateReportAndResume();
+                this.switchView('workspace');
+            },
+
+            changeGrade(newGrade) {
+                this.state.grade = newGrade;
+                this.updateLiveScore();
+            },
+
+            changeDept(newDept) {
+                this.state.dept = newDept;
+                this.switchTrackDirect(this.state.track);
+                this.updateLiveScore();
+            },
+
+            switchTrackDirect(trackKey) {
+                this.state.track = trackKey;
+                ['core', 'practical', 'program'].forEach(k => {
+                    const tab = document.getElementById(`tab-track-${k}`);
+                    if (tab) {
+                        if (k === trackKey) {
+                            tab.className = "flex-1 py-2 rounded-md bg-white text-slate-900 font-bold shadow-2xs transition-all";
+                        } else {
+                            tab.className = "flex-1 py-2 rounded-md text-slate-500 hover:text-slate-800 transition-all";
+                        }
+                    }
+                });
+
+                let trackData;
+                if (trackKey === 'program' || trackKey === 'core') {
+                    const deptKey = this.state.dept || 'CS';
+                    trackData = ACADEMIC_DATA[trackKey][deptKey] || ACADEMIC_DATA[trackKey].CS;
+                } else {
+                    trackData = ACADEMIC_DATA[trackKey];
+                }
+
+                document.getElementById('course-section-title').innerText = trackData.title;
+                document.getElementById('course-goal').innerText = `目標: ${trackData.goal} 學分`;
+
+                this.renderPrograms(trackData.data, trackData.goal);
+            },
+
+            renderPrograms(dataList, goalCredits) {
+                const requiredCourses = goalCredits / 3;
+                document.getElementById('programs-container').innerHTML = dataList.map(prog => `
+                    <div class="border border-slate-200/80 rounded-lg p-4 bg-slate-50/50">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-bold text-xs text-slate-800">${prog.name}</h4>
+                            <span id="badge-${prog.id}" class="text-[11px] font-mono text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200" data-goal="${requiredCourses}">0 / ${requiredCourses} 門</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            ${prog.courses.map(course => {
+                                const isChecked = this.state.selectedCourses.has(course);
+                                return `
+                                    <label class="cursor-pointer">
+                                        <input type="checkbox" class="peer sr-only" value="${course}" data-prog="${prog.id}" ${isChecked ? 'checked' : ''} onchange="window.App.toggleCourse(this)">
+                                        <div class="px-3 py-1.5 text-xs font-medium rounded-md border border-slate-200 bg-white text-slate-700 peer-checked:bg-klein peer-checked:text-white peer-checked:border-klein hover:border-slate-300 transition-all">
+                                            ${course}
+                                        </div>
+                                    </label>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `).join('');
+
+                dataList.forEach(p => this.updateProgramBadge(p.id));
+            },
+
+            renderExperiences() {
+                const container = document.getElementById('experience-container');
+                container.innerHTML = EXPERIENCES.map(exp => {
+                    const isChecked = this.state.selectedExps.has(exp.id);
+                    return `
+                        <label class="cursor-pointer block">
+                            <input type="checkbox" class="peer sr-only" value="${exp.id}" ${isChecked ? 'checked' : ''} onchange="window.App.toggleExp('${exp.id}')">
+                            <div class="flex items-center gap-3 p-3.5 rounded-lg border border-slate-200 bg-white hover:border-slate-300 peer-checked:border-klein peer-checked:bg-blue-50/40 text-slate-700 transition-all">
+                                <span class="text-xl">${exp.icon}</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-bold text-xs text-slate-900">${exp.name}</div>
+                                    <div class="text-[11px] text-slate-400">權重 +${exp.score} 分</div>
+                                </div>
+                                <div class="w-4 h-4 border border-slate-300 rounded flex items-center justify-center peer-checked:bg-klein peer-checked:border-klein">
+                                    <i class="fa-solid fa-check text-[10px] text-white opacity-0 [.peer:checked~div_&]:opacity-100"></i>
+                                </div>
+                            </div>
+                        </label>
+                    `;
+                }).join('');
+            },
+
+            toggleCourse(checkbox) {
+                if (checkbox.checked) this.state.selectedCourses.add(checkbox.value);
+                else this.state.selectedCourses.delete(checkbox.value);
+                this.updateProgramBadge(checkbox.dataset.prog);
+                this.updateLiveScore();
+            },
+
+            toggleExp(id) {
+                if (this.state.selectedExps.has(id)) this.state.selectedExps.delete(id);
+                else this.state.selectedExps.add(id);
+                this.updateLiveScore();
+            },
+
+            updateProgramBadge(progId) {
+                const checked = document.querySelectorAll(`input[data-prog="${progId}"]:checked`).length;
+                const badge = document.getElementById(`badge-${progId}`);
+                if (!badge) return;
+                const goal = parseInt(badge.dataset.goal);
+                badge.innerText = `${checked} / ${goal} 門`;
+            },
+
+            updateLiveScore() {
+                const dept = this.state.dept || 'CS';
+                const progGroup = ACADEMIC_DATA.program[dept] || ACADEMIC_DATA.program.CS;
+                let maxProg = 0;
+                progGroup.data.forEach(p => {
+                    const c = p.courses.filter(item => this.state.selectedCourses.has(item)).length * 3;
+                    if (c > maxProg) maxProg = c;
+                });
+                const progScore = Math.min(40, Math.round((maxProg / 15) * 40));
+
+                let pracTaken = 0;
+                ACADEMIC_DATA.practical.data.forEach(cl => {
+                    cl.courses.forEach(c => {
+                        if (this.state.selectedCourses.has(c)) pracTaken++;
+                    });
+                });
+                const pracScore = Math.min(40, Math.round(((pracTaken * 3) / 9) * 40));
+
+                let expScore = 0;
+                EXPERIENCES.forEach(e => {
+                    if (this.state.selectedExps.has(e.id)) expScore += e.score;
+                });
+                expScore = Math.min(20, expScore);
+
+                const totalScore = Math.min(100, progScore + pracScore + expScore);
+                const elScore = document.getElementById('form-live-score');
+                if (elScore) elScore.innerText = totalScore;
+
+                return { progScore, pracScore, expScore, totalScore, maxProg };
+            },
+
+            generateReportAndResume() {
+                const metrics = this.updateLiveScore();
+                const deptNames = { CS: '資訊工程學系', IM: '資訊管理學系', AI: '人工智慧學系' };
+                const targetJob = document.getElementById('target-role-selector')?.value || '全端 / 後端軟體工程師';
+
+                // 更新左側卡片
+                document.getElementById('ws-score').innerText = metrics.totalScore;
+                document.getElementById('ws-prog-text').innerText = `${metrics.progScore} / 40 分`;
+                document.getElementById('ws-prog-bar').style.width = `${(metrics.progScore / 40) * 100}%`;
+
+                document.getElementById('ws-prac-text').innerText = `${metrics.pracScore} / 40 分`;
+                document.getElementById('ws-prac-bar').style.width = `${(metrics.pracScore / 40) * 100}%`;
+
+                document.getElementById('ws-exp-text').innerText = `${metrics.expScore} / 20 分`;
+                document.getElementById('ws-exp-bar').style.width = `${(metrics.expScore / 20) * 100}%`;
+
+                document.getElementById('ws-student-meta').innerText = `靜宜大學 ${deptNames[this.state.dept] || '資訊系'} ${this.state.grade} · 目標：${targetJob}`;
+
+                // 產生極簡無噪音行動建議
+                const actions = [
+                    {
+                        title: "將「資訊軟體學程認證 (15學分)」置於履歷首段",
+                        desc: "您已達成校級學程認證標準。在求職履歷的專業摘要第一行直接點出，可大幅加強企業人資對您技術深度的信任感。"
+                    },
+                    {
+                        title: "以 STAR 與 Google XYZ 原則重寫專案成果",
+                        desc: "避免「參與系統開發」等空泛字句，改用右側範例的量化公式（例如：API 響應時間縮短 42%），突顯實質工程貢獻。"
+                    },
+                    {
+                        title: "大四加強雲端技術與 CI/CD 自動化實作",
+                        desc: "建議補齊 Docker 容器化與 GitHub Actions 部屬流程，讓專案從本地開發進階到現代化雲端運維標準。"
+                    }
+                ];
+
+                document.getElementById('ws-action-container').innerHTML = actions.map(act => `
+                    <div class="bg-white border border-slate-200/80 rounded-xl p-4 shadow-2xs">
+                        <h4 class="text-xs font-bold text-slate-900 mb-1">${act.title}</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">${act.desc}</p>
+                    </div>
+                `).join('');
+
+                // 產生右側高可讀性 A4 履歷
+                const resumeHtml = `
+                    <div id="pdf-content">
+                        <div class="border-b-2 border-slate-900 pb-5 mb-5">
+                            <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+                                <h1 class="text-2xl font-black tracking-tight text-slate-900">陳小華 <span class="text-sm font-normal text-slate-400 font-mono">/ Howard Chen</span></h1>
+                                <span class="font-mono text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">目標：${targetJob}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2.5 text-xs text-slate-500 font-mono">
+                                <span>howard.chen@pu.edu.tw</span>
+                                <span>0912-345-678</span>
+                                <span>github.com/howard-chen</span>
+                                <span>台中市沙鹿區</span>
+                            </div>
+                        </div>
+
+                        <section class="mb-5">
+                            <h2 class="text-xs font-mono font-bold tracking-wider text-slate-400 uppercase mb-1.5">專業摘要 / SUMMARY</h2>
+                            <p class="text-xs text-slate-700 leading-relaxed text-justify">
+                                靜宜大學資訊工程學系大三學生，具備完整的<strong>「校級資訊軟體學程」專業認證 (15學分)</strong>。專精於 Node.js、TypeScript、Express 與 MongoDB 資料庫架構設計，擅長微服務 API 整合與 SQL/NoSQL 查詢效能優化。具備知名軟體企業實習經驗，主導重構核心訂單查詢邏輯，成功使 API 響應延遲降低 42%。熱衷於「公開學習 (Learn in Public)」與開源專案維護，具備良好的跨團隊敏捷溝通能力。
+                            </p>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="text-xs font-mono font-bold tracking-wider text-slate-400 uppercase mb-1.5">核心技術棧 / SKILLS</h2>
+                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200/60 text-xs font-mono space-y-1 text-slate-700">
+                                <div><strong class="text-slate-900">後端與資料庫：</strong>Node.js, Express, TypeScript, RESTful API, MongoDB, PostgreSQL, Redis 快取</div>
+                                <div><strong class="text-slate-900">前端介面架構：</strong>React.js, Vue 3, Tailwind CSS, Responsive Web Design, Vite, Pinia</div>
+                                <div><strong class="text-slate-900">開發維運工具：</strong>Git, Docker, GitHub Actions CI/CD, Jest 單元測試, Postman, Linux (Ubuntu)</div>
+                            </div>
+                        </section>
+
+                        <section class="mb-5">
+                            <h2 class="text-xs font-mono font-bold tracking-wider text-slate-400 uppercase mb-2">實務專案經歷 / PROJECTS</h2>
+                            <div class="space-y-3.5">
+                                <div>
+                                    <div class="flex justify-between items-baseline mb-0.5">
+                                        <h3 class="text-xs font-bold text-slate-900">CareerDNA 大專職涯智能導航與 ATS 履歷健檢系統 <span class="font-normal text-slate-500 font-mono">| 全端負責人</span></h3>
+                                        <span class="text-[11px] font-mono text-slate-400">2026.03 - 2026.10</span>
+                                    </div>
+                                    <ul class="list-disc list-outside ml-4 space-y-1 text-xs text-slate-700 leading-relaxed">
+                                        <li><strong>Google XYZ 成果量化：</strong>設計 Multi-Agent 非同步調度管線，藉由建立 Redis 複合索引與記憶體快取層，將履歷 ATS 結構化診斷評分時間由 2.4 秒縮短至 420 毫秒（<strong>效能提升 82%</strong>）。</li>
+                                        <li><strong>STAR 結構化實踐：</strong>針對大專生選課盲目且難以對接就業職能的痛點（S/T），串接靜宜大學課綱資料庫與教育部 UCAN 指標（A），成功引導 120+ 名學生產出通過人資標準的專業履歷（R）。</li>
+                                        <li>導入 Jest 撰寫涵蓋核心認證模組的單元測試，維持代碼覆蓋率在 88% 以上。</li>
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between items-baseline mb-0.5">
+                                        <h3 class="text-xs font-bold text-slate-900">校園二手教科書拍賣與即時媒合平台 <span class="font-normal text-slate-500 font-mono">| 後端開發組長</span></h3>
+                                        <span class="text-[11px] font-mono text-slate-400">2025.09 - 2026.01</span>
+                                    </div>
+                                    <ul class="list-disc list-outside ml-4 space-y-1 text-xs text-slate-700 leading-relaxed">
+                                        <li>使用 WebSocket 建構即時私訊與議價通知系統，支援 500+ 人同時在線並發，平均延遲維持於 50ms 以內。</li>
+                                        <li>導入 JWT 身份認證與 Bcrypt 密碼加密，建立嚴謹的 API Rate Limiting 防護機制。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section>
+                            <h2 class="text-xs font-mono font-bold tracking-wider text-slate-400 uppercase mb-1.5">學歷與學程認證 / EDUCATION</h2>
+                            <div class="flex justify-between items-baseline">
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-900">靜宜大學 (Providence University) · 資訊工程學系</h3>
+                                    <p class="text-[11px] text-slate-500 font-mono mt-0.5">學士學位（在學）· 取得「<strong>校級資訊軟體學程認證 (15學分)</strong>」· GPA 3.82 / 4.0</p>
+                                </div>
+                                <span class="text-[11px] font-mono text-slate-400">2023.09 - 2027.06 (預計)</span>
+                            </div>
+                        </section>
+                    </div>
+                `;
+
+                document.getElementById('resume-output').innerHTML = resumeHtml;
+            },
+
+            copyResumeMarkdown() {
+                const targetJob = document.getElementById('target-role-selector')?.value || '全端 / 後端軟體工程師';
+                const text = `# 陳小華 - ${targetJob} 專業履歷\n\n- 靜宜大學 資訊工程學系 (資訊軟體學程認證)\n- 核心技能：Node.js, TypeScript, React, Docker, Redis\n- 專案：CareerDNA 大專職涯智能導航平台`;
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('已成功複製履歷純文字內容！');
+                });
+            },
+
+            downloadPDF() {
+                const element = document.getElementById('pdf-content');
+                if (!element) return;
+                const btn = document.getElementById('pdf-export-btn');
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 匯出中...';
+
+                const opt = {
+                    margin: [10, 10, 10, 10],
+                    filename: 'CareerDNA_A4_Resume_HowardChen.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(element).save().then(() => {
+                    btn.innerHTML = '<i class="fa-solid fa-file-arrow-down"></i> 匯出 PDF';
+                    alert('🎉 已成功下載印製級 A4 履歷 PDF！');
+                }).catch(err => {
+                    console.error(err);
+                    btn.innerHTML = '<i class="fa-solid fa-file-arrow-down"></i> 匯出 PDF';
+                    alert('匯出失敗：' + err.message);
+                });
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => window.App.init());
+    </script>
+</body>
+</html>

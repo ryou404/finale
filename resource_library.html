@@ -7,9 +7,13 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&amp;family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&amp;family=Inter:wght@300;400;500;700;900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Sora:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="static/courses_data.js"></script>
+    <script src="static/db-client.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -20,26 +24,44 @@
                         cobalt: '#1F50CD',
                         sapphire: '#3B6BF0',
                         ice: '#EBF2FF',
+                        iceMid: '#DCE8FF',
                         iceBorder: '#C7DCFF',
                         canvas: '#F8FAFF',
+                        inkBody: '#1E3A8A',
+                        inkMuted: '#3B63C4',
                         'electric-blue': '#00e5ff',
                         'flame-orange': '#ff4500'
                     },
                     fontFamily: {
-                        syne: ['"Syne"', 'sans-serif'],
-                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
-                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
-                        mono: ['"Chakra Petch"', 'monospace']
+                        sora: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        syne: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        heading: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['"DM Sans"', 'Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', '"Chakra Petch"', 'monospace']
                     }
                 }
             }
         }
     </script>
     <style>
+        :root {
+            --klein-primary: #002FA7;
+            --klein-cobalt: #1F50CD;
+            --klein-sapphire: #3B6BF0;
+            --ice-surface: #EBF2FF;
+            --ice-hover: #DCE8FF;
+            --ice-border: #C7DCFF;
+            --canvas-bg: #F8FAFF;
+            --band-bg: #F2F6FF;
+            --card-white: #FFFFFF;
+            --ink-body: #1E3A8A;
+            --ink-muted: #3B63C4;
+        }
+
         html, body {
             background-color: #F8FAFF;
             color: #002FA7;
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            font-family: 'DM Sans', 'Inter', 'Noto Sans TC', sans-serif;
             overflow-x: hidden;
         }
         .hover-spring { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -83,22 +105,37 @@
             </a>
             <div class="hidden md:flex items-center gap-6 lg:gap-10 shrink-0 mx-auto">
                 <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">履歷健檢</a>
                 <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">系所推薦</a>
                 <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein transition-colors border-b-2 border-klein pb-1">課程資料庫</a>
                 <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="flex items-center gap-2 sm:gap-4 shrink-0">
                 <a href="career_fit.html" class="hidden sm:flex hover-spring bg-klein text-white font-mono text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase px-3 py-1.5 sm:px-4 sm:py-2 items-center gap-2">
                     <span>立即診斷</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
                 </a>
+                <div id="nav-auth-section" class="flex items-center gap-2 sm:gap-3 border-l border-klein/10 pl-2 sm:pl-4 shrink-0">
+                    <button id="nav-login-btn"
+                        onclick="window.CareerDNA_DB && window.CareerDNA_DB.showAuthModal((u) => window.location.reload())"
+                        class="font-mono uppercase text-[11px] sm:text-xs font-bold tracking-wider text-klein bg-[#EBF2FF] hover:text-white hover:bg-klein border border-klein px-2.5 sm:px-4 py-1 sm:py-1.5 transition-all">登入</button>
+                    <div id="nav-user-info" class="hidden flex items-center gap-2 sm:gap-3">
+                        <div class="flex flex-col text-right">
+                            <span id="nav-user-name" class="text-[11px] sm:text-xs font-bold text-klein truncate max-w-[80px] sm:max-w-[120px]"></span>
+                            <button onclick="window.CareerDNA_DB && window.CareerDNA_DB.logout(); window.location.reload();"
+                                class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
+                        </div>
+                        <div id="nav-user-avatar"
+                            class="w-7 h-7 sm:w-8 sm:h-8 bg-klein text-white flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
     <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
         <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">品牌測驗</a>
-        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">AI 履歷健檢</a>
+        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">履歷健檢</a>
         <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">系所推薦</a>
         <a href="resource_library.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein px-2 py-1 transition-colors shrink-0 border-b border-klein">課程資料庫</a>
         <a href="profile.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">個人檔案</a>
@@ -168,8 +205,8 @@
                         <label class="flex items-center gap-2 cursor-pointer hover:text-klein text-klein/70 transition-colors text-sm"><input type="radio" name="credits" value="1" class="accent-klein w-4 h-4"> 1 學分</label>
                         <label class="flex items-center gap-2 cursor-pointer hover:text-klein text-klein/70 transition-colors text-sm"><input type="radio" name="credits" value="2" class="accent-klein w-4 h-4"> 2 學分</label>
                         <label class="flex items-center gap-2 cursor-pointer hover:text-klein text-klein/70 transition-colors text-sm"><input type="radio" name="credits" value="3" class="accent-klein w-4 h-4"> 3 學分</label>
-                        <label class="flex items-center gap-2 cursor-pointer hover:text-klein text-klein/70 transition-colors text-sm"><input type="radio" name="credits" value="4" class="accent-klein w-4 h-4"> 4 學分</label>
-                        <label class="flex items-center gap-2 cursor-pointer hover:text-klein text-klein/70 transition-colors text-sm"><input type="radio" name="credits" value="0" class="accent-klein w-4 h-4"> 0 學分</label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-klein text-klein/70 transition-colors text-sm"><input type="radio" name="credits" value="4+" class="accent-klein w-4 h-4"> 4 學分以上 (實習/專案)</label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-klein text-klein/70 transition-colors text-sm"><input type="radio" name="credits" value="0" class="accent-klein w-4 h-4"> 0 學分 (通識/體育)</label>
                     </div>
                 </div>
             </div>
@@ -177,6 +214,22 @@
 
         <!-- Course List -->
         <div class="flex-1">
+            <!-- Action Item Track Recommendation Banner -->
+            <div id="track-banner" class="hidden mb-6 p-4 bg-klein/5 border border-klein/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-klein text-white flex items-center justify-center font-bold text-sm shrink-0">
+                        <i id="track-banner-icon" class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <p id="track-banner-title" class="font-heading font-black text-sm text-klein"></p>
+                        <p id="track-banner-desc" class="font-body text-xs text-klein/70"></p>
+                    </div>
+                </div>
+                <button onclick="window.app.clearTrackFilter()" class="px-3 py-1.5 bg-white hover:bg-klein hover:text-white border border-klein text-klein font-mono text-xs font-bold transition-all shrink-0">
+                    解除學程鎖定
+                </button>
+            </div>
+
             <div class="flex items-center justify-between mb-6">
                 <h2 class="font-heading font-black text-xl sm:text-2xl text-klein uppercase tracking-tight">所有課程 <span id="course-count" class="text-sm text-klein/50 ml-2 font-mono">(0)</span></h2>
                 <button onclick="window.app.resetFilters()" class="text-xs font-mono font-bold uppercase tracking-wider text-klein/60 hover:text-klein underline transition-colors">清除條件</button>
@@ -244,7 +297,8 @@
                 dept: "all",
                 type: "all",
                 grade: "all",
-                credits: "all"
+                credits: "all",
+                track: null
             },
 
             init() {
@@ -253,14 +307,38 @@
                 const searchParam = urlParams.get('search');
                 if (searchParam) {
                     this.state.search = searchParam.toLowerCase();
-                    document.getElementById('search-input').value = searchParam;
+                    const inputEl = document.getElementById('search-input');
+                    if (inputEl) inputEl.value = searchParam;
                 }
 
-                // Initialize events
-                document.getElementById('search-input').addEventListener('input', (e) => {
-                    this.state.search = e.target.value.toLowerCase();
-                    this.renderCourses();
+                const trackParam = urlParams.get('track');
+                if (trackParam) {
+                    this.setTrack(trackParam);
+                }
+
+                ['dept', 'type', 'grade', 'credits'].forEach(paramKey => {
+                    const val = urlParams.get(paramKey);
+                    if (val) {
+                        this.state[paramKey] = val;
+                        const targetRadio = document.querySelector(`input[name="${paramKey}"][value="${val}"]`);
+                        if (targetRadio) {
+                            targetRadio.checked = true;
+                            document.querySelectorAll(`input[name="${paramKey}"]`).forEach(inp => {
+                                if (inp.checked) inp.parentElement.classList.add('font-bold');
+                                else inp.parentElement.classList.remove('font-bold');
+                            });
+                        }
+                    }
                 });
+
+                // Initialize events
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        this.state.search = e.target.value.toLowerCase();
+                        this.renderCourses();
+                    });
+                }
 
                 const radios = document.querySelectorAll('input[type="radio"]');
                 radios.forEach(r => {
@@ -281,15 +359,49 @@
                 this.renderCourses();
             },
 
+            setTrack(track) {
+                this.state.track = track;
+                const banner = document.getElementById('track-banner');
+                const titleEl = document.getElementById('track-banner-title');
+                const descEl = document.getElementById('track-banner-desc');
+                const iconEl = document.getElementById('track-banner-icon');
+
+                if (banner && titleEl && descEl) {
+                    if (track === 'program') {
+                        titleEl.innerText = '履歷健檢行動建議：鎖定專業學程選修課程';
+                        descEl.innerText = '集中修滿 15 學分即可取得校級正式學程認證，已為您自動聚焦各系所專業選修課程！';
+                        if (iconEl) iconEl.className = 'fa-solid fa-graduation-cap';
+                        banner.classList.remove('hidden');
+                    } else if (track === 'practical') {
+                        titleEl.innerText = '履歷健檢行動建議：強化跨域實務課群';
+                        descEl.innerText = '建議選修具備專題實作、系統開發或跨域整合的實務課程，並累積具體成果專案！';
+                        if (iconEl) iconEl.className = 'fa-solid fa-cubes';
+                        banner.classList.remove('hidden');
+                    }
+                }
+            },
+
+            clearTrackFilter() {
+                this.state.track = null;
+                const banner = document.getElementById('track-banner');
+                if (banner) banner.classList.add('hidden');
+                this.renderCourses();
+            },
+
             resetFilters() {
                 this.state = {
                     search: "",
                     dept: "all",
                     type: "all",
                     grade: "all",
-                    credits: "all"
+                    credits: "all",
+                    track: null
                 };
-                document.getElementById('search-input').value = "";
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) searchInput.value = "";
+
+                const banner = document.getElementById('track-banner');
+                if (banner) banner.classList.add('hidden');
                 
                 ['dept', 'type', 'grade', 'credits'].forEach(key => {
                     const radios = document.querySelectorAll(`input[name="${key}"]`);
@@ -321,7 +433,9 @@
                 }
                 document.getElementById('modal-dept').innerText = course.department;
 
-                document.getElementById('modal-content').innerHTML = marked.parse(course.syllabus || '尚無詳細課綱資料。');
+                const rawSyllabus = course.syllabus || '尚無詳細課綱資料。';
+                const parsed = (typeof marked !== 'undefined') ? marked.parse(rawSyllabus) : rawSyllabus;
+                document.getElementById('modal-content').innerHTML = (typeof DOMPurify !== 'undefined') ? DOMPurify.sanitize(parsed) : parsed;
 
                 const modal = document.getElementById('course-modal');
                 const backdrop = document.getElementById('modal-backdrop');
@@ -363,7 +477,26 @@
                     if (this.state.dept !== 'all' && c.department !== this.state.dept) return false;
                     if (this.state.type !== 'all' && c.type !== this.state.type) return false;
                     if (this.state.grade !== 'all' && c.grade !== this.state.grade) return false;
-                    if (this.state.credits !== 'all' && c.credits.toString() !== this.state.credits) return false;
+                    
+                    // Credits filter with numeric coercion and 4+ support
+                    if (this.state.credits !== 'all') {
+                        const courseCred = Number(c.credits);
+                        if (this.state.credits === '4+' || this.state.credits === '4') {
+                            if (courseCred < 4) return false;
+                        } else {
+                            if (courseCred !== Number(this.state.credits)) return false;
+                        }
+                    }
+
+                    // Track filter from career_fit recommendations
+                    if (this.state.track === 'program') {
+                        if (c.type !== '選修') return false;
+                    } else if (this.state.track === 'practical') {
+                        const practicalKws = ['實務', '實習', '專案', '專題', '系統', '應用', '設計', '大數據', '雲端', '網路', '人工智慧'];
+                        const isPractical = practicalKws.some(kw => c.title.includes(kw));
+                        if (!isPractical && c.type !== '選修') return false;
+                    }
+
                     return true;
                 });
 

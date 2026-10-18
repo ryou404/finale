@@ -12,24 +12,32 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&amp;family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&amp;family=Inter:wght@300;400;500;700;900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Sora:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        klein: '#002fa7',
+                        klein: '#002FA7',
                         'deep-klein': '#001a5e',
-                        cobalt: '#1a4ec4',
+                        cobalt: '#1F50CD',
+                        sapphire: '#3B6BF0',
+                        ice: '#EBF2FF',
+                        iceMid: '#DCE8FF',
+                        iceBorder: '#C7DCFF',
+                        canvas: '#F8FAFF',
+                        inkBody: '#1E3A8A',
+                        inkMuted: '#3B63C4',
                         'electric-blue': '#00e5ff',
                         'flame-orange': '#ff4500'
                     },
                     fontFamily: {
-                        syne: ['"Syne"', 'sans-serif'],
-                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
-                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
-                        mono: ['"Chakra Petch"', '"JetBrains Mono"', 'monospace']
+                        sora: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        syne: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        heading: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['"DM Sans"', 'Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', '"Chakra Petch"', 'monospace']
                     }
                 }
             }
@@ -37,10 +45,24 @@
     </script>
 
     <style>
+        :root {
+            --klein-primary: #002FA7;
+            --klein-cobalt: #1F50CD;
+            --klein-sapphire: #3B6BF0;
+            --ice-surface: #EBF2FF;
+            --ice-hover: #DCE8FF;
+            --ice-border: #C7DCFF;
+            --canvas-bg: #F8FAFF;
+            --band-bg: #F2F6FF;
+            --card-white: #FFFFFF;
+            --ink-body: #1E3A8A;
+            --ink-muted: #3B63C4;
+        }
+
         html, body {
-            background-color: #ffffff;
-            color: #002fa7;
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #F8FAFF;
+            color: #002FA7;
+            font-family: 'DM Sans', 'Inter', 'Noto Sans TC', sans-serif;
             max-width: 100vw;
             overflow-x: hidden !important;
             position: relative;
@@ -62,17 +84,6 @@
         .crosshair-corner {
             position: relative;
         }
-        .crosshair-corner::before, .crosshair-corner::after {
-            content: '+';
-            position: absolute;
-            color: rgba(0, 47, 167, 0.3);
-            font-family: monospace;
-            font-size: 0.85rem;
-            line-height: 1;
-            pointer-events: none;
-        }
-        .crosshair-corner::before { top: 2px; left: 2px; }
-        .crosshair-corner::after { bottom: 2px; right: 2px; }
 
         .outline-text {
             color: #ffffff;
@@ -86,7 +97,7 @@
         }
     </style>
 </head>
-<body class="overflow-x-hidden pb-24 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col justify-between bg-white">
+<body class="overflow-x-hidden pb-24 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col justify-between bg-canvas">
 
     <!-- Global Top Navigation Bar -->
     <nav class="fixed top-0 left-0 right-0 w-full z-40 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
@@ -103,7 +114,7 @@
             <!-- Desktop Nav Links (Hidden on Mobile) -->
             <div class="hidden md:flex items-center gap-6 lg:gap-8 whitespace-nowrap">
                 <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">履歷健檢</a>
                 <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">系所推薦</a>
                 <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">課程資料庫</a>
                 <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">個人檔案</a>
@@ -120,7 +131,7 @@
     <!-- Mobile Fixed Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
         <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">品牌測驗</a>
-        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">AI 履歷健檢</a>
+        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">履歷健檢</a>
         <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">系所推薦</a>
         <a href="resource_library.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">課程資料庫</a>
         <a href="profile.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">個人檔案</a>

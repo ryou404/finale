@@ -15,11 +15,11 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Google Fonts: Chakra Petch, DM Sans, Noto Sans TC, Syne -->
+    <!-- Google Fonts: Sora, Chakra Petch, DM Sans, Noto Sans TC, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Sora:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <script>
@@ -38,10 +38,11 @@
                         inkMuted: '#3B63C4'
                     },
                     fontFamily: {
-                        syne: ['"Syne"', 'sans-serif'],
-                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
+                        sora: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        syne: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        heading: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
                         body: ['"DM Sans"', '"Noto Sans TC"', 'sans-serif'],
-                        mono: ['"Chakra Petch"', 'monospace']
+                        mono: ['"JetBrains Mono"', '"Chakra Petch"', 'monospace']
                     }
                 }
             }
@@ -74,7 +75,7 @@
         html, body {
             background-color: var(--canvas-bg);
             color: var(--klein-primary);
-            font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+            font-family: 'Sora', 'DM Sans', 'Noto Sans TC', sans-serif;
             max-width: 100vw;
             overflow-x: hidden !important;
             position: relative;
@@ -139,32 +140,9 @@
             z-index: 30;
         }
 
-        /* Architectural Crosshairs toned in Royal Cobalt (#1F50CD) */
+        /* Clean Architecture Container */
         .crosshair-corner {
             position: relative;
-        }
-
-        .crosshair-corner::before,
-        .crosshair-corner::after {
-            content: '+';
-            position: absolute;
-            color: var(--klein-cobalt);
-            font-family: 'Chakra Petch', monospace;
-            font-size: 0.9rem;
-            font-weight: 700;
-            line-height: 1;
-            pointer-events: none;
-            z-index: 20;
-        }
-
-        .crosshair-corner::before {
-            top: 6px;
-            left: 8px;
-        }
-
-        .crosshair-corner::after {
-            bottom: 6px;
-            right: 8px;
         }
 
         /* Outlined Hero Display Text filled with Crystal Ice (#EBF2FF) */
@@ -180,7 +158,7 @@
             -webkit-text-stroke: 2px var(--klein-primary);
         }
 
-        /* Architecture Module Card States */
+        /* Architecture Module Card States: Unified Continuous Spectrum */
         .arch-card {
             background-color: #FFFFFF;
             position: relative;
@@ -196,19 +174,42 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #002FA7 0%, #1F50CD 60%, #EBF2FF 100%);
-            opacity: 0.85;
+            background: linear-gradient(90deg, #002FA7 0%, #1742C4 25%, #1F50CD 50%, #3B6BF0 75%, #7BAAFF 92%, #C7DCFF 100%);
+            background-size: 100% 100%;
+            background-position: 0% 0%;
+            opacity: 0.95;
             transform-origin: top;
-            transition: transform 0.3s ease, opacity 0.3s ease;
+            transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+            z-index: 10;
         }
+
+        /* Desktop: Unified continuous gradient from AI 履歷健檢 -> 個人品牌 -> 系所推薦 */
+        @media (min-width: 1024px) {
+            .arch-card::before {
+                background-size: 300% 100% !important;
+            }
+            .arch-card:nth-child(1)::before,
+            .arch-card-1::before {
+                background-position: 0% 0% !important;
+            }
+            .arch-card:nth-child(2)::before,
+            .arch-card-2::before {
+                background-position: 50% 0% !important;
+            }
+            .arch-card:nth-child(3)::before,
+            .arch-card-3::before {
+                background-position: 100% 0% !important;
+            }
+        }
+
         .arch-card:hover {
             background-color: #002FA7;
             color: #FFFFFF;
         }
         .arch-card:hover::before {
-            background: #3B6BF0;
             opacity: 1;
-            transform: scaleY(1.25);
+            transform: scaleY(1.35);
+            filter: brightness(1.2);
         }
 
         .tabular-data {
@@ -306,7 +307,7 @@
 
                 <!-- Supporting Lead Copy in #1E3A8A (Crisp Ultramarine Reading Tone) -->
                 <p class="reveal-up reveal-delay-2 font-body text-base sm:text-lg md:text-xl text-[#1E3A8A] leading-relaxed max-w-[58ch]">
-                    結合靜宜大學實務課群、教育部 UCAN 職能診斷與 AI 履歷健檢，將你在校累積的修課與專題經歷，轉化為具備高競爭力的專業求職履歷。
+                    結合靜宜大學實務課群、教育部 UCAN 職能診斷與履歷健檢，將你在校累積的修課與專題經歷，轉化為具備高競爭力的專業求職履歷。
                 </p>
 
                 <!-- Action CTA Group -->
@@ -349,7 +350,7 @@
 
                 <!-- Feature 1: AI 履歷健檢 -->
                 <div
-                    class="arch-card p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up reveal-delay-1 min-h-[360px] sm:min-h-[410px]">
+                    class="arch-card arch-card-1 p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up reveal-delay-1 min-h-[360px] sm:min-h-[410px]">
                     <div>
                         <div class="mb-6 sm:mb-9">
                             <div
@@ -359,7 +360,7 @@
                         </div>
 
                         <h3 class="font-heading font-black text-xl sm:text-2xl md:text-3xl uppercase mb-3 sm:mb-4 tracking-tight text-[#002FA7] group-hover:text-white transition-colors">
-                            AI 履歷健檢
+                            履歷健檢
                         </h3>
                         <p
                             class="font-body font-normal text-[#1E3A8A] group-hover:text-[#EBF2FF] text-sm sm:text-base md:text-lg leading-[1.7] transition-colors duration-300">
@@ -376,7 +377,7 @@
 
                 <!-- Feature 2: 個人品牌 -->
                 <div
-                    class="arch-card p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up reveal-delay-2 min-h-[360px] sm:min-h-[410px]">
+                    class="arch-card arch-card-2 p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up reveal-delay-2 min-h-[360px] sm:min-h-[410px]">
                     <div>
                         <div class="mb-6 sm:mb-9">
                             <div
@@ -403,7 +404,7 @@
 
                 <!-- Feature 3: 系所推薦 -->
                 <div
-                    class="arch-card p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up reveal-delay-3 min-h-[360px] sm:min-h-[410px]">
+                    class="arch-card arch-card-3 p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up reveal-delay-3 min-h-[360px] sm:min-h-[410px]">
                     <div>
                         <div class="mb-6 sm:mb-9">
                             <div

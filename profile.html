@@ -11,6 +11,7 @@
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
     
     <!-- CareerDNA MongoDB Atlas Client -->
     <script src="static/db-client.js"></script>
@@ -21,10 +22,10 @@
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Google Fonts: Syne, Inter, Noto Sans TC, Chakra Petch, JetBrains Mono -->
+    <!-- Google Fonts: Sora, DM Sans, Inter, Noto Sans TC, Chakra Petch, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&amp;family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&amp;family=Inter:wght@300;400;500;700;900&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Sora:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -36,16 +37,20 @@
                         cobalt: '#1F50CD',
                         sapphire: '#3B6BF0',
                         ice: '#EBF2FF',
+                        iceMid: '#DCE8FF',
                         iceBorder: '#C7DCFF',
                         canvas: '#F8FAFF',
+                        inkBody: '#1E3A8A',
+                        inkMuted: '#3B63C4',
                         'electric-blue': '#00e5ff',
                         'flame-orange': '#ff4500'
                     },
                     fontFamily: {
-                        syne: ['"Syne"', 'sans-serif'],
-                        heading: ['"Syne"', '"Noto Sans TC"', 'sans-serif'],
-                        body: ['Inter', '"Noto Sans TC"', 'sans-serif'],
-                        mono: ['"Chakra Petch"', '"JetBrains Mono"', 'monospace']
+                        sora: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        syne: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        heading: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['"DM Sans"', 'Inter', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', '"Chakra Petch"', 'monospace']
                     }
                 }
             }
@@ -53,10 +58,24 @@
     </script>
     
     <style>
+        :root {
+            --klein-primary: #002FA7;
+            --klein-cobalt: #1F50CD;
+            --klein-sapphire: #3B6BF0;
+            --ice-surface: #EBF2FF;
+            --ice-hover: #DCE8FF;
+            --ice-border: #C7DCFF;
+            --canvas-bg: #F8FAFF;
+            --band-bg: #F2F6FF;
+            --card-white: #FFFFFF;
+            --ink-body: #1E3A8A;
+            --ink-muted: #3B63C4;
+        }
+
         html, body {
             background-color: #F8FAFF;
             color: #002FA7;
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            font-family: 'DM Sans', 'Inter', 'Noto Sans TC', sans-serif;
             max-width: 100vw;
             overflow-x: hidden !important;
             position: relative;
@@ -91,21 +110,10 @@
             z-index: 50;
         }
 
-        /* Brutalist Crosshairs */
+        /* Brutalist Corner Container (plus marks removed for visual calm) */
         .crosshair-corner {
             position: relative;
         }
-        .crosshair-corner::before, .crosshair-corner::after {
-            content: '+';
-            position: absolute;
-            color: #1F50CD;
-            font-family: monospace;
-            font-size: 0.85rem;
-            line-height: 1;
-            pointer-events: none;
-        }
-        .crosshair-corner::before { top: 2px; left: 2px; }
-        .crosshair-corner::after { bottom: 2px; right: 2px; }
 
         /* Outline Display Typography */
         .outline-text {
@@ -149,12 +157,6 @@
     </style>
 </head>
 <body class="overflow-x-hidden max-w-full pb-24 md:pb-0 antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col">
-    <script>
-      // Apply dark mode instantly to prevent FOUC (Flash of Unstyled Content)
-      if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark-mode');
-      }
-    </script>
 
     <!-- Global Top Navigation Bar -->
     <nav class="fixed top-0 left-0 right-0 w-full z-40 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
@@ -171,7 +173,7 @@
             <!-- Desktop Nav Links (Hidden on Mobile) -->
             <div class="hidden md:flex items-center gap-6 lg:gap-8 whitespace-nowrap">
                 <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
-                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">AI 履歷健檢</a>
+                <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">履歷健檢</a>
                 <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">系所推薦</a>
                 <a href="resource_library.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">課程資料庫</a>
                 <a href="profile.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1 transition-colors">個人檔案</a>
@@ -199,7 +201,7 @@
     <!-- Mobile Fixed Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
         <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">品牌測驗</a>
-        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">AI 履歷健檢</a>
+        <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">履歷健檢</a>
         <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">系所推薦</a>
         <a href="resource_library.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">課程資料庫</a>
         <a href="profile.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein border-b-2 border-klein pb-0.5 px-2 py-1 transition-colors shrink-0">個人檔案</a>
@@ -267,7 +269,7 @@
                             <span id="greeting-text">早安，很高興見到你</span>
                         </h3>
                         <p class="font-body text-white/80 text-xs sm:text-sm leading-relaxed">
-                            完善學籍與技能武器庫，將使 AI 履歷健檢與系所推薦引擎獲得更高維度的精準判讀。
+                            完善學籍與技能武器庫，將使履歷健檢與系所推薦引擎獲得更高維度的精準判讀。
                         </p>
                     </div>
                 </div>
@@ -387,6 +389,76 @@
                     </form>
                 </div>
 
+                <!-- ================= SKILL ARSENAL (技能武器庫) CARD ================= -->
+                <div class="p-4 sm:p-8 md:p-12 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2 max-w-full overflow-hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-klein/10 pb-6 mb-8">
+                        <div>
+                            <div class="h-2"></div>
+                            <h2 class="font-heading font-black text-xl sm:text-2xl uppercase tracking-tight text-klein flex items-center gap-2.5">
+                                <i class="fa-solid fa-screwdriver-wrench text-klein"></i>
+                                <span>專業技能武器庫 (Skill Arsenal)</span>
+                            </h2>
+                            <p class="font-mono text-xs text-klein/60 mt-1">
+                                建立您的個人技術棧與專業認證，將自動同步至履歷診斷引擎與履歷生成中。
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="selected-skills-count-badge" class="font-mono text-xs font-bold bg-klein/10 text-klein px-3 py-1.5 border border-klein/20 shrink-0">
+                                已建立 0 項技能
+                            </span>
+                            <button type="button" onclick="window.ProfileApp.clearAllSkills()" class="text-xs font-mono text-klein/50 hover:text-rose-600 transition-colors" title="清空全部技能">
+                                <i class="fa-solid fa-trash-can mr-1"></i>清空
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Add Skill Form -->
+                    <div class="space-y-6">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                            <div class="relative flex-1">
+                                <i class="fa-solid fa-tag absolute left-3.5 top-1/2 -translate-y-1/2 text-klein/30 text-sm"></i>
+                                <input type="text" id="custom-skill-input" placeholder="輸入專長或工具（例如：Python、React、Docker、SQL、AWS 證照...）"
+                                    onkeydown="if(event.key === 'Enter') { event.preventDefault(); window.ProfileApp.addCustomSkill(); }"
+                                    class="w-full pl-10 pr-4 py-3 bg-white border border-klein/20 text-klein font-mono text-sm focus:border-klein focus:outline-none transition-all">
+                            </div>
+                            <div class="w-full sm:w-36 shrink-0">
+                                <select id="custom-skill-level" class="w-full px-3 py-3 bg-white border border-klein/20 text-klein font-mono text-sm font-bold focus:border-klein focus:outline-none">
+                                    <option value="精通">精通 (Expert)</option>
+                                    <option value="熟練" selected>熟練 (Proficient)</option>
+                                    <option value="基礎">基礎 (Familiar)</option>
+                                </select>
+                            </div>
+                            <button type="button" onclick="window.ProfileApp.addCustomSkill()" class="hover-spring px-6 py-3 bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider shrink-0 flex items-center justify-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                                <span>新增技能</span>
+                            </button>
+                        </div>
+
+                        <!-- Quick Recommend Tags -->
+                        <div>
+                            <span class="font-mono text-[11px] font-bold text-klein/40 uppercase tracking-wider block mb-2">快速加入熱門技能：</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                <button type="button" onclick="document.getElementById('custom-skill-input').value='Python'; window.ProfileApp.addCustomSkill();" class="text-[11px] font-mono px-2.5 py-1 bg-klein/5 hover:bg-klein hover:text-white border border-klein/10 text-klein transition-all">+ Python</button>
+                                <button type="button" onclick="document.getElementById('custom-skill-input').value='Java'; window.ProfileApp.addCustomSkill();" class="text-[11px] font-mono px-2.5 py-1 bg-klein/5 hover:bg-klein hover:text-white border border-klein/10 text-klein transition-all">+ Java</button>
+                                <button type="button" onclick="document.getElementById('custom-skill-input').value='JavaScript (ES6+)'; window.ProfileApp.addCustomSkill();" class="text-[11px] font-mono px-2.5 py-1 bg-klein/5 hover:bg-klein hover:text-white border border-klein/10 text-klein transition-all">+ JavaScript</button>
+                                <button type="button" onclick="document.getElementById('custom-skill-input').value='SQL / 資料庫設計'; window.ProfileApp.addCustomSkill();" class="text-[11px] font-mono px-2.5 py-1 bg-klein/5 hover:bg-klein hover:text-white border border-klein/10 text-klein transition-all">+ SQL 資料庫</button>
+                                <button type="button" onclick="document.getElementById('custom-skill-input').value='Git / GitHub'; window.ProfileApp.addCustomSkill();" class="text-[11px] font-mono px-2.5 py-1 bg-klein/5 hover:bg-klein hover:text-white border border-klein/10 text-klein transition-all">+ Git / GitHub</button>
+                                <button type="button" onclick="document.getElementById('custom-skill-input').value='Linux / Docker'; window.ProfileApp.addCustomSkill();" class="text-[11px] font-mono px-2.5 py-1 bg-klein/5 hover:bg-klein hover:text-white border border-klein/10 text-klein transition-all">+ Docker / Linux</button>
+                                <button type="button" onclick="document.getElementById('custom-skill-input').value='機器學習 / PyTorch'; window.ProfileApp.addCustomSkill();" class="text-[11px] font-mono px-2.5 py-1 bg-klein/5 hover:bg-klein hover:text-white border border-klein/10 text-klein transition-all">+ 機器學習</button>
+                                <button type="button" onclick="document.getElementById('custom-skill-input').value='UI/UX / Figma'; window.ProfileApp.addCustomSkill();" class="text-[11px] font-mono px-2.5 py-1 bg-klein/5 hover:bg-klein hover:text-white border border-klein/10 text-klein transition-all">+ UI/UX 設計</button>
+                            </div>
+                        </div>
+
+                        <!-- Active Skills List -->
+                        <div class="pt-4 border-t border-klein/10">
+                            <span class="font-mono text-[11px] font-bold text-klein/50 uppercase tracking-wider block mb-3">已建立的技能清單（點擊標籤旁的熟練度可循環切換）：</span>
+                            <div id="active-skills-list" class="flex flex-wrap gap-2.5 min-h-[50px] p-4 bg-klein/[0.02] border border-klein/10">
+                                <!-- Populated dynamically by renderActiveSkills() -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ================= RECOMMENDED COURSES CARD ================= -->
                 <div class="p-4 sm:p-8 md:p-12 bg-white border border-klein/10 crosshair-corner reveal-up reveal-delay-2 max-w-full overflow-hidden">
                     <div class="border-b border-klein/10 pb-6 mb-6">
@@ -429,7 +501,7 @@
                             </div>
                             <h4 class="font-heading font-bold text-sm text-klein uppercase">尚無已生成的履歷紀錄</h4>
                             <p class="font-mono text-xs text-klein/50 max-w-md mx-auto">
-                                前往「AI 履歷健檢」結合您的專屬技能武器庫與修課紀錄，立即生成第一份高競爭力 A4 履歷！
+                                前往「履歷健檢」結合您的專屬技能武器庫與修課紀錄，立即生成第一份高競爭力 A4 履歷！
                             </p>
                             <a href="career_fit.html" class="inline-flex items-center gap-2 px-6 py-2.5 bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider hover-spring mt-2">
                                 <span>前往生成履歷</span>
@@ -1028,7 +1100,7 @@
                             </div>
                             <h4 class="font-heading font-bold text-sm text-klein uppercase">尚無已生成的履歷紀錄</h4>
                             <p class="font-mono text-xs text-klein/50 max-w-md mx-auto">
-                                前往「AI 履歷健檢」結合您的專屬技能武器庫與修課紀錄，立即生成第一份高競爭力 A4 履歷！
+                                前往「履歷健檢」結合您的專屬技能武器庫與修課紀錄，立即生成第一份高競爭力 A4 履歷！
                             </p>
                             <a href="career_fit.html" class="inline-flex items-center gap-2 px-6 py-2.5 bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider hover-spring mt-2">
                                 <span>前往生成履歷</span>
@@ -1188,12 +1260,14 @@
 
                 if (window.CVTemplates && cvData) {
                     const html = window.CVTemplates.render(this.currentModalTemplate, cvData);
-                    paper.innerHTML = `<div id="profile-pdf-render-target">${html}</div>`;
+                    const safeHtml = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(html) : html;
+                    paper.innerHTML = `<div id="profile-pdf-render-target">${safeHtml}</div>`;
                 } else {
                     // Fallback to markdown parse
                     const md = resume.formattedResumeMarkdown || resume.resumeMarkdown || '無履歷內容';
-                    const html = typeof marked !== 'undefined' ? marked.parse(md) : md;
-                    paper.innerHTML = `<div id="profile-pdf-render-target" class="p-8 text-klein">${html}</div>`;
+                    const rawHtml = typeof marked !== 'undefined' ? marked.parse(md) : md;
+                    const safeHtml = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawHtml) : rawHtml;
+                    paper.innerHTML = `<div id="profile-pdf-render-target" class="p-8 text-klein">${safeHtml}</div>`;
                 }
             },
 
