@@ -9,6 +9,7 @@
     "server": "node src/index.js --server",
     "cli": "node src/index.js --cli",
     "test": "node test_orchestration.js",
+    "test:resume": "node --test tests/resume/knowledge.test.js",
     "test:pipeline": "node test_orchestration.js",
     "test:e2e": "node tests/e2e/run_e2e_tests.js"
   },
@@ -30,8 +31,10 @@
     "bcryptjs": "^3.0.3",
     "cheerio": "^1.2.0",
     "cors": "^2.8.5",
+    "docx": "^9.15.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "marked": "^18.1.2",
     "mongoose": "^9.9.4",
     "multer": "^2.3.0",
     "nodemailer": "^9.0.6",

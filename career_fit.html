@@ -20,9 +20,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="static/careerdna-motion.js"></script>
 
     <!-- CareerDNA MongoDB Atlas Client -->
     <script src="static/db-client.js"></script>
+    
+    <!-- CareerDNA Resume Knowledge Engine -->
+    <script src="static/resume-knowledge.js"></script>
     
     <script>
         tailwind.config = {
@@ -43,7 +49,7 @@
                         sora: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
                         syne: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
                         heading: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
-                        body: ['"Sora"', 'Inter', '"Noto Sans TC"', 'sans-serif'],
+                        body: ['"Sora"', '"Noto Sans TC"', 'sans-serif'],
                         mono: ['"JetBrains Mono"', '"Chakra Petch"', 'monospace']
                     }
                 }
@@ -76,7 +82,7 @@
 
         /* Interactive Spring Lift */
         .hover-spring {
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1) !important;
         }
         .hover-spring:hover {
             transform: translateY(-6px) scale(1.01) !important;
@@ -241,6 +247,34 @@
             border-color: #002fa7 !important;
             outline: none !important;
             box-shadow: 0 0 0 1px #002fa7 !important;
+        }
+
+        /* Resume Placeholder & Print Guidance Styling */
+        .resume-placeholder {
+            background-color: #fef3c7 !important;
+            color: #78350f !important;
+            border-bottom: 2px dashed #f59e0b !important;
+            padding: 1px 4px !important;
+            border-radius: 2px !important;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .resume-placeholder:hover {
+            background-color: #fde68a !important;
+            box-shadow: 0 0 0 1px #d97706;
+        }
+        .no-print {
+            display: block;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .resume-placeholder {
+                background: transparent !important;
+                color: #000000 !important;
+                border-bottom: 1px solid #666666 !important;
+            }
         }
 
         /* Custom Scrollbar */
@@ -408,6 +442,95 @@
                     </div>
                 </section>
 
+                <!-- Section 03: Resume Profile & Target Job (履歷個人資料與應徵設定) -->
+                <section id="resume-profile-card" class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-3">
+                    <div class="border-b border-klein/10 pb-4 mb-4 flex items-center justify-between">
+                        <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
+                            <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">03</span>
+                            履歷基本資料與目標職務
+                        </h2>
+                        <span class="font-mono text-[10px] text-klein/60 bg-klein/5 px-2 py-0.5 border border-klein/10">二資與目標設定</span>
+                    </div>
+                    <p class="font-mono text-xs text-klein/60 mb-4 leading-relaxed">
+                        * 個人資料將自動帶入 A4 履歷中；未填欄位將以 <code class="bg-amber-50 text-amber-800 px-1 border border-amber-200">【使用者自行輸入】</code> 標示，方便後續編修。
+                    </p>
+
+                    <div class="space-y-4 font-mono text-xs">
+                        <!-- 應徵目標職位 (Role Preset) -->
+                        <div>
+                            <label class="block font-bold text-klein mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-bullseye text-flame-orange"></i> 應徵目標職位 (Target Role)
+                            </label>
+                            <select id="resume-target-role" onchange="window.App.handleProfileChange()" class="w-full p-2.5 text-xs bg-white border border-klein/20">
+                                <option value="fullstack">全端軟體工程師 (Full-Stack Engineer)</option>
+                                <option value="frontend">前端工程師 (Front-End Engineer)</option>
+                                <option value="backend">後端軟體工程師 (Back-End Engineer)</option>
+                                <option value="data_ai">商業數據分析師 / AI 應用工程師 (Data & AI)</option>
+                                <option value="sa_pm">系統分析師 (SA) / 專案管理師 (PM)</option>
+                                <option value="erp">ERP 系統顧問 / 業務流程分析師 (ERP Consultant)</option>
+                                <option value="devops_sec">雲端維運 / 系統資訊安全工程師 (DevOps & Security)</option>
+                            </select>
+                        </div>
+
+                        <!-- 應徵目標企業 -->
+                        <div>
+                            <label class="block font-bold text-klein mb-1">應徵目標企業 (Target Company)</label>
+                            <input type="text" id="resume-target-company" oninput="window.App.handleProfileChange()" placeholder="例如：Google、台積電、國泰金控、某某科技公司" class="w-full p-2.5 text-xs bg-white border border-klein/20">
+                        </div>
+
+                        <!-- 姓名與英文名 -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-klein mb-1">中文姓名</label>
+                                <input type="text" id="resume-user-name" oninput="window.App.handleProfileChange()" placeholder="例如：王小明" class="w-full p-2.5 text-xs bg-white border border-klein/20">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-klein mb-1">英文姓名</label>
+                                <input type="text" id="resume-user-engname" oninput="window.App.handleProfileChange()" placeholder="例如：Xiao-Ming Wang" class="w-full p-2.5 text-xs bg-white border border-klein/20">
+                            </div>
+                        </div>
+
+                        <!-- 聯絡電話與 Email -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-klein mb-1">聯絡手機</label>
+                                <input type="text" id="resume-user-phone" oninput="window.App.handleProfileChange()" placeholder="例如：0912-345678" class="w-full p-2.5 text-xs bg-white border border-klein/20">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-klein mb-1">電子郵件 (Email)</label>
+                                <input type="email" id="resume-user-email" oninput="window.App.handleProfileChange()" placeholder="例如：student@pu.edu.tw" class="w-full p-2.5 text-xs bg-white border border-klein/20">
+                            </div>
+                        </div>
+
+                        <!-- GitHub 與 作品集連結 -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-klein mb-1"><i class="fa-brands fa-github mr-1"></i>GitHub 倉庫連結</label>
+                                <input type="url" id="resume-user-github" oninput="window.App.handleProfileChange()" placeholder="https://github.com/your-id" class="w-full p-2.5 text-xs bg-white border border-klein/20">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-klein mb-1"><i class="fa-solid fa-globe mr-1"></i>作品集 / 簡報展示連結</label>
+                                <input type="url" id="resume-user-portfolio" oninput="window.App.handleProfileChange()" placeholder="https://yourportfolio.dev" class="w-full p-2.5 text-xs bg-white border border-klein/20">
+                            </div>
+                        </div>
+
+                        <!-- 正面證件照上傳 -->
+                        <div class="p-3 bg-klein/[0.02] border border-klein/10">
+                            <label class="block font-bold text-klein mb-1 flex items-center justify-between">
+                                <span><i class="fa-solid fa-camera mr-1"></i>正面專業證件照 (3.5×4.5cm)</span>
+                                <span id="resume-photo-status" class="text-[10px] text-klein/60 font-normal">未上傳 (顯示佔位框)</span>
+                            </label>
+                            <div class="flex items-center gap-3">
+                                <input type="file" id="resume-photo-input" accept="image/*" onchange="window.App.handlePhotoUpload(event)" class="text-xs file:mr-2 file:py-1 file:px-2 file:border-0 file:text-[11px] file:bg-klein file:text-white file:font-mono">
+                                <button type="button" id="resume-photo-clear" onclick="window.App.clearPhoto()" class="hidden text-[11px] text-rose-600 underline font-mono">清除照片</button>
+                            </div>
+                            <p class="text-[10px] text-klein/60 mt-1 leading-tight">
+                                💡 <strong>人資提示：</strong>93% 企業表示有附照片優先安排面試。請使用光線明亮之乾淨正面照，避免生活自拍或濾鏡。
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Action Button Cluster -->
                 <div class="space-y-3">
                     <button onclick="window.App.calculateAndGenerate()" id="generate-btn" class="hover-spring w-full py-4 bg-klein text-white border border-klein font-heading font-bold text-base uppercase tracking-wider flex items-center justify-center gap-3 group shadow-md hover:shadow-xl transition-all">
@@ -510,6 +633,9 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <!-- Export Checklist Warning Banner -->
+                            <div id="resume-checklist-banner" class="hidden mb-3 p-3 bg-amber-50 border border-amber-300"></div>
 
                             <!-- A4 Preview Paper Sheet -->
                             <div id="resume-output" class="bg-white border border-klein/20 p-6 md:p-10 max-h-[600px] overflow-y-auto shadow-sm text-klein/90 leading-relaxed font-body">
@@ -693,7 +819,135 @@
                 selectedCourses: new Set(), 
                 selectedExps: new Set(), 
                 grade: '大三', 
-                dept: '' 
+                dept: '',
+                profile: {
+                    targetRole: 'fullstack',
+                    targetCompany: '',
+                    name: '',
+                    engName: '',
+                    phone: '',
+                    email: '',
+                    github: '',
+                    portfolio: '',
+                    photoUrl: null
+                }
+            },
+
+            handleProfileChange() {
+                const role = document.getElementById('resume-target-role')?.value || 'fullstack';
+                const comp = document.getElementById('resume-target-company')?.value || '';
+                const name = document.getElementById('resume-user-name')?.value || '';
+                const engName = document.getElementById('resume-user-engname')?.value || '';
+                const phone = document.getElementById('resume-user-phone')?.value || '';
+                const email = document.getElementById('resume-user-email')?.value || '';
+                const github = document.getElementById('resume-user-github')?.value || '';
+                const portfolio = document.getElementById('resume-user-portfolio')?.value || '';
+
+                this.state.profile = Object.assign(this.state.profile || {}, {
+                    targetRole: role,
+                    targetCompany: comp,
+                    name: name,
+                    engName: engName,
+                    phone: phone,
+                    email: email,
+                    github: github,
+                    portfolio: portfolio
+                });
+
+                try {
+                    localStorage.setItem('cdna_resume_profile', JSON.stringify(this.state.profile));
+                } catch(e){}
+
+                this.debouncedLiveGenerate();
+            },
+
+            async handlePhotoUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (!file.type.startsWith('image/')) {
+                    alert('請上傳 JPG 或 PNG 格式的照片。');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const targetW = 300;
+                        const targetH = 390;
+                        canvas.width = targetW;
+                        canvas.height = targetH;
+                        const ctx = canvas.getContext('2d');
+                        
+                        const scale = Math.max(targetW / img.width, targetH / img.height);
+                        const x = (targetW - img.width * scale) / 2;
+                        const y = (targetH - img.height * scale) / 2;
+                        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                        this.state.profile = this.state.profile || {};
+                        this.state.profile.photoUrl = compressedDataUrl;
+
+                        const status = document.getElementById('resume-photo-status');
+                        if (status) status.innerHTML = '<span class="text-emerald-600 font-bold">✔ 已成功套用照片</span>';
+                        const clearBtn = document.getElementById('resume-photo-clear');
+                        if (clearBtn) clearBtn.classList.remove('hidden');
+
+                        try {
+                            localStorage.setItem('cdna_resume_profile', JSON.stringify(this.state.profile));
+                        } catch(err){}
+
+                        this.calculateAndGenerate(true);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
+
+            clearPhoto() {
+                if (this.state.profile) {
+                    this.state.profile.photoUrl = null;
+                }
+                const input = document.getElementById('resume-photo-input');
+                if (input) input.value = '';
+                const status = document.getElementById('resume-photo-status');
+                if (status) status.innerHTML = '未上傳 (顯示佔位框)';
+                const clearBtn = document.getElementById('resume-photo-clear');
+                if (clearBtn) clearBtn.classList.add('hidden');
+
+                try {
+                    localStorage.setItem('cdna_resume_profile', JSON.stringify(this.state.profile));
+                } catch(e){}
+
+                this.calculateAndGenerate(true);
+            },
+
+            restoreProfileUI() {
+                try {
+                    const saved = localStorage.getItem('cdna_resume_profile');
+                    if (saved) {
+                        this.state.profile = Object.assign(this.state.profile || {}, JSON.parse(saved));
+                    }
+                } catch(e){}
+
+                const p = this.state.profile || {};
+                if (p.targetRole && document.getElementById('resume-target-role')) document.getElementById('resume-target-role').value = p.targetRole;
+                if (p.targetCompany && document.getElementById('resume-target-company')) document.getElementById('resume-target-company').value = p.targetCompany;
+                if (p.name && document.getElementById('resume-user-name')) document.getElementById('resume-user-name').value = p.name;
+                if (p.engName && document.getElementById('resume-user-engname')) document.getElementById('resume-user-engname').value = p.engName;
+                if (p.phone && document.getElementById('resume-user-phone')) document.getElementById('resume-user-phone').value = p.phone;
+                if (p.email && document.getElementById('resume-user-email')) document.getElementById('resume-user-email').value = p.email;
+                if (p.github && document.getElementById('resume-user-github')) document.getElementById('resume-user-github').value = p.github;
+                if (p.portfolio && document.getElementById('resume-user-portfolio')) document.getElementById('resume-user-portfolio').value = p.portfolio;
+
+                if (p.photoUrl) {
+                    const status = document.getElementById('resume-photo-status');
+                    if (status) status.innerHTML = '<span class="text-emerald-600 font-bold">✔ 已成功套用照片</span>';
+                    const clearBtn = document.getElementById('resume-photo-clear');
+                    if (clearBtn) clearBtn.classList.remove('hidden');
+                }
             },
 
             debouncedLiveGenerate() {
@@ -785,6 +1039,7 @@
 
                 // Restore selections into checkbox DOM
                 this.restoreSelections(true);
+                this.restoreProfileUI();
 
                 // Guaranteed initial generation: A4 resume will immediately be visible on page load!
                 try {
@@ -1267,6 +1522,9 @@
                 if (liveTotal) {
                     let currentScore = parseInt(liveTotal.innerText) || 0;
                     this.animateLiveScore(currentScore, totalScore, liveTotal);
+                    if (currentScore !== totalScore && window.CareerDNAMotion) {
+                        window.CareerDNAMotion.pulseElement(liveTotal);
+                    }
                 }
                 
                 if (liveProgScore) {
@@ -1315,66 +1573,14 @@
             },
 
             generateDefaultResumeMarkdown(dept, grade) {
-                const deptNames = { CS: '資訊工程學系', IM: '資訊管理學系', AI: '人工智慧學系' };
-                const deptFullName = deptNames[dept] || '資訊學院';
-                let studentName = '靜宜資訊學士候選人';
-                if (currentUser && currentUser.displayName) studentName = currentUser.displayName;
-                else {
-                    const localName = localStorage.getItem('cdna_student_name');
-                    if (localName) studentName = localName;
-                }
-                let targetJob = '全端 / 後端軟體工程師';
-                if (dept === 'IM') targetJob = '系統分析師 (SA) / 專案管理師 (PM) / 商業數據分析師';
-                if (dept === 'AI') targetJob = 'AI 演算法工程師 / 資料科學家 (Data Scientist)';
-
-                return `# ${studentName}
-### 🎯 應徵職務：${targetJob}
-
-**二資 ｜ 個人基本資料 (Personal Profile)**  
-- **教育背景**：靜宜大學 (Providence University) 資訊學院 ${deptFullName} ｜ ${grade || '大三'}在學  
-- **聯絡資訊**：0912-345-678 ｜ student@pu.edu.tw ｜ 台灣 台中市沙鹿區  
-- **專業連結**：[GitHub 程式碼倉庫](https://github.com/pu-student) ｜ [線上作品集展示](https://pu-student.dev)
-
----
-
-## 一信 ｜ 求職自薦信 (Cover Letter)
-我是 **${studentName}**，就讀靜宜大學${deptFullName} ${grade || '大三'}學生。在校期間專注於核心資訊架構、資料庫綱要規劃與物件導向程式設計，並以敏捷團隊協同完成系統專案為主要實踐。熟悉 Git 版本控制與 RESTful API 串接，希望能應徵【${targetJob}】職位，將所學之工程邏輯轉化為實際專案成果，為團隊創造實質產值！
-
----
-
-## 四專 ｜ 專業專長與證照 (Skills & Credentials)
-- **核心程式開發 (Core Programming)**：
-  - 具備物件導向 (OOP) 與模組化思維，熟練使用 Python / Java 進行系統開發。
-  - 能參考架構規格撰寫清晰、可維護之業務邏輯，並進行輸入防護與資料格式驗證。
-- **資料庫與系統架構 (Database & Architecture)**：
-  - 熟悉 SQL 語法與關聯式資料庫設計（PostgreSQL / MySQL），能進行 ER Model 綱要規劃與 CRUD 查詢調校。
-  - 理解軟體工程與模組化架構，具備系統分析與模組分工經驗。
-- **測試與協作工具 (Testing & Collaboration)**：
-  - 使用 Postman 進行 RESTful API 回應檢查與資料格式驗證。
-  - 熟練運用 **Git / GitHub** 進行分支管理 (Branching) 與團隊協同開發。
-
----
-
-<div class="html2pdf__page-break"></div>
-
-## 三歷 ｜ 專案實作與經歷 (Project Experience - STAR Format)
-### 💻 核心專業必修實作 ｜ 系統整合與資料庫專題 (2025.09 - 2026.01)
-- **職責與分工**：負責核心業務邏輯設計、RESTful API 串接與前端互動介面開發。
-- **量化實績 (STAR)**：完成前後端串接並撰寫技術規格說明文件，順利完成 Live Demo 成果展演。
-
-## 五傳 ｜ 完整自傳 (Autobiography - 我是誰・我會什麼・我想做什麼)
-### 1. 【我是誰】個人背景與特質
-我是靜宜大學${deptFullName}的${grade || '大三'}學生。求學期間秉持探究底層邏輯的精神，在資訊核心課程中穩紮穩打，具備高度自主學習熱忱、邏輯思維清晰，能在面對未知技術時迅速拆解問題並找到解法。
-
-### 2. 【我會什麼】核心專長與實戰成果
-在校期間深入修習系上專業必修與跨領域實務課群，具備獨立設計 RESTful API、規劃資料庫綱要與排除系統 Bug 的能力；在專案協同上，我重視跨組溝通與責任邊界，能以 Git 確保程式碼交付品質。
-
-### 3. 【我想做什麼】求職動機與職缺連結
-立志投身於【${targetJob}】領域。我深知產業需要的是不僅能動手寫 code，更能理解業務痛點、穩定交付高品質系統的工程人才。我期望能運用自身紮實的技術底子與團隊協作成績，迅速融入開發節奏、為專案創造實質產值！
-
----
-*(本履歷格式嚴格依據企業人資「五元三要（一信、二資、三歷、四專、五傳）」黃金規格自動生成)*
-`;
+                const model = ResumeKnowledge.buildEvidence({
+                    dept: dept || this.state.dept || 'IM',
+                    grade: grade || this.state.grade || '大三',
+                    selectedCourses: Array.from(this.state.selectedCourses || []),
+                    selectedExps: Array.from(this.state.selectedExps || []),
+                    userProfile: this.state.profile || {}
+                });
+                return ResumeKnowledge.renderResumeMarkdown(model);
             },
 
             async calculateAndGenerate(isSilent = false) {
@@ -1470,6 +1676,15 @@
                     this.renderResultUI(result);
 
                     if (!isSilent) {
+                        if (window.CareerDNAMotion) {
+                            window.CareerDNAMotion.showToast('A4 履歷與三軌戰力診斷報告已生成完畢', 'success');
+                        }
+                        if (window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                            gsap.fromTo('#ai-result-panel .border, #resume-output .resume-sheet',
+                                { autoAlpha: 0, y: 16 },
+                                { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.06, ease: 'power3.out', overwrite: true }
+                            );
+                        }
                         setTimeout(() => {
                             const aiPanel = document.getElementById('ai-result-panel');
                             if (aiPanel) aiPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1590,32 +1805,50 @@
                     if (raw) ucan = JSON.parse(raw);
                 } catch(e){}
 
-                // Read student name
-                let studentName = '靜宜資訊學士候選人';
-                if (currentUser && currentUser.displayName) studentName = currentUser.displayName;
-                else if (ucan && ucan.student && ucan.student.name) studentName = ucan.student.name;
-                else {
-                    const localName = localStorage.getItem('cdna_student_name');
-                    if (localName) studentName = localName;
+                // Prepare user profile
+                const userProf = Object.assign({}, this.state.profile || {});
+                if (!userProf.name && currentUser && currentUser.displayName) userProf.name = currentUser.displayName;
+                if (!userProf.name && ucan && ucan.student && ucan.student.name) userProf.name = ucan.student.name;
+                if (!userProf.email && currentUser && currentUser.email) userProf.email = currentUser.email;
+
+                // Determine target role key
+                let roleKey = userProf.targetRole;
+                if (!roleKey) {
+                    if (dept === 'IM') roleKey = 'sa_pm';
+                    else if (dept === 'AI') roleKey = 'data_ai';
+                    else roleKey = 'fullstack';
                 }
 
-                // Target pathway / job title
-                let targetJob = '全端 / 後端軟體工程師';
-                if (dept === 'IM') targetJob = '系統分析師 (SA) / 專案管理師 (PM) / 商業數據分析師';
-                if (dept === 'AI') targetJob = 'AI 演算法工程師 / 資料科學家 (Data Scientist)';
-                if (ucan && ucan.profPathway) {
+                if (!userProf.targetRole && ucan && ucan.profPathway) {
                     const pwMap = {
-                        '軟體開發': '軟體工程師 (Software Engineer)',
-                        '資料科學與分析': '商業數據分析師 / 資料科學家',
-                        '人工智慧技術應用': 'AI 演算法與應用工程師',
-                        '資訊安全': '資訊安全工程師 / 滲透測試專員',
-                        '網路與系統維運': '雲端架構 / 系統網路維運工程師 (DevOps/SRE)',
-                        '企業資源規劃': 'ERP 系統顧問 / 業務流程分析師 (SAP/鼎新)'
+                        '軟體開發': 'fullstack',
+                        '資料科學與分析': 'data_ai',
+                        '人工智慧技術應用': 'data_ai',
+                        '資訊安全': 'devops_sec',
+                        '網路與系統維運': 'devops_sec',
+                        '企業資源規劃': 'erp'
                     };
-                    if (pwMap[ucan.profPathway]) targetJob = pwMap[ucan.profPathway];
+                    if (pwMap[ucan.profPathway]) roleKey = pwMap[ucan.profPathway];
                 }
 
-                // Calculate ATS Metrics
+                // Build evidence model via ResumeKnowledge
+                const resumeModel = ResumeKnowledge.buildEvidence({
+                    selectedCourses: selectedCourses,
+                    selectedExps: selectedExps,
+                    roleKey: roleKey,
+                    userProfile: userProf,
+                    grade: grade || this.state.grade || '大三',
+                    dept: dept,
+                    ucan: ucan
+                });
+
+                this.lastResumeModel = resumeModel;
+
+                // Render A4 HTML and Markdown
+                const resumeHtml = ResumeKnowledge.renderResumeHTML(resumeModel);
+                const resumeMarkdown = ResumeKnowledge.renderResumeMarkdown(resumeModel);
+
+                // ATS Metrics
                 const hasIntern = selectedExps.includes('exp_intern');
                 const hasCompete = selectedExps.includes('exp_compete') || selectedExps.includes('exp_hackathon');
                 const hasProj = selectedExps.includes('exp_project') || selectedExps.includes('exp_proj');
@@ -1631,8 +1864,6 @@
                 let comp = 40;
                 comp += Math.round((progScore / 40) * 30);
                 comp += Math.round((pracScore / 40) * 20);
-                const draftText = document.getElementById('resume-draft-input')?.value.trim() || '';
-                if (draftText.length > 20) comp += 10;
                 comp = Math.min(98, Math.max(45, comp));
 
                 let kw = 50;
@@ -1648,7 +1879,7 @@
                     levelDesc = '恭喜！您的專業學程佈局嚴謹、實務課群跨域實作紮實，且擁有出色的課外經歷，在就業市場上已具備極高的錄取優勢！';
                 } else if (totalScore >= 60) {
                     levelBadge = '✨ A級 實務就業即戰力 (Solid Practitioner)';
-                    levelDesc = '表現優異！專業學程與實務課群皆有穩定累積，若能將專案成果進一步以量化指標（STAR/XYZ）展現於履歷中，將更具說服力！';
+                    levelDesc = '表現優異！專業學程與實務課群皆有穩定累積，若能將專案成果進一步以量化指標（STAR）展現於履歷中，將更具說服力！';
                 } else if (totalScore >= 40) {
                     levelBadge = '💡 B級 潛力養成期 (Promising Candidate)';
                     levelDesc = '已建立基本專業學分架構！建議針對實務課群與專案實作進行重點強化，積極爭取企業實習或黑客松競賽經驗。';
@@ -1686,278 +1917,18 @@
                     </div>
                 `;
 
-                // Generate Structured Action Items (Human-toned & High Scannability)
-                const actionItems = [];
-                if (progScore < 30) {
-                    const diffCredits = Math.max(0, progGoalCredits - maxProgCredits);
-                    actionItems.push({
-                        category: '專業學程',
-                        tagColor: 'blue',
-                        icon: 'fa-solid fa-graduation-cap',
-                        title: `鎖定「${bestProgName}」修滿 15 學分認證`,
-                        desc: `目前已累積 ${maxProgCredits} 學分，距離取得校級學程認證尚差 ${diffCredits} 學分。建議下學期集中選修該學程指定課程，畢業時能多拿一張校級正式學程證書，在履歷首頁直接展現專業主線！`,
-                        actionText: '查閱學程選修',
-                        actionUrl: 'resource_library.html?track=program'
-                    });
-                } else {
-                    actionItems.push({
-                        category: '專業學程',
-                        tagColor: 'blue',
-                        icon: 'fa-solid fa-circle-check',
-                        title: `「${bestProgName}」已達標，直接列為履歷主打亮點`,
-                        desc: `您在「${bestProgName}」已完成 ${maxProgCredits} 學分，已達成或接近學程標準！建議在履歷第一段個人簡介直接寫出學程認證，加深人資信任度。`,
-                        actionText: '瀏覽進階延伸課',
-                        actionUrl: 'resource_library.html'
-                    });
-                }
-
-                if (pracScore < 30) {
-                    const diffPrac = Math.max(0, pracGoalCredits - pracCredits);
-                    actionItems.push({
-                        category: '實務課群',
-                        tagColor: 'indigo',
-                        icon: 'fa-solid fa-cubes',
-                        title: `補強跨域實務學分（目標 9 學分，尚差 ${diffPrac} 學分）`,
-                        desc: `目前實務課群累積 ${pracCredits} 學分。建議選修「智慧雲端應用」、「大數據商務」等實務課群，並將期末專案整理為具體成果，落實跨領域技術應用！`,
-                        actionText: '探索實務課群',
-                        actionUrl: 'resource_library.html?track=practical'
-                    });
-                } else {
-                    actionItems.push({
-                        category: '實務課群',
-                        tagColor: 'indigo',
-                        icon: 'fa-solid fa-circle-check',
-                        title: `實務課群學分充沛，展現跨域整合實戰力`,
-                        desc: `實務課群已累積 ${pracCredits} 學分，兼具理論與技術實踐。在履歷與面試中可特別強調多元技術棧的協同串接經驗。`,
-                        actionText: null,
-                        actionUrl: null
-                    });
-                }
-
-                if (!hasIntern) {
-                    actionItems.push({
-                        category: '職場實習',
-                        tagColor: 'amber',
-                        icon: 'fa-solid fa-briefcase',
-                        title: `爭取企業實習或產學合作機會`,
-                        desc: `人資審閱新鮮人履歷最看重實習紀錄。強烈建議報名資訊學院與業界企業（如台積電先修、光寶科技或在地軟體園區）的實習職缺，提早累積業界研發經驗。`,
-                        actionText: null,
-                        actionUrl: null
-                    });
-                } else {
-                    actionItems.push({
-                        category: '職場實習',
-                        tagColor: 'emerald',
-                        icon: 'fa-solid fa-chart-line',
-                        title: `以 STAR / XYZ 原則量化實習產出`,
-                        desc: `您已具備企業實習經歷！請務必在面試與履歷中強調具體成果數字（如：API 延遲降低多少 %、處理幾萬筆即時數據、提升系統穩定度），避免流水帳敘述。`,
-                        actionText: null,
-                        actionUrl: null
-                    });
-                }
-
-                if (!hasProj) {
-                    actionItems.push({
-                        category: '專案作品',
-                        tagColor: 'cyan',
-                        icon: 'fa-solid fa-laptop-code',
-                        title: `建立 GitHub 程式碼倉庫與作品集展示`,
-                        desc: `建議將系上重要課堂專題或大型期末成果整理成 GitHub 儲存庫，附上系統架構圖與清楚的 README.md，讓人資第一眼就能檢視你的程式碼撰寫風格！`,
-                        actionText: null,
-                        actionUrl: null
-                    });
-                }
-
-                if (ucan && ucan.commonComps && typeof ucan.commonComps === 'object') {
-                    try {
-                        const comps = Object.entries(ucan.commonComps).filter(([_, d]) => d != null);
-                        if (comps.length > 0) {
-                            const sorted = comps.sort((a,b) => {
-                                const prA = (typeof a[1] === 'object' && a[1] !== null) ? (a[1].pr ?? a[1].score ?? 50) : (typeof a[1] === 'number' ? a[1] : 50);
-                                const prB = (typeof b[1] === 'object' && b[1] !== null) ? (b[1].pr ?? b[1].score ?? 50) : (typeof b[1] === 'number' ? b[1] : 50);
-                                return prA - prB;
-                            });
-                            const weakComp = sorted[0];
-                            if (weakComp) {
-                                const prVal = (typeof weakComp[1] === 'object' && weakComp[1] !== null) ? (weakComp[1].pr ?? weakComp[1].score ?? 0) : (typeof weakComp[1] === 'number' ? weakComp[1] : 0);
-                                if (prVal < 50) {
-                                    const kw = weakComp[0].includes('溝通') ? '軟體工程' : (weakComp[0].includes('創新') ? '創新' : '實務');
-                                    actionItems.push({
-                                        category: '職能補強',
-                                        tagColor: 'purple',
-                                        icon: 'fa-solid fa-lightbulb',
-                                        title: `補強 UCAN 共通職能「${weakComp[0]}」(PR ${prVal})`,
-                                        desc: `系統偵測到您的「${weakComp[0]}」相對偏弱。建議在下學期的分組專案或期末專題中主動擔任該面向角色，或選修推薦課程以全方位平衡職場戰力。`,
-                                        actionText: '查閱推薦補強課程',
-                                        actionUrl: `resource_library.html?search=${encodeURIComponent(kw)}`
-                                    });
-                                }
-                            }
-                        }
-                    } catch (e) {
-                        console.warn('[CareerDNA] Error processing weak UCAN comp:', e);
-                    }
-                }
-
-                // Derive Technical Skills & Stack
-                const techSkillsList = [];
-                const devTools = ['Git / GitHub', 'VS Code'];
-                const systemArchitectures = [];
-
-                if (selectedCourses.some(c => c.includes('程式設計') || c.includes('Python'))) techSkillsList.push('Python', '物件導向程式設計 (OOP)');
-                if (selectedCourses.some(c => c.includes('Java'))) techSkillsList.push('Java', 'JVM 架構');
-                if (selectedCourses.some(c => c.includes('網頁') || c.includes('前端'))) techSkillsList.push('HTML5 / CSS3', 'JavaScript (ES6+)', 'RESTful API 串接');
-                if (selectedCourses.some(c => c.includes('資料庫') || c.includes('SQL'))) {
-                    techSkillsList.push('SQL 語法與資料庫設計');
-                    systemArchitectures.push('關聯式資料庫 (PostgreSQL / MySQL)', 'ER Model 規格化');
-                }
-                if (selectedCourses.some(c => c.includes('資料結構') || c.includes('演算法'))) {
-                    systemArchitectures.push('核心資料結構 (樹/圖/雜湊表)', '演算法複雜度分析 (Big-O)');
-                }
-                if (selectedCourses.some(c => c.includes('網路') || c.includes('Linux'))) {
-                    systemArchitectures.push('Linux 系統指令與伺服器架構', 'TCP/IP 網路協定');
-                    devTools.push('Linux / Docker');
-                }
-                if (selectedCourses.some(c => c.includes('人工智慧') || c.includes('機器學習') || c.includes('深度學習'))) {
-                    techSkillsList.push('機器學習演算法', 'PyTorch / Scikit-learn', '模型評估與數據預處理');
-                }
-                if (selectedCourses.some(c => c.includes('ERP') || c.includes('企業資源規劃'))) {
-                    systemArchitectures.push('企業資源規劃 (ERP)', '商業流程分析 (BPMN)');
-                }
-                if (selectedCourses.some(c => c.includes('系統分析'))) {
-                    systemArchitectures.push('UML 系統建模', '敏捷軟體開發 (Agile/Scrum)');
-                }
-
-                if (techSkillsList.length === 0) techSkillsList.push('Python / 核心程式設計', '資料庫基礎操作', '演算法與邏輯思維');
-                if (systemArchitectures.length === 0) systemArchitectures.push('關聯式資料庫架構', '軟體工程與模組化開發');
-
-                // Generate STAR Experience Entries
-                const expEntries = [];
-                if (hasIntern) {
-                    expEntries.push(`### 🏢 企業實習 / 產學合作 ｜ 軟體研發實習生 (2025.07 - 2026.01)
-- **職責與任務**：參與核心業務模組開發，負責後端 RESTful API 實作、資料庫查詢調校與單元測試。
-- **量化實績 (STAR)**：運用模組化架構降低後端查詢延遲約 **25%**，交付上線 2 項新功能模組，提升日常處理穩定性。`);
-                }
-
-                if (hasCompete) {
-                    expEntries.push(`### 🏆 專業競賽成果 ｜ 全國資訊創新應用競賽 / 黑客松 (2025.10 - 2025.11)
-- **競賽情境**：限時 36 小時由零到一產出可落地軟體原型 (MVP)，負責核心邏輯實作與雲端服務部署。
-- **量化實績 (STAR)**：在數十組參賽隊伍中入圍決賽，展現高抗壓性、快速掌握未知技術與敏捷團隊協作能力。`);
-                }
-
-                if (hasProj) {
-                    const projTitle = dept === 'IM' ? '智能商務決策與營運管理系統' : dept === 'AI' ? '智慧深度學習瑕疵辨識與推論平台' : '微服務分散式架構與雲端應用系統';
-                    expEntries.push(`### 🚀 畢業專題 / 大型核心專案 ｜ ${projTitle} (2025.09 - 2026.06)
-- **職責與分工**：擔任核心系統架構與後端負責人，主導系統分析、資料庫綱要設計與 API 規格制定。
-- **量化實績 (STAR)**：每兩週交付 Sprint 成果，榮獲靜宜大學資訊學院專題成果展院級前 **15%** 優等肯定。`);
-                }
-
-                if (hasLeader) {
-                    expEntries.push(`### 👥 組織幹部與專案協調 ｜ 資訊技術研習活動籌備組長 (2024.09 - 2025.06)
-- **職責與分工**：主導多場跨系技術研討會與工作坊之策劃、資源協調與時程控管。
-- **量化實績 (STAR)**：活動滿意度達 92%，參與人數增長 **40%**，展現優良跨領域協作、問題解決與溝通領導力。`);
-                }
-
-                if (expEntries.length === 0) {
-                    expEntries.push(`### 💻 課堂大型期末專題 ｜ ${selectedCourses.slice(0, 2).join(' 與 ') || '專業核心課程'} 實作專題 (2025.09 - 2026.01)
-- **職責與分工**：負責核心資料邏輯設計、RESTful API 串接與前端互動介面開發。
-- **量化實績 (STAR)**：完成前後端串接並撰寫技術說明文件，順利完成 Live Demo 取得 90 分以上優異成績。`);
-                }
-
-                // Format UCAN Strengths safely
-                let ucanStrengthsText = '持續學習 (Continuous Learning)、問題解決 (Problem Solving)、邏輯思考 (Logical Reasoning)';
-                if (ucan && ucan.commonComps && typeof ucan.commonComps === 'object') {
-                    try {
-                        const validEntries = Object.entries(ucan.commonComps).filter(([_, d]) => d != null);
-                        if (validEntries.length > 0) {
-                            const sorted = validEntries.sort((a, b) => {
-                                const prB = (typeof b[1] === 'object' && b[1] !== null) ? (b[1].pr ?? b[1].score ?? 0) : (typeof b[1] === 'number' ? b[1] : 0);
-                                const prA = (typeof a[1] === 'object' && a[1] !== null) ? (a[1].pr ?? a[1].score ?? 0) : (typeof a[1] === 'number' ? a[1] : 0);
-                                return prB - prA;
-                            });
-                            const topComps = sorted.slice(0, 3).map(([name, data]) => {
-                                const pr = (typeof data === 'object' && data !== null) ? (data.pr ?? data.score) : data;
-                                return pr ? `${name} (PR ${pr})` : name;
-                            });
-                            if (topComps.length > 0) ucanStrengthsText = topComps.join('、');
-                        }
-                    } catch (e) {
-                        console.warn('[CareerDNA] Error formatting UCAN commonComps:', e);
-                    }
-                }
-
-                // Construct full A4 Markdown Resume strictly aligned with "五元三要" (一信、二資、三歷、四專、五傳)
-                const gradTimeline = (grade === '大四' || grade === '碩士') ? '2023.09 入學・預計 2027.06 畢業' : '在學中（修讀學士學位）';
-                
-                // 一信：求職自薦信 (Cover Letter)
-                let coverLetterContent = draftText;
-                if (!coverLetterContent) {
-                    coverLetterContent = `我是 **${studentName}**，就讀靜宜大學${deptFullName} ${grade}學生，主要技術方向為 ${techSkillsList.slice(0, 3).join('、') || '軟體工程與資料庫系統'}。在校期間專攻【${bestProgName}】，並在大型專題中以核心業務邏輯開發、後端 RESTful API 實作與資料庫查詢優化為主要分工，曾與跨領域組員協同完成資料庫優化與前後端串接。熟悉 Git 版本控制與敏捷開發流程，希望透過本次應徵【${targetJob}】職位，將所學之工程實力投入專案開發中，並持續累積實務經驗，期待能與貴公司更進一步交流！`;
-                }
-
-                const resumeMarkdown = `# ${studentName}
-### 🎯 應徵職務：${targetJob}
-
-**二資 ｜ 個人基本資料 (Personal Profile)**  
-- **教育背景**：靜宜大學 (Providence University) 資訊學院 ${deptFullName} ｜ ${grade}在學（${gradTimeline}）  
-- **聯絡資訊**：0912-345-678 ｜ student@pu.edu.tw ｜ 台灣 台中市沙鹿區  
-- **專業連結**：[GitHub 程式碼倉庫](https://github.com/pu-student) ｜ [線上作品集展示](https://pu-student.dev)
-
----
-
-## 一信 ｜ 求職自薦信 (Cover Letter)
-${coverLetterContent}
-
----
-
-## 四專 ｜ 專業專長與證照 (Skills & Credentials)
-- **核心程式開發 (Core Programming)**：
-  - 具備物件導向 (OOP) 與模組化思維，熟練使用 **${techSkillsList.slice(0, 2).join('、') || 'Python / Java'}** 開發系統功能。
-  - 能參考架構規格撰寫清晰、可維護之業務邏輯，並進行輸入防護與資料格式驗證。
-- **資料庫與系統架構 (Database & Architecture)**：
-  - 熟悉 SQL 語法與關聯式資料庫設計（PostgreSQL / MySQL），能進行 ER Model 綱要規劃、Index 索引建立與 CRUD 查詢調校。
-  - 理解 ${systemArchitectures.join('、') || '軟體工程與模組化架構'}，具備系統分析與模組分工經驗。
-- **測試與協作工具 (Testing & Collaboration)**：
-  - 使用 Postman 進行 RESTful API 回應檢查、狀態碼測試與資料格式驗證。
-  - 熟練運用 **Git / GitHub** 進行分支管理 (Branching)、提交規範 (Commit message) 與團隊 Code Review 協同開發。
-- **證照與學程認證 (Certifications & Accreditations)**：
-  - 靜宜大學校級【${bestProgName}】專業學程認證（已修畢 ${maxProgCredits} / ${progGoalCredits} 學分）
-  - 靜宜大學資訊學院【跨領域應用實務課群】認證（已修畢 ${pracCredits} / ${pracGoalCredits} 學分）
-  - 教育部 UCAN 專業職能【${ucan ? ucan.profPathway : '資訊科技'}】深度對標（PR ${ucan ? ucan.profPr : 75}）
-
----
-
-<div class="html2pdf__page-break"></div>
-
-## 三歷 ｜ 專案實作與經歷 (Project Experience - STAR Format)
-${expEntries.join('\n\n')}
-
-## 五傳 ｜ 完整自傳 (Autobiography - 我是誰・我會什麼・我想做什麼)
-### 1. 【我是誰】個人背景與特質
-我是靜宜大學${deptFullName}的${grade}學生。求學期間秉持探究底層邏輯的精神，在資訊核心課程與專業學程中穩紮穩打。在教育部 UCAN 共通職能檢測中，展現出【${ucanStrengthsText}】等突出優勢特質，具備高度自主學習熱忱、邏輯思維清晰，能在面對未知技術時迅速拆解問題並找到解法。
-
-### 2. 【我會什麼】核心專長與實戰成果
-在校期間深入修習【${bestProgName}】，並在「${selectedCourses.slice(0, 3).join('」、「') || '專業必修課程'}」等實務課程中落實軟體工程生命週期。我具備獨立設計 RESTful API、規劃資料庫綱要與排除系統 Bug 的能力；在專案協同上，我重視跨組溝通與責任邊界，能用清晰易懂的語言與團隊對齊規格，並以 Git 確保程式碼交付品質。
-
-### 3. 【我想做什麼】求職動機與職缺連結
-立志投身於【${targetJob}】領域。我深知產業需要的是不僅能動手寫 code，更能理解業務痛點、穩定交付高品質系統的工程人才。貴公司的研發方向與文化非常吸引我，我期望能運用自身紮實的技術底子與團隊協作成績，迅速融入開發節奏、為專案創造實質產值，並在產業前輩的指導下持續精進，成為團隊不可或缺的堅實戰力。
-
----
-
-## 📚 重點修課紀錄 (Academic Coursework Milestones)
-- **專業核心修課 (${selectedCourses.length} 門)**：${selectedCourses.map(c => `\`${c}\``).join('  ') || '尚未勾選課程'}
-- **跨域實務課群**：${matchedPracClusters.map(cl => `*${cl.name}* (${cl.courses.join(', ')})`).join('； ') || '智慧雲端應用、大數據商務應用'}
-
----
-*(本履歷格式嚴格依據企業人資「五元三要（一信、二資、三歷、四專、五傳）」黃金規格，結合 UCAN 測驗數據與三軌學制自動生成)*
-`;
-
                 return {
                     quantifiability: quant,
                     completeness: comp,
                     keywordRelevance: kw,
                     analysis: analysisHtml,
-                    actionItems: actionItems,
+                    actionItems: resumeModel.gapRecommendations,
+                    jdAlignment: resumeModel.jdAlignment,
+                    gapRecommendations: resumeModel.gapRecommendations,
+                    checklist: resumeModel.checklist,
+                    antiNgGuide: ResumeKnowledge.ANTI_NG_GUIDE,
+                    resumeModel: resumeModel,
+                    resumeHtml: resumeHtml,
                     resumeMarkdown: resumeMarkdown
                 };
             },
@@ -2068,106 +2039,224 @@ ${expEntries.join('\n\n')}
                 document.getElementById('ai-result-panel').classList.remove('hidden');
                 const aiContent = document.getElementById('ai-content');
                 this.lastResumeMarkdown = result.resumeMarkdown || '';
-                
-                let html = `<div class="mb-6 p-5 border border-klein/15 bg-klein/[0.02] shadow-sm">${result.analysis}</div>`;
-                
-                if (result.actionItems && result.actionItems.length > 0) {
-                    html += `
-                    <div class="border border-klein/15 p-5 md:p-6 bg-white shadow-sm mb-6">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-klein/10 pb-3 mb-4">
-                            <div>
-                                <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
-                                    <i class="fa-solid fa-compass text-klein"></i> 下一步具體行動建議 (Action Items)
-                                </h4>
-                                <p class="text-[11px] text-klein/60 font-body mt-0.5">針對您目前的學分累積與經歷差距，整理出最具效益的補強順序</p>
-                            </div>
-                            <span class="inline-block px-2.5 py-0.5 font-mono text-[11px] font-bold text-klein/70 bg-klein/5 border border-klein/10 self-start sm:self-auto">
-                                ${result.actionItems.length} 項策略
-                            </span>
-                        </div>
+                this.lastResumeModel = result.resumeModel || this.lastResumeModel;
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                    `;
+                let html = '';
 
-                    result.actionItems.forEach(item => {
-                        let category = '行動建議';
-                        let tagColor = 'blue';
-                        let icon = 'fa-solid fa-arrow-right';
-                        let title = '';
-                        let desc = '';
-                        let actionText = null;
-                        let actionUrl = null;
+                // 1. Telemetry scorecard
+                html += `<div class="mb-6 p-5 border border-klein/15 bg-klein/[0.02] shadow-sm">${result.analysis}</div>`;
 
-                        if (typeof item === 'object') {
-                            category = item.category || '行動建議';
-                            tagColor = item.tagColor || 'blue';
-                            icon = item.icon || 'fa-solid fa-arrow-right';
-                            title = item.title || '';
-                            desc = item.desc || '';
-                            actionText = item.actionText;
-                            actionUrl = item.actionUrl;
-                        } else {
-                            const text = String(item);
-                            if (text.includes('專業學程')) { category = '專業學程'; tagColor = 'blue'; icon = 'fa-solid fa-graduation-cap'; }
-                            else if (text.includes('實務課群')) { category = '實務課群'; tagColor = 'indigo'; icon = 'fa-solid fa-cubes'; }
-                            else if (text.includes('實習')) { category = '職場實習'; tagColor = 'amber'; icon = 'fa-solid fa-briefcase'; }
-                            else if (text.includes('專案')) { category = '專案作品'; tagColor = 'cyan'; icon = 'fa-solid fa-laptop-code'; }
-                            else if (text.includes('UCAN')) { category = '職能補強'; tagColor = 'purple'; icon = 'fa-solid fa-lightbulb'; }
-                            
-                            const parts = text.replace(/^[🎯🛠️💼🌟💻💡✅\s*▪]+/g, '').split('】');
-                            title = parts[0].replace('【', '') || '行動重點';
-                            desc = parts[1] || text;
+                // 2. JD 對焦表 (Job Description Alignment Table)
+                if (result.jdAlignment && result.jdAlignment.length > 0) {
+                    const rows = result.jdAlignment.map(item => {
+                        let statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 font-mono text-[10px] font-bold rounded">✖ 尚待補強缺口</span>';
+                        if (item.status === 'has_evidence') {
+                            statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono text-[10px] font-bold rounded">✔ 已備充足證據</span>';
+                        } else if (item.status === 'partial') {
+                            statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 font-mono text-[10px] font-bold rounded">△ 具概念基礎</span>';
                         }
 
-                        const colorClasses = {
-                            blue: { badge: 'bg-blue-50 text-blue-700 border-blue-200' },
-                            indigo: { badge: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-                            amber: { badge: 'bg-amber-50 text-amber-800 border-amber-200' },
-                            emerald: { badge: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
-                            cyan: { badge: 'bg-cyan-50 text-cyan-800 border-cyan-200' },
-                            purple: { badge: 'bg-purple-50 text-purple-800 border-purple-200' }
-                        };
-                        const c = colorClasses[tagColor] || colorClasses.blue;
+                        const matchedPills = item.matchedCourses.length > 0
+                            ? item.matchedCourses.map(c => `<span class="inline-block px-1.5 py-0.5 bg-klein/5 border border-klein/15 text-klein font-mono text-[10px] mr-1 mb-1">${c}</span>`).join('')
+                            : '<span class="text-klein/40 text-[10px] font-mono">尚未修習對應課程</span>';
 
-                        html += `
-                        <div class="border border-klein/10 bg-klein/[0.01] hover:bg-white hover:border-klein/30 hover:shadow-md transition-all p-4 flex flex-col justify-between">
-                            <div>
-                                <div class="mb-2">
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded border ${c.badge}">
-                                        <i class="${icon} text-[9px]"></i> ${category}
-                                    </span>
+                        return `
+                            <tr class="border-b border-klein/10 hover:bg-klein/[0.015] transition-colors">
+                                <td class="py-2.5 px-3 align-top font-heading font-bold text-xs text-klein w-1/4">
+                                    ${item.jdRequirement}
+                                </td>
+                                <td class="py-2.5 px-3 align-top font-body text-xs text-klein/80 leading-relaxed w-1/4">
+                                    ${item.businessNeed}
+                                </td>
+                                <td class="py-2.5 px-3 align-top w-1/4">
+                                    <div class="mb-1">${statusBadge}</div>
+                                    <div class="flex flex-wrap">${matchedPills}</div>
+                                </td>
+                                <td class="py-2.5 px-3 align-top font-mono text-[11px] text-klein/75 leading-relaxed w-1/4">
+                                    <div class="text-klein font-bold mb-0.5">💡 補強建議：</div>
+                                    <div>${item.actionWhenMissing}</div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    html += `
+                        <div class="border border-klein/15 p-5 md:p-6 bg-white shadow-sm mb-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-klein/10 pb-3 mb-4">
+                                <div>
+                                    <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
+                                        <i class="fa-solid fa-crosshairs text-flame-orange"></i> JD 對焦表 (企業需求 ➔ 我的能力證據)
+                                    </h4>
+                                    <p class="text-[11px] text-klein/60 font-body mt-0.5">將企業職缺要求翻譯為個人可驗證的課綱與專案證據，精準找出能力交集與缺口</p>
                                 </div>
-                                <h5 class="font-heading font-bold text-xs text-klein mb-1.5 leading-snug">${title}</h5>
-                                <p class="text-[11px] text-klein/75 font-body leading-relaxed">${desc}</p>
+                                <span class="inline-block px-2.5 py-0.5 font-mono text-[11px] font-bold text-klein/70 bg-klein/5 border border-klein/10 self-start sm:self-auto">
+                                    ${result.jdAlignment.length} 項對焦指標
+                                </span>
                             </div>
-                            ${actionText && actionUrl ? `
+
+                            <div class="overflow-x-auto border border-klein/15">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-klein text-white font-mono text-[11px]">
+                                            <th class="py-2 px-3 font-bold">企業職缺要求</th>
+                                            <th class="py-2 px-3 font-bold">企業真正期待 (痛點)</th>
+                                            <th class="py-2 px-3 font-bold">我的能力證據</th>
+                                            <th class="py-2 px-3 font-bold">對應補強方案</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-klein/10">
+                                        ${rows}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 3. 年級專屬補強路徑 (Action Items)
+                if (result.gapRecommendations && result.gapRecommendations.length > 0) {
+                    html += `
+                        <div class="border border-klein/15 p-5 md:p-6 bg-white shadow-sm mb-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-klein/10 pb-3 mb-4">
+                                <div>
+                                    <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
+                                        <i class="fa-solid fa-graduation-cap text-klein"></i> 年級專屬補強路徑 (Action Roadmap)
+                                    </h4>
+                                    <p class="text-[11px] text-klein/60 font-body mt-0.5">依據在學年級（大一/二 打底、大三 專案/學程、大四 實習/作品集）量身打造</p>
+                                </div>
+                                <span class="inline-block px-2.5 py-0.5 font-mono text-[11px] font-bold text-klein/70 bg-klein/5 border border-klein/10 self-start sm:self-auto">
+                                    優先補強 ${result.gapRecommendations.length} 項
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                    `;
+
+                    result.gapRecommendations.forEach(rec => {
+                        const searchParam = rec.targetCourses && rec.targetCourses[0] ? encodeURIComponent(rec.targetCourses[0]) : '';
+                        html += `
+                            <div class="border border-klein/10 bg-klein/[0.01] hover:bg-white hover:border-klein/30 hover:shadow-md transition-all p-4 flex flex-col justify-between">
+                                <div>
+                                    <div class="mb-2">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded border bg-indigo-50 text-indigo-700 border-indigo-200">
+                                            優先級 ${rec.priority}
+                                        </span>
+                                    </div>
+                                    <h5 class="font-heading font-bold text-xs text-klein mb-1.5 leading-snug">${rec.jdRequirement}</h5>
+                                    <p class="text-[11px] text-klein/75 font-body leading-relaxed">${rec.advice}</p>
+                                </div>
                                 <div class="mt-3 pt-2 border-t border-klein/5 flex justify-end">
-                                    <a href="${actionUrl}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-klein hover:text-blue-700 underline underline-offset-2">
-                                        <span>${actionText}</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                                    <a href="resource_library.html?search=${searchParam}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-klein hover:text-blue-700 underline underline-offset-2">
+                                        <span>查閱推薦選修課程</span> <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
                                     </a>
                                 </div>
-                            ` : ''}
-                        </div>
+                            </div>
                         `;
                     });
 
                     html += `</div></div>`;
                 }
 
+                // 4. 防 NG 履歷寫作核心指引 (Anti-NG Guidance)
+                html += `
+                    <div class="border border-klein/15 p-5 md:p-6 bg-white shadow-sm mb-6">
+                        <div class="border-b border-klein/10 pb-3 mb-4">
+                            <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved text-emerald-600"></i> 防 NG 履歷與 HR 審查標準核心指引
+                            </h4>
+                            <p class="text-[11px] text-klein/60 font-body mt-0.5">依據企業人資 30 秒法則與「五元三要」手掌口訣整理</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 font-mono text-xs">
+                            <div class="p-3 bg-blue-50/50 border border-blue-200">
+                                <strong class="text-blue-900 block mb-1">⏱️ 關鍵 30 秒法則</strong>
+                                <p class="text-[11px] text-blue-950/80 leading-relaxed font-body">HR 平均僅花 6~10 秒掃讀履歷：先看「你是誰」(姓名/照片) ➔ 再看「學經歷」 ➔ 最後看「專長自傳」。重視度：技能專長 > 畢業科系 > 自傳。</p>
+                            </div>
+                            <div class="p-3 bg-indigo-50/50 border border-indigo-200">
+                                <strong class="text-indigo-900 block mb-1">🖐️ 五元三要手掌口訣</strong>
+                                <p class="text-[11px] text-indigo-950/80 leading-relaxed font-body">一信 (Cover Letter) ｜ 二資 (基本資料/照片) ｜ 三歷 (STAR 經歷) ｜ 四專 (技能表格) ｜ 五傳 (我是誰/我會什麼/我想做什麼，500~800 字)。</p>
+                            </div>
+                            <div class="p-3 bg-amber-50/50 border border-amber-200">
+                                <strong class="text-amber-900 block mb-1">⭐ STAR 經驗公式</strong>
+                                <p class="text-[11px] text-amber-950/80 leading-relaxed font-body">採用「行動動詞 + 具體做法 + 成果數據 + 職務能力」。每一項人格特質後面，都必須接一個可說明、可驗證的具體實戰案例！</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-rose-50/40 border border-rose-200 p-3.5">
+                            <strong class="text-rose-900 font-mono text-xs block mb-1.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> 六大常見 NG 避雷區 (切勿踩雷)
+                            </strong>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-rose-950/85 font-body">
+                                <div>• <strong>❌ 虛構浮誇數字：</strong>若無數據請寫交付模組與主管反饋，絕不捏造。</div>
+                                <div>• <strong>❌ 空泛形容詞：</strong>「抗壓性高」後面必須接實際抗壓或自學案例。</div>
+                                <div>• <strong>❌ 未寫明確職務：</strong>一份履歷僅鎖定一個職位，拒絕亂槍打鳥。</div>
+                                <div>• <strong>❌ 聯絡資訊填錯：</strong>最毋湯的失誤！務必檢查手機與 Email 正確性。</div>
+                                <div>• <strong>❌ 自傳流水帳：</strong>新鮮人自傳直接寫我是誰/我會什麼/我想做什麼。</div>
+                                <div>• <strong>❌ 照片非正式照：</strong>93% 公司看照片，請附清晰光線之正面專業照。</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // 5. 履歷待辦檢核狀態 (Pre-flight Checklist)
+                if (result.checklist) {
+                    const c = result.checklist;
+                    html += `
+                        <div class="border border-klein/15 p-4 bg-klein/[0.02] shadow-sm mb-6 font-mono text-xs">
+                            <div class="flex items-center justify-between border-b border-klein/10 pb-2 mb-2">
+                                <strong class="text-klein flex items-center gap-1.5">
+                                    <i class="fa-solid fa-clipboard-check text-klein"></i> 履歷匯出前檢核狀態
+                                </strong>
+                                <span class="text-[11px] text-klein/70">
+                                    自傳字數：<strong>${c.bioWordCount}</strong> 字 (目標 500~800 字)
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                                <div>姓名：${c.hasName ? '<span class="text-emerald-600 font-bold">✔ 已填寫</span>' : '<span class="text-amber-600 font-bold">△ 待填寫</span>'}</div>
+                                <div>手機：${c.hasPhone ? '<span class="text-emerald-600 font-bold">✔ 已填寫</span>' : '<span class="text-amber-600 font-bold">△ 待填寫</span>'}</div>
+                                <div>Email：${c.hasEmail ? '<span class="text-emerald-600 font-bold">✔ 已填寫</span>' : '<span class="text-amber-600 font-bold">△ 待填寫</span>'}</div>
+                                <div>證件照：${c.hasPhoto ? '<span class="text-emerald-600 font-bold">✔ 已上傳</span>' : '<span class="text-amber-600 font-bold">△ 建議附照片</span>'}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 aiContent.innerHTML = html;
-                
-                // Safely and guaranteed unhide resume preview panel
+
+                // 6. Safely unhide resume preview panel & render HTML
                 try {
                     const resumePreview = document.getElementById('resume-preview-panel');
                     if (resumePreview) {
                         resumePreview.classList.remove('hidden');
                     }
-                    
+
+                    const banner = document.getElementById('resume-checklist-banner');
+                    if (banner && result.checklist) {
+                        if (result.checklist.totalPlaceholders > 0) {
+                            banner.classList.remove('hidden');
+                            banner.innerHTML = `
+                                <div class="flex items-center justify-between text-xs font-mono">
+                                    <span class="flex items-center gap-1.5 text-amber-900 font-bold">
+                                        <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
+                                        履歷中尚有 ${result.checklist.totalPlaceholders} 個待填項目（標註為【使用者自行輸入】），可在左側「履歷基本資料」補齊。
+                                    </span>
+                                    <button type="button" onclick="document.getElementById('resume-profile-card')?.scrollIntoView({behavior:'smooth'})" class="underline text-amber-800 hover:text-amber-950 font-bold ml-2">前往填寫</button>
+                                </div>
+                            `;
+                        } else {
+                            banner.classList.add('hidden');
+                        }
+                    }
+
                     const resumeOutput = document.getElementById('resume-output');
                     if (resumeOutput) {
-                        const rawMd = result.resumeMarkdown || this.generateDefaultResumeMarkdown(this.state.dept || 'IM', this.state.grade || '大三');
-                        const resumeHtml = this.parseMarkdownSafe(rawMd);
-                        resumeOutput.innerHTML = `<div class="resume-sheet font-body leading-relaxed" id="pdf-content">${resumeHtml}</div>`;
+                        if (result.resumeHtml) {
+                            resumeOutput.innerHTML = `<div class="resume-sheet font-body leading-relaxed" id="pdf-content">${result.resumeHtml}</div>`;
+                        } else {
+                            const rawMd = result.resumeMarkdown || this.generateDefaultResumeMarkdown(this.state.dept || 'IM', this.state.grade || '大三');
+                            const resumeHtml = this.parseMarkdownSafe(rawMd);
+                            resumeOutput.innerHTML = `<div class="resume-sheet font-body leading-relaxed" id="pdf-content">${resumeHtml}</div>`;
+                        }
                     }
                 } catch (e) {
                     console.error('[CareerDNA] Error displaying resume preview:', e);
@@ -2289,6 +2378,18 @@ ${expEntries.join('\n\n')}
                     return;
                 }
 
+                if (this.lastResumeModel && this.lastResumeModel.checklist && this.lastResumeModel.checklist.totalPlaceholders > 0) {
+                    const count = this.lastResumeModel.checklist.totalPlaceholders;
+                    const proceed = confirm(
+                        `【匯出前履歷檢核提醒】\n\n偵測到履歷中尚有 ${count} 個待補齊項目（標註為【使用者自行輸入】）。\n為符合企業標準，建議先在左側填寫基本資料與成果細節。\n\n確定要直接匯出嗎？`
+                    );
+                    if (!proceed) {
+                        const card = document.getElementById('resume-profile-card');
+                        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+                }
+
                 const btn = document.getElementById('pdf-export-btn');
                 if (btn) {
                     btn.disabled = true;
@@ -2323,6 +2424,12 @@ ${expEntries.join('\n\n')}
                     pagebreak:    { mode: 'css' }
                 };
 
+                const noPrintEls = element.querySelectorAll('.no-print');
+                noPrintEls.forEach(el => el.style.setProperty('display', 'none', 'important'));
+                const page2 = element.querySelector('.resume-page-2');
+                const prevMt = page2 ? page2.style.marginTop : '';
+                if (page2) page2.style.marginTop = '0px';
+
                 try {
                     await html2pdf().set(opt).from(element).save();
 
@@ -2356,6 +2463,8 @@ ${expEntries.join('\n\n')}
                     }
                     alert('PDF 匯出失敗：' + (err.message || err));
                 } finally {
+                    noPrintEls.forEach(el => el.style.removeProperty('display'));
+                    if (page2) page2.style.marginTop = prevMt;
                     if (resumeOutput) {
                         resumeOutput.style.maxHeight = prevMaxH;
                         resumeOutput.style.overflow = prevOverflow;

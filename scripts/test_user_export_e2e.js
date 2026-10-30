@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
+const assert = require('assert');
 
 (async () => {
     console.log('Launching headless browser...');
@@ -25,6 +26,12 @@ const path = require('path');
             downloadPath: downloadDir
         });
 
+        // Automatically accept pre-export dialogs
+        page.on('dialog', async dialog => {
+            console.log('Dialog shown:', dialog.message());
+            await dialog.accept();
+        });
+
         page.on('console', msg => console.log('BROWSER LOG:', msg.type(), msg.text()));
         page.on('pageerror', err => console.error('BROWSER ERROR:', err));
 
@@ -33,7 +40,7 @@ const path = require('path');
         await page.waitForSelector('#pdf-content', { timeout: 10000 });
         console.log('Found #pdf-content in DOM!');
 
-        // Scroll down to 1800 to simulate user browsing
+        // Scroll down to simulate user browsing
         await page.evaluate(() => window.scrollTo(0, 1800));
         await new Promise(r => setTimeout(r, 600));
 
@@ -69,12 +76,9 @@ const path = require('path');
         const imageCount = (str.match(/\/Subtype\s*\/Image\b/g) || []).length;
         console.log(`PDF Verification: Pages: ${pageCount}, Embedded Canvas Images: ${imageCount}`);
 
-        if (stats.size < 50000) {
-            console.error('FAIL: PDF file is too small! Likely blank.');
-            process.exit(1);
-        } else {
-            console.log('PASS: PDF file has substantial binary size (rich canvas rendering).');
-        }
+        assert.ok(stats.size > 50000, 'PDF file must be substantial (>50KB)');
+        assert.strictEqual(pageCount, 2, 'Exported PDF must be exactly 2 pages');
+        console.log('PASS: PDF file has verified 2-page A4 structure and substantial binary size.');
 
     } catch (e) {
         console.error('Test error:', e);

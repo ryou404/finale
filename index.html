@@ -9,6 +9,13 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- DOMPurify -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+
+    <!-- GSAP Core & ScrollTrigger (Official GreenSock CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
     <!-- CareerDNA MongoDB Atlas Client -->
     <script src="static/db-client.js"></script>
 
@@ -110,33 +117,23 @@
             outline-offset: 3px;
         }
 
-        /* Scroll Reveal Animations */
+        /* Visible-by-default for resilience; GSAP progressive enhancement handles entrance */
         .reveal-up {
-            opacity: 0;
-            transform: translateY(32px) scale(0.995);
-            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .reveal-up.is-visible {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
         }
-
-        .reveal-delay-1 { transition-delay: 0.08s; }
-        .reveal-delay-2 { transition-delay: 0.16s; }
-        .reveal-delay-3 { transition-delay: 0.24s; }
 
         /* Refined Spring Elevation */
         .hover-spring {
-            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-                        box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
                         background-color 0.3s ease,
-                        border-color 0.3s ease !important;
+                        border-color 0.3s ease;
         }
 
         .hover-spring:hover {
-            transform: translateY(-5px) !important;
-            box-shadow: 0 22px 44px -18px rgba(15, 23, 42, 0.14) !important;
+            transform: translateY(-4px);
+            box-shadow: 0 22px 44px -18px rgba(15, 23, 42, 0.14);
             z-index: 30;
         }
 
@@ -183,7 +180,7 @@
             z-index: 10;
         }
 
-        /* Desktop: Unified continuous gradient from AI 履歷健檢 -> 個人品牌 -> 系所推薦 */
+        /* Desktop: Unified continuous gradient from 履歷健檢 -> 個人品牌 -> 系所推薦 */
         @media (min-width: 1024px) {
             .arch-card::before {
                 background-size: 300% 100% !important;
@@ -214,6 +211,24 @@
 
         .tabular-data {
             font-variant-numeric: tabular-nums;
+        }
+
+        /* Technical surface for the DNA visualizer & synthesis stage */
+        .klein-blueprint-grid {
+            background-color: #F8FAFF;
+        }
+
+        .pipeline-step-btn[aria-selected="true"] {
+            background-color: #002FA7;
+            color: #FFFFFF;
+            border-color: #002FA7;
+            box-shadow: 0 10px 24px -10px rgba(15, 23, 42, 0.18);
+        }
+
+        .pipeline-step-btn[aria-selected="false"] {
+            background-color: #FFFFFF;
+            color: #002FA7;
+            border-color: #C7DCFF;
         }
     </style>
 </head>
@@ -247,7 +262,7 @@
                     class="hidden nav-admin-btn px-2 sm:px-3 py-1 sm:py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-[11px] sm:text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1 shadow-sm">
                     <i class="fa-solid fa-shield-halved"></i> <span class="hidden sm:inline">管理後台</span><span class="sm:hidden">後台</span>
                 </a>
-                <a href="career_fit.html" class="hidden sm:flex hover-spring bg-[#002FA7] hover:bg-[#1F50CD] text-white font-mono text-xs font-bold tracking-[0.2em] uppercase px-4 lg:px-5 py-2 sm:py-2.5 items-center gap-2">
+                <a href="career_fit.html" data-magnetic class="hidden sm:flex hover-spring bg-[#002FA7] hover:bg-[#1F50CD] text-white font-mono text-xs font-bold tracking-[0.2em] uppercase px-4 lg:px-5 py-2 sm:py-2.5 items-center gap-2">
                     <span>立即部署</span> <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
                 <div id="nav-auth-section" class="flex items-center gap-2 sm:gap-3 border-l border-[#C7DCFF] pl-2 sm:pl-4 shrink-0">
@@ -281,76 +296,318 @@
     <!-- Main Content -->
     <main class="flex-grow pt-24 sm:pt-32 pb-16 sm:pb-28 px-4 sm:px-6 md:px-12">
 
-        <!-- ================= HERO SECTION (Pure White Gallery Card on #F8FAFF Ice Canvas) ================= -->
-        <section
+        <!-- ================= HERO SECTION (Clean Spacious Editorial Card) ================= -->
+        <section id="hero-section"
             class="max-w-[1400px] mx-auto min-h-[70vh] flex flex-col justify-between relative bg-white border border-[#C7DCFF] crosshair-corner overflow-hidden shadow-[0_12px_36px_-18px_rgba(15,23,42,0.07)]">
 
-            <!-- Top Architectural Accent Bar (Klein Blue -> Royal Cobalt -> Crystal Ice) -->
-            <div class="w-full h-1.5 bg-gradient-to-r from-[#002FA7] via-[#1F50CD] to-[#EBF2FF]"></div>
+            <!-- Top Architectural Accent Bar (Animated via GSAP scaleX) -->
+            <div id="hero-accent-bar" class="w-full h-1.5 bg-gradient-to-r from-[#002FA7] via-[#1F50CD] to-[#EBF2FF] origin-left"></div>
 
-            <div class="px-5 sm:px-10 md:px-16 lg:px-24 py-12 sm:py-16 md:py-20 relative z-10 w-full flex flex-col gap-6 sm:gap-8">
+            <div class="px-5 sm:px-10 md:px-16 lg:px-24 py-12 sm:py-16 md:py-20 relative z-10 w-full flex flex-col justify-between gap-8 sm:gap-10">
+                <div class="flex flex-col gap-6 sm:gap-8 max-w-[850px]">
+                    <!-- Display Headline (No eyebrow kicker above heading per craft floor; max 5.8rem) -->
+                    <h1 id="hero-headline"
+                        class="font-syne font-extrabold text-3xl sm:text-5xl md:text-6xl lg:text-[5.5rem] xl:text-[5.8rem] leading-[1.02] sm:leading-[0.96] tracking-tight uppercase flex flex-col gap-1.5 md:gap-2.5 break-words">
+                        <span id="hero-line-1" class="text-[#002FA7] block">High-Performance</span>
+                        <span id="hero-line-2" class="outline-text block">Resume Engine.</span>
+                    </h1>
 
-                <!-- Top Context Badge using Crystal Ice (#EBF2FF) & Royal Cobalt (#1F50CD) -->
-                <div class="reveal-up inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-[#EBF2FF] border border-[#C7DCFF] w-fit">
-                    <span class="w-2 h-2 bg-[#1F50CD]"></span>
-                    <span class="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#002FA7]">
-                        PROVIDENCE UNIVERSITY // AI 職涯與履歷優化平台
-                    </span>
+                    <!-- Supporting Lead Copy in #1E3A8A (62ch measure) -->
+                    <p id="hero-lead" class="font-body text-base sm:text-lg md:text-xl text-[#1E3A8A] leading-relaxed max-w-[62ch]">
+                        結合靜宜大學實務課群、教育部 UCAN 職能診斷與履歷健檢，將你在校累積的修課與專題經歷，轉化為具備高競爭力的專業求職履歷。
+                    </p>
+
+                    <!-- Action CTA Group -->
+                    <div id="hero-cta-group" class="flex flex-col sm:flex-row gap-3.5 sm:gap-5 pt-2 w-full sm:w-fit">
+                        <a href="career_fit.html" data-magnetic
+                            class="hover-spring bg-[#002FA7] hover:bg-[#1F50CD] text-white font-heading font-bold text-base sm:text-lg tracking-wider uppercase px-7 sm:px-10 py-4 sm:py-5 flex items-center justify-center gap-3.5 group">
+                            <span>部署履歷</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform duration-300"></i>
+                        </a>
+                        <a href="lab_recommendation.html" data-magnetic
+                            class="hover-spring border border-[#C7DCFF] hover:border-[#002FA7] bg-[#EBF2FF] hover:bg-[#DCE8FF] text-[#002FA7] font-heading font-bold text-base sm:text-lg tracking-wider uppercase px-7 sm:px-10 py-4 sm:py-5 flex items-center justify-center gap-3.5 group">
+                            <i class="fa-solid fa-microscope text-[#1F50CD] group-hover:text-[#002FA7] transition-colors"></i>
+                            <span>職涯診斷</span>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Display Headline -->
-                <h1
-                    class="font-syne font-extrabold text-3xl sm:text-5xl md:text-6xl lg:text-[5.5rem] xl:text-[6.2rem] leading-[1.02] sm:leading-[0.95] tracking-tight uppercase reveal-up reveal-delay-1 flex flex-col gap-1.5 md:gap-2.5 break-words">
-                    <span class="text-[#002FA7] block">High-Performance</span>
-                    <span class="outline-text block">Resume Engine.</span>
-                </h1>
-
-                <!-- Supporting Lead Copy in #1E3A8A (Crisp Ultramarine Reading Tone) -->
-                <p class="reveal-up reveal-delay-2 font-body text-base sm:text-lg md:text-xl text-[#1E3A8A] leading-relaxed max-w-[58ch]">
-                    結合靜宜大學實務課群、教育部 UCAN 職能診斷與履歷健檢，將你在校累積的修課與專題經歷，轉化為具備高競爭力的專業求職履歷。
-                </p>
-
-                <!-- Action CTA Group -->
-                <div class="flex flex-col sm:flex-row gap-3.5 sm:gap-5 mt-4 sm:mt-8 reveal-up reveal-delay-3 w-full sm:w-fit">
-                    <!-- Primary Button: #002FA7 Klein Blue -> #1F50CD Royal Cobalt on hover -->
-                    <a href="career_fit.html"
-                        class="hover-spring bg-[#002FA7] hover:bg-[#1F50CD] text-white font-heading font-bold text-base sm:text-lg md:text-xl tracking-wider uppercase px-7 sm:px-10 py-4 sm:py-5 flex items-center justify-center gap-3 sm:gap-4 group">
-                        <span>部署履歷</span>
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>
+                <!-- Bottom Telemetry Strip -->
+                <div id="hero-telemetry-strip" class="pt-8 border-t border-[#C7DCFF] grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 max-w-[850px]">
+                    <a href="resource_library.html" class="group block">
+                        <div class="font-mono text-xl sm:text-2xl md:text-3xl font-extrabold text-[#002FA7] tabular-data group-hover:text-[#1F50CD] transition-colors">
+                            <span class="hero-counter" data-target="270" data-suffix="+">270+</span>
+                        </div>
+                        <div class="font-body text-xs sm:text-sm text-[#1E3A8A] font-medium mt-1">資訊三系必選修課綱</div>
                     </a>
-                    <!-- Secondary Button: #EBF2FF Crystal Ice Fill + #C7DCFF Border + #1F50CD Icon -->
-                    <a href="lab_recommendation.html"
-                        class="hover-spring border border-[#C7DCFF] hover:border-[#002FA7] bg-[#EBF2FF] hover:bg-[#DCE8FF] text-[#002FA7] font-heading font-bold text-base sm:text-lg md:text-xl tracking-wider uppercase px-7 sm:px-10 py-4 sm:py-5 flex items-center justify-center gap-3 sm:gap-4 group">
-                        <i class="fa-solid fa-microscope text-[#1F50CD] group-hover:text-[#002FA7] transition-colors"></i>
-                        <span>職涯診斷</span>
+                    <a href="brand_test.html" class="group block sm:border-l sm:border-[#C7DCFF] sm:pl-8">
+                        <div class="font-mono text-xl sm:text-2xl md:text-3xl font-extrabold text-[#002FA7] tabular-data group-hover:text-[#1F50CD] transition-colors">
+                            <span class="hero-counter" data-target="16" data-suffix=" 群">16 群</span>
+                        </div>
+                        <div class="font-body text-xs sm:text-sm text-[#1E3A8A] font-medium mt-1">UCAN 職能與興趣維度</div>
+                    </a>
+                    <a href="career_fit.html" class="group block sm:border-l sm:border-[#C7DCFF] sm:pl-8">
+                        <div class="font-mono text-xl sm:text-2xl md:text-3xl font-extrabold text-[#002FA7] tabular-data group-hover:text-[#1F50CD] transition-colors">
+                            <span class="hero-counter" data-target="3" data-suffix=" 軌制">3 軌制</span>
+                        </div>
+                        <div class="font-body text-xs sm:text-sm text-[#1E3A8A] font-medium mt-1">學程 × 實務 × 課外認證</div>
                     </a>
                 </div>
             </div>
 
             <!-- Large abstract watermark in #EBF2FF Crystal Ice -->
             <div id="parallax-dna"
-                class="absolute right-[-2%] top-1/2 -translate-y-1/2 text-[36vw] font-syne font-extrabold text-[#EBF2FF]/80 pointer-events-none select-none tracking-tighter leading-none hidden xl:block overflow-hidden transition-transform duration-75 ease-out">
+                class="absolute right-[-2%] top-1/2 -translate-y-1/2 text-[32vw] font-syne font-extrabold text-[#EBF2FF]/80 pointer-events-none select-none tracking-tighter leading-none hidden xl:block overflow-hidden transition-transform duration-75 ease-out">
                 DNA
             </div>
         </section>
 
+        <!-- ================= SIGNATURE GSAP SCROLLTRIGGER STAGE: 三軌職涯合成藍圖 ================= -->
+        <section id="synthesis-pipeline" class="max-w-[1400px] mx-auto mt-16 sm:mt-24 bg-white border border-[#C7DCFF] crosshair-corner shadow-[0_12px_36px_-18px_rgba(15,23,42,0.06)]">
+            <div class="px-5 py-8 sm:px-8 sm:py-12 md:px-14 border-b border-[#C7DCFF] bg-[#F2F6FF] flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 class="font-heading font-black text-2xl sm:text-4xl md:text-5xl uppercase tracking-tight text-[#002FA7]">
+                        三軌職涯合成藍圖
+                    </h2>
+                    <p class="font-body text-sm sm:text-base text-[#1E3A8A] mt-2 max-w-[62ch]">
+                        從探索自身職能特質、校準在校修課學分，到自動合成符合業界人資審閱標準的 A4 履歷，隨滾動或點擊階段檢視完整運作流程。
+                    </p>
+                </div>
+                <!-- Stage Progress Pill Bar -->
+                <div class="flex items-center gap-2 shrink-0" role="tablist" aria-label="職涯合成階段切換">
+                    <button type="button" role="tab" aria-selected="true" data-stage-btn="0"
+                        class="pipeline-step-btn font-mono text-xs font-bold uppercase px-3.5 py-2 border transition-all cursor-pointer">
+                        01. 職能解碼
+                    </button>
+                    <button type="button" role="tab" aria-selected="false" data-stage-btn="1"
+                        class="pipeline-step-btn font-mono text-xs font-bold uppercase px-3.5 py-2 border transition-all cursor-pointer">
+                        02. 三軌校準
+                    </button>
+                    <button type="button" role="tab" aria-selected="false" data-stage-btn="2"
+                        class="pipeline-step-btn font-mono text-xs font-bold uppercase px-3.5 py-2 border transition-all cursor-pointer">
+                        03. 履歷部署
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive 2-Column Synthesis Stage -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch">
+                <!-- Left Column: 3-Stage Interactive Cards (5 cols) -->
+                <div class="lg:col-span-5 divide-y divide-[#C7DCFF] border-b lg:border-b-0 lg:border-r border-[#C7DCFF] flex flex-col justify-between">
+                    <!-- Stage 01 Description -->
+                    <div data-stage-card="0" onclick="window.CareerDNAHome && window.CareerDNAHome.setStage(0, true)"
+                        class="p-6 sm:p-8 cursor-pointer transition-colors bg-[#EBF2FF]/60 hover:bg-[#EBF2FF]">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-mono text-xs font-bold uppercase tracking-wider text-[#1F50CD]">STAGE 01 // DECODE</span>
+                            <span class="w-2.5 h-2.5 bg-[#002FA7] stage-indicator-dot"></span>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-lg sm:text-xl text-[#002FA7] mb-2">匯入 UCAN 診斷與系所適配探索</h3>
+                        <p class="font-body text-sm text-[#1E3A8A] leading-relaxed">
+                            上傳教育部 UCAN 診斷 PDF 或透過 6 道實務情境題，解析你的 Holland 六大興趣代碼與八大職場共通職能，鎖定最適合的系所實驗室與發展主線。
+                        </p>
+                    </div>
+
+                    <!-- Stage 02 Description -->
+                    <div data-stage-card="1" onclick="window.CareerDNAHome && window.CareerDNAHome.setStage(1, true)"
+                        class="p-6 sm:p-8 cursor-pointer transition-colors bg-white hover:bg-[#EBF2FF]/40">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-mono text-xs font-bold uppercase tracking-wider text-[#1F50CD]">STAGE 02 // CALIBRATE</span>
+                            <span class="w-2.5 h-2.5 bg-[#C7DCFF] stage-indicator-dot"></span>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-lg sm:text-xl text-[#002FA7] mb-2">專業學程 40% × 實務課群 40% × 課外 20%</h3>
+                        <p class="font-body text-sm text-[#1E3A8A] leading-relaxed">
+                            勾選在校修習的必選修課程與專題實習經歷，系統即時換算「專業學程 15 學分認證」與「跨域實務課群 9 學分」達成率，自動抓出尚缺的關鍵學分。
+                        </p>
+                    </div>
+
+                    <!-- Stage 03 Description -->
+                    <div data-stage-card="2" onclick="window.CareerDNAHome && window.CareerDNAHome.setStage(2, true)"
+                        class="p-6 sm:p-8 cursor-pointer transition-colors bg-white hover:bg-[#EBF2FF]/40">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-mono text-xs font-bold uppercase tracking-wider text-[#1F50CD]">STAGE 03 // DEPLOY</span>
+                            <span class="w-2.5 h-2.5 bg-[#C7DCFF] stage-indicator-dot"></span>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-lg sm:text-xl text-[#002FA7] mb-2">一鍵合成 A4 結構化履歷與行動建議</h3>
+                        <p class="font-body text-sm text-[#1E3A8A] leading-relaxed">
+                            將修課紀錄與個人品牌優勢自動轉譯為 STAR 原則專案描述，即時預覽並匯出 A4 PDF 履歷，同時收納至個人檔案的履歷典藏庫。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Column: Dynamic GSAP Animated Synthesis Viewport (7 cols) -->
+                <div class="lg:col-span-7 klein-blueprint-grid p-6 sm:p-10 flex flex-col justify-between relative min-h-[420px] overflow-hidden">
+                    <!-- Top Stage Progress Bar -->
+                    <div class="bg-white border border-[#C7DCFF] p-3.5 flex items-center justify-between gap-4 z-10">
+                        <div class="flex items-center gap-2.5">
+                            <span class="font-mono text-xs font-bold uppercase px-2 py-0.5 bg-[#002FA7] text-white" id="stage-viewport-badge">STAGE 01</span>
+                            <span class="font-heading font-bold text-sm text-[#002FA7]" id="stage-viewport-title">UCAN 職能基因與系所適配解碼</span>
+                        </div>
+                        <div class="w-28 sm:w-36 h-2 bg-[#EBF2FF] overflow-hidden border border-[#C7DCFF]">
+                            <div id="stage-progress-fill" class="h-full bg-[#002FA7] origin-left" style="transform: scaleX(0.33);"></div>
+                        </div>
+                    </div>
+
+                    <!-- Stage Panels Container -->
+                    <div class="relative flex-grow flex items-center justify-center my-6">
+                        <!-- PANEL 0: UCAN & Department Decode -->
+                        <div data-stage-panel="0" class="w-full bg-white border border-[#C7DCFF] p-5 sm:p-7 shadow-sm">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+                                <!-- Left: Competency Bars -->
+                                <div class="space-y-3.5">
+                                    <div class="font-mono text-xs font-bold uppercase text-[#1F50CD]">UCAN 職能雷達解碼</div>
+                                    <div>
+                                        <div class="flex justify-between text-xs font-bold text-[#002FA7] mb-1">
+                                            <span>問題解決與創新思維</span>
+                                            <span class="font-mono tabular-data">92%</span>
+                                        </div>
+                                        <div class="w-full h-2.5 bg-[#EBF2FF]">
+                                            <div class="stage0-bar h-full bg-[#002FA7] origin-left" data-scale="0.92"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-xs font-bold text-[#002FA7] mb-1">
+                                            <span>資訊科技與系統整合</span>
+                                            <span class="font-mono tabular-data">88%</span>
+                                        </div>
+                                        <div class="w-full h-2.5 bg-[#EBF2FF]">
+                                            <div class="stage0-bar h-full bg-[#1F50CD] origin-left" data-scale="0.88"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-xs font-bold text-[#002FA7] mb-1">
+                                            <span>團隊協作與專案溝通</span>
+                                            <span class="font-mono tabular-data">85%</span>
+                                        </div>
+                                        <div class="w-full h-2.5 bg-[#EBF2FF]">
+                                            <div class="stage0-bar h-full bg-[#3B6BF0] origin-left" data-scale="0.85"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right: Matched Archetype & Department Card -->
+                                <div class="bg-[#EBF2FF] border border-[#C7DCFF] p-4 flex flex-col justify-between gap-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-mono text-[11px] font-bold text-[#1F50CD] uppercase">HOLLAND // I · R · A</span>
+                                        <i class="fa-solid fa-fingerprint text-[#002FA7] text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-heading font-black text-lg text-[#002FA7]">研究型系統架構創造者</div>
+                                        <p class="font-body text-xs text-[#1E3A8A] mt-1">
+                                            高適配系所：資工系 / 人工智慧學系（智慧系統與深度學習實驗室）
+                                        </p>
+                                    </div>
+                                    <div class="flex flex-wrap gap-1.5 pt-1">
+                                        <span class="px-2 py-0.5 bg-white border border-[#C7DCFF] font-mono text-[10px] font-bold text-[#002FA7]">#演算法工程</span>
+                                        <span class="px-2 py-0.5 bg-white border border-[#C7DCFF] font-mono text-[10px] font-bold text-[#002FA7]">#AI模型部署</span>
+                                        <span class="px-2 py-0.5 bg-white border border-[#C7DCFF] font-mono text-[10px] font-bold text-[#002FA7]">#全端開發</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 1: Three-Track Credit Calibration -->
+                        <div data-stage-panel="1" class="hidden w-full bg-white border border-[#C7DCFF] p-5 sm:p-7 shadow-sm">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+                                <div class="p-4 bg-[#EBF2FF] border border-[#C7DCFF]">
+                                    <div class="font-mono text-[11px] font-bold text-[#1F50CD] uppercase">TRACK 01 // 40%</div>
+                                    <div class="font-heading font-extrabold text-base text-[#002FA7] mt-1">專業學程認證</div>
+                                    <div class="font-mono text-2xl font-black text-[#002FA7] mt-2 tabular-data">15 / 15 <span class="text-xs font-bold">學分</span></div>
+                                    <div class="w-full h-2 bg-white mt-2">
+                                        <div class="stage1-bar h-full bg-[#002FA7] origin-left" data-scale="1"></div>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-[#EBF2FF] border border-[#C7DCFF]">
+                                    <div class="font-mono text-[11px] font-bold text-[#1F50CD] uppercase">TRACK 02 // 40%</div>
+                                    <div class="font-heading font-extrabold text-base text-[#002FA7] mt-1">跨域實務課群</div>
+                                    <div class="font-mono text-2xl font-black text-[#002FA7] mt-2 tabular-data">9 / 9 <span class="text-xs font-bold">學分</span></div>
+                                    <div class="w-full h-2 bg-white mt-2">
+                                        <div class="stage1-bar h-full bg-[#1F50CD] origin-left" data-scale="1"></div>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-[#EBF2FF] border border-[#C7DCFF]">
+                                    <div class="font-mono text-[11px] font-bold text-[#1F50CD] uppercase">TRACK 03 // 20%</div>
+                                    <div class="font-heading font-extrabold text-base text-[#002FA7] mt-1">課外經歷與實習</div>
+                                    <div class="font-mono text-2xl font-black text-[#002FA7] mt-2 tabular-data">3 <span class="text-xs font-bold">項實戰認證</span></div>
+                                    <div class="w-full h-2 bg-white mt-2">
+                                        <div class="stage1-bar h-full bg-[#3B6BF0] origin-left" data-scale="0.9"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-[#C7DCFF]">
+                                <span class="font-mono text-xs font-bold text-[#1E3A8A] mr-1">已校準核心課程：</span>
+                                <span class="stage1-chip px-2.5 py-1 bg-[#002FA7] text-white font-mono text-xs font-bold">資料結構 (3)</span>
+                                <span class="stage1-chip px-2.5 py-1 bg-[#002FA7] text-white font-mono text-xs font-bold">人工智慧導論 (3)</span>
+                                <span class="stage1-chip px-2.5 py-1 bg-[#1F50CD] text-white font-mono text-xs font-bold">雲端服務設計 (3)</span>
+                                <span class="stage1-chip px-2.5 py-1 bg-[#EBF2FF] border border-[#002FA7] text-[#002FA7] font-mono text-xs font-bold">企業實習 (9)</span>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 2: ATS Blueprint Deployment -->
+                        <div data-stage-panel="2" class="hidden w-full bg-white border-2 border-[#002FA7] p-5 sm:p-7 shadow-md">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#C7DCFF]">
+                                <div>
+                                    <div class="font-mono text-xs font-bold uppercase text-[#1F50CD]">A4 RESUME BLUEPRINT // READY</div>
+                                    <div class="font-heading font-black text-xl text-[#002FA7] mt-0.5">資訊工程學系 · 全端與 AI 應用工程師履歷</div>
+                                </div>
+                                <div class="px-3.5 py-2 bg-[#002FA7] text-white font-mono text-right shrink-0">
+                                    <div class="text-[10px] uppercase text-[#C7DCFF]">ATS MATCH SCORE</div>
+                                    <div id="stage2-score-counter" class="text-2xl font-extrabold tabular-data">96%</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4 text-xs font-body text-[#1E3A8A]">
+                                <div class="p-3 bg-[#F8FAFF] border border-[#C7DCFF]">
+                                    <div class="font-bold text-[#002FA7] mb-1"><i class="fa-solid fa-check text-[#1F50CD] mr-1.5"></i>STAR 量化專案成果自動轉換</div>
+                                    <p>將「雲端服務設計」與「畢業專題」自動轉化為具備量化數據與技術棧標籤的履歷段落。</p>
+                                </div>
+                                <div class="p-3 bg-[#F8FAFF] border border-[#C7DCFF]">
+                                    <div class="font-bold text-[#002FA7] mb-1"><i class="fa-solid fa-check text-[#1F50CD] mr-1.5"></i>支援 A4 PDF 匯出與雲端典藏</div>
+                                    <p>一鍵輸出符合業界審閱標準的單頁 A4 履歷，並同步保存至個人檔案典藏庫。</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <a href="career_fit.html" class="bg-[#002FA7] hover:bg-[#1F50CD] text-white font-mono text-xs font-bold uppercase tracking-wider px-5 py-2.5 inline-flex items-center gap-2 transition-colors">
+                                    <span>立即前往生成我的履歷</span>
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Stage Navigation Footer -->
+                    <div class="flex items-center justify-between text-xs font-mono text-[#1E3A8A] border-t border-[#C7DCFF] pt-3 z-10">
+                        <span id="stage-footer-hint">點擊上方階段按鈕或向下滾動以檢視合成步驟</span>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="window.CareerDNAHome && window.CareerDNAHome.prevStage()"
+                                class="px-2.5 py-1 bg-white border border-[#C7DCFF] hover:border-[#002FA7] text-[#002FA7] font-bold cursor-pointer">
+                                <i class="fa-solid fa-chevron-left"></i> 上一步
+                            </button>
+                            <button type="button" onclick="window.CareerDNAHome && window.CareerDNAHome.nextStage()"
+                                class="px-2.5 py-1 bg-white border border-[#C7DCFF] hover:border-[#002FA7] text-[#002FA7] font-bold cursor-pointer">
+                                下一步 <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- ================= ARCHITECTURE SECTION ================= -->
-        <section id="features" class="max-w-[1400px] mx-auto mt-16 sm:mt-28 bg-white border border-[#C7DCFF] crosshair-corner shadow-[0_12px_36px_-18px_rgba(15,23,42,0.06)]">
+        <section id="features" class="max-w-[1400px] mx-auto mt-16 sm:mt-24 bg-white border border-[#C7DCFF] crosshair-corner shadow-[0_12px_36px_-18px_rgba(15,23,42,0.06)]">
 
             <!-- Section Header -->
             <div class="px-5 py-10 sm:px-8 sm:py-14 md:px-16 md:py-16 border-b border-[#C7DCFF] bg-[#F2F6FF] reveal-up">
-                <h2 class="font-heading font-black text-2xl sm:text-4xl md:text-6xl uppercase tracking-tighter text-[#002FA7]">
+                <h2 class="font-heading font-black text-2xl sm:text-4xl md:text-5xl uppercase tracking-tighter text-[#002FA7]">
                     系統架構
-                    <span class="text-[#3B63C4] ml-2 sm:ml-3 block sm:inline font-syne text-xl sm:text-3xl md:text-5xl">Architecture</span>
+                    <span class="text-[#3B63C4] ml-2 sm:ml-3 block sm:inline font-syne text-xl sm:text-3xl md:text-4xl">Architecture</span>
                 </h2>
             </div>
 
             <!-- 3 Architecture Cards Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-[#C7DCFF]">
 
-                <!-- Feature 1: AI 履歷健檢 -->
+                <!-- Feature 1: 履歷健檢 -->
                 <div
-                    class="arch-card arch-card-1 p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up reveal-delay-1 min-h-[360px] sm:min-h-[410px]">
+                    class="arch-card arch-card-1 p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up min-h-[360px] sm:min-h-[410px]">
                     <div>
                         <div class="mb-6 sm:mb-9">
                             <div
@@ -377,7 +634,7 @@
 
                 <!-- Feature 2: 個人品牌 -->
                 <div
-                    class="arch-card arch-card-2 p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up reveal-delay-2 min-h-[360px] sm:min-h-[410px]">
+                    class="arch-card arch-card-2 p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up min-h-[360px] sm:min-h-[410px]">
                     <div>
                         <div class="mb-6 sm:mb-9">
                             <div
@@ -404,7 +661,7 @@
 
                 <!-- Feature 3: 系所推薦 -->
                 <div
-                    class="arch-card arch-card-3 p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up reveal-delay-3 min-h-[360px] sm:min-h-[410px]">
+                    class="arch-card arch-card-3 p-6 sm:p-8 md:p-12 hover-spring group flex flex-col justify-between reveal-up min-h-[360px] sm:min-h-[410px]">
                     <div>
                         <div class="mb-6 sm:mb-9">
                             <div
@@ -433,35 +690,207 @@
         </section>
     </main>
 
+    <!-- Shared CareerDNA GSAP Motion Engine -->
+    <script src="static/careerdna-motion.js"></script>
+
+    <!-- Bespoke CareerDNA Home GSAP Choreography -->
     <script>
-        // Intersection Observer for scroll reveals
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
+        window.CareerDNAHome = {
+            currentStage: 0,
+
+            stageMeta: [
+                { badge: 'STAGE 01', title: 'UCAN 職能基因與系所適配解碼', progress: 0.33 },
+                { badge: 'STAGE 02', title: '三軌制修課學分與實務課群校準', progress: 0.66 },
+                { badge: 'STAGE 03', title: 'A4 高競爭力履歷藍圖自動部署', progress: 1.0 }
+            ],
+
+            init() {
+                this.bindStageButtons();
+
+                if (typeof gsap === 'undefined') return;
+                if (typeof ScrollTrigger !== 'undefined') {
+                    gsap.registerPlugin(ScrollTrigger);
+                }
+
+                const mm = gsap.matchMedia();
+
+                mm.add({
+                    reduceMotion: '(prefers-reduced-motion: reduce)'
+                }, (context) => {
+                    const { reduceMotion } = context.conditions;
+
+                    if (!reduceMotion) {
+                        this.playHeroChoreography();
+                    }
+
+                    this.setupSynthesisScrollTrigger(reduceMotion);
+                });
+            },
+
+            playHeroChoreography() {
+                const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+                tl.fromTo('#hero-accent-bar',
+                    { scaleX: 0 },
+                    { scaleX: 1, duration: 0.7, ease: 'power3.inOut' },
+                    0
+                )
+                .fromTo(['#hero-line-1', '#hero-line-2'],
+                    { y: 26, autoAlpha: 0 },
+                    { y: 0, autoAlpha: 1, duration: 0.65, stagger: 0.1 },
+                    0.1
+                )
+                .fromTo(['#hero-lead', '#hero-cta-group', '#hero-telemetry-strip'],
+                    { y: 18, autoAlpha: 0 },
+                    { y: 0, autoAlpha: 1, duration: 0.55, stagger: 0.08 },
+                    0.28
+                );
+
+                // Animate Hero Telemetry Counters
+                document.querySelectorAll('.hero-counter').forEach((counterEl) => {
+                    const target = parseInt(counterEl.getAttribute('data-target'), 10) || 0;
+                    const suffix = counterEl.getAttribute('data-suffix') || '';
+                    if (window.CareerDNAMotion) {
+                        window.CareerDNAMotion.animateCounter(counterEl, target, {
+                            startValue: 0,
+                            suffix,
+                            duration: 1.1
+                        });
+                    }
+                });
+            },
+
+            bindStageButtons() {
+                document.querySelectorAll('[data-stage-btn]').forEach((btn) => {
+                    btn.addEventListener('click', () => {
+                        const idx = parseInt(btn.getAttribute('data-stage-btn'), 10) || 0;
+                        this.setStage(idx, true);
+                    });
+                });
+            },
+
+            setupSynthesisScrollTrigger(reduceMotion) {
+                if (typeof ScrollTrigger === 'undefined' || reduceMotion) return;
+
+                // Animate Stage 0 bars when synthesis section enters viewport
+                ScrollTrigger.create({
+                    trigger: '#synthesis-pipeline',
+                    start: 'top 78%',
+                    once: true,
+                    onEnter: () => this.animateStageInternal(this.currentStage)
+                });
+            },
+
+            setStage(index, userInitiated = false) {
+                const clamped = Math.max(0, Math.min(2, index));
+                if (clamped === this.currentStage && !userInitiated) return;
+                this.currentStage = clamped;
+
+                // Update top stage buttons
+                document.querySelectorAll('[data-stage-btn]').forEach((btn) => {
+                    const idx = parseInt(btn.getAttribute('data-stage-btn'), 10);
+                    btn.setAttribute('aria-selected', idx === clamped ? 'true' : 'false');
+                });
+
+                // Update left stage cards
+                document.querySelectorAll('[data-stage-card]').forEach((card) => {
+                    const idx = parseInt(card.getAttribute('data-stage-card'), 10);
+                    const dot = card.querySelector('.stage-indicator-dot');
+                    if (idx === clamped) {
+                        card.classList.add('bg-[#EBF2FF]/60');
+                        card.classList.remove('bg-white');
+                        if (dot) {
+                            dot.classList.remove('bg-[#C7DCFF]');
+                            dot.classList.add('bg-[#002FA7]');
+                        }
+                    } else {
+                        card.classList.remove('bg-[#EBF2FF]/60');
+                        card.classList.add('bg-white');
+                        if (dot) {
+                            dot.classList.add('bg-[#C7DCFF]');
+                            dot.classList.remove('bg-[#002FA7]');
+                        }
+                    }
+                });
+
+                // Update viewport header & progress bar
+                const meta = this.stageMeta[clamped];
+                const badgeEl = document.getElementById('stage-viewport-badge');
+                const titleEl = document.getElementById('stage-viewport-title');
+                const fillEl = document.getElementById('stage-progress-fill');
+
+                if (badgeEl) badgeEl.textContent = meta.badge;
+                if (titleEl) titleEl.textContent = meta.title;
+                if (fillEl && typeof gsap !== 'undefined') {
+                    gsap.to(fillEl, { scaleX: meta.progress, duration: 0.45, ease: 'power3.out' });
+                }
+
+                // Switch panels and play stage-specific GSAP choreography
+                document.querySelectorAll('[data-stage-panel]').forEach((panel) => {
+                    const idx = parseInt(panel.getAttribute('data-stage-panel'), 10);
+                    if (idx === clamped) {
+                        panel.classList.remove('hidden');
+                        if (typeof gsap !== 'undefined') {
+                            gsap.fromTo(panel,
+                                { autoAlpha: 0, y: 16, scale: 0.985 },
+                                { autoAlpha: 1, y: 0, scale: 1, duration: 0.42, ease: 'power3.out' }
+                            );
+                        }
+                    } else {
+                        panel.classList.add('hidden');
+                    }
+                });
+
+                this.animateStageInternal(clamped);
+            },
+
+            animateStageInternal(stageIdx) {
+                if (typeof gsap === 'undefined') return;
+
+                if (stageIdx === 0) {
+                    gsap.fromTo('.stage0-bar',
+                        { scaleX: 0 },
+                        {
+                            scaleX: (i, el) => parseFloat(el.getAttribute('data-scale')) || 1,
+                            duration: 0.65,
+                            stagger: 0.08,
+                            ease: 'power3.out'
+                        }
+                    );
+                } else if (stageIdx === 1) {
+                    gsap.fromTo('.stage1-bar',
+                        { scaleX: 0 },
+                        {
+                            scaleX: (i, el) => parseFloat(el.getAttribute('data-scale')) || 1,
+                            duration: 0.6,
+                            stagger: 0.08,
+                            ease: 'power3.out'
+                        }
+                    );
+                    gsap.fromTo('.stage1-chip',
+                        { scale: 0.85, autoAlpha: 0 },
+                        { scale: 1, autoAlpha: 1, duration: 0.35, stagger: 0.06, ease: 'back.out(2)' }
+                    );
+                } else if (stageIdx === 2) {
+                    const scoreEl = document.getElementById('stage2-score-counter');
+                    if (scoreEl && window.CareerDNAMotion) {
+                        window.CareerDNAMotion.animateCounter(scoreEl, 96, { startValue: 60, suffix: '%', duration: 0.8 });
+                    }
+                }
+            },
+
+            nextStage() {
+                this.setStage((this.currentStage + 1) % 3, true);
+            },
+
+            prevStage() {
+                this.setStage((this.currentStage + 2) % 3, true);
+            }
         };
 
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.reveal-up').forEach((el) => {
-            observer.observe(el);
+        document.addEventListener('DOMContentLoaded', () => {
+            window.CareerDNAHome.init();
         });
-
-        // Scroll-driven Parallax for DNA text
-        const dnaText = document.getElementById('parallax-dna');
-        if (dnaText) {
-            window.addEventListener('scroll', () => {
-                const scrolled = window.scrollY;
-                dnaText.style.transform = `translateY(calc(-50% + ${scrolled * 0.4}px))`;
-            });
-        }
     </script>
 
     <!-- CareerDNA AI Chatbot Assistant Widget -->
