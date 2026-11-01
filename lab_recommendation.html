@@ -162,6 +162,7 @@
             
             <!-- Desktop Nav Links (Hidden on Mobile) -->
             <div class="hidden md:flex items-center gap-6 lg:gap-8 whitespace-nowrap">
+                <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">首頁</a>
                 <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">品牌測驗</a>
                 <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">履歷健檢</a>
                 <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1 transition-colors">系所推薦</a>
@@ -171,8 +172,10 @@
 
             <!-- Top Right Action Controls -->
             <div class="flex items-center gap-2 sm:gap-4 shrink-0">
-                <a href="index.html" class="hidden sm:flex font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors items-center gap-1.5">
-                    <i class="fa-solid fa-arrow-left"></i> <span>返回首頁</span>
+                <a href="index.html" class="font-mono uppercase text-[11px] sm:text-xs font-bold tracking-wider text-klein hover:text-white hover:bg-klein border border-klein/30 hover:border-klein px-2.5 sm:px-3 py-1 sm:py-1.5 transition-all flex items-center gap-1.5 shrink-0" title="返回首頁">
+                    <i class="fa-solid fa-arrow-left text-[10px] sm:text-[11px]"></i>
+                    <span class="hidden sm:inline">返回首頁</span>
+                    <span class="sm:hidden">首頁</span>
                 </a>
                 <div id="nav-auth-section" class="flex items-center gap-2 sm:gap-3 border-l border-klein/10 pl-2 sm:pl-4 shrink-0">
                     <button id="nav-login-btn" onclick="window.CareerDNA_DB.showAuthModal((u) => window.location.reload())" class="font-mono uppercase text-[11px] sm:text-xs font-bold tracking-wider text-klein hover:text-white hover:bg-klein border border-klein px-2.5 sm:px-4 py-1 sm:py-1.5 transition-all">登入</button>
@@ -190,6 +193,7 @@
 
     <!-- Mobile Fixed Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
+        <a href="index.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0 flex items-center gap-1"><i class="fa-solid fa-house text-[10px]"></i> 首頁</a>
         <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">品牌測驗</a>
         <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">履歷健檢</a>
         <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein border-b-2 border-klein pb-0.5 px-2 py-1 transition-colors shrink-0">系所推薦</a>
@@ -214,6 +218,13 @@
 
                 <!-- Hero Header -->
                 <div class="space-y-4 sm:space-y-6 pt-2">
+                    <div id="lab-rec-breadcrumb" class="flex items-center gap-2 font-mono text-xs text-klein/60 mb-2">
+                        <a href="index.html" class="hover:text-klein transition-colors flex items-center gap-1.5">
+                            <i class="fa-solid fa-house text-[11px]"></i> 首頁
+                        </a>
+                        <span class="text-klein/30">/</span>
+                        <span class="text-klein font-bold">系所推薦</span>
+                    </div>
                     <h1 class="font-heading font-black text-3xl sm:text-5xl md:text-6xl tracking-tight uppercase text-klein">
                         資訊系所推薦探索
                     </h1>
@@ -278,8 +289,13 @@
                 <!-- Progress HUD -->
                 <div class="border-b border-klein/10 pb-6">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="font-mono text-xs font-bold tracking-wider text-klein/70">測驗進度</span>
-                        <span id="progress-text" class="font-mono text-sm font-bold text-klein tracking-widest px-3 py-1 bg-klein/5 border border-klein/10">1/6</span>
+                        <div class="flex items-center gap-3">
+                            <span class="font-mono text-xs font-bold tracking-wider text-klein/70">測驗進度</span>
+                            <span id="progress-text" class="font-mono text-sm font-bold text-klein tracking-widest px-3 py-1 bg-klein/5 border border-klein/10">1/6</span>
+                        </div>
+                        <a id="quiz-back-home" href="index.html" class="font-mono text-xs font-bold text-klein/60 hover:text-klein flex items-center gap-1.5">
+                            <i class="fa-solid fa-house text-[11px]"></i> 返回首頁
+                        </a>
                     </div>
                     <div class="w-full bg-klein/10 h-2 overflow-hidden">
                         <div id="progress-bar" class="bg-klein h-full transition-all duration-500 ease-out" style="width: 16.66%;"></div>
@@ -359,6 +375,10 @@
                         <a href="brand_test.html" class="hover-spring border border-klein/20 hover:border-klein bg-transparent hover:bg-klein/5 text-klein font-heading font-bold text-sm sm:text-base md:text-lg tracking-wider uppercase px-6 sm:px-8 py-4 sm:py-5 flex items-center justify-center gap-3 transition-all text-center">
                             <i class="fa-solid fa-compass text-klein/50"></i>
                             <span>進行個人品牌測驗</span>
+                        </a>
+                        <a id="result-back-home" href="index.html" class="hover-spring border border-klein/20 hover:border-klein bg-transparent hover:bg-klein/5 text-klein font-heading font-bold text-sm sm:text-base md:text-lg tracking-wider uppercase px-6 sm:px-8 py-4 sm:py-5 flex items-center justify-center gap-3 transition-all text-center">
+                            <i class="fa-solid fa-house text-klein/50"></i>
+                            <span>返回首頁</span>
                         </a>
                     </div>
 

@@ -190,6 +190,7 @@
                 </a>
                 
                 <div class="hidden md:flex items-center gap-8">
+                    <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">首頁</a>
                     <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">品牌測驗</a>
                     <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">履歷健檢</a>
                     <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">系所推薦</a>
@@ -198,8 +199,10 @@
                 </div>
 
                 <div class="flex items-center gap-2 sm:gap-4 shrink-0">
-                    <a href="index.html" class="hidden sm:flex font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/50 hover:text-klein transition-colors items-center gap-2">
-                        <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">返回首頁</span>
+                    <a href="index.html" class="font-mono uppercase text-[11px] sm:text-xs font-bold tracking-wider text-klein hover:text-white hover:bg-klein border border-klein/30 hover:border-klein px-2.5 sm:px-3 py-1 sm:py-1.5 transition-all flex items-center gap-1.5 shrink-0" title="返回首頁">
+                        <i class="fa-solid fa-arrow-left text-[10px] sm:text-[11px]"></i>
+                        <span class="hidden sm:inline">返回首頁</span>
+                        <span class="sm:hidden">首頁</span>
                     </a>
                     <div id="nav-auth-section" class="flex items-center gap-2 sm:gap-3 border-l border-klein/10 pl-2 sm:pl-4 shrink-0">
                         <button id="nav-login-btn"
@@ -222,6 +225,7 @@
 
         <!-- Mobile Fixed Bottom Navigation Bar -->
         <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
+            <a href="index.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0 flex items-center gap-1"><i class="fa-solid fa-house text-[10px]"></i> 首頁</a>
             <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein border-b-2 border-klein pb-0.5 px-2 py-1 transition-colors shrink-0">品牌測驗</a>
             <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">履歷健檢</a>
             <a href="lab_recommendation.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">系所推薦</a>
@@ -237,6 +241,13 @@
                 <div class="absolute bottom-0 left-0 w-full h-[1px] bg-klein/10"></div>
 
                 <div class="relative z-10 w-full flex flex-col gap-6 md:gap-8 pt-4">
+                    <div id="brand-test-breadcrumb" class="flex items-center gap-2 font-mono text-xs text-klein/60 reveal-up">
+                        <a href="index.html" class="hover:text-klein transition-colors flex items-center gap-1.5">
+                            <i class="fa-solid fa-house text-[11px]"></i> 首頁
+                        </a>
+                        <span class="text-klein/30">/</span>
+                        <span class="text-klein font-bold">品牌測驗</span>
+                    </div>
                     
                     
 
@@ -287,6 +298,14 @@
     </div>
     <div id="view-ucan-import" class="hidden min-h-screen bg-gray-50 text-klein flex flex-col pt-20 pb-20 relative z-10">
         <div class="max-w-4xl w-full mx-auto px-4 md:px-8">
+            <div id="ucan-wizard-nav" class="flex items-center justify-between mb-6 pb-4 border-b border-klein/10">
+                <a href="brand_test.html" class="text-xs font-mono font-bold text-klein/60 hover:text-klein flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> 回測驗介紹
+                </a>
+                <a href="index.html" class="text-xs font-mono font-bold text-klein hover:text-white hover:bg-klein border border-klein/30 hover:border-klein px-3 py-1.5 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-house"></i> 返回首頁
+                </a>
+            </div>
             <h2 class="font-heading font-black text-3xl uppercase tracking-tight text-klein mb-2 text-center">UCAN 數據精準匯入</h2>
             <p class="text-klein/60 font-body text-center mb-8">為了提供最具公信力的職涯定位，我們採用教育部 UCAN 平台之測驗數據。</p>
             
