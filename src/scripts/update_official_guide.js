@@ -16,7 +16,7 @@ CareerDNA 是專為靜宜大學（Providence University）資訊學院（資訊�
 
 ## 2. 核心功能模組 (Core Modules)
 
-### (1) AI 履歷健檢與生成 (career_fit_v2.html)
+### (1) AI 履歷健檢與生成 (career_fit.html)
 - **ATS 人資檢核標準**：採用國際 Golden Triangle ATS 檢核體系，全面掃描關鍵字匹配度、版面排版相容性與語意清晰度。
 - **Micro-STAR (STAR-L) 原則**：情境（Situation）、任務（Task）、行動（Action）、結果（Result）、學習延伸（Learning）。
 - **Google XYZ 量化公式**：引導學生將專案經歷量化為「Accomplished [X] as measured by [Y], by doing [Z]」。

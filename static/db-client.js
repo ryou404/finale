@@ -43,6 +43,16 @@
     }
   }
 
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function refreshNavbar() {
     if (typeof document === 'undefined') return;
     const user = getCurrentUser();
@@ -75,20 +85,22 @@
         userInfo.className = 'relative group flex items-center gap-3 cursor-pointer py-1.5';
       }
       
-      const name = user.name || user.displayName || user.username || '用戶';
-      const email = user.email || user.username || '';
-      const dept = user.department || user.dept || localStorage.getItem('cdna_department') || '靜宜大學';
-      const grade = user.grade || localStorage.getItem('cdna_grade') || '大學部';
+      const rawName = user.name || user.displayName || user.username || '用戶';
+      const name = escapeHtml(rawName);
+      const email = escapeHtml(user.email || user.username || '');
+      const dept = escapeHtml(user.department || user.dept || localStorage.getItem('cdna_department') || '靜宜大學');
+      const grade = escapeHtml(user.grade || localStorage.getItem('cdna_grade') || '大學部');
       const roleName = user.role === 'admin' ? 'SUPER ADMIN' : 'STUDENT';
-      const initial = name.charAt(0).toUpperCase();
+      const initial = escapeHtml(rawName.charAt(0).toUpperCase());
+      const safePhotoUrl = user.photoURL ? escapeHtml(user.photoURL) : '';
 
-      if (userName) userName.innerText = name;
+      if (userName) userName.innerText = rawName;
       if (userAvatar) {
-        if (user.photoURL) {
-          userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${initial}'">`;
+        if (safePhotoUrl) {
+          userAvatar.innerHTML = `<img src="${safePhotoUrl}" alt="avatar" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${initial}'">`;
           userAvatar.className = 'w-9 h-9 overflow-hidden border border-klein flex items-center justify-center bg-white shadow-sm shrink-0';
         } else {
-          userAvatar.innerText = initial;
+          userAvatar.innerText = rawName.charAt(0).toUpperCase();
           userAvatar.className = 'w-9 h-9 bg-klein text-white flex items-center justify-center font-bold text-sm shadow-sm shrink-0';
         }
       }
@@ -109,7 +121,7 @@
             <!-- Header Profile Summary -->
             <div class="flex items-center gap-3 pb-3 mb-3 border-b border-klein/15">
               <div class="w-12 h-12 bg-klein text-white flex items-center justify-center font-bold text-lg border border-klein overflow-hidden shrink-0 shadow-sm">
-                ${user.photoURL ? `<img src="${user.photoURL}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${initial}'">` : initial}
+                ${safePhotoUrl ? `<img src="${safePhotoUrl}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${initial}'">` : initial}
               </div>
               <div class="min-w-0 flex-1 text-left">
                 <div class="font-heading font-black text-sm text-klein truncate leading-tight">${name}</div>
@@ -130,7 +142,7 @@
                 </span>
                 <i class="fa-solid fa-chevron-right text-[10px] text-klein/30 group-hover/item:translate-x-0.5 transition-transform"></i>
               </a>
-              <a href="career_fit_v2.html" class="flex items-center justify-between p-2 hover:bg-klein/5 text-klein border border-transparent hover:border-klein/20 transition-all group/item">
+              <a href="career_fit.html" class="flex items-center justify-between p-2 hover:bg-klein/5 text-klein border border-transparent hover:border-klein/20 transition-all group/item">
                 <span class="flex items-center gap-2">
                   <i class="fa-solid fa-wand-magic-sparkles text-klein/60 group-hover/item:text-klein"></i>
                   <span>AI 履歷診斷與健檢</span>

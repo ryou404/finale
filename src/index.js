@@ -38,8 +38,44 @@ app.use('/api', apiRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/rag', ragChatRoutes);
 
-// Serve static frontend files from workspace root
-app.use(express.static(path.resolve(__dirname, '..')));
+// Legacy URL redirect: career_fit_v2.html -> career_fit.html
+app.get('/career_fit_v2.html', (req, res) => {
+  res.redirect(301, '/career_fit.html');
+});
+
+// Security Middleware: Block public access to backend source code, config, and dot-files
+const BLOCKED_PATH_PREFIXES = [
+  '/src',
+  '/functions',
+  '/tests',
+  '/evals',
+  '/.env',
+  '/.git',
+  '/.agents',
+  '/.impeccable',
+  '/.dockerignore',
+  '/.firebaserc',
+  '/package.json',
+  '/package-lock.json',
+  '/Dockerfile',
+  '/firebase.json',
+  '/scraper.js'
+];
+
+app.use((req, res, next) => {
+  const reqPath = decodeURIComponent(req.path || '').toLowerCase();
+  if (
+    reqPath.includes('..') ||
+    path.basename(reqPath).startsWith('.') ||
+    BLOCKED_PATH_PREFIXES.some(prefix => reqPath === prefix || reqPath.startsWith(prefix + '/'))
+  ) {
+    return res.status(403).json({ status: 'error', message: 'Forbidden: Access to internal server files is restricted.' });
+  }
+  next();
+});
+
+// Serve static frontend files from workspace root (protected by security middleware above)
+app.use(express.static(path.resolve(__dirname, '..'), { dotfiles: 'deny' }));
 
 /**
  * Health Check API
@@ -60,7 +96,10 @@ app.get('/api/health', (req, res) => {
       model: CONFIG.llm.model,
       temperature: CONFIG.llm.temperature,
       deterministicConstraintMet: CONFIG.llm.temperature <= 0.3,
-      hasApiKey: Boolean(CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY)
+      hasApiKey: Boolean(CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY),
+      ragChatModel: CONFIG.api.shopAiKeyChatModel,
+      ragEmbeddingModel: CONFIG.api.shopAiKeyEmbeddingModel,
+      hasRagApiKey: Boolean(CONFIG.api.shopAiKeyApiKey || process.env.SHOPAIKEY_API_KEY)
     }
   });
 });
@@ -89,6 +128,28 @@ app.post('/api/analyze', async (req, res) => {
     };
 
     const result = await orchestrator.runPipeline(studentPayload, { forceDeterministic });
+
+    // Record AuditLog asynchronously
+    if (mongoose.connection.readyState === 1) {
+      const { AuditLog } = require('./db/models/AuditLog');
+      AuditLog.create({
+        userId: payload.uid || payload.userId || studentPayload.name || 'guest',
+        targetRole: studentPayload.targetRole,
+        overallScore: result.atsAudit?.overallScore || 80,
+        grade: result.atsAudit?.grade || 'B+',
+        metrics: {
+          quantifiability: result.atsAudit?.metrics?.quantifiability || 80,
+          completeness: result.atsAudit?.metrics?.completeness || 80,
+          keywordRelevance: result.atsAudit?.metrics?.relevance || 80
+        },
+        auditSummary: result.atsAudit?.auditSummary || '',
+        matchedTechStack: result.atsAudit?.matchedTechStack || [],
+        missingTechStack: result.atsAudit?.missingTechStack || [],
+        rawDraftLength: studentPayload.rawDraft.length,
+        pipelineLatencyMs: result.pipelineLatencyMs || (Date.now() - startTime)
+      }).catch(e => console.warn('[AuditLog Warning]:', e.message));
+    }
+
     res.json(result);
   } catch (err) {
     console.error('[API /api/analyze Error]:', err);

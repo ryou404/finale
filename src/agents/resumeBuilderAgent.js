@@ -23,6 +23,7 @@ class ResumeBuilderAgent {
    * @returns {Promise<Object>} Output adhering to RESUME_BUILDER_JSON_SCHEMA
    */
   async execute(profileResult, studentPayload) {
+    const startTime = Date.now();
     const apiKey = CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY;
     const safeProfile = (profileResult && typeof profileResult === 'object') ? profileResult : {};
     const safePayload = (studentPayload && typeof studentPayload === 'object') ? studentPayload : {};

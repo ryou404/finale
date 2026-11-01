@@ -24,6 +24,7 @@ class AcademicGapFillerAgent {
    * @returns {Promise<Object>} Output adhering to ACADEMIC_GAP_FILLER_JSON_SCHEMA
    */
   async execute(atsAuditResult, studentPayload) {
+    const startTime = Date.now();
     const apiKey = CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY;
     const safeATS = (atsAuditResult && typeof atsAuditResult === 'object') ? atsAuditResult : {};
     const safePayload = (studentPayload && typeof studentPayload === 'object') ? studentPayload : {};

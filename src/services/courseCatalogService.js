@@ -16,7 +16,7 @@ const FILES = [
 
 const YEAR_MAP = { '一': 1, '二': 2, '三': 3, '四': 4 };
 
-// UCAN professional pathway -> course keywords
+// UCAN professional pathway -> course competency & title keywords
 const PATHWAY_KEYWORDS = {
   '軟體開發': ['程式設計', '資料結構', '演算法', '網頁前端', '動態網頁', '系統分析', '軟體', '行動應用', '網路程式'],
   '資料科學與分析': ['Python', '大數據', '資料倉儲', '機器學習', '深度學習', '資料庫', '資料挖掘', '商業智慧', '統計'],
@@ -24,6 +24,15 @@ const PATHWAY_KEYWORDS = {
   '資訊安全': ['資訊安全', '安全程式', '系統安全', '網路安全', '計算機網路', 'Linux', '密碼'],
   '網路與系統維運': ['計算機網路', '網路管理', '雲端', 'Linux', '網路安全', '物聯網', '作業系統'],
   '企業資源規劃': ['企業資源規劃', 'ERP', '財務會計', '人力資源', 'ABAP', '商業智慧', '專案管理', '管理']
+};
+
+const PATHWAY_COMPETENCY_MATCHERS = {
+  '軟體開發': /程式|軟體開發|系統的分析與設計|資訊系統|軟、硬體工具/,
+  '資料科學與分析': /數據|數學|統計|分析|專案分析/,
+  '人工智慧技術應用': /人工智慧|跨域設計|數理邏輯|程式/,
+  '資訊安全': /系統|軟、硬體|專業倫理|資訊科技/,
+  '網路與系統維運': /網路|資訊系統|軟、硬體工具|維護管理/,
+  '企業資源規劃': /企業流程|資訊整合|系統之分析規劃|專案分析企劃/
 };
 
 let CATALOG = null;
@@ -67,6 +76,27 @@ function extractWeeklySchedule(section) {
   return rows;
 }
 
+function extractCompetencies(section) {
+  const raw = extractSectionText(section, '學生能力指標與權重');
+  if (!raw) return [];
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.startsWith('|'));
+  const items = [];
+  for (const line of lines) {
+    const cells = line.split('|').slice(1, -1).map(c => c.trim());
+    if (cells.length < 2) continue;
+    if (cells[0] === '能力指標' || /^-+$/.test(cells[0])) continue;
+    const weight = parseFloat(cells[1]) || 0;
+    if (weight <= 0) continue;
+    const codeMatch = cells[0].match(/^([A-Z])\.\s*(.+)$/);
+    items.push({
+      code: codeMatch ? codeMatch[1] : '',
+      label: codeMatch ? codeMatch[2].trim() : cells[0],
+      weight
+    });
+  }
+  return items.sort((a, b) => b.weight - a.weight);
+}
+
 function loadCatalog() {
   if (CATALOG) return CATALOG;
   const map = new Map();
@@ -80,7 +110,9 @@ function loadCatalog() {
     for (const sec of sections) {
       const nm = sec.match(/^##\s+\d+\.\s*([^\n\r]+)/);
       if (!nm) continue;
-      const name = nm[1].trim();
+      const rawTitle = nm[1].trim();
+      if (rawTitle.includes('(抓取失敗)')) continue;
+      const name = rawTitle.replace(/\(合授課程\)/g, '').trim();
       const classGrade = pick(sec, '上課班級');
       const ym = classGrade.match(/(?:資工|資管|人工智慧|AI|IM|CS)\s*([一二三四])/);
       if (!ym) continue; // common/general courses without a clear year
@@ -95,12 +127,29 @@ function loadCatalog() {
       const credits = parseFloat(creditRaw) || 0;
       const type = pick(sec, '修別');
       const introObj = extractIntro(sec);
+      const competencies = extractCompetencies(sec);
+      const code = pick(sec, '選課代號');
 
       const key = `${dept}|${year}|${name}`;
-      if (map.has(key)) continue;
+      if (map.has(key)) {
+        const existing = map.get(key);
+        if (code && !existing.codes.includes(code)) {
+          existing.codes.push(code);
+          existing.code = existing.codes.join(' / ');
+        }
+        if (!existing.intro && introObj.short) {
+          existing.intro = introObj.short;
+          existing.fullIntro = introObj.full;
+        }
+        if (existing.competencies.length === 0 && competencies.length > 0) {
+          existing.competencies = competencies;
+        }
+        continue;
+      }
 
       map.set(key, {
-        code: pick(sec, '選課代號'),
+        code,
+        codes: code ? [code] : [],
         name,
         dept,
         year,
@@ -114,6 +163,7 @@ function loadCatalog() {
         language: pick(sec, '課程授課語言'),
         textbook: extractSectionText(sec, '主要教科書及其他參考書'),
         grading: extractSectionText(sec, '評分方式及比重'),
+        competencies,
         intro: introObj.short,
         fullIntro: introObj.full,
         weeklySchedule: extractWeeklySchedule(sec)
@@ -144,6 +194,17 @@ function scoreCourse(course, pathway) {
     score += 10;
     reasons.push(`契合 UCAN 職能路徑「${pathway}」`);
   }
+
+  // Score against course competency weights (學生能力指標與權重)
+  const compMatcher = PATHWAY_COMPETENCY_MATCHERS[pathway];
+  if (compMatcher && Array.isArray(course.competencies)) {
+    const matchedComp = course.competencies.find(c => compMatcher.test(c.label));
+    if (matchedComp && matchedComp.weight >= 20) {
+      score += Math.round(matchedComp.weight / 10);
+      reasons.push(`指標 ${matchedComp.code}（${matchedComp.weight}%）高度對齊`);
+    }
+  }
+
   if (course.required) score += 3;
   return { score, reasons };
 }

@@ -115,7 +115,13 @@ const UserSchema = new mongoose.Schema({
   favorites: [{ type: mongoose.Schema.Types.Mixed }]
 }, {
   timestamps: true,
-  collection: 'users'
+  collection: 'users',
+  toJSON: {
+    transform(doc, ret) {
+      delete ret.password;
+      return ret;
+    }
+  }
 });
 
 // Auto-sync dept and department fields, name and displayName

@@ -25,6 +25,7 @@ class ATSAuditorAgent {
    * @returns {Promise<Object>} Output adhering to ATS_AUDITOR_JSON_SCHEMA
    */
   async execute(resumeResult, profileResult, studentPayload) {
+    const startTime = Date.now();
     const apiKey = CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY;
     const safePayload = (studentPayload && typeof studentPayload === 'object') ? studentPayload : {};
     const safeProfile = (profileResult && typeof profileResult === 'object') ? profileResult : {};

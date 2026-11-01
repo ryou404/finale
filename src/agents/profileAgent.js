@@ -22,6 +22,7 @@ class ProfileAgent {
    * @returns {Promise<Object>} Output adhering to PROFILE_JSON_SCHEMA
    */
   async execute(studentPayload) {
+    const startTime = Date.now();
     const apiKey = CONFIG.api.deepseekApiKey || process.env.DEEPSEEK_API_KEY;
     const safePayload = (studentPayload && typeof studentPayload === 'object') ? studentPayload : {};
 

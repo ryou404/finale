@@ -9,7 +9,7 @@ const { ProfileAgent } = require('./profileAgent');
 const { ResumeBuilderAgent } = require('./resumeBuilderAgent');
 const { ATSAuditorAgent } = require('./atsAuditorAgent');
 const { AcademicGapFillerAgent } = require('./academicGapFillerAgent');
-const { generateDeterministicOutput } = require('../engines/deterministicEngine');
+const { generateDeterministicOutput, deterministicATSAuditor } = require('../engines/deterministicEngine');
 
 class MasterOrchestrator {
   constructor(options = {}) {
@@ -68,17 +68,19 @@ class MasterOrchestrator {
         latencyMs: resumeResult?._metadata?.latencyMs || 0
       });
 
-      // Step 3: Execute ATS Auditor Agent (Role 3)
-      const atsResult = await this.atsAuditorAgent.execute(resumeResult, profileResult, normalizedPayload);
+      // Step 3 & Step 4 (Parallelized): Execute ATS Auditor Agent (Role 3) & Academic Gap-Filler Agent (Role 4) concurrently
+      const targetRoleHint = normalizedPayload.targetRole || profileResult?.targetPersona?.roleTitle || "全端網頁工程師";
+      const baselineAtsHint = deterministicATSAuditor(resumeResult, profileResult, targetRoleHint);
+      const [atsResult, academicResult] = await Promise.all([
+        this.atsAuditorAgent.execute(resumeResult, profileResult, normalizedPayload),
+        this.academicGapFillerAgent.execute(baselineAtsHint, normalizedPayload)
+      ]);
       agentTraces.push({
         agent: "ATSAuditorAgent",
         role: 3,
         mode: atsResult?._metadata?.executionMode || "live_llm",
         latencyMs: atsResult?._metadata?.latencyMs || 0
       });
-
-      // Step 4: Execute Academic Gap-Filler Agent (Role 4)
-      const academicResult = await this.academicGapFillerAgent.execute(atsResult, normalizedPayload);
       agentTraces.push({
         agent: "AcademicGapFillerAgent",
         role: 4,

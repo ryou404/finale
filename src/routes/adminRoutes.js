@@ -26,6 +26,10 @@ const upload = multer({
 // Protect all admin routes with requireAdmin middleware
 router.use(requireAdmin);
 
+function escapeRegex(str = '') {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /**
  * ===================================================================
  * 1. DASHBOARD & SYSTEM METRICS
@@ -129,7 +133,7 @@ router.get('/users', async (req, res) => {
     const query = {};
 
     if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), 'i');
+      const regex = new RegExp(escapeRegex(search.trim()), 'i');
       query.$or = [
         { name: regex },
         { displayName: regex },
@@ -166,13 +170,13 @@ router.get('/users', async (req, res) => {
         .lean()
     ]);
 
-    // Enhance users with test indicators
-    const formattedUsers = users.map(u => ({
+    // Enhance users with test indicators and strip raw password hash
+    const formattedUsers = users.map(({ password, ...u }) => ({
       ...u,
       hasBrand: Boolean(u.brand_results?.latest?.topHollandCode || u.brandTestResult),
       hasResume: Boolean(u.resume_data?.latest?.scores?.total || u.careerFitResult),
       hasLab: Boolean(u.summary_cache?.lab?.dept || u.labRecommendationResult),
-      passwordMasked: Boolean(u.password)
+      passwordMasked: Boolean(password)
     }));
 
     res.json({
@@ -525,7 +529,7 @@ router.get('/resources', async (req, res) => {
     const query = {};
 
     if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), 'i');
+      const regex = new RegExp(escapeRegex(search.trim()), 'i');
       query.$or = [
         { title: regex },
         { description: regex },
@@ -868,7 +872,7 @@ router.get('/files', async (req, res) => {
     const query = {};
     if (folder && folder !== 'all') query.folder = folder;
     if (search && search.trim()) {
-      query.originalName = new RegExp(search.trim(), 'i');
+      query.originalName = new RegExp(escapeRegex(search.trim()), 'i');
     }
 
     const files = await UploadedFile.find(query).sort({ createdAt: -1 });
@@ -1083,7 +1087,7 @@ router.get('/audit-logs', async (req, res) => {
     const query = {};
 
     if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), 'i');
+      const regex = new RegExp(escapeRegex(search.trim()), 'i');
       query.$or = [
         { userId: regex },
         { targetRole: regex },

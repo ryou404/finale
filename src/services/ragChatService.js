@@ -113,7 +113,7 @@ function buildSystemPrompt({ contextText = '', currentPage = '', userInfo = null
 5. 【課程輸出格式（最高優先，覆蓋其他規則）】：只要使用者是在「推薦／建議／gợi ý／recommend／suggest」課程或詢問「適合修哪些課」，回答只能是簡短的課程名稱清單，每行一個，格式如「- 程式設計」。嚴禁輸出：選課代號、授課教師、上課班級、時間地點、修別、學分數、課程簡介、教科書、參考來源。可在開頭加一句簡短說明，結尾加一句邀請使用者詢問某門課詳細資訊即可。
 
 【平台架構與功能】：
-- **AI 履歷健檢與生成 (career_fit_v2.html)**：結合 Golden Triangle ATS 人資檢核標準、Micro-STAR (STAR-L) 原則與 Google XYZ 量化公式，提供 Classic, Modern, Minimal 3 種 A4 履歷樣式並支援匯出 PDF。
+- **AI 履歷健檢與生成 (career_fit.html)**：結合 Golden Triangle ATS 人資檢核標準、Micro-STAR (STAR-L) 原則與 Google XYZ 量化公式，提供 Classic, Modern, Minimal 3 種 A4 履歷樣式並支援匯出 PDF。
 - **品牌測驗 (brand_test.html)**：Holland RIASEC 六大職業性格（R實用, I研究, A藝術, S社交, E企業, C常規）與蓋洛普優勢分析。
 - **科系適配 (lab_recommendation.html)**：靜宜資工、資管、AI 三大系所適配度與教授實驗室導覽。
 - **個人檔案 (profile.html)**：管理學歷、技能武器庫、歷史履歷典藏庫。
@@ -389,13 +389,13 @@ function generateOfflineFallback({ userQuery = '', retrievedChunks = [], userId 
   } else {
     fallbackReply += isEnglish
       ? 'I can assist you with:\n' +
-        '1. **AI Resume Diagnosis**: Visit [AI Resume Fit](career_fit_v2.html) for ATS optimization and A4 PDF export.\n' +
+        '1. **AI Resume Diagnosis**: Visit [AI Resume Fit](career_fit.html) for ATS optimization and A4 PDF export.\n' +
         '2. **Holland RIASEC Assessment**: Discover your career personality at [Brand Test](brand_test.html).\n' +
         '3. **Department & Lab Guidance**: Explore Providence CS, IM, and AI programs at [Lab Recommendation](lab_recommendation.html).\n' +
         '4. **Personal Dossier**: Review your saved resumes and skill profile at [Profile](profile.html).\n\n' +
         'Please enter your question, and I will be delighted to guide you!'
       : '我可以協助您：\n' +
-        '1. **AI 履歷健檢與生成**：前往 [AI 履歷健檢](career_fit_v2.html)，一鍵診斷並生成符合 ATS 標準的履歷。\n' +
+        '1. **AI 履歷健檢與生成**：前往 [AI 履歷健檢](career_fit.html)，一鍵診斷並生成符合 ATS 標準的履歷。\n' +
         '2. **Holland 職涯測驗**：於 [品牌測驗](brand_test.html) 探索 RIASEC 六大職業性格。\n' +
         '3. **科系適配與實驗室**：於 [科系適配](lab_recommendation.html) 探索靜宜資工、資管、AI 三大系所。\n' +
         '4. **個人檔案與歷史履歷**：於 [個人檔案](profile.html) 隨時查閱歷史生成的履歷。\n\n' +
