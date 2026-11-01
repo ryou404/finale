@@ -80,6 +80,21 @@
         .reveal-delay-3 { transition-delay: 0.3s; }
         .reveal-delay-4 { transition-delay: 0.4s; }
 
+        /* Modal Slide-in Animation */
+        @keyframes modalSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(24px) scale(0.97);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .modal-slide-in {
+            animation: modalSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
         /* Interactive Spring Lift */
         .hover-spring {
             transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1) !important;
@@ -719,15 +734,15 @@
     </div>
 
     <!-- Google Docs Editing Guide Cyber-Brutalist Modal -->
-    <div id="google-docs-guide-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white max-w-xl w-full border-2 border-klein shadow-[8px_8px_0px_0px_#002fa7] p-6 md:p-8 relative reveal-up is-visible">
+    <div id="google-docs-guide-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-all">
+        <div id="google-docs-guide-card" class="bg-white max-w-lg w-full border-2 border-klein shadow-[8px_8px_0px_0px_#002fa7] p-6 md:p-7 relative modal-slide-in">
             
             <!-- Header -->
-            <div class="flex items-center justify-between border-b border-klein/15 pb-4 mb-5">
+            <div class="flex items-center justify-between border-b border-klein/15 pb-3.5 mb-4">
                 <div>
                     <span class="font-mono text-[10px] font-bold text-klein/60 uppercase tracking-[0.2em] block">CLIPBOARD SYNC SUCCESS</span>
-                    <h3 class="font-heading font-black text-xl text-klein uppercase tracking-tight flex items-center gap-2 mt-0.5">
-                        <i class="fa-solid fa-clipboard-check text-emerald-600"></i> 已複製！Google 文件排版教學
+                    <h3 class="font-heading font-black text-lg text-klein uppercase tracking-tight flex items-center gap-2 mt-0.5">
+                        <i class="fa-solid fa-clipboard-check text-emerald-600"></i> 已複製！貼上小提示
                     </h3>
                 </div>
                 <button type="button" onclick="window.App.closeGoogleDocsGuide()" class="text-klein/50 hover:text-klein text-xl p-1 transition-colors" title="關閉">
@@ -735,64 +750,15 @@
                 </button>
             </div>
 
-            <p class="font-body text-xs text-klein/80 leading-relaxed mb-4">
-                已為您複製<strong>雙模格式</strong>（包含文字與富文本標記）。在 Google 文件貼上時，請依以下建議操作以獲取最佳排版效果：
-            </p>
-
-            <!-- 3 Step Cards -->
-            <div class="space-y-3 mb-6 font-body text-xs">
-                
-                <!-- Step 1 -->
-                <div class="p-3.5 bg-klein/[0.03] border border-klein/15 flex items-start gap-3">
-                    <span class="w-6 h-6 rounded bg-klein text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">01</span>
-                    <div class="space-y-1">
-                        <div class="font-bold text-klein flex items-center gap-1.5">
-                            開啟 Google 文件的 Markdown 支援
-                            <span class="font-mono text-[10px] text-klein/60 font-normal">（首次使用建議設定）</span>
-                        </div>
-                        <div class="text-klein/75 leading-relaxed text-[11px]">
-                            進入 Google 文件上方選單：<code class="px-1.5 py-0.5 bg-white border border-klein/20 text-klein font-mono rounded">工具</code> ➔ <code class="px-1.5 py-0.5 bg-white border border-klein/20 text-klein font-mono rounded">偏好設定</code> ➔ 在「一般」標籤頁下方勾選 <strong class="text-klein">「自動偵測 Markdown」</strong>。
-                        </div>
-                    </div>
+            <!-- Single Focused Step: Markdown Support in Google Docs -->
+            <div class="mb-5">
+                <div class="font-heading font-bold text-sm text-klein mb-2 flex items-center gap-2">
+                    <span class="w-5 h-5 rounded bg-klein text-white font-mono text-xs flex items-center justify-center font-bold">1</span>
+                    開啟 Google 文件的 Markdown 支援
                 </div>
-
-                <!-- Step 2 -->
-                <div class="p-3.5 bg-klein/[0.03] border border-klein/15 flex items-start gap-3">
-                    <span class="w-6 h-6 rounded bg-klein text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">02</span>
-                    <div class="space-y-1.5">
-                        <div class="font-bold text-klein">選擇貼上方式（二選一）</div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                            <div class="p-2 bg-white border border-emerald-500/40 rounded">
-                                <div class="font-bold text-emerald-800 flex items-center gap-1 mb-1">
-                                    <i class="fa-solid fa-star text-amber-500"></i> 推薦方式：直接貼上
-                                </div>
-                                <div class="text-klein/70">
-                                    直接按下 <kbd class="px-1 py-0.5 bg-slate-100 border border-slate-300 font-mono text-[10px] rounded">Ctrl + V</kbd>，可完美保留<span class="bg-amber-100 text-amber-900 font-bold px-1 rounded">黃色螢光標記</span>與粗體。
-                                </div>
-                            </div>
-                            <div class="p-2 bg-white border border-klein/20 rounded">
-                                <div class="font-bold text-klein flex items-center gap-1 mb-1">
-                                    <i class="fa-solid fa-code text-klein"></i> 結構方式：Markdown
-                                </div>
-                                <div class="text-klein/70">
-                                    點選上方選單 <code class="font-mono text-[10px]">編輯</code> ➔ <code class="font-mono text-[10px]">從 Markdown 貼上</code>，自動轉換標題層級與清單項目。
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="p-4 bg-klein/[0.03] border border-klein/15 rounded text-xs text-klein/85 leading-relaxed font-body">
+                    進入 Google 文件上方選單：<code class="px-1.5 py-0.5 bg-white border border-klein/20 text-klein font-mono rounded font-semibold">工具</code> ➔ <code class="px-1.5 py-0.5 bg-white border border-klein/20 text-klein font-mono rounded font-semibold">偏好設定</code> ➔ 在「一般」標籤頁下方勾選 <strong class="text-klein font-bold">「啟用 Markdown」</strong>。
                 </div>
-
-                <!-- Step 3 -->
-                <div class="p-3.5 bg-klein/[0.03] border border-klein/15 flex items-start gap-3">
-                    <span class="w-6 h-6 rounded bg-klein text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">03</span>
-                    <div class="space-y-1">
-                        <div class="font-bold text-klein">補齊黃色螢光標記個人真實資訊</div>
-                        <div class="text-klein/75 leading-relaxed text-[11px]">
-                            履歷中標示為 <span class="inline-block bg-amber-100 text-amber-900 border-b-2 border-amber-400 font-mono text-[10px] px-1 font-bold">【使用者自行輸入：...】</span> 的部分，代表需填入您個人真實的量化數據與專案細節，請逐一替換後即可完成求職履歷！
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
             <!-- Footer Actions -->
@@ -803,7 +769,7 @@
                 </label>
                 <div class="flex items-center gap-2">
                     <a href="https://docs.new" target="_blank" rel="noopener noreferrer" class="hover-spring bg-white text-klein border border-klein/30 hover:border-klein font-mono text-xs font-bold py-2 px-3 flex items-center gap-1.5 transition-all">
-                        <i class="fa-solid fa-arrow-up-right-from-square text-klein/70"></i> 開啟 Google 文件 (docs.new)
+                        <i class="fa-solid fa-arrow-up-right-from-square text-klein/70"></i> 開啟 Google 文件
                     </a>
                     <button type="button" onclick="window.App.closeGoogleDocsGuide()" class="hover-spring bg-klein text-white font-mono text-xs font-bold py-2 px-4 shadow-sm hover:bg-klein/90 transition-all">
                         我知道了，繼續編輯
@@ -2203,6 +2169,12 @@
                     const modal = document.getElementById('google-docs-guide-modal');
                     if (modal) {
                         modal.classList.remove('hidden');
+                        const card = document.getElementById('google-docs-guide-card');
+                        if (card) {
+                            card.classList.remove('modal-slide-in');
+                            void card.offsetWidth; // trigger CSS reflow for smooth re-animation
+                            card.classList.add('modal-slide-in');
+                        }
                         const chk = document.getElementById('dont-show-gdocs-guide-checkbox');
                         if (chk) chk.checked = false;
                     }
