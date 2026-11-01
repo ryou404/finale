@@ -622,7 +622,10 @@
                                     </h4>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <button type="button" onclick="window.App.copyResumeMarkdown()" class="hover-spring bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3.5 flex items-center gap-1.5 transition-all" title="複製 Markdown 格式">
+                                    <button type="button" id="resume-reset-btn" onclick="window.App.resetOriginalResume()" class="hover-spring bg-white text-klein/80 hover:text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3 flex items-center gap-1.5 transition-all" title="放棄目前的修改，還原成系統生成的原始履歷">
+                                        <i class="fa-solid fa-rotate-left text-klein/60"></i> 重設為原始履歷
+                                    </button>
+                                    <button type="button" onclick="window.App.copyResumeMarkdown()" class="hover-spring bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3.5 flex items-center gap-1.5 transition-all" title="複製履歷內容（支援雙模格式，可在 Google 文件保留高亮標記）">
                                         <i class="fa-solid fa-copy"></i> 複製內容
                                     </button>
                                     <button type="button" onclick="window.App.printResume()" class="hover-spring bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3 flex items-center gap-1.5 transition-all" title="瀏覽器原生無損列印 / 另存為向量 PDF">
@@ -637,8 +640,21 @@
                             <!-- Export Checklist Warning Banner -->
                             <div id="resume-checklist-banner" class="hidden mb-3 p-3 bg-amber-50 border border-amber-300"></div>
 
+                            <!-- Live Dynamic Edit Status Banner -->
+                            <div class="flex items-center justify-between text-[11px] font-mono text-klein/60 mb-2 px-1">
+                                <span class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-pen-to-square text-klein"></i> 支援動態編輯：點擊 A4 預覽內任意文字可直接輸入修改，複製時將自動保留最新內容。
+                                </span>
+                                <span id="resume-edit-indicator" class="hidden text-amber-600 font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-dot animate-pulse"></i> 內容已編輯修改
+                                </span>
+                            </div>
+
                             <!-- A4 Preview Paper Sheet -->
-                            <div id="resume-output" class="bg-white border border-klein/20 p-6 md:p-10 max-h-[600px] overflow-y-auto shadow-sm text-klein/90 leading-relaxed font-body">
+                            <div id="resume-output" 
+                                 contenteditable="true" 
+                                 spellcheck="false"
+                                 class="bg-white border border-klein/20 p-6 md:p-10 max-h-[700px] overflow-y-auto shadow-sm text-klein/90 leading-relaxed font-body focus:outline-none focus:ring-2 focus:ring-klein/30 focus:border-klein transition-all">
                                 <!-- Populated with parseMarkdownSafe HTML inside #pdf-content -->
                             </div>
                         </div>
@@ -697,6 +713,102 @@
                 <button onclick="window.App.processManualJson()" id="fallback-apply-json" class="hover-spring bg-klein text-white font-heading font-bold text-xs uppercase tracking-wider px-6 py-2 flex items-center gap-2">
                     <i class="fa-solid fa-check"></i> 解析並渲染報告
                 </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Google Docs Editing Guide Cyber-Brutalist Modal -->
+    <div id="google-docs-guide-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white max-w-xl w-full border-2 border-klein shadow-[8px_8px_0px_0px_#002fa7] p-6 md:p-8 relative reveal-up is-visible">
+            
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-klein/15 pb-4 mb-5">
+                <div>
+                    <span class="font-mono text-[10px] font-bold text-klein/60 uppercase tracking-[0.2em] block">CLIPBOARD SYNC SUCCESS</span>
+                    <h3 class="font-heading font-black text-xl text-klein uppercase tracking-tight flex items-center gap-2 mt-0.5">
+                        <i class="fa-solid fa-clipboard-check text-emerald-600"></i> 已複製！Google 文件排版教學
+                    </h3>
+                </div>
+                <button type="button" onclick="window.App.closeGoogleDocsGuide()" class="text-klein/50 hover:text-klein text-xl p-1 transition-colors" title="關閉">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="font-body text-xs text-klein/80 leading-relaxed mb-4">
+                已為您複製<strong>雙模格式</strong>（包含文字與富文本標記）。在 Google 文件貼上時，請依以下建議操作以獲取最佳排版效果：
+            </p>
+
+            <!-- 3 Step Cards -->
+            <div class="space-y-3 mb-6 font-body text-xs">
+                
+                <!-- Step 1 -->
+                <div class="p-3.5 bg-klein/[0.03] border border-klein/15 flex items-start gap-3">
+                    <span class="w-6 h-6 rounded bg-klein text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">01</span>
+                    <div class="space-y-1">
+                        <div class="font-bold text-klein flex items-center gap-1.5">
+                            開啟 Google 文件的 Markdown 支援
+                            <span class="font-mono text-[10px] text-klein/60 font-normal">（首次使用建議設定）</span>
+                        </div>
+                        <div class="text-klein/75 leading-relaxed text-[11px]">
+                            進入 Google 文件上方選單：<code class="px-1.5 py-0.5 bg-white border border-klein/20 text-klein font-mono rounded">工具</code> ➔ <code class="px-1.5 py-0.5 bg-white border border-klein/20 text-klein font-mono rounded">偏好設定</code> ➔ 在「一般」標籤頁下方勾選 <strong class="text-klein">「自動偵測 Markdown」</strong>。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="p-3.5 bg-klein/[0.03] border border-klein/15 flex items-start gap-3">
+                    <span class="w-6 h-6 rounded bg-klein text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">02</span>
+                    <div class="space-y-1.5">
+                        <div class="font-bold text-klein">選擇貼上方式（二選一）</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                            <div class="p-2 bg-white border border-emerald-500/40 rounded">
+                                <div class="font-bold text-emerald-800 flex items-center gap-1 mb-1">
+                                    <i class="fa-solid fa-star text-amber-500"></i> 推薦方式：直接貼上
+                                </div>
+                                <div class="text-klein/70">
+                                    直接按下 <kbd class="px-1 py-0.5 bg-slate-100 border border-slate-300 font-mono text-[10px] rounded">Ctrl + V</kbd>，可完美保留<span class="bg-amber-100 text-amber-900 font-bold px-1 rounded">黃色螢光標記</span>與粗體。
+                                </div>
+                            </div>
+                            <div class="p-2 bg-white border border-klein/20 rounded">
+                                <div class="font-bold text-klein flex items-center gap-1 mb-1">
+                                    <i class="fa-solid fa-code text-klein"></i> 結構方式：Markdown
+                                </div>
+                                <div class="text-klein/70">
+                                    點選上方選單 <code class="font-mono text-[10px]">編輯</code> ➔ <code class="font-mono text-[10px]">從 Markdown 貼上</code>，自動轉換標題層級與清單項目。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="p-3.5 bg-klein/[0.03] border border-klein/15 flex items-start gap-3">
+                    <span class="w-6 h-6 rounded bg-klein text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">03</span>
+                    <div class="space-y-1">
+                        <div class="font-bold text-klein">補齊黃色螢光標記個人真實資訊</div>
+                        <div class="text-klein/75 leading-relaxed text-[11px]">
+                            履歷中標示為 <span class="inline-block bg-amber-100 text-amber-900 border-b-2 border-amber-400 font-mono text-[10px] px-1 font-bold">【使用者自行輸入：...】</span> 的部分，代表需填入您個人真實的量化數據與專案細節，請逐一替換後即可完成求職履歷！
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-klein/15">
+                <label class="flex items-center gap-2 cursor-pointer select-none text-xs font-mono text-klein/70 hover:text-klein">
+                    <input type="checkbox" id="dont-show-gdocs-guide-checkbox" onchange="window.App.toggleGdocsGuidePreference(this.checked)" class="w-4 h-4 rounded border-klein/30 text-klein focus:ring-klein">
+                    <span>下次直接複製，不再顯示此教學</span>
+                </label>
+                <div class="flex items-center gap-2">
+                    <a href="https://docs.new" target="_blank" rel="noopener noreferrer" class="hover-spring bg-white text-klein border border-klein/30 hover:border-klein font-mono text-xs font-bold py-2 px-3 flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-klein/70"></i> 開啟 Google 文件 (docs.new)
+                    </a>
+                    <button type="button" onclick="window.App.closeGoogleDocsGuide()" class="hover-spring bg-klein text-white font-mono text-xs font-bold py-2 px-4 shadow-sm hover:bg-klein/90 transition-all">
+                        我知道了，繼續編輯
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -814,6 +926,9 @@
         ];
 
         window.App = {
+            originalGeneratedHtml: '',
+            originalResumeMarkdown: '',
+            isResumeEdited: false,
             state: { 
                 track: 'practical', 
                 selectedCourses: new Set(), 
@@ -1040,6 +1155,17 @@
                 // Restore selections into checkbox DOM
                 this.restoreSelections(true);
                 this.restoreProfileUI();
+
+                // Setup live edit listener on #resume-output
+                const resumeOutput = document.getElementById('resume-output');
+                if (resumeOutput && !resumeOutput._hasEditListener) {
+                    resumeOutput._hasEditListener = true;
+                    resumeOutput.addEventListener('input', () => {
+                        const ind = document.getElementById('resume-edit-indicator');
+                        if (ind) ind.classList.remove('hidden');
+                        this.isResumeEdited = true;
+                    });
+                }
 
                 // Guaranteed initial generation: A4 resume will immediately be visible on page load!
                 try {
@@ -2017,22 +2143,238 @@
                 return processed.join('\n');
             },
 
-            copyResumeMarkdown() {
-                if (!this.lastResumeMarkdown) {
-                    alert('尚未產生履歷內容！');
+            async copyResumeMarkdown() {
+                const resumeOutput = document.getElementById('resume-output');
+                const pdfContent = document.getElementById('pdf-content') || resumeOutput;
+                
+                if (!resumeOutput || !pdfContent || !pdfContent.innerHTML.trim()) {
+                    alert('尚未產生履歷內容！請先點擊產生履歷。');
                     return;
                 }
-                navigator.clipboard.writeText(this.lastResumeMarkdown).then(() => {
-                    this.showToast('已成功複製 A4 履歷 Markdown 內容！');
-                }).catch(() => {
+
+                const processedHtml = this.prepareHtmlForGoogleDocs(pdfContent);
+                let processedMarkdown = '';
+
+                if (this.isResumeEdited) {
+                    processedMarkdown = this.domToMarkdown(pdfContent);
+                } else {
+                    processedMarkdown = (this.lastResumeMarkdown || this.domToMarkdown(pdfContent))
+                        .replace(/【使用者自行輸入[：:]([^】]+)】/g, '`**【使用者自行輸入：$1】**`')
+                        .replace(/【使用者自行輸入】/g, '`**【使用者自行輸入】**`');
+                }
+
+                let writeSuccess = false;
+
+                // 1. Dual Clipboard Payload (text/html + text/plain)
+                if (navigator.clipboard && window.ClipboardItem) {
+                    try {
+                        const htmlBlob = new Blob([processedHtml], { type: 'text/html' });
+                        const textBlob = new Blob([processedMarkdown], { type: 'text/plain' });
+                        await navigator.clipboard.write([
+                            new ClipboardItem({
+                                'text/html': htmlBlob,
+                                'text/plain': textBlob
+                            })
+                        ]);
+                        writeSuccess = true;
+                    } catch (clipErr) {
+                        console.warn('[CareerDNA] ClipboardItem write failed, trying writeText:', clipErr);
+                    }
+                }
+
+                // 2. Fallback to standard writeText
+                if (!writeSuccess && navigator.clipboard && navigator.clipboard.writeText) {
+                    try {
+                        await navigator.clipboard.writeText(processedMarkdown);
+                        writeSuccess = true;
+                    } catch (writeErr) {
+                        console.warn('[CareerDNA] clipboard.writeText failed, using execCommand:', writeErr);
+                    }
+                }
+
+                // 3. Fallback to textarea execCommand
+                if (!writeSuccess) {
                     const dummy = document.createElement('textarea');
-                    dummy.value = this.lastResumeMarkdown;
+                    dummy.value = processedMarkdown;
                     document.body.appendChild(dummy);
                     dummy.select();
                     document.execCommand('copy');
                     document.body.removeChild(dummy);
-                    this.showToast('已成功複製 A4 履歷 Markdown 內容！');
+                }
+
+                // 4. Show modal or toast according to preference
+                const hideGuide = localStorage.getItem('career_dna_hide_gdocs_guide') === 'true';
+                if (!hideGuide) {
+                    const modal = document.getElementById('google-docs-guide-modal');
+                    if (modal) {
+                        modal.classList.remove('hidden');
+                        const chk = document.getElementById('dont-show-gdocs-guide-checkbox');
+                        if (chk) chk.checked = false;
+                    }
+                } else {
+                    this.showToast('已成功複製 A4 履歷內容（支援雙模格式，可在 Google 文件保留高亮標記）！');
+                }
+            },
+
+            prepareHtmlForGoogleDocs(rootEl) {
+                if (!rootEl) return '';
+                const clone = rootEl.cloneNode(true);
+                
+                // 1. Remove non-printable elements
+                clone.querySelectorAll('.no-print').forEach(el => el.remove());
+
+                // 2. Transform placeholder spans to Google Docs highlight marks
+                const placeholders = clone.querySelectorAll('.resume-placeholder');
+                placeholders.forEach(span => {
+                    const text = span.textContent.trim();
+                    const mark = document.createElement('mark');
+                    mark.setAttribute('style', 'background-color: #FEF08A !important; color: #854D0E !important; font-weight: bold !important; border-bottom: 2px solid #EAB308 !important; padding: 2px 4px; border-radius: 2px; font-family: monospace;');
+                    mark.textContent = text;
+                    span.parentNode.replaceChild(mark, span);
                 });
+
+                let innerHtml = clone.innerHTML;
+                
+                // 3. Transform any text-based placeholders not wrapped in .resume-placeholder spans
+                innerHtml = innerHtml.replace(/【使用者自行輸入[：:]([^】]+)】/g, '<mark style="background-color: #FEF08A !important; color: #854D0E !important; font-weight: bold !important; border-bottom: 2px solid #EAB308 !important; padding: 2px 4px; border-radius: 2px; font-family: monospace;">【使用者自行輸入：$1】</mark>');
+                innerHtml = innerHtml.replace(/【使用者自行輸入】/g, '<mark style="background-color: #FEF08A !important; color: #854D0E !important; font-weight: bold !important; border-bottom: 2px solid #EAB308 !important; padding: 2px 4px; border-radius: 2px; font-family: monospace;">【使用者自行輸入】</mark>');
+
+                return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CareerDNA A4 Resume</title>
+<style>
+body { font-family: 'Noto Sans TC', Inter, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 11pt; line-height: 1.6; color: #1e293b; background: #ffffff; }
+h1 { font-size: 20pt; font-weight: 800; color: #002fa7; border-bottom: 2px solid #002fa7; padding-bottom: 4px; margin: 0 0 10px 0; }
+h2 { font-size: 14pt; font-weight: 700; color: #002fa7; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; margin: 16px 0 8px 0; }
+h3 { font-size: 12pt; font-weight: 700; color: #1e3a8a; margin: 10px 0 4px 0; }
+p { font-size: 11pt; margin: 4px 0 6px 0; color: #1e293b; }
+ul { margin: 4px 0 8px 20px; padding: 0; }
+li { margin-bottom: 3px; font-size: 11pt; color: #1e293b; }
+strong { color: #002fa7; font-weight: 700; }
+em { font-style: italic; color: #334155; }
+code { background: #f1f5f9; padding: 2px 4px; border-radius: 3px; font-family: monospace; font-size: 10pt; }
+hr { border: none; border-top: 1px solid #cbd5e1; margin: 12px 0; }
+mark { background-color: #FEF08A !important; color: #854D0E !important; font-weight: bold !important; border-bottom: 2px solid #EAB308 !important; padding: 2px 4px; border-radius: 2px; font-family: monospace; }
+</style>
+</head>
+<body>
+${innerHtml}
+</body>
+</html>`;
+            },
+
+            domToMarkdown(rootEl) {
+                if (!rootEl) return '';
+                
+                function walk(node) {
+                    if (!node) return '';
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        return node.nodeValue;
+                    }
+                    if (node.nodeType !== Node.ELEMENT_NODE) {
+                        return '';
+                    }
+                    
+                    const tag = node.tagName.toLowerCase();
+                    if (node.classList && node.classList.contains('no-print')) {
+                        return '';
+                    }
+                    if (node.classList && node.classList.contains('resume-placeholder')) {
+                        const field = node.getAttribute('data-field') || node.textContent.replace(/[【】]/g, '');
+                        return `\`**【${field}】**\``;
+                    }
+
+                    let inner = '';
+                    for (let child of node.childNodes) {
+                        inner += walk(child);
+                    }
+
+                    switch (tag) {
+                        case 'h1':
+                            return `\n\n# ${inner.trim()}\n\n`;
+                        case 'h2':
+                            return `\n\n## ${inner.trim()}\n\n`;
+                        case 'h3':
+                            return `\n\n### ${inner.trim()}\n\n`;
+                        case 'h4':
+                        case 'h5':
+                        case 'h6':
+                            return `\n\n#### ${inner.trim()}\n\n`;
+                        case 'p':
+                            return `\n\n${inner.trim()}\n\n`;
+                        case 'ul':
+                            return `\n${inner}\n`;
+                        case 'li':
+                            return `- ${inner.trim()}\n`;
+                        case 'strong':
+                        case 'b':
+                            return `**${inner}**`;
+                        case 'em':
+                        case 'i':
+                            return `*${inner}*`;
+                        case 'code':
+                            return `\`${inner}\``;
+                        case 'hr':
+                            return `\n\n---\n\n`;
+                        case 'br':
+                            return `\n`;
+                        case 'div':
+                            if (node.classList && node.classList.contains('html2pdf__page-break')) {
+                                return `\n\n<div class="html2pdf__page-break"></div>\n\n`;
+                            }
+                            return inner ? `\n${inner}\n` : '';
+                        default:
+                            return inner;
+                    }
+                }
+
+                const raw = walk(rootEl);
+                return raw
+                    .replace(/\n{3,}/g, '\n\n')
+                    .replace(/【使用者自行輸入[：:]([^】]+)】/g, '`**【使用者自行輸入：$1】**`')
+                    .replace(/【使用者自行輸入】/g, '`**【使用者自行輸入】**`')
+                    .trim();
+            },
+
+            closeGoogleDocsGuide() {
+                const modal = document.getElementById('google-docs-guide-modal');
+                if (modal) modal.classList.add('hidden');
+                this.showToast('已複製履歷內容至剪貼簿！');
+            },
+
+            toggleGdocsGuidePreference(checked) {
+                if (checked) {
+                    localStorage.setItem('career_dna_hide_gdocs_guide', 'true');
+                } else {
+                    localStorage.removeItem('career_dna_hide_gdocs_guide');
+                }
+            },
+
+            resetOriginalResume() {
+                const resumeOutput = document.getElementById('resume-output');
+                if (!resumeOutput) return;
+
+                if (!this.originalGeneratedHtml && !this.originalResumeMarkdown) {
+                    this.showToast('目前尚無系統原始履歷可供還原！');
+                    return;
+                }
+
+                if (this.originalGeneratedHtml) {
+                    resumeOutput.innerHTML = this.originalGeneratedHtml;
+                } else if (this.originalResumeMarkdown) {
+                    const resumeHtml = this.parseMarkdownSafe(this.originalResumeMarkdown);
+                    resumeOutput.innerHTML = `<div class="resume-sheet font-body leading-relaxed" id="pdf-content">${resumeHtml}</div>`;
+                }
+
+                this.lastResumeMarkdown = this.originalResumeMarkdown || '';
+                this.isResumeEdited = false;
+
+                const indicator = document.getElementById('resume-edit-indicator');
+                if (indicator) indicator.classList.add('hidden');
+
+                this.showToast('已成功重設為系統原始履歷！');
             },
 
             renderResultUI(result) {
@@ -2256,6 +2598,24 @@
                             const rawMd = result.resumeMarkdown || this.generateDefaultResumeMarkdown(this.state.dept || 'IM', this.state.grade || '大三');
                             const resumeHtml = this.parseMarkdownSafe(rawMd);
                             resumeOutput.innerHTML = `<div class="resume-sheet font-body leading-relaxed" id="pdf-content">${resumeHtml}</div>`;
+                        }
+
+                        // Save pristine copies for resetOriginalResume
+                        this.originalGeneratedHtml = resumeOutput.innerHTML;
+                        this.originalResumeMarkdown = result.resumeMarkdown || '';
+                        this.lastResumeMarkdown = result.resumeMarkdown || '';
+                        this.isResumeEdited = false;
+                        const indicator = document.getElementById('resume-edit-indicator');
+                        if (indicator) indicator.classList.add('hidden');
+
+                        // Attach input event listener to track dynamic live edits
+                        if (!resumeOutput._hasEditListener) {
+                            resumeOutput._hasEditListener = true;
+                            resumeOutput.addEventListener('input', () => {
+                                const ind = document.getElementById('resume-edit-indicator');
+                                if (ind) ind.classList.remove('hidden');
+                                this.isResumeEdited = true;
+                            });
                         }
                     }
                 } catch (e) {
