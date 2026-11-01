@@ -550,7 +550,7 @@
                 <div class="space-y-3">
                     <button onclick="window.App.calculateAndGenerate()" id="generate-btn" class="hover-spring w-full py-4 bg-klein text-white border border-klein font-heading font-bold text-base uppercase tracking-wider flex items-center justify-center gap-3 group shadow-md hover:shadow-xl transition-all">
                         <i class="fa-solid fa-file-signature text-base group-hover:scale-110 transition-transform"></i>
-                        <span>🚀 立即產生專業 A4 履歷與戰力診斷報告</span>
+                        <span>履歷與修課建議</span>
                     </button>
                 </div>
 
@@ -1736,7 +1736,7 @@
                 const btn = document.getElementById('generate-btn');
                 if (btn && !isSilent) {
                     btn.disabled = true;
-                    btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-sm"></i> <span>A4 履歷生成與戰力診斷中...</span>`;
+                    btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-sm"></i> <span>正在分析修課並產生履歷...</span>`;
                 }
 
                 // Deterministic frontend rule-based generation (Render UI immediately so user never waits)
@@ -1764,7 +1764,7 @@
 
                     if (!isSilent) {
                         if (window.CareerDNAMotion) {
-                            window.CareerDNAMotion.showToast('A4 履歷與三軌戰力診斷報告已生成完畢', 'success');
+                            window.CareerDNAMotion.showToast('履歷與修課建議已產生完畢', 'success');
                         }
                         if (window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                             gsap.fromTo('#ai-result-panel .border, #resume-output .resume-sheet',
@@ -1792,7 +1792,7 @@
                 } finally {
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = `<i class="fa-solid fa-file-signature text-base group-hover:scale-110 transition-transform"></i> <span>🚀 立即產生專業 A4 履歷與戰力診斷報告</span>`;
+                        btn.innerHTML = `<i class="fa-solid fa-file-signature text-base group-hover:scale-110 transition-transform"></i> <span>履歷與修課建議</span>`;
                     }
                 }
 
@@ -2592,7 +2592,7 @@ ${innerHtml}
                 const btn = document.getElementById('generate-btn');
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-file-signature text-base group-hover:scale-110 transition-transform"></i> <span>🚀 立即產生專業 A4 履歷與戰力診斷報告</span>`;
+                    btn.innerHTML = `<i class="fa-solid fa-file-signature text-base group-hover:scale-110 transition-transform"></i> <span>履歷與修課建議</span>`;
                 }
             },
 
