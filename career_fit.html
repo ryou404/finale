@@ -552,7 +552,7 @@
                                 <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">儀表板</h3>
                             </div>
                             <div class="text-right">
-                                <span id="live-total-score" class="font-syne font-black text-4xl text-klein leading-none">0</span>
+                                <span id="live-total-score" class="font-syne font-black text-4xl text-klein leading-none">0</span><span class="font-mono text-sm font-bold text-klein/60 ml-1.5">/ 100 分</span>
                             </div>
                         </div>
 
@@ -561,7 +561,7 @@
                             <div class="border border-klein/10 p-3 bg-klein/[0.02]">
                                 <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
                                     <span>專業學程 (40%)</span>
-                                    <span><span id="live-prog-score">0</span> / 40</span>
+                                    <span><span id="live-prog-score">0</span> / 40 分</span>
                                 </div>
                                 <div class="w-full bg-klein/10 h-1.5">
                                     <div id="live-prog-bar" class="bg-klein h-1.5 transition-all duration-500" style="width: 0%"></div>
@@ -571,7 +571,7 @@
                             <div class="border border-klein/10 p-3 bg-klein/[0.02]">
                                 <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
                                     <span>實務課群 (40%)</span>
-                                    <span><span id="live-prac-score">0</span> / 40</span>
+                                    <span><span id="live-prac-score">0</span> / 40 分</span>
                                 </div>
                                 <div class="w-full bg-klein/10 h-1.5">
                                     <div id="live-prac-bar" class="bg-cobalt h-1.5 transition-all duration-500" style="width: 0%"></div>
@@ -581,7 +581,7 @@
                             <div class="border border-klein/10 p-3 bg-klein/[0.02]">
                                 <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
                                     <span>課外經歷 (20%)</span>
-                                    <span><span id="live-exp-score">0</span> / 20</span>
+                                    <span><span id="live-exp-score">0</span> / 20 分</span>
                                 </div>
                                 <div class="w-full bg-klein/10 h-1.5">
                                     <div id="live-exp-bar" class="bg-emerald-600 h-1.5 transition-all duration-500" style="width: 0%"></div>
@@ -603,7 +603,7 @@
                             </div>
                             <div>
                                 <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40"></span>
-                                <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">AI 職涯顧問導航報告</h3>
+                                <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">履歷診斷與修課建議</h3>
                             </div>
                         </div>
 
@@ -1513,13 +1513,8 @@
 
             renderPrograms(dataList, goalCredits) {
                 const requiredCourses = goalCredits / 3;
-                const recBanner = `
-                    <div class="mb-3 p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11px] font-mono flex items-center gap-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i>
-                        <span>已自動標記適合選修的課程：<strong class="text-emerald-800">🎯 UCAN推薦</strong>、<strong class="text-amber-800">🌱 大一/二奠基</strong>、<strong class="text-blue-800">💡 弱項補強</strong></span>
-                    </div>`;
 
-                document.getElementById('programs-container').innerHTML = recBanner + dataList.map(prog => `
+                document.getElementById('programs-container').innerHTML = dataList.map(prog => `
                     <div class="border border-klein/10 p-4 bg-white">
                         <div class="flex justify-between items-center mb-3">
                             <h3 class="font-heading font-black text-klein text-sm uppercase">${prog.name}</h3>
@@ -1670,7 +1665,7 @@
                     if (totalScore === 0) {
                         recText.innerText = "";
                     } else if (progScore < 20 && pracScore < 20) {
-                        recText.innerHTML = "💡 <strong>系統建議：</strong>學術地基尚待奠定！建議優先選修 1 個專業學程與 3 門實務課群（9 學分）。";
+                        recText.innerHTML = "💡 <strong>選課建議：</strong>目前學程進度較少，建議先挑選 1 個有興趣的專業學程與 3 門實務課程（共 9 學分）開始修讀。";
                     } else if (progScore < 20) {
                         recText.innerHTML = "📚 <strong>系統建議：</strong>專業學程進度偏低，建議集中修滿所屬學程的核心課程以取得認證！";
                     } else if (pracScore < 20) {
@@ -2388,7 +2383,7 @@ ${innerHtml}
                 // 1. Telemetry scorecard
                 html += `<div class="mb-6 p-5 border border-klein/15 bg-klein/[0.02] shadow-sm">${result.analysis}</div>`;
 
-                // 2. JD 對焦表 (Job Description Alignment Table)
+                // 2. 職缺條件比對表 (Job Requirements Alignment)
                 if (result.jdAlignment && result.jdAlignment.length > 0) {
                     const rows = result.jdAlignment.map(item => {
                         let statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 font-mono text-[10px] font-bold rounded">✖ 尚待補強缺口</span>';
@@ -2427,9 +2422,9 @@ ${innerHtml}
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-klein/10 pb-3 mb-4">
                                 <div>
                                     <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
-                                        <i class="fa-solid fa-crosshairs text-flame-orange"></i> JD 對焦表 (企業需求 ➔ 我的能力證據)
+                                        <i class="fa-solid fa-crosshairs text-flame-orange"></i> 職缺條件比對表
                                     </h4>
-                                    <p class="text-[11px] text-klein/60 font-body mt-0.5">將企業職缺要求翻譯為個人可驗證的課綱與專案證據，精準找出能力交集與缺口</p>
+                                    <p class="text-[11px] text-klein/60 font-body mt-0.5">對照目標職缺要求，看看自己有哪些課程與專案可以作為實力證明，並找出還能補強的地方。</p>
                                 </div>
                                 <span class="inline-block px-2.5 py-0.5 font-mono text-[11px] font-bold text-klein/70 bg-klein/5 border border-klein/10 self-start sm:self-auto">
                                     ${result.jdAlignment.length} 項對焦指標
@@ -2455,14 +2450,14 @@ ${innerHtml}
                     `;
                 }
 
-                // 3. 年級專屬補強路徑 (Action Items)
+                // 3. 各年級修課與準備建議 (Action Roadmap)
                 if (result.gapRecommendations && result.gapRecommendations.length > 0) {
                     html += `
                         <div class="border border-klein/15 p-5 md:p-6 bg-white shadow-sm mb-6">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-klein/10 pb-3 mb-4">
                                 <div>
                                     <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
-                                        <i class="fa-solid fa-graduation-cap text-klein"></i> 年級專屬補強路徑 (Action Roadmap)
+                                        <i class="fa-solid fa-graduation-cap text-klein"></i> 各年級修課與準備建議
                                     </h4>
                                     <p class="text-[11px] text-klein/60 font-body mt-0.5">依據在學年級（大一/二 打底、大三 專案/學程、大四 實習/作品集）量身打造</p>
                                 </div>
