@@ -11,6 +11,8 @@
     "test": "node test_orchestration.js",
     "test:resume": "node --test tests/resume/knowledge.test.js",
     "test:pipeline": "node test_orchestration.js",
+    "test:brand": "node --test \"tests/brand/*.test.js\"",
+    "check:links": "node scripts/check_links.js",
     "test:e2e": "node tests/e2e/run_e2e_tests.js"
   },
   "keywords": [

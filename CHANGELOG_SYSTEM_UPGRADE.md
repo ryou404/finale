@@ -1,7 +1,7 @@
 ﻿# CareerDNA - 系統全面升級與功能演進手冊 (System Upgrade & Changelog)
 
-**版本 (Version)**: 2.2.0  
-**更新日期 (Date)**: 2026/08/29  
+**版本 (Version)**: 2.3.0  
+**更新日期 (Date)**: 2026/11/03  
 **團隊 (Author)**: CareerDNA 研發工程團隊 (CareerDNA Engineering Team)  
 
 ---
@@ -18,6 +18,7 @@
 9. [後端 API 端點完整清單 (Complete API Endpoints)](#9-後端-api-端點完整清單-complete-api-endpoints)
 10. [變更檔案總覽清單 (File Structure & Changes Summary)](#10-變更檔案總覽清單-file-structure--changes-summary)
 11. [環境配置與啟動指南 (Setup & Deployment Guide)](#11-環境配置與啟動指南-setup--deployment-guide)
+12. [個人品牌與系所推薦全面改用 UCAN 數據 (2026/11/03)](#12-個人品牌與系所推薦全面改用-ucan-數據-20261103)
 
 ---
 
@@ -197,6 +198,13 @@
 | `src/services/emailService.js` | **新增** | Gmail SMTP 2FA OTP 郵件發送服務 |
 | `src/db/connection.js` | **新增** | Mongoose MongoDB Atlas 連線與重連機制 |
 | `src/db/models/OtpToken.js` | **新增** | 10 分鐘自動物理過期 (TTL Index) 驗證碼模型 |
+| `static/ucan-parser.js` | **新增** | 解析 3 份 UCAN PDF 文字（Holland、16 職涯類型、8 項共通職能、專業職能逐項 PR），缺的報告不補預設值 |
+| `static/brand-knowledge.js` | **新增** | 人工整理的知識庫：13 個職務的 30/60/90 劇本、共通職能補強任務、台灣人物連結、名詞辭典、UCAN 官方職能說明 |
+| `static/brand-engine.js` | **新增** | 可解釋的規則引擎：職務推薦、行動計畫、社群策略、系所推薦與依據 |
+| `brand_test.html` | **修改** | 移除假資料與舊 DATA；新增「選擇未來目標」、「為什麼推薦」、UCAN 官方說明；修正雲端同步 |
+| `lab_recommendation.html` | **修改** | 移除 6 題自編情境題，改用 UCAN 數據推薦系所並列出依據 |
+| `src/db/models/User.js`、`src/db/models/LegacyResults.js`、`src/routes/apiRoutes.js` | **修改** | 品牌結果新增 `ucanProfile`、`goalRoleId`、`goalRoleTitle`、`kbVersion` |
+| `tests/brand/`、`scripts/check_links.js`、`docs/BRAND_DEFENSE_QA.md` | **新增** | 24 項測試（匿名化範例）、人物/平台連結檢查、口試問答備忘 |
 
 ---
 
@@ -238,3 +246,37 @@ node src/index.js
 - 科系與實驗室適配 (Lab Recommendation): [http://localhost:3001/lab_recommendation.html](http://localhost:3001/lab_recommendation.html)
 - 學習資源庫 (Resource Library): [http://localhost:3001/resource_library.html](http://localhost:3001/resource_library.html)
 - 管理後台 (Admin Panel): [http://localhost:3001/admin.html](http://localhost:3001/admin.html)
+
+---
+
+## 12. 個人品牌與系所推薦全面改用 UCAN 數據 (2026/11/03)
+
+### 12.1. 背景
+上次口試委員質疑自編 30 題問卷缺乏學術依據、容易有 AI 幻覺。本次改為全面採用教育部 **UCAN** 三份官方診斷報告（職業興趣探索、職場共通職能、專業職能診斷），並把「深度」落在 **精準度** 與 **落地性**。
+
+### 12.2. 主要變更
+1. **移除所有非 UCAN 的資料**：刪除舊版 `submitUCAN()` 自動補假分數、`+'IE'` 硬湊 Holland 代碼與各種預設值；缺少報告時明確提示，不補任何數字。
+2. **更完整的 UCAN 解析** (`static/ucan-parser.js`)：新增 16 職涯類型分數與 PR、興趣最高類型、專業職能逐項 PR，並處理 PDF 分頁造成的重複列。使用 pdf.js 實際輸出格式驗證 3 份報告。
+3. **依「未來目標」產生專屬 30/60/90 天計畫**：UCAN 推薦 3 個目標（或自選，共 13 個職務）；每個任務含「做什麼、成果、時間、完成標準」；偏低的共通職能（PR < 34）與專業職能最低項目自動加入補強任務並標示來自哪個 UCAN 數字，同一個 Holland 字母也會得到不同計畫。
+4. **UCAN 官方說明**：補強項目旁顯示 UCAN「職場共通職能查詢」公開頁面的主要指標、相關知識技能與相關活動（2026-11-03 擷取，附來源連結）。
+5. **社群策略 + 值得參考的人**：每個職務 2–3 位台灣經營者或社群，附可點擊連結與「可以學什麼」；連結已逐一確認，可用 `npm run check:links` 重新檢查。UI/UX 領域目前為設計社群與 Behance 搜尋入口，待團隊補入個人設計師。
+6. **可解釋性**：新增「為什麼是這個目標」面板（各項依據對應 UCAN 數字與權重）與名詞小辭典（Figma、Prototype、Behance、Case Study 等）。權重為本專案依 Holland 人境適配理論設定，非 UCAN 官方公式，報告已標註。
+7. **系所推薦改用 UCAN** (`lab_recommendation.html`)：依 Holland、職涯類型興趣、專業職能與共通職能推薦資工／資管／人工智慧系，並列出依據；可上傳 PDF 或沿用品牌測驗已匯入的資料。
+8. **修正雲端同步**：前端原本呼叫不存在的 `saveBrandData / getBrandData`，改為 `saveBrandResult / getBrandResult`；後端保存 `ucanProfile`（完整 UCAN 資料）、`goalRoleId`、`goalRoleTitle`、`kbVersion`。舊版（非 `schemaVersion: 2`）紀錄不再載入。
+
+### 12.3. 隱私與安全
+- 含真實姓名與學號的 3 份 UCAN PDF 已移出版本控制（`git rm --cached`），`.gitignore` 新增 `/UCAN/`；測試改用匿名化的文字範例（`tests/brand/fixtures/`）。**注意：Git 歷史紀錄仍可能含有舊檔案。**
+- PDF 只在使用者瀏覽器內解析，不上傳；登入後才儲存解析後的數字。
+
+### 12.4. 測試與維護
+```bash
+npm run test:brand     # 解析器與規則引擎 (24 項)
+npm run check:links    # 檢查人物 / 平台連結是否仍可開啟
+```
+- 新增名詞、平台或人物時，先在 `static/brand-knowledge.js` 補齊 glossary 與 `verifiedAt`（測試會檢查）；沒把握的人物標 `needsTeamReview`。
+- 目前待確認：`ggelis` 部落格、`羽毛的電玩新手村` 的內容；Harris 先生、羽毛的電玩新手村與 Behance 搜尋會擋機器人，需用瀏覽器手動確認。
+
+### 12.5. 已知限制
+- 契合度權重與各系所對 Holland 類型的對應強度為啟發式設定，尚未做實證驗證。
+- 13 個職務之外的就業途徑，以最接近的職務推薦。
+- `src/config.js` 仍有預設 API Key 字串（待輪替並改由 `.env` 讀取），本次未處理。

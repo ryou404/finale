@@ -88,3 +88,6 @@ impeccable/
 /merged_sample.txt
 /scripts/generate_star_history.py
 scripts/__pycache__/
+
+# UCAN 個人診斷報告含真實姓名與學號，請勿提交 (測試改用 tests/brand/fixtures 的匿名化文字)
+/UCAN/

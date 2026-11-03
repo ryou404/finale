@@ -13,6 +13,11 @@ const BrandTestResultSchema = new mongoose.Schema({
   topStrengths: [{ type: mongoose.Schema.Types.Mixed }],
   radarData: [{ type: Number }],
   resumeDraft: { type: String, default: '' },
+  // UCAN 官方數據 (v2)
+  ucanProfile: { type: mongoose.Schema.Types.Mixed, default: null },
+  goalRoleId: { type: String, default: '' },
+  goalRoleTitle: { type: String, default: '' },
+  kbVersion: { type: String, default: '' },
   answers: { type: mongoose.Schema.Types.Mixed, default: {} },
   completedAt: { type: Date, default: Date.now }
 }, {

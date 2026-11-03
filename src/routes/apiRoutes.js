@@ -140,7 +140,7 @@ router.post('/auth/login', async (req, res) => {
 router.post('/auth/register-request', async (req, res) => {
   try {
     const { username, password, email, name, school, department, grade } = req.body || {};
-    
+
     if (!name || !name.trim()) {
       return res.status(400).json({ status: 'error', message: '請輸入姓名 / 暱稱' });
     }
@@ -210,7 +210,7 @@ router.post('/auth/register-request', async (req, res) => {
       console.info(`🔑 ==========================================`);
       console.info(`🔑 [RENDER OTP VERIFICATION CODE]: ${otpCode} for ${targetEmail}`);
       console.info(`🔑 ==========================================`);
-      
+
       res.json({
         status: 'ok',
         isSimulated: true,
@@ -537,7 +537,7 @@ router.put('/users/:uid/profile', async (req, res) => {
   try {
     const { uid } = req.params;
     const { name, displayName, school, department, dept, grade, skills, settings } = req.body || {};
-    
+
     const updateFields = {};
     if (name !== undefined) updateFields.name = name;
     if (displayName !== undefined) updateFields.displayName = displayName;
@@ -550,12 +550,14 @@ router.put('/users/:uid/profile', async (req, res) => {
     updateFields.updatedAt = new Date();
 
     const user = await User.findOneAndUpdate(
-      { $or: [
-        { uid }, 
-        { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null },
-        { email: uid },
-        { username: uid }
-      ] },
+      {
+        $or: [
+          { uid },
+          { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null },
+          { email: uid },
+          { username: uid }
+        ]
+      },
       { $set: updateFields },
       { returnDocument: 'after', upsert: true }
     );
@@ -584,7 +586,11 @@ router.post('/users/:uid/brand', async (req, res) => {
       topStrengths: Array.isArray(brandData.topStrengths) ? brandData.topStrengths : [],
       radarData: Array.isArray(brandData.radarData) ? brandData.radarData : [],
       hollandScores: brandData.hollandScores || [],
-      ucan: brandData.ucan || ''
+      ucan: brandData.ucan || '',
+      ucanProfile: brandData.ucanProfile || null,
+      goalRoleId: brandData.goalRoleId || '',
+      goalRoleTitle: brandData.goalRoleTitle || '',
+      kbVersion: brandData.kbVersion || ''
     };
 
     // 1. Create record in dedicated brand_test_results collection
@@ -598,6 +604,10 @@ router.post('/users/:uid/brand', async (req, res) => {
       topStrengths: snapshot.topStrengths,
       radarData: snapshot.radarData,
       resumeDraft: brandData.resumeDraft || '',
+      ucanProfile: snapshot.ucanProfile,
+      goalRoleId: snapshot.goalRoleId,
+      goalRoleTitle: snapshot.goalRoleTitle,
+      kbVersion: snapshot.kbVersion,
       answers: brandData.answers || {}
     });
 
@@ -636,7 +646,7 @@ router.get('/users/:uid/brand', async (req, res) => {
     const { uid } = req.params;
     const user = await findUserFlexible(uid);
     let latestBrand = user?.brand_results?.latest || null;
-    
+
     if (!latestBrand || !latestBrand.topHollandCode) {
       // Fallback to query brand_test_results
       const legacyDoc = await BrandTestResult.findOne({ userId: uid }).sort({ createdAt: -1 });
@@ -716,7 +726,7 @@ router.post('/users/:uid/resume', async (req, res) => {
     const lastHistoryItem = user.history_resume.length > 0 ? user.history_resume[user.history_resume.length - 1] : null;
     const nowTime = new Date(updatedAtStr).getTime();
     const lastTime = lastHistoryItem?.updatedAt ? new Date(lastHistoryItem.updatedAt).getTime() : 0;
-    
+
     // If last history entry was added within 15 seconds, replace it to prevent duplicates
     if (lastHistoryItem && Math.abs(nowTime - lastTime) < 15000) {
       user.history_resume[user.history_resume.length - 1] = snapshot;
@@ -839,7 +849,7 @@ router.get('/professors', async (req, res) => {
     const { dept } = req.query;
     const filter = dept ? { department: dept.toUpperCase() } : {};
     let professors = await Professor.find(filter);
-    
+
     // Auto-seed if collection is empty
     if (professors.length === 0 && !dept) {
       const defaultProfessors = [
@@ -876,7 +886,7 @@ router.get('/professors', async (req, res) => {
       ];
       professors = await Professor.insertMany(defaultProfessors);
     }
-    
+
     res.json({ status: 'ok', count: professors.length, professors });
   } catch (err) {
     console.error('[API /professors error]:', err);
@@ -895,7 +905,7 @@ router.post('/users/:uid/avatar', upload.single('avatar'), async (req, res) => {
     }
 
     const { key, url } = await uploadAvatarToR2(req.file.buffer, req.file.mimetype, uid, req.file.originalname);
-    
+
     // Update User in MongoDB Atlas
     let user = await User.findOneAndUpdate(
       { $or: [{ uid }, { username: uid }, { email: uid }] },
@@ -931,7 +941,7 @@ router.get('/r2/file/*', async (req, res) => {
     if (contentType) res.setHeader('Content-Type', contentType);
     if (contentLength) res.setHeader('Content-Length', contentLength);
     res.setHeader('Cache-Control', 'public, max-age=31536000');
-    
+
     if (body.pipe) {
       body.pipe(res);
     } else {
