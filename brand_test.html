@@ -834,16 +834,22 @@
                 if (btnLast) btnLast.classList.remove('hidden');
                 return true;
             };
-            try {
-                if (typeof db !== 'undefined' && uid) {
+            // 1) Firebase 登入者：讀 Firestore (沒有 Firebase 登入或權限不足就略過，不影響下一步)
+            if (currentUser && typeof db !== 'undefined' && uid) {
+                try {
                     const docSnap = await getDoc(doc(db, "users", uid, "brand_results", "latest"));
                     if (docSnap.exists() && accept(docSnap.data())) return;
-                }
-                if (window.CareerDNA_DB && uid) {
-                    const res = await window.CareerDNA_DB.getBrandResult(uid);
+                } catch (e) { console.warn("Firestore 讀取略過：", e.code || e.message); }
+            }
+            // 2) 站內帳號 (MongoDB)：讀後端
+            if (window.CareerDNA_DB) {
+                try {
+                    const mongoUid = window.CareerDNA_DB.getEffectiveUid(currentUser) || uid;
+                    if (!mongoUid) return;
+                    const res = await window.CareerDNA_DB.getBrandResult(mongoUid);
                     if (res && res.brand) accept(res.brand.ucanProfile);
-                }
-            } catch (e) { console.error("Error fetching last report:", e); }
+                } catch (e) { console.warn("後端讀取略過：", e.message || e); }
+            }
         }
 
         onAuthStateChanged(auth, async (user) => {
@@ -1615,7 +1621,7 @@
 
                 const printContainer = document.createElement('div');
                 printContainer.id = 'print-a4-temp-container';
-                printContainer.style.position = 'absolute';
+                printContainer.style.position = 'relative'; // 不可用 absolute：html2pdf 會複製節點，absolute 會讓容器高度變 0 而輸出空白 PDF
                 printContainer.style.top = '0';
                 printContainer.style.left = '0';
                 printContainer.style.width = '1024px'; // Force lg breakpoint for tailwind
@@ -1629,7 +1635,7 @@
                 clone.querySelectorAll('details').forEach(d => d.setAttribute('open', ''));
 
                 printContainer.appendChild(clone);
-                document.body.appendChild(printContainer);
+                // 不需要把 printContainer 加進頁面：html2pdf 會自行複製並渲染，避免畫面閃動
 
                 const opt = {
                     margin: [0.3, 0, 0.3, 0],
