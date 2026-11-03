@@ -36,7 +36,7 @@ const ResumeSnapshotSchema = new mongoose.Schema({
   targetRole: { type: String, default: '' },
   rawDraft: { type: String, default: '' },
   analysis: { type: String, default: '' },
-  actionItems: [{ type: String }],
+  actionItems: [{ type: mongoose.Schema.Types.Mixed }], // 履歷健檢可能回傳字串或物件 (priority / advice / targetCourses)
   formattedResumeMarkdown: { type: String, default: '' },
   cvData: { type: mongoose.Schema.Types.Mixed, default: {} },
   updatedAt: { type: String, default: () => new Date().toISOString() }
