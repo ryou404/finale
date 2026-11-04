@@ -270,6 +270,13 @@ node src/index.js
 - 「名詞小辭典」改名為「**必備工具和概念說明**」，並改為整列寬度、兩欄排版；內容不變。
 - 測試新增職務與系所對應檢查（共 25 項）。
 
+### 12.2.2. 2026/11/04 修正 iPad / App 內建瀏覽器無法下載 PDF
+- 回報：在 Render 上用 iPad 的 Messenger 內建瀏覽器按「下載完整報告 (PDF)」匯不出來。伺服器端沒有問題（桌機 Chrome 實測可下載 2.5MB PDF），原因在裝置端：
+  1. App 內建瀏覽器 (WebView) 常常不支援 `<a download>` 的檔案下載。
+  2. iOS 的 canvas 面積上限約 1677 萬像素，報告變長後 scale 2 會超過而失敗。
+- 修正：依報告高度自動降低 PDF 解析度 (iOS / App 內建瀏覽器約 scale 1.4，桌機維持 2)；iOS 與 App 內建瀏覽器改用系統「分享 / 儲存到檔案」(`navigator.share`)，若瀏覽器因產生時間過長而拒絕，顯示「分享 / 儲存」與「在新分頁開啟 PDF」按鈕（每個按鈕都是新的使用者點擊）；偵測到 Messenger / Facebook / Instagram / LINE 等內建瀏覽器時，於報告頂端提示改用 Safari / Chrome 開啟；產生的 PDF 若為空白會明確報錯。
+- 驗證：桌機 Chrome 下載正常；以 iPad + Messenger UA 模擬，share() 收到 1.5MB 的有效 PDF；share 被拒時 fallback 面板可用。真實 iOS 裝置仍建議實測一次。
+
 ### 12.3. 隱私與安全
 - 含真實姓名與學號的 3 份 UCAN PDF 已移出版本控制（`git rm --cached`），`.gitignore` 新增 `/UCAN/`；測試改用匿名化的文字範例（`tests/brand/fixtures/`）。**注意：Git 歷史紀錄仍可能含有舊檔案。**
 - PDF 只在使用者瀏覽器內解析，不上傳；登入後才儲存解析後的數字。

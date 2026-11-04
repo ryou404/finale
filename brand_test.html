@@ -593,6 +593,8 @@
     <div id="view-result"
         class="hidden min-h-screen bg-white text-klein py-8 px-6 md:px-12 selection:bg-klein selection:text-white">
 
+        <div id="inapp-warning" class="hidden no-print max-w-[1400px] mx-auto mb-4 text-xs font-body text-amber-900 bg-amber-50 border border-amber-300 px-4 py-3 leading-relaxed"></div>
+
         <!-- Top Action Bar (no-print) -->
         <div
             class="max-w-[1400px] mx-auto mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print border-b border-klein/10 pb-6">
@@ -1298,6 +1300,7 @@
 
             renderReport(profile, roleId) {
                 const plan = BE.buildPlan(profile, roleId);
+                this.showInAppWarning();
                 const social = BE.buildSocial(profile, roleId);
                 const role = BE.getRole(roleId);
                 const ranked = BE.rankRoles(profile);
@@ -1587,11 +1590,87 @@
                 }
             },
 
+            /** 是否為 iOS / iPadOS (含偽裝成 Mac 的 iPad) */
+            isIOS() {
+                return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            },
+
+            /** 是否在 Messenger / Facebook / Instagram / LINE 等 App 內建瀏覽器 (這類瀏覽器常常無法下載檔案) */
+            isInAppBrowser() {
+                return /FBAN|FBAV|FB_IAB|Messenger|Instagram|\bLine\/|MicroMessenger|Zalo|TikTok|Snapchat/i.test(navigator.userAgent);
+            },
+
+            showInAppWarning() {
+                const el = document.getElementById('inapp-warning');
+                if (!el || !this.isInAppBrowser()) return;
+                el.classList.remove('hidden');
+                el.innerHTML = '<b>你正在 App 內建瀏覽器 (如 Messenger / Facebook / LINE) 中開啟。</b>這類瀏覽器常常無法下載 PDF。建議點右上角「⋯」→「在 Safari / Chrome 中開啟」，再按「下載完整報告」。';
+            },
+
+            /** 把 PDF 交給使用者：桌機直接下載；iOS / App 內建瀏覽器改用「分享」或「開啟」，避免下載被擋 */
+            async deliverPdf(blob, filename) {
+                const useShare = this.isIOS() || this.isInAppBrowser();
+                if (useShare) {
+                    try {
+                        const file = new File([blob], filename, { type: 'application/pdf' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({ files: [file], title: filename });
+                            return 'shared';
+                        }
+                    } catch (e) {
+                        if (e && e.name === 'AbortError') return 'cancelled';
+                        // 產生 PDF 花了幾秒，瀏覽器可能已不認為這是使用者操作 → 改顯示按鈕，讓使用者再點一次
+                    }
+                    this.showPdfFallback(blob, filename);
+                    return 'fallback';
+                }
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = filename; a.style.display = 'none';
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 60000);
+                return 'saved';
+            },
+
+            /** 自動分享失敗時顯示的底部面板：每個按鈕都是一次新的使用者點擊，iOS 才允許開啟 / 分享 */
+            showPdfFallback(blob, filename) {
+                const old = document.getElementById('pdf-fallback'); if (old) old.remove();
+                const url = URL.createObjectURL(blob);
+                const box = document.createElement('div');
+                box.id = 'pdf-fallback';
+                box.className = 'fixed inset-x-0 bottom-0 z-[200] bg-white border-t-2 border-klein shadow-2xl p-5 no-print';
+                box.innerHTML = `
+                    <div class="max-w-xl mx-auto">
+                        <div class="font-heading font-black text-klein text-lg mb-1">PDF 已產生</div>
+                        <p class="text-xs font-body text-klein/70 mb-4">請選一種方式取得檔案。若點了沒反應，請改用 Safari / Chrome 開啟本頁。</p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button id="pdf-share-btn" class="flex-1 px-5 py-3 bg-klein text-white font-bold text-sm">分享 / 儲存到「檔案」</button>
+                            <a href="${url}" target="_blank" rel="noopener" class="flex-1 px-5 py-3 border border-klein text-klein font-bold text-sm text-center">在新分頁開啟 PDF</a>
+                            <button id="pdf-close-btn" class="px-5 py-3 border border-klein/20 text-klein/70 text-sm">關閉</button>
+                        </div>
+                    </div>`;
+                document.body.appendChild(box);
+                document.getElementById('pdf-close-btn').onclick = () => { box.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000); };
+                document.getElementById('pdf-share-btn').onclick = async () => {
+                    try {
+                        const file = new File([blob], filename, { type: 'application/pdf' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: filename });
+                        else window.open(url, '_blank');
+                    } catch (e) { if (!e || e.name !== 'AbortError') window.open(url, '_blank'); }
+                };
+            },
+
             downloadPDF() {
                 const element = document.getElementById('report-container');
                 if (!element) return;
 
                 const btn = document.getElementById('btn-export-pdf');
+                const resetBtn = () => {
+                    if (!btn) return;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> 下載完整報告 (PDF)';
+                    btn.classList.remove('opacity-70', 'cursor-not-allowed', '!bg-green-600', '!border-green-600');
+                };
                 if (btn) {
                     btn.disabled = true;
                     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 產生中...';
@@ -1619,41 +1698,45 @@
                 printContainer.appendChild(clone);
                 // 不需要把 printContainer 加進頁面：html2pdf 會自行複製並渲染，避免畫面閃動
 
+                // iOS Safari 的 canvas 面積上限約 1677 萬像素：報告很長時 scale 2 會超過而失敗 (iPad 上匯不出來)。
+                // 依內容高度自動降低解析度，把總像素控制在安全範圍內。
+                const approxHeight = Math.max(element.scrollHeight, 3000) + 60;
+                const pixelBudget = this.isIOS() || this.isInAppBrowser() ? 11000000 : 40000000;
+                const scale = Math.max(1, Math.min(2, Math.sqrt(pixelBudget / (1024 * approxHeight))));
+
                 const opt = {
                     margin: [0.3, 0, 0.3, 0],
                     filename: 'CareerDNA_UCAN_Brand_Report.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, scrollX: 0, windowWidth: 1024 },
+                    image: { type: 'jpeg', quality: 0.92 },
+                    html2canvas: { scale, useCORS: true, logging: false, scrollY: 0, scrollX: 0, windowWidth: 1024 },
                     jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
                 };
 
-                html2pdf().set(opt).from(printContainer).save().then(() => {
-                    if (document.body.contains(printContainer)) document.body.removeChild(printContainer);
+                const toastMsg = (html, ok) => {
+                    const toast = document.createElement('div');
+                    toast.className = (ok ? 'bg-green-600' : 'bg-amber-600') + ' rounded-lg text-white px-5 py-3 shadow-2xl flex items-center gap-3 transition-all duration-500 pointer-events-auto transform translate-y-0 opacity-100 font-body text-sm font-medium';
+                    toast.innerHTML = html;
+                    document.getElementById('toast-container').appendChild(toast);
+                    setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-2'); setTimeout(() => toast.remove(), 500); }, 5000);
+                };
+
+                html2pdf().set(opt).from(printContainer).outputPdf('blob').then(async blob => {
                     window.scrollTo(0, scrollY);
+                    if (!blob || blob.size < 20000) throw new Error('產生的 PDF 內容為空 (可能是裝置記憶體不足)，請改用電腦或 Safari / Chrome 再試。');
+                    const how = await this.deliverPdf(blob, opt.filename);
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = '<i class="fa-solid fa-check"></i> 匯出成功';
+                        btn.innerHTML = '<i class="fa-solid fa-check"></i> ' + (how === 'fallback' ? 'PDF 已產生' : '匯出成功');
                         btn.classList.remove('opacity-70', 'cursor-not-allowed');
                         btn.classList.add('!bg-green-600', '!border-green-600');
-                        setTimeout(() => {
-                            btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> 下載完整報告 (PDF)';
-                            btn.classList.remove('!bg-green-600', '!border-green-600');
-                        }, 3000);
+                        setTimeout(resetBtn, 3000);
                     }
-                    const toast = document.createElement('div');
-                    toast.className = 'bg-green-600 rounded-lg text-white px-5 py-3 shadow-2xl flex items-center gap-3 transition-all duration-500 pointer-events-auto transform translate-y-0 opacity-100 font-body text-sm font-medium';
-                    toast.innerHTML = '<i class="fa-solid fa-circle-check text-lg"></i> 已成功匯出品牌定位報告';
-                    document.getElementById('toast-container').appendChild(toast);
-                    setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-2'); setTimeout(() => toast.remove(), 500); }, 4000);
+                    if (how === 'saved' || how === 'shared') toastMsg('<i class="fa-solid fa-circle-check text-lg"></i> 已成功匯出品牌定位報告', true);
                 }).catch(err => {
                     window.scrollTo(0, scrollY);
-                    if (document.body.contains(printContainer)) document.body.removeChild(printContainer);
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> 下載完整報告 (PDF)';
-                        btn.classList.remove('opacity-70', 'cursor-not-allowed');
-                    }
-                    alert('PDF 匯出失敗：' + (err.message || err));
+                    resetBtn();
+                    toastMsg('<i class="fa-solid fa-triangle-exclamation text-lg"></i> PDF 匯出失敗：' + (err.message || err), false);
+                    alert('PDF 匯出失敗：' + (err.message || err) + (this.isInAppBrowser() ? '\n\n你正在 App 內建瀏覽器中，請改用 Safari / Chrome 開啟本頁再試。' : ''));
                 });
             },
 
