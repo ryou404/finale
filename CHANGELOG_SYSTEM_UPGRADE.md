@@ -1,7 +1,7 @@
 ﻿# CareerDNA - 系統全面升級與功能演進手冊 (System Upgrade & Changelog)
 
 **版本 (Version)**: 2.3.0  
-**更新日期 (Date)**: 2026/11/03  
+**更新日期 (Date)**: 2026/11/04  
 **團隊 (Author)**: CareerDNA 研發工程團隊 (CareerDNA Engineering Team)  
 
 ---
@@ -260,9 +260,15 @@ node src/index.js
 3. **依「未來目標」產生專屬 30/60/90 天計畫**：UCAN 推薦 3 個目標（或自選，共 13 個職務）；每個任務含「做什麼、成果、時間、完成標準」；偏低的共通職能（PR < 34）與專業職能最低項目自動加入補強任務並標示來自哪個 UCAN 數字，同一個 Holland 字母也會得到不同計畫。
 4. **UCAN 官方說明**：補強項目旁顯示 UCAN「職場共通職能查詢」公開頁面的主要指標、相關知識技能與相關活動（2026-11-03 擷取，附來源連結）。
 5. **社群策略 + 值得參考的人**：每個職務 2–3 位台灣經營者或社群，附可點擊連結與「可以學什麼」；連結已逐一確認，可用 `npm run check:links` 重新檢查。UI/UX 領域目前為設計社群與 Behance 搜尋入口，待團隊補入個人設計師。
-6. **可解釋性**：新增「為什麼是這個目標」面板（各項依據對應 UCAN 數字與權重）與名詞小辭典（Figma、Prototype、Behance、Case Study 等）。權重為本專案依 Holland 人境適配理論設定，非 UCAN 官方公式，報告已標註。
+6. **可解釋性**：新增「為什麼是這個目標」面板（各項依據對應 UCAN 數字與權重）與「必備工具和概念說明」（Figma、Prototype、Behance、Case Study 等）。權重為本專案依 Holland 人境適配理論設定，非 UCAN 官方公式，報告已標註。
 7. **系所推薦改用 UCAN** (`lab_recommendation.html`)：依 Holland、職涯類型興趣、專業職能與共通職能推薦資工／資管／人工智慧系，並列出依據；可上傳 PDF 或沿用品牌測驗已匯入的資料。
 8. **修正雲端同步**：前端原本呼叫不存在的 `saveBrandData / getBrandData`，改為 `saveBrandResult / getBrandResult`；後端保存 `ucanProfile`（完整 UCAN 資料）、`goalRoleId`、`goalRoleTitle`、`kbVersion`。舊版（非 `schemaVersion: 2`）紀錄不再載入。
+
+### 12.2.1. 2026/11/04 依回饋調整
+- 報告在目標職務後加入「**對應靜宜大學資訊系所**」（例如 UI/UX 設計師 → 資訊管理學系為主、人工智慧學系可跨修；資安工程師 → 資訊工程學系），點系名可前往該系必修課；目標選擇卡片也同步顯示。對應關係寫在 `brand-knowledge.js` 各職務的 `match.depts`（第一個為主要），僅供參考，非學校官方分發依據。
+- **移除「履歷定位草稿」**（頁面區塊、產生程式與知識庫中的 `resume` 範本文字）。
+- 「名詞小辭典」改名為「**必備工具和概念說明**」，並改為整列寬度、兩欄排版；內容不變。
+- 測試新增職務與系所對應檢查（共 25 項）。
 
 ### 12.3. 隱私與安全
 - 含真實姓名與學號的 3 份 UCAN PDF 已移出版本控制（`git rm --cached`），`.gitignore` 新增 `/UCAN/`；測試改用匿名化的文字範例（`tests/brand/fixtures/`）。**注意：Git 歷史紀錄仍可能含有舊檔案。**
@@ -270,7 +276,7 @@ node src/index.js
 
 ### 12.4. 測試與維護
 ```bash
-npm run test:brand     # 解析器與規則引擎 (24 項)
+npm run test:brand     # 解析器與規則引擎 (25 項)
 npm run check:links    # 檢查人物 / 平台連結是否仍可開啟
 ```
 - 新增名詞、平台或人物時，先在 `static/brand-knowledge.js` 補齊 glossary 與 `verifiedAt`（測試會檢查）；沒把握的人物標 `needsTeamReview`。

@@ -61,7 +61,8 @@ test('KB: each role is complete (3 phases, 3+ concrete tasks, 2-3 creators, vali
         assert.ok(r.platform.cadence.length >= 2 && r.platform.postIdeas.length >= 3 && r.platform.bio.includes('{dept}'));
         r.match.holland.forEach(k => assert.ok('RIASEC'.includes(k)));
         r.focus.forEach(k => assert.ok(P.COMMON_KEYS.includes(k), `${r.id} focus ${k}`));
-        assert.ok(r.resume);
+        assert.ok(r.match.depts.length >= 1 && r.match.depts.every(d => ['CS', 'IM', 'AI'].includes(d)), `${r.id} depts`);
+        assert.equal(r.resume, undefined, 'resume draft was removed from the product');
     });
 });
 
@@ -182,3 +183,15 @@ test('plan: each prioritised weak competency carries its UCAN official reference
     assert.ok(plan.gaps[0].ref.activities.some(a => a.includes('簡報')) );
     assert.equal(plan.refSource.url, KB.UCAN_REF_URL);
 });
+
+test('each role maps to the corresponding Providence University IT department(s), first one is primary', () => {
+    const ux = E.departmentsFor('ui-ux');
+    assert.deepEqual(ux.map(d => d.name), ['資訊管理學系', '人工智慧學系']);
+    assert.deepEqual(ux.map(d => d.primary), [true, false]);
+    assert.equal(E.departmentsFor('security')[0].name, '資訊工程學系');
+    assert.equal(E.departmentsFor('pm')[0].name, '資訊管理學系');
+    assert.equal(E.departmentsFor('ai-ml')[0].name, '人工智慧學系');
+    assert.deepEqual(E.departmentsFor('nope'), []);
+    assert.equal(E.buildPlan(designer, 'ui-ux').depts[0].key, 'IM');
+});
+

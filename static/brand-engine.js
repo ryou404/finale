@@ -148,6 +148,7 @@
             fitScore: ranked.score,
             reasons: ranked.parts,
             phases,
+            depts: departmentsFor(roleId),
             gaps: picked.map(g => Object.assign({}, g, { ref: KB.ucanRef[g.name] || null })),
             refSource: { url: KB.UCAN_REF_URL, fetchedAt: KB.UCAN_REF_FETCHED },
             otherWeak: weak.slice(maxGaps),
@@ -178,6 +179,16 @@
             tips,
             creators: role.creators.map(id => Object.assign({ id }, KB.creators[id]))
         };
+    }
+
+    /* ---------------- 對應的靜宜資訊系所 ---------------- */
+    const DEPT_SHORT = { CS: '資訊工程學系', IM: '資訊管理學系', AI: '人工智慧學系' };
+
+    /** 職務對應的靜宜大學資訊系所 (依 brand-knowledge 的 match.depts 排序，第一個為主要) */
+    function departmentsFor(roleId) {
+        const role = getRole(roleId);
+        if (!role) return [];
+        return role.match.depts.map((key, i) => ({ key, name: DEPT_SHORT[key], primary: i === 0 }));
     }
 
     /* ---------------- 名詞辭典 ---------------- */
@@ -268,7 +279,7 @@
 
     return {
         WEAK_PR, DEPTS, getRole, shortDept,
-        rankRoles, suggestRoles, buildPlan, buildSocial, glossaryFor,
+        rankRoles, suggestRoles, buildPlan, buildSocial, glossaryFor, departmentsFor,
         findWeakCommon, findStrengths, recommendDepartments
     };
 });

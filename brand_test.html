@@ -658,6 +658,7 @@
                         <div id="best-dept"
                             class="font-heading font-black text-3xl md:text-5xl tracking-tight text-klein">分析中...</div>
                         <div id="best-dept-en" class="font-mono text-sm text-klein/50 mt-1"></div>
+                        <div id="role-depts" class="mt-4"></div>
                         <div id="archetype-desc"
                             class="font-body text-base md:text-lg text-klein/70 mt-3 max-w-3xl leading-relaxed"></div>
                         <div
@@ -768,29 +769,15 @@
                 </div>
             </div>
 
-            <!-- 6. 履歷定位草稿 + 名詞小辭典 -->
-            <div class="lg:col-span-6 p-8 bg-white border border-klein/10 crosshair-corner">
-                <div class="flex items-center justify-between mb-4">
-                    <h3
-                        class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> 履歷定位草稿 <span
-                            class="font-mono text-xs text-klein/40 tracking-[0.2em]">DRAFT</span>
-                    </h3>
-                    <button onclick="window.app.copyText('resume-draft')"
-                        class="no-print text-xs font-mono text-klein/60 underline">複製</button>
-                </div>
-                <p class="text-xs font-body text-klein/60 mb-3">{大括號} 的地方請換成你自己的真實經驗與數字。</p>
-                <pre id="resume-draft"
-                    class="whitespace-pre-wrap font-body text-sm text-klein/80 leading-relaxed"></pre>
-            </div>
-            <div class="lg:col-span-6 p-8 bg-white border border-klein/10 crosshair-corner">
+            <!-- 6. 必備工具和概念說明 -->
+            <div class="lg:col-span-12 p-8 bg-white border border-klein/10 crosshair-corner">
                 <h3
-                    class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-4 flex items-center gap-3">
-                    <span class="w-2 h-6 bg-klein"></span> 名詞小辭典 <span
-                        class="font-mono text-xs text-klein/40 tracking-[0.2em]">GLOSSARY</span>
+                    class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-2 flex items-center gap-3">
+                    <span class="w-2 h-6 bg-klein"></span> 必備工具和概念說明 <span
+                        class="font-mono text-xs text-klein/40 tracking-[0.2em]">ESSENTIALS</span>
                 </h3>
-                <p class="text-xs font-body text-klein/60 mb-3">計畫裡出現的工具與平台，各用一句話說明。</p>
-                <dl id="glossary-panel" class="divide-y divide-klein/10"></dl>
+                <p class="text-xs font-body text-klein/60 mb-4">這份計畫會用到的工具、平台與專有名詞，各用一句話說明。看不懂計畫裡的詞時，回來這裡查。</p>
+                <dl id="glossary-panel" class="grid grid-cols-1 md:grid-cols-2 gap-x-10"></dl>
             </div>
         </div>
 
@@ -1202,6 +1189,7 @@
                             <div>
                                 <div class="font-heading font-black text-xl text-klein">${esc(role.title)}</div>
                                 <div class="font-mono text-[11px] text-klein/50 mt-0.5">${esc(role.en)}</div>
+                                <div class="text-xs font-body font-bold text-klein mt-2"><i class="fa-solid fa-graduation-cap mr-1"></i>對應系所：${BE.departmentsFor(r.roleId).map(d => esc(d.name) + (d.primary ? '' : '（可跨修）')).join('、')}</div>
                                 <p class="text-sm font-body text-klein/70 mt-3 leading-relaxed">${esc(role.summary)}</p>
                             </div>
                             <ul class="text-xs font-body text-klein/70 space-y-1.5 border-t border-klein/10 pt-3">
@@ -1330,6 +1318,12 @@
                 if (deptEl) deptEl.innerText = role.title;
                 const enEl = document.getElementById('best-dept-en');
                 if (enEl) enEl.innerText = role.en;
+                const roleDeptsEl = document.getElementById('role-depts');
+                if (roleDeptsEl) {
+                    roleDeptsEl.innerHTML = '<div class="text-xs font-mono font-bold text-klein/60 mb-1.5 tracking-wider">對應靜宜大學資訊系所</div><div class="flex flex-wrap items-center gap-2">' +
+                        plan.depts.map(d => `<a href="career_fit.html?dept=${esc(d.key)}" title="查看該系必修課" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold border ${d.primary ? 'bg-klein text-white border-klein' : 'border-klein/30 text-klein hover:bg-klein/5'}"><i class="fa-solid fa-graduation-cap text-xs"></i>${esc(d.name)}<span class="text-[10px] font-mono font-normal opacity-80">${d.primary ? '主要對應' : '可跨修 / 輔修'}</span></a>`).join('') +
+                        '</div><div class="text-[11px] font-body text-klein/50 mt-1.5">依職務性質與各系特色整理，僅供參考，非學校官方分發依據。點系名可查看該系必修課。</div>';
+                }
                 const circle = document.querySelector('.circle');
                 if (circle) {
                     circle.style.stroke = plan.fitScore >= 70 ? '#002fa7' : (plan.fitScore >= 50 ? '#1a4ec4' : '#001a5e');
@@ -1581,22 +1575,10 @@
                     }).join('') || '<div class="text-sm text-klein/60">沒有共通職能資料。</div>';
                 }
 
-                // 名詞小辭典
+                // 必備工具和概念說明
                 const gEl = document.getElementById('glossary-panel');
                 if (gEl) {
-                    gEl.innerHTML = BE.glossaryFor(plan, social).map(g => `<div class="py-2.5"><dt class="font-bold text-sm text-klein">${esc(g.term)}</dt><dd class="text-xs font-body text-klein/70 mt-0.5 leading-relaxed">${esc(g.meaning)}</dd></div>`).join('');
-                }
-
-                // 履歷定位草稿
-                const draftEl = document.getElementById('resume-draft');
-                if (draftEl) {
-                    const lines = ['【個人品牌定位】', role.resume, '', '【UCAN 數據佐證】'];
-                    if (profile.hollandCode) lines.push(`- 職業性格代碼 ${profile.hollandCode}：` + profile.hollandCode.split('').map(k => `${HOLLAND_INFO[k].name}${k} PR${profile.holland[k] ? profile.holland[k].pr : '-'}`).join('、'));
-                    if (profile.profPathway) lines.push(`- 專業職能途徑：${profile.profPathway}` + (profile.profPr != null ? `（平均 PR${profile.profPr}）` : ''));
-                    const st = plan.strengths.slice(0, 3);
-                    if (st.length) lines.push(`- 相對優勢：${st.map(s => `${s.name} PR${s.pr}`).join('、')}`);
-                    lines.push('', '【未來 90 天目標】', plan.phases.map(ph => `${ph.label}：${ph.theme}`).join('\n'));
-                    draftEl.innerText = lines.join('\n');
+                    gEl.innerHTML = BE.glossaryFor(plan, social).map(g => `<div class="py-3 border-b border-klein/10"><dt class="font-bold text-sm text-klein">${esc(g.term)}</dt><dd class="text-xs font-body text-klein/70 mt-0.5 leading-relaxed">${esc(g.meaning)}</dd></div>`).join('');
                 }
 
                 if (window.CareerDNAMotion) window.CareerDNAMotion.showToast('個人品牌報告與 90 天行動計畫已產生', 'success');
