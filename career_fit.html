@@ -397,11 +397,55 @@
         </div>
     </section>
 
-    <!-- Main Two-Column Master Grid Layout -->
+    <!-- View Switcher Tab Navigation -->
+    <section class="max-w-[1400px] mx-auto border-x border-klein/10 px-6 md:px-12 pb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-klein bg-white p-2 shadow-xs">
+            <div class="flex items-center gap-2">
+                <!-- Tab 1: 健檢診斷與策略 -->
+                <button type="button" 
+                        id="tab-btn-audit" 
+                        onclick="window.App.switchViewMode('audit')" 
+                        class="py-3 px-4 md:px-6 font-heading font-bold text-xs md:text-sm uppercase tracking-wider flex items-center gap-2.5 transition-all bg-klein text-white shadow-xs"
+                        title="查看修課雷達、戰力儀表板、推薦課程與各年級修課補強建議">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>健檢診斷與策略</span>
+                    <span class="tab-badge hidden md:inline-block font-mono text-[10px] py-0.5 px-2 bg-white/20 text-white font-normal">
+                        戰力・雷達・年級建議
+                    </span>
+                </button>
+                
+                <!-- Tab 2: 專業履歷與編輯 -->
+                <button type="button" 
+                        id="tab-btn-resume" 
+                        onclick="window.App.switchViewMode('resume')" 
+                        class="py-3 px-4 md:px-6 font-heading font-bold text-xs md:text-sm uppercase tracking-wider flex items-center gap-2.5 transition-all bg-white text-klein hover:bg-klein/5 border border-transparent"
+                        title="填寫履歷基本資料、在 A4 紙上即時打字編修與匯出 PDF">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>專業履歷與編輯</span>
+                    <span class="tab-badge hidden md:inline-block font-mono text-[10px] py-0.5 px-2 bg-klein/10 text-klein font-normal">
+                        個人資料・A4編輯・匯出
+                    </span>
+                </button>
+            </div>
+
+            <!-- 當前模式狀態小標籤 -->
+            <div class="hidden sm:flex items-center gap-2.5 font-mono text-xs text-klein/60 pr-2">
+                <span id="tab-status-indicator" class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>當前模式：健檢診斷與策略</span>
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Workspace Container -->
     <main class="flex-grow max-w-[1400px] mx-auto w-full border-x border-klein/10 px-6 md:px-12 pb-24">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- ================= VIEW 1: 健檢診斷與修課策略 (Audit & Strategy) ================= -->
+        <!-- 僅收納戰力儀表板、推薦課程、課群雷達、課外經歷、年級修課補強建議（無關履歷資訊與編輯） -->
+        <div id="view-audit-container" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- ================= LEFT COLUMN: Inputs & Curriculum (5 Cols) ================= -->
+            <!-- LEFT COLUMN: 推薦課程、課群雷達、課外經歷 (5 Cols) -->
             <div class="lg:col-span-5 space-y-8">
                 
                 <!-- Section 00: Recommended Courses (from Brand Test / UCAN) -->
@@ -416,8 +460,8 @@
                     <div id="recommended-courses-body"></div>
                 </section>
 
-                <!-- Section 01: Course Radar & Checklist -->
-                <section class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-1">
+                <!-- Section 01: Course Radar & Checklist (課群雷達) -->
+                <section id="course-section" class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-1">
                     <div class="flex justify-between items-center mb-4 border-b border-klein/10 pb-4">
                         <div>
                             <h2 id="course-section-title" class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
@@ -452,9 +496,8 @@
                     </div>
                 </section>
 
-                <!-- Section 02: Practical & Extracurricular Experience -->
-                <!-- Section 02: Extracurricular Experience -->
-                <section class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-2">
+                <!-- Section 02: Extracurricular Experience (課外經歷) -->
+                <section id="experience-section" class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-2">
                     <div class="border-b border-klein/10 pb-4 mb-4">
                         <div class="h-2"></div>
                         <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
@@ -468,8 +511,121 @@
                     </div>
                 </section>
 
+                <!-- Action Button Cluster for Audit View -->
+                <div class="space-y-3">
+                    <button onclick="window.App.calculateAndGenerate()" id="generate-btn" class="hover-spring w-full py-4 bg-klein text-white border border-klein font-heading font-bold text-base uppercase tracking-wider flex items-center justify-center gap-3 group shadow-md hover:shadow-xl transition-all">
+                        <i class="fa-solid fa-arrows-rotate text-base group-hover:scale-110 transition-transform"></i>
+                        <span>更新健檢診斷與修課建議</span>
+                    </button>
+                    <button type="button" onclick="window.App.switchViewMode('resume')" class="hover-spring w-full py-3.5 bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold flex items-center justify-center gap-2 transition-all">
+                        <span>前往檢視與編輯專業履歷</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: 戰力儀表板、診斷結果面板 (7 Cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="sticky top-24 space-y-6">
+                    
+                    <!-- Live Telemetry Scorecard Box (戰力儀表板) -->
+                    <div id="live-telemetry-box" class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-1">
+                        <div class="flex justify-between items-end border-b border-klein/10 pb-4 mb-6">
+                            <div class="mb-1">
+                                <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">戰力儀表板</h3>
+                            </div>
+                            <div class="text-right">
+                                <span id="live-total-score" class="font-syne font-black text-4xl text-klein leading-none">0</span><span class="font-mono text-sm font-bold text-klein/60 ml-1.5">/ 100 分</span>
+                            </div>
+                        </div>
+
+                        <!-- 3 Horizontal Telemetry Meters -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="border border-klein/10 p-3 bg-klein/[0.02]">
+                                <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
+                                    <span>專業學程 (40%)</span>
+                                    <span><span id="live-prog-score">0</span> / 40 分</span>
+                                </div>
+                                <div class="w-full bg-klein/10 h-1.5">
+                                    <div id="live-prog-bar" class="bg-klein h-1.5 transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div class="border border-klein/10 p-3 bg-klein/[0.02]">
+                                <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
+                                    <span>實務課群 (40%)</span>
+                                    <span><span id="live-prac-score">0</span> / 40 分</span>
+                                </div>
+                                <div class="w-full bg-klein/10 h-1.5">
+                                    <div id="live-prac-bar" class="bg-cobalt h-1.5 transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <div class="border border-klein/10 p-3 bg-klein/[0.02]">
+                                <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
+                                    <span>課外經歷 (20%)</span>
+                                    <span><span id="live-exp-score">0</span> / 20 分</span>
+                                </div>
+                                <div class="w-full bg-klein/10 h-1.5">
+                                    <div id="live-exp-bar" class="bg-emerald-600 h-1.5 transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Advice Feedback Note -->
+                        <div id="live-recommendation" class="font-mono text-xs text-klein/70 bg-klein/5 border border-klein/10 p-3">
+                            
+                        </div>
+                    </div>
+
+                    <!-- AI Consultant Results & Action Items Panel (年級修課補強建議、職缺比對、防NG) -->
+                    <div id="ai-result-panel" class="p-6 md:p-8 bg-white border border-klein transition-all duration-500">
+                        <div class="flex items-center gap-3 mb-4 border-b border-klein/10 pb-4">
+                            <div class="w-8 h-8 bg-klein text-white flex items-center justify-center font-mono text-sm">
+                                <i class="fa-solid fa-compass animate-spin" style="animation-duration: 8s;"></i>
+                            </div>
+                            <div>
+                                <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40">DIAGNOSIS & ROADMAP</span>
+                                <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">戰力診斷與各年級修課補強建議</h3>
+                            </div>
+                        </div>
+
+                        <!-- AI HTML Content & Action Items -->
+                        <div id="ai-content" class="font-body text-sm text-klein/80 leading-relaxed space-y-4 mb-6">
+                            <!-- Populated by renderResultUI() -->
+                        </div>
+
+                        <!-- Bottom Link to Resume -->
+                        <div class="p-4 md:p-5 border-2 border-klein bg-klein/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-6">
+                            <div>
+                                <div class="font-heading font-black text-sm text-klein flex items-center gap-1.5">
+                                    <i class="fa-solid fa-file-lines text-klein"></i> 專業 A4 履歷已同步生成
+                                </div>
+                                <p class="font-mono text-[11px] text-klein/70 mt-0.5">系統已根據您的修課與經歷產出標準五元三要履歷，隨時可進行編輯與匯出。</p>
+                            </div>
+                            <button type="button" onclick="window.App.switchViewMode('resume')" class="hover-spring px-4 py-2.5 bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 whitespace-nowrap shadow-sm">
+                                <span>前往編輯履歷</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= VIEW 2: 專業履歷與即時編輯 (Resume & Editor) ================= -->
+        <!-- 僅收納履歷基本資料、目標職務、履歷檢核、A4 履歷畫布與工具列（專注履歷編輯與匯出） -->
+        <div id="view-resume-container" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- LEFT COLUMN: 履歷基本資料與目標職務 (5 Cols on lg, 4 on xl) -->
+            <div class="lg:col-span-5 xl:col-span-4 space-y-6">
+                
                 <!-- Section 03: Resume Profile & Target Job (履歷個人資料與應徵設定) -->
-                <section id="resume-profile-card" class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-3">
+                <section id="resume-profile-card" class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-1">
                     <div class="border-b border-klein/10 pb-4 mb-4 flex items-center justify-between">
                         <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
                             <span class="w-6 h-6 bg-klein text-white text-xs font-mono font-bold flex items-center justify-center">03</span>
@@ -478,7 +634,7 @@
                         <span class="font-mono text-[10px] text-klein/60 bg-klein/5 px-2 py-0.5 border border-klein/10">二資與目標設定</span>
                     </div>
                     <p class="font-mono text-xs text-klein/60 mb-4 leading-relaxed">
-                        * 個人資料將自動帶入 A4 履歷中；未填欄位將以 <code class="bg-amber-50 text-amber-800 px-1 border border-amber-200">【使用者自行輸入】</code> 標示，方便後續編修。
+                        * 個人資料將自動帶入右側 A4 履歷中；未填欄位將以 <code class="bg-amber-50 text-amber-800 px-1 border border-amber-200">【使用者自行輸入】</code> 標示，方便後續編修。
                     </p>
 
                     <div class="space-y-4 font-mono text-xs">
@@ -557,139 +713,102 @@
                     </div>
                 </section>
 
-                <!-- Action Button Cluster -->
-                <div class="space-y-3">
-                    <button onclick="window.App.calculateAndGenerate()" id="generate-btn" class="hover-spring w-full py-4 bg-klein text-white border border-klein font-heading font-bold text-base uppercase tracking-wider flex items-center justify-center gap-3 group shadow-md hover:shadow-xl transition-all">
-                        <i class="fa-solid fa-file-signature text-base group-hover:scale-110 transition-transform"></i>
-                        <span>產生履歷與修課建議</span>
+                <!-- 履歷填寫檢核狀態卡片 -->
+                <div id="resume-checklist-card" class="p-5 border border-klein/15 bg-white shadow-xs font-mono text-xs">
+                    <div class="flex items-center justify-between border-b border-klein/10 pb-2 mb-3">
+                        <strong class="text-klein flex items-center gap-1.5 font-heading text-xs font-bold">
+                            <i class="fa-solid fa-clipboard-check text-klein"></i> 履歷填寫檢核狀態
+                        </strong>
+                        <span id="resume-bio-count" class="text-[11px] text-klein/70">自傳字數：-- 字</span>
+                    </div>
+                    <div id="resume-checklist-items" class="grid grid-cols-2 gap-2 text-[11px]">
+                        <div class="flex items-center justify-between p-1.5 bg-klein/[0.02] border border-klein/10">
+                            <span>中文姓名</span>
+                            <span class="text-amber-600 font-bold">△ 檢測中</span>
+                        </div>
+                        <div class="flex items-center justify-between p-1.5 bg-klein/[0.02] border border-klein/10">
+                            <span>聯絡手機</span>
+                            <span class="text-amber-600 font-bold">△ 檢測中</span>
+                        </div>
+                        <div class="flex items-center justify-between p-1.5 bg-klein/[0.02] border border-klein/10">
+                            <span>電子信箱</span>
+                            <span class="text-amber-600 font-bold">△ 檢測中</span>
+                        </div>
+                        <div class="flex items-center justify-between p-1.5 bg-klein/[0.02] border border-klein/10">
+                            <span>證件照片</span>
+                            <span class="text-amber-600 font-bold">△ 檢測中</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快速動作區 -->
+                <div class="p-4 border border-klein/10 bg-white space-y-2.5 font-mono">
+                    <button type="button" onclick="window.App.calculateAndGenerate()" id="generate-btn-resume" class="hover-spring w-full py-3 bg-klein text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-rotate"></i>
+                        <span>依最新修課重新生成履歷</span>
+                    </button>
+                    <button type="button" onclick="window.App.switchViewMode('audit')" class="hover-spring w-full py-2.5 bg-white text-klein border border-klein/20 hover:border-klein text-xs font-bold flex items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>返回修課與戰力健檢</span>
                     </button>
                 </div>
 
             </div>
 
-            <!-- ================= RIGHT COLUMN: Telemetry, Scores & Output (7 Cols) ================= -->
-            <div class="lg:col-span-7 space-y-6">
-                <div class="sticky top-24 space-y-6">
-                    
-                    <!-- Live Telemetry Scorecard Box -->
-                    <div class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-1">
-                        <div class="flex justify-between items-end border-b border-klein/10 pb-4 mb-6">
-                            <div class="mb-1">
-                                <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">儀表板</h3>
-                            </div>
-                            <div class="text-right">
-                                <span id="live-total-score" class="font-syne font-black text-4xl text-klein leading-none">0</span><span class="font-mono text-sm font-bold text-klein/60 ml-1.5">/ 100 分</span>
-                            </div>
+            <!-- RIGHT COLUMN: A4 履歷預覽與即時編輯畫布 (7 Cols on lg, 8 on xl) -->
+            <div class="lg:col-span-7 xl:col-span-8 space-y-6">
+                
+                <!-- A4 Markdown Resume Preview Panel -->
+                <div id="resume-preview-panel" class="border border-klein/15 bg-white p-6 md:p-8 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-klein/10 pb-4 mb-4">
+                        <div>
+                            <span class="font-mono text-[10px] font-bold text-klein/50 uppercase tracking-[0.2em] block">LIVE EDIT ARTIFACT</span>
+                            <h4 class="font-heading font-black text-xl text-klein uppercase tracking-tight flex items-center gap-2">
+                                <i class="fa-solid fa-file-lines text-klein"></i> A4 專業履歷畫布
+                            </h4>
                         </div>
-
-                        <!-- 3 Horizontal Telemetry Meters -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                            <div class="border border-klein/10 p-3 bg-klein/[0.02]">
-                                <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
-                                    <span>專業學程 (40%)</span>
-                                    <span><span id="live-prog-score">0</span> / 40 分</span>
-                                </div>
-                                <div class="w-full bg-klein/10 h-1.5">
-                                    <div id="live-prog-bar" class="bg-klein h-1.5 transition-all duration-500" style="width: 0%"></div>
-                                </div>
-                            </div>
-
-                            <div class="border border-klein/10 p-3 bg-klein/[0.02]">
-                                <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
-                                    <span>實務課群 (40%)</span>
-                                    <span><span id="live-prac-score">0</span> / 40 分</span>
-                                </div>
-                                <div class="w-full bg-klein/10 h-1.5">
-                                    <div id="live-prac-bar" class="bg-cobalt h-1.5 transition-all duration-500" style="width: 0%"></div>
-                                </div>
-                            </div>
-
-                            <div class="border border-klein/10 p-3 bg-klein/[0.02]">
-                                <div class="flex justify-between font-mono text-xs font-bold text-klein mb-1">
-                                    <span>課外經歷 (20%)</span>
-                                    <span><span id="live-exp-score">0</span> / 20 分</span>
-                                </div>
-                                <div class="w-full bg-klein/10 h-1.5">
-                                    <div id="live-exp-bar" class="bg-emerald-600 h-1.5 transition-all duration-500" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Live Advice Feedback Note -->
-                        <div id="live-recommendation" class="font-mono text-xs text-klein/70 bg-klein/5 border border-klein/10 p-3">
-                            
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" id="resume-reset-btn" onclick="window.App.resetOriginalResume()" class="hover-spring bg-white text-klein/80 hover:text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3 flex items-center gap-1.5 transition-all" title="放棄目前的修改，還原成系統生成的原始履歷">
+                                <i class="fa-solid fa-rotate-left text-klein/60"></i> 重設原始履歷
+                            </button>
+                            <button type="button" onclick="window.App.copyResumeMarkdown()" class="hover-spring bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3.5 flex items-center gap-1.5 transition-all" title="複製履歷內容（支援雙模格式，可在 Google 文件保留高亮標記）">
+                                <i class="fa-solid fa-copy"></i> 複製內容
+                            </button>
+                            <button type="button" onclick="window.App.printResume()" class="hover-spring bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3 flex items-center gap-1.5 transition-all" title="瀏覽器原生無損列印 / 另存為向量 PDF">
+                                <i class="fa-solid fa-print"></i> 列印 / 向量 PDF
+                            </button>
+                            <button type="button" onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2 shadow-sm" id="pdf-export-btn">
+                                <i class="fa-solid fa-download"></i> 匯出 PDF
+                            </button>
                         </div>
                     </div>
 
-                    <!-- AI Consultant Results & Action Items Panel -->
-                    <div id="ai-result-panel" class="p-6 md:p-8 bg-white border border-klein hidden transition-all duration-500">
-                        <div class="flex items-center gap-3 mb-4 border-b border-klein/10 pb-4">
-                            <div class="w-8 h-8 bg-klein text-white flex items-center justify-center font-mono text-sm">
-                                <i class="fa-solid fa-compass animate-spin" style="animation-duration: 8s;"></i>
-                            </div>
-                            <div>
-                                <span class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-klein/40"></span>
-                                <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein">履歷診斷與修課建議</h3>
-                            </div>
-                        </div>
+                    <!-- Export Checklist Warning Banner -->
+                    <div id="resume-checklist-banner" class="hidden mb-3 p-3 bg-amber-50 border border-amber-300"></div>
 
-                        <!-- AI HTML Content & Action Items -->
-                        <div id="ai-content" class="font-body text-sm text-klein/80 leading-relaxed space-y-4 mb-6">
-                            <!-- Populated by renderResultUI() -->
-                        </div>
-                        
-                        <!-- A4 Markdown Resume Preview Panel -->
-                        <div id="resume-preview-panel" class="hidden border-t border-klein/10 pt-8 mt-8">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                                <div>
-                                    <span class="font-mono text-[10px] font-bold text-klein/50 uppercase tracking-[0.2em] block">GENERATED ARTIFACT</span>
-                                    <h4 class="font-heading font-black text-lg text-klein uppercase tracking-tight flex items-center gap-2">
-                                        <i class="fa-solid fa-file-lines text-klein"></i> A4 履歷預覽
-                                    </h4>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <button type="button" id="resume-reset-btn" onclick="window.App.resetOriginalResume()" class="hover-spring bg-white text-klein/80 hover:text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3 flex items-center gap-1.5 transition-all" title="放棄目前的修改，還原成系統生成的原始履歷">
-                                        <i class="fa-solid fa-rotate-left text-klein/60"></i> 重設為原始履歷
-                                    </button>
-                                    <button type="button" onclick="window.App.copyResumeMarkdown()" class="hover-spring bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3.5 flex items-center gap-1.5 transition-all" title="複製履歷內容（支援雙模格式，可在 Google 文件保留高亮標記）">
-                                        <i class="fa-solid fa-copy"></i> 複製內容
-                                    </button>
-                                    <button type="button" onclick="window.App.printResume()" class="hover-spring bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold py-2 px-3 flex items-center gap-1.5 transition-all" title="瀏覽器原生無損列印 / 另存為向量 PDF">
-                                        <i class="fa-solid fa-print"></i> 列印 / 向量 PDF
-                                    </button>
-                                    <button type="button" onclick="window.App.downloadPDF()" class="hover-spring bg-klein text-white font-mono text-xs font-bold uppercase tracking-wider py-2 px-4 flex items-center gap-2 shadow-sm" id="pdf-export-btn">
-                                        <i class="fa-solid fa-download"></i> 匯出 PDF
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Export Checklist Warning Banner -->
-                            <div id="resume-checklist-banner" class="hidden mb-3 p-3 bg-amber-50 border border-amber-300"></div>
-
-                            <!-- Live Dynamic Edit Status Banner -->
-                            <div class="flex items-center justify-between text-[11px] font-mono text-klein/60 mb-2 px-1">
-                                <span class="flex items-center gap-1.5">
-                                    <i class="fa-solid fa-pen-to-square text-klein"></i> 支援動態編輯：點擊 A4 預覽內任意文字可直接輸入修改，複製時將自動保留最新內容。
-                                </span>
-                                <span id="resume-edit-indicator" class="hidden text-amber-600 font-bold flex items-center gap-1">
-                                    <i class="fa-solid fa-circle-dot animate-pulse"></i> 內容已編輯修改
-                                </span>
-                            </div>
-
-                            <!-- A4 Preview Paper Sheet -->
-                            <div id="resume-output" 
-                                 contenteditable="true" 
-                                 spellcheck="false"
-                                 class="bg-white border border-klein/20 p-6 md:p-10 max-h-[700px] overflow-y-auto shadow-sm text-klein/90 leading-relaxed font-body focus:outline-none focus:ring-2 focus:ring-klein/30 focus:border-klein transition-all">
-                                <!-- Populated with parseMarkdownSafe HTML inside #pdf-content -->
-                            </div>
-                        </div>
+                    <!-- Live Dynamic Edit Status Banner -->
+                    <div class="flex items-center justify-between text-[11px] font-mono text-klein/60 mb-3 px-1 border-b border-klein/5 pb-2">
+                        <span class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-pen-to-square text-klein"></i> 支援動態編輯：點擊 A4 預覽內任意文字可直接輸入修改，複製與匯出時將自動保留最新內容。
+                        </span>
+                        <span id="resume-edit-indicator" class="hidden text-amber-600 font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-circle-dot animate-pulse"></i> 內容已編輯修改
+                        </span>
                     </div>
 
+                    <!-- A4 Preview Paper Sheet -->
+                    <div id="resume-output" 
+                         contenteditable="true" 
+                         spellcheck="false"
+                         class="bg-white border border-klein/20 p-6 md:p-10 max-h-[850px] overflow-y-auto shadow-sm text-klein/90 leading-relaxed font-body focus:outline-none focus:ring-2 focus:ring-klein/30 focus:border-klein transition-all">
+                        <!-- Populated with parseMarkdownSafe HTML inside #pdf-content -->
+                    </div>
                 </div>
+
             </div>
 
         </div>
+
     </main>
 
     <!-- Offline / Rate-Limited Fallback Modal -->
@@ -903,6 +1022,76 @@
         ];
 
         window.App = {
+            currentViewMode: 'audit',
+
+            switchViewMode(mode, isInitial = false) {
+                this.currentViewMode = mode;
+                const auditContainer = document.getElementById('view-audit-container');
+                const resumeContainer = document.getElementById('view-resume-container');
+                const tabBtnAudit = document.getElementById('tab-btn-audit');
+                const tabBtnResume = document.getElementById('tab-btn-resume');
+                const statusIndicator = document.getElementById('tab-status-indicator');
+
+                if (mode === 'resume') {
+                    if (auditContainer) auditContainer.classList.add('hidden');
+                    if (resumeContainer) {
+                        resumeContainer.classList.remove('hidden');
+                        resumeContainer.querySelectorAll('.reveal-up').forEach(el => el.classList.add('is-visible'));
+                    }
+
+                    if (tabBtnAudit) {
+                        tabBtnAudit.className = "py-3 px-4 md:px-6 font-heading font-bold text-xs md:text-sm uppercase tracking-wider flex items-center gap-2.5 transition-all bg-white text-klein hover:bg-klein/5 border border-transparent";
+                        const badge = tabBtnAudit.querySelector('.tab-badge');
+                        if (badge) badge.className = "tab-badge hidden md:inline-block font-mono text-[10px] py-0.5 px-2 bg-klein/10 text-klein font-normal";
+                    }
+                    if (tabBtnResume) {
+                        tabBtnResume.className = "py-3 px-4 md:px-6 font-heading font-bold text-xs md:text-sm uppercase tracking-wider flex items-center gap-2.5 transition-all bg-klein text-white shadow-xs";
+                        const badge = tabBtnResume.querySelector('.tab-badge');
+                        if (badge) badge.className = "tab-badge hidden md:inline-block font-mono text-[10px] py-0.5 px-2 bg-white/20 text-white font-normal";
+                    }
+                    if (statusIndicator) {
+                        statusIndicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-klein animate-pulse"></span><span>當前模式：專業履歷與即時編輯</span>';
+                    }
+
+                    const resumePreview = document.getElementById('resume-preview-panel');
+                    if (resumePreview) resumePreview.classList.remove('hidden');
+                } else {
+                    if (auditContainer) {
+                        auditContainer.classList.remove('hidden');
+                        auditContainer.querySelectorAll('.reveal-up').forEach(el => el.classList.add('is-visible'));
+                    }
+                    if (resumeContainer) resumeContainer.classList.add('hidden');
+
+                    if (tabBtnAudit) {
+                        tabBtnAudit.className = "py-3 px-4 md:px-6 font-heading font-bold text-xs md:text-sm uppercase tracking-wider flex items-center gap-2.5 transition-all bg-klein text-white shadow-xs";
+                        const badge = tabBtnAudit.querySelector('.tab-badge');
+                        if (badge) badge.className = "tab-badge hidden md:inline-block font-mono text-[10px] py-0.5 px-2 bg-white/20 text-white font-normal";
+                    }
+                    if (tabBtnResume) {
+                        tabBtnResume.className = "py-3 px-4 md:px-6 font-heading font-bold text-xs md:text-sm uppercase tracking-wider flex items-center gap-2.5 transition-all bg-white text-klein hover:bg-klein/5 border border-transparent";
+                        const badge = tabBtnResume.querySelector('.tab-badge');
+                        if (badge) badge.className = "tab-badge hidden md:inline-block font-mono text-[10px] py-0.5 px-2 bg-klein/10 text-klein font-normal";
+                    }
+                    if (statusIndicator) {
+                        statusIndicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>當前模式：健檢診斷與策略</span>';
+                    }
+                }
+
+                try {
+                    localStorage.setItem('cdna_view_mode', mode);
+                } catch(e) {}
+
+                if (!isInitial && window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    const activeContainer = mode === 'resume' ? resumeContainer : auditContainer;
+                    if (activeContainer) {
+                        gsap.fromTo(activeContainer, 
+                            { autoAlpha: 0, y: 15 },
+                            { autoAlpha: 1, y: 0, duration: 0.35, ease: 'power2.out', overwrite: true }
+                        );
+                    }
+                }
+            },
+
             originalGeneratedHtml: '',
             originalResumeMarkdown: '',
             isResumeEdited: false,
@@ -1132,6 +1321,13 @@
                 // Restore selections into checkbox DOM
                 this.restoreSelections(true);
                 this.restoreProfileUI();
+
+                // Initialize view mode from URL query ?tab= or localStorage (default: 'audit')
+                const initUrlParams = new URLSearchParams(window.location.search);
+                const reqTab = initUrlParams.get('tab');
+                const savedMode = localStorage.getItem('cdna_view_mode') || 'audit';
+                const initialMode = reqTab === 'resume' ? 'resume' : (reqTab === 'audit' ? 'audit' : savedMode);
+                this.switchViewMode(initialMode, true);
 
                 // Setup live edit listener on #resume-output
                 const resumeOutput = document.getElementById('resume-output');
@@ -2405,7 +2601,7 @@ ${innerHtml}
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-klein/10 pb-3 mb-4">
                                 <div>
                                     <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
-                                        <i class="fa-solid fa-crosshairs text-flame-orange"></i> 職缺條件比對表
+                                        <i class="fa-solid fa-crosshairs text-flame-orange"></i> 職缺條件比對表 (JD 對焦表)
                                     </h4>
                                     <p class="text-[11px] text-klein/60 font-body mt-0.5">對照目標職缺要求，看看自己有哪些課程與專案可以作為實力證明，並找出還能補強的地方。</p>
                                 </div>
@@ -2440,7 +2636,7 @@ ${innerHtml}
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-klein/10 pb-3 mb-4">
                                 <div>
                                     <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
-                                        <i class="fa-solid fa-graduation-cap text-klein"></i> 各年級修課與準備建議
+                                        <i class="fa-solid fa-graduation-cap text-klein"></i> 各年級修課與準備建議 (年級專屬補強路徑)
                                     </h4>
                                     <p class="text-[11px] text-klein/60 font-body mt-0.5">依據在學年級（大一/二 打底、大三 專案/學程、大四 實習/作品集）量身打造</p>
                                 </div>

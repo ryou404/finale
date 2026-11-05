@@ -65,8 +65,10 @@ const assert = require('assert');
         assert.ok(aiContentHtml.includes('年級專屬補強路徑'), 'Must display 年級專屬補強路徑');
         console.log('✔ JD 对焦表, Anti-NG guidance, and Grade-specific roadmap verified');
 
-        // 2. Simulate User Input into Section 03
-        console.log('2. Simulating User Typing in Profile Card...');
+        // 2. Simulate User Switching to Resume Tab & Typing in Profile Card
+        console.log('2. Simulating User Switching to Resume Tab & Typing in Profile Card...');
+        await page.click('#tab-btn-resume');
+        await new Promise(r => setTimeout(r, 400));
         await page.type('#resume-user-name', '陳志明');
         await page.type('#resume-user-engname', 'Chih-Ming Chen');
         await page.type('#resume-user-phone', '0987-654321');

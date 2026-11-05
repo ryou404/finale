@@ -88,3 +88,15 @@ impeccable/
 /merged_sample.txt
 /scripts/generate_star_history.py
 scripts/__pycache__/
+
+# Temporary local images & specimen boards
+/*.png
+/*.jpeg
+/*.jpg
+
+# Temporary logo generation scripts
+scripts/apply_final_logo_fixes.py
+scripts/generate_symbol_only_logo.py
+scripts/remove_tag_and_version.py
+scripts/update_all_brand_and_docs.py
+scripts/update_official_logo.py
