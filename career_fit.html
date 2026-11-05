@@ -401,27 +401,27 @@
     <section class="max-w-[1400px] mx-auto border-x border-klein/10 px-6 md:px-12 pb-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-klein bg-white p-2 shadow-xs">
             <div class="flex items-center gap-2">
-                <!-- Tab 1: 健檢診斷與策略 -->
+                <!-- Tab 1: 診斷策略 -->
                 <button type="button" 
                         id="tab-btn-audit" 
                         onclick="window.App.switchViewMode('audit')" 
                         class="py-3 px-4 md:px-6 font-heading font-bold text-xs md:text-sm uppercase tracking-wider flex items-center gap-2.5 transition-all bg-klein text-white shadow-xs"
                         title="查看修課雷達、戰力儀表板、推薦課程與各年級修課補強建議">
                     <i class="fa-solid fa-chart-pie"></i>
-                    <span>健檢診斷與策略</span>
+                    <span>診斷策略</span>
                     <span class="tab-badge hidden md:inline-block font-mono text-[10px] py-0.5 px-2 bg-white/20 text-white font-normal">
                         戰力・雷達・年級建議
                     </span>
                 </button>
                 
-                <!-- Tab 2: 專業履歷與編輯 -->
+                <!-- Tab 2: 履歷編輯 -->
                 <button type="button" 
                         id="tab-btn-resume" 
                         onclick="window.App.switchViewMode('resume')" 
                         class="py-3 px-4 md:px-6 font-heading font-bold text-xs md:text-sm uppercase tracking-wider flex items-center gap-2.5 transition-all bg-white text-klein hover:bg-klein/5 border border-transparent"
                         title="填寫履歷基本資料、在 A4 紙上即時打字編修與匯出 PDF">
                     <i class="fa-solid fa-file-signature"></i>
-                    <span>專業履歷與編輯</span>
+                    <span>履歷編輯</span>
                     <span class="tab-badge hidden md:inline-block font-mono text-[10px] py-0.5 px-2 bg-klein/10 text-klein font-normal">
                         個人資料・A4編輯・匯出
                     </span>
@@ -432,7 +432,7 @@
             <div class="hidden sm:flex items-center gap-2.5 font-mono text-xs text-klein/60 pr-2">
                 <span id="tab-status-indicator" class="flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>當前模式：健檢診斷與策略</span>
+                    <span>目前模式：診斷策略</span>
                 </span>
             </div>
         </div>
@@ -441,7 +441,7 @@
     <!-- Main Workspace Container -->
     <main class="flex-grow max-w-[1400px] mx-auto w-full border-x border-klein/10 px-6 md:px-12 pb-24">
         
-        <!-- ================= VIEW 1: 健檢診斷與修課策略 (Audit & Strategy) ================= -->
+        <!-- ================= VIEW 1: 診斷策略 (Audit & Strategy) ================= -->
         <!-- 僅收納戰力儀表板、推薦課程、課群雷達、課外經歷、年級修課補強建議（無關履歷資訊與編輯） -->
         <div id="view-audit-container" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
@@ -518,7 +518,7 @@
                         <span>更新健檢診斷與修課建議</span>
                     </button>
                     <button type="button" onclick="window.App.switchViewMode('resume')" class="hover-spring w-full py-3.5 bg-white text-klein border border-klein/20 hover:border-klein font-mono text-xs font-bold flex items-center justify-center gap-2 transition-all">
-                        <span>前往檢視與編輯專業履歷</span>
+                        <span>前往履歷編輯</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
@@ -617,14 +617,53 @@
 
         </div>
 
-        <!-- ================= VIEW 2: 專業履歷與即時編輯 (Resume & Editor) ================= -->
+        <!-- ================= VIEW 2: 履歷編輯 (Resume & Editor) ================= -->
         <!-- 僅收納履歷基本資料、目標職務、履歷檢核、A4 履歷畫布與工具列（專注履歷編輯與匯出） -->
         <div id="view-resume-container" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <!-- LEFT COLUMN: 履歷基本資料與目標職務 (5 Cols on lg, 4 on xl) -->
             <div class="lg:col-span-5 xl:col-span-4 space-y-6">
                 
-                <!-- Section 03: Resume Profile & Target Job (履歷個人資料與應徵設定) -->
+                                <!-- Section: 人資審核原則與合格履歷對焦標準 (Anti-NG & HR Guidance Card) -->
+                <section id="resume-guidance-card" class="p-5 md:p-6 bg-white border border-klein/15 shadow-xs font-mono text-xs">
+                    <div class="border-b border-klein/10 pb-3 mb-4">
+                        <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-emerald-600"></i> 人資審核原則與合格履歷對焦標準
+                        </h4>
+                        <p class="text-[11px] text-klein/60 font-body mt-0.5">依據企業人資 30 秒初審習慣與「五元三要」完整架構整理</p>
+                    </div>
+
+                    <div class="space-y-3 mb-4">
+                        <div class="p-3 bg-blue-50/50 border border-blue-200">
+                            <strong class="text-blue-900 block mb-1">⏱️ 人資 30 秒審查法則</strong>
+                            <p class="text-[11px] text-blue-950/80 leading-relaxed font-body">人資平均只花 6 至 10 秒快速瀏覽履歷：先看姓名與照片確認身分，接著看實務專案經歷，最後才看自傳。審查優先權：專業實務技能 ＞ 畢業科系 ＞ 自傳內容。</p>
+                        </div>
+                        <div class="p-3 bg-indigo-50/50 border border-indigo-200">
+                            <strong class="text-indigo-900 block mb-1">🖐️ 五元三要手掌口訣</strong>
+                            <p class="text-[11px] text-indigo-950/80 leading-relaxed font-body">一信（應徵信）｜ 二資（基本資料與照片）｜ 三歷（STAR 專案經歷）｜ 四專（技能對照表）｜ 五傳（新鮮人自傳三段式：我是誰、我會什麼、我想做什麼，建議 500 至 800 字）。</p>
+                        </div>
+                        <div class="p-3 bg-amber-50/50 border border-amber-200">
+                            <strong class="text-amber-900 block mb-1">⭐ STAR 經歷寫作公式</strong>
+                            <p class="text-[11px] text-amber-950/80 leading-relaxed font-body">依序交代情境（Situation）、任務（Task）、行動（Action）與結果（Result）。描述個人特質時，一律附上具體做法或數據成果，避免只有主觀形容詞。</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50/40 border border-rose-200 p-3.5">
+                        <strong class="text-rose-900 font-mono text-xs block mb-1.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> 六大常見履歷地雷
+                        </strong>
+                        <div class="grid grid-cols-1 gap-2 text-[11px] text-rose-950/85 font-body">
+                            <div>• <strong>❌ 虛構不實數據：</strong>如果專案沒有量化數據，請如實描述完成的功能模組與實質成果，切忌捏造數字。</div>
+                            <div>• <strong>❌ 空泛形容詞：</strong>寫「抗壓性高」或「學習力強」時，請務必附上實際解決問題或自學技術的案例。</div>
+                            <div>• <strong>❌ 未註明應徵職務：</strong>一份履歷應鎖定單一特定職位，避免目標模糊或亂槍打鳥。</div>
+                            <div>• <strong>❌ 聯絡資訊填錯：</strong>電話或信箱填錯會直接錯失面試通知，送出前請務必再三確認。</div>
+                            <div>• <strong>❌ 自傳流水帳：</strong>不需從家庭背景贅述，直接聚焦「我是誰」、「我具備什麼能力」、「我想在貴公司做什麼」。</div>
+                            <div>• <strong>❌ 照片不合規範：</strong>九成以上企業會看照片，請使用光線良好、五官清晰的正式證件照，避免生活自拍。</div>
+                        </div>
+                    </div>
+                </section>
+
+<!-- Section 03: Resume Profile & Target Job (履歷個人資料與應徵設定) -->
                 <section id="resume-profile-card" class="p-6 md:p-8 bg-white border border-klein/10 reveal-up reveal-delay-1">
                     <div class="border-b border-klein/10 pb-4 mb-4 flex items-center justify-between">
                         <h2 class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-2">
@@ -749,7 +788,7 @@
                     </button>
                     <button type="button" onclick="window.App.switchViewMode('audit')" class="hover-spring w-full py-2.5 bg-white text-klein border border-klein/20 hover:border-klein text-xs font-bold flex items-center justify-center gap-2 transition-all">
                         <i class="fa-solid fa-arrow-left"></i>
-                        <span>返回修課與戰力健檢</span>
+                        <span>返回診斷策略</span>
                     </button>
                 </div>
 
@@ -1050,7 +1089,7 @@
                         if (badge) badge.className = "tab-badge hidden md:inline-block font-mono text-[10px] py-0.5 px-2 bg-white/20 text-white font-normal";
                     }
                     if (statusIndicator) {
-                        statusIndicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-klein animate-pulse"></span><span>當前模式：專業履歷與即時編輯</span>';
+                        statusIndicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-klein animate-pulse"></span><span>目前模式：履歷編輯</span>';
                     }
 
                     const resumePreview = document.getElementById('resume-preview-panel');
@@ -1073,7 +1112,7 @@
                         if (badge) badge.className = "tab-badge hidden md:inline-block font-mono text-[10px] py-0.5 px-2 bg-klein/10 text-klein font-normal";
                     }
                     if (statusIndicator) {
-                        statusIndicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>當前模式：健檢診斷與策略</span>';
+                        statusIndicator.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>目前模式：診斷策略</span>';
                     }
                 }
 
@@ -2673,42 +2712,42 @@ ${innerHtml}
                     html += `</div></div>`;
                 }
 
-                // 4. 防 NG 履歷寫作核心指引 (Anti-NG Guidance)
+                // 4. 人資審核原則與合格履歷對焦標準 (Anti-NG Guidance)
                 html += `
                     <div class="border border-klein/15 p-5 md:p-6 bg-white shadow-sm mb-6">
                         <div class="border-b border-klein/10 pb-3 mb-4">
                             <h4 class="font-heading font-black text-sm uppercase tracking-wider text-klein flex items-center gap-2">
-                                <i class="fa-solid fa-shield-halved text-emerald-600"></i> 防 NG 履歷與 HR 審查標準核心指引
+                                <i class="fa-solid fa-shield-halved text-emerald-600"></i> 人資審核原則與合格履歷對焦標準
                             </h4>
-                            <p class="text-[11px] text-klein/60 font-body mt-0.5">依據企業人資 30 秒法則與「五元三要」手掌口訣整理</p>
+                            <p class="text-[11px] text-klein/60 font-body mt-0.5">依據企業人資 30 秒初審習慣與「五元三要」完整架構整理</p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 font-mono text-xs">
                             <div class="p-3 bg-blue-50/50 border border-blue-200">
-                                <strong class="text-blue-900 block mb-1">⏱️ 關鍵 30 秒法則</strong>
-                                <p class="text-[11px] text-blue-950/80 leading-relaxed font-body">HR 平均僅花 6~10 秒掃讀履歷：先看「你是誰」(姓名/照片) ➔ 再看「學經歷」 ➔ 最後看「專長自傳」。重視度：技能專長 > 畢業科系 > 自傳。</p>
+                                <strong class="text-blue-900 block mb-1">⏱️ 人資 30 秒審查法則</strong>
+                                <p class="text-[11px] text-blue-950/80 leading-relaxed font-body">人資平均只花 6 至 10 秒快速瀏覽履歷：先看姓名與照片確認身分，接著看實務專案經歷，最後才看自傳。審查優先權：專業實務技能 ＞ 畢業科系 ＞ 自傳內容。</p>
                             </div>
                             <div class="p-3 bg-indigo-50/50 border border-indigo-200">
                                 <strong class="text-indigo-900 block mb-1">🖐️ 五元三要手掌口訣</strong>
-                                <p class="text-[11px] text-indigo-950/80 leading-relaxed font-body">一信 (Cover Letter) ｜ 二資 (基本資料/照片) ｜ 三歷 (STAR 經歷) ｜ 四專 (技能表格) ｜ 五傳 (我是誰/我會什麼/我想做什麼，500~800 字)。</p>
+                                <p class="text-[11px] text-indigo-950/80 leading-relaxed font-body">一信（應徵信）｜ 二資（基本資料與照片）｜ 三歷（STAR 專案經歷）｜ 四專（技能對照表）｜ 五傳（新鮮人自傳三段式：我是誰、我會什麼、我想做什麼，建議 500 至 800 字）。</p>
                             </div>
                             <div class="p-3 bg-amber-50/50 border border-amber-200">
-                                <strong class="text-amber-900 block mb-1">⭐ STAR 經驗公式</strong>
-                                <p class="text-[11px] text-amber-950/80 leading-relaxed font-body">採用「行動動詞 + 具體做法 + 成果數據 + 職務能力」。每一項人格特質後面，都必須接一個可說明、可驗證的具體實戰案例！</p>
+                                <strong class="text-amber-900 block mb-1">⭐ STAR 經歷寫作公式</strong>
+                                <p class="text-[11px] text-amber-950/80 leading-relaxed font-body">依序交代情境（Situation）、任務（Task）、行動（Action）與結果（Result）。描述個人特質時，一律附上具體做法或數據成果，避免只有主觀形容詞。</p>
                             </div>
                         </div>
 
                         <div class="bg-rose-50/40 border border-rose-200 p-3.5">
                             <strong class="text-rose-900 font-mono text-xs block mb-1.5 flex items-center gap-1.5">
-                                <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> 六大常見 NG 避雷區 (切勿踩雷)
+                                <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> 六大常見履歷地雷
                             </strong>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-rose-950/85 font-body">
-                                <div>• <strong>❌ 虛構浮誇數字：</strong>若無數據請寫交付模組與主管反饋，絕不捏造。</div>
-                                <div>• <strong>❌ 空泛形容詞：</strong>「抗壓性高」後面必須接實際抗壓或自學案例。</div>
-                                <div>• <strong>❌ 未寫明確職務：</strong>一份履歷僅鎖定一個職位，拒絕亂槍打鳥。</div>
-                                <div>• <strong>❌ 聯絡資訊填錯：</strong>最毋湯的失誤！務必檢查手機與 Email 正確性。</div>
-                                <div>• <strong>❌ 自傳流水帳：</strong>新鮮人自傳直接寫我是誰/我會什麼/我想做什麼。</div>
-                                <div>• <strong>❌ 照片非正式照：</strong>93% 公司看照片，請附清晰光線之正面專業照。</div>
+                                <div>• <strong>❌ 虛構不實數據：</strong>如果專案沒有量化數據，請如實描述完成的功能模組與實質成果，切忌捏造數字。</div>
+                                <div>• <strong>❌ 空泛形容詞：</strong>寫「抗壓性高」或「學習力強」時，請務必附上實際解決問題或自學技術的案例。</div>
+                                <div>• <strong>❌ 未註明應徵職務：</strong>一份履歷應鎖定單一特定職位，避免目標模糊或亂槍打鳥。</div>
+                                <div>• <strong>❌ 聯絡資訊填錯：</strong>電話或信箱填錯會直接錯失面試通知，送出前請務必再三確認。</div>
+                                <div>• <strong>❌ 自傳流水帳：</strong>不需從家庭背景贅述，直接聚焦「我是誰」、「我具備什麼能力」、「我想在貴公司做什麼」。</div>
+                                <div>• <strong>❌ 照片不合規範：</strong>九成以上企業會看照片，請使用光線良好、五官清晰的正式證件照，避免生活自拍。</div>
                             </div>
                         </div>
                     </div>
