@@ -8,6 +8,11 @@ const BrandSnapshotSchema = new mongoose.Schema({
   topStrengths: [{ type: String }],
   radarData: [{ type: Number }],
   hollandScores: { type: mongoose.Schema.Types.Mixed, default: [] },
+  // UCAN 官方數據 (v2)：完整個人資料、使用者選擇的目標職務、知識庫版本
+  ucanProfile: { type: mongoose.Schema.Types.Mixed, default: null },
+  goalRoleId: { type: String, default: '' },
+  goalRoleTitle: { type: String, default: '' },
+  kbVersion: { type: String, default: '' },
   ucan: { type: String, default: '' }
 }, { _id: false, timestamps: true });
 
@@ -31,7 +36,7 @@ const ResumeSnapshotSchema = new mongoose.Schema({
   targetRole: { type: String, default: '' },
   rawDraft: { type: String, default: '' },
   analysis: { type: String, default: '' },
-  actionItems: [{ type: String }],
+  actionItems: [{ type: mongoose.Schema.Types.Mixed }], // 履歷健檢可能回傳字串或物件 (priority / advice / targetCourses)
   formattedResumeMarkdown: { type: String, default: '' },
   cvData: { type: mongoose.Schema.Types.Mixed, default: {} },
   updatedAt: { type: String, default: () => new Date().toISOString() }
@@ -54,7 +59,7 @@ const UserSchema = new mongoose.Schema({
   displayName: { type: String, default: '' },
   name: { type: String, default: '' },
   photoURL: { type: String, default: '' },
-  
+
   // Academic Background
   school: { type: String, default: '靜宜大學' },
   department: { type: String, default: 'IM' },
@@ -62,13 +67,13 @@ const UserSchema = new mongoose.Schema({
   grade: { type: String, default: '大三' },
   skills: { type: mongoose.Schema.Types.Mixed, default: [] },
   hollandCode: { type: String, default: '' },
-  
+
   // References to Dedicated Result Collections
   brandTestResult: { type: mongoose.Schema.Types.Mixed, default: null },
   careerFitResult: { type: mongoose.Schema.Types.Mixed, default: null },
   labRecommendationResult: { type: mongoose.Schema.Types.Mixed, default: null },
   resume: { type: mongoose.Schema.Types.Mixed, default: null },
-  
+
   // Permissions & Status
   role: { type: String, enum: ['user', 'admin'], default: 'user', index: true },
   isActive: { type: Boolean, default: true },
@@ -78,7 +83,7 @@ const UserSchema = new mongoose.Schema({
   settings: {
     darkMode: { type: Boolean, default: false }
   },
-  
+
   // Aggregate cache for rapid dashboard display
   summary_cache: {
     brand: {
@@ -125,7 +130,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Auto-sync dept and department fields, name and displayName
-UserSchema.pre('save', function() {
+UserSchema.pre('save', function () {
   if (!this.uid) this.uid = String(this._id);
   if (this.department && !this.dept) this.dept = this.department;
   if (this.dept && !this.department) this.department = this.dept;

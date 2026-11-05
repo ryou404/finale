@@ -1,14 +1,17 @@
-<!DOCTYPE html><html lang="zh-TW" class="scroll-smooth bg-white text-klein"><head>
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth bg-white text-klein">
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CareerDNA | 全方位個人品牌定位系統</title>
-    
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- html2pdf.js for PDF Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
+
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -20,12 +23,14 @@
 
     <!-- CareerDNA MongoDB Atlas Client -->
     <script src="static/db-client.js"></script>
-    
+
     <!-- Google Fonts: Sora, Noto Sans TC, Chakra Petch, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Sora:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;family=Sora:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet">
+
     <script>
         tailwind.config = {
             theme: {
@@ -81,19 +86,33 @@
             transform: translateY(30px) scale(0.99);
             transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .reveal-up.is-visible {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.3s; }
-        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        .reveal-delay-4 {
+            transition-delay: 0.4s;
+        }
 
         /* Interactive Spring Lift */
         .hover-spring {
             transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1) !important;
         }
+
         .hover-spring:hover {
             transform: translateY(-6px) scale(1.01) !important;
             box-shadow: 0 22px 44px -18px rgba(15, 23, 42, 0.14) !important;
@@ -112,13 +131,16 @@
             paint-order: stroke fill;
             transition: all 0.4s ease;
         }
+
         .outline-text:hover {
             color: #1F50CD;
             -webkit-text-stroke: 2px #002FA7;
         }
 
         /* Brutalist Form Controls */
-        input, select, textarea {
+        input,
+        select,
+        textarea {
             background-color: #ffffff !important;
             border: 1px solid rgba(0, 47, 167, 0.2) !important;
             color: #002fa7 !important;
@@ -126,44 +148,62 @@
             font-family: 'Chakra Petch', 'Noto Sans TC', sans-serif !important;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
-        input:focus, select:focus, textarea:focus {
+
+        input:focus,
+        select:focus,
+        textarea:focus {
             border-color: #002fa7 !important;
             outline: none !important;
             box-shadow: 0 0 0 1px #002fa7 !important;
         }
 
         /* Likert Scale Radio Button State */
-        .likert-opt input:checked + div { 
-            background-color: #002fa7 !important; 
-            color: #ffffff !important; 
-            border-color: #002fa7 !important; 
-            box-shadow: 0 0 0 2px rgba(0,47,167,0.2) !important; 
-            font-weight: 700 !important; 
-            transform: scale(1.03) !important; 
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important; 
+        .likert-opt input:checked+div {
+            background-color: #002fa7 !important;
+            color: #ffffff !important;
+            border-color: #002fa7 !important;
+            box-shadow: 0 0 0 2px rgba(0, 47, 167, 0.2) !important;
+            font-weight: 700 !important;
+            transform: scale(1.03) !important;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
         /* Circular Chart Rings */
-        .circle-bg { 
-            fill: none !important; 
-            stroke: rgba(0, 47, 167, 0.1) !important; 
-            stroke-width: 2.8 !important; 
+        .circle-bg {
+            fill: none !important;
+            stroke: rgba(0, 47, 167, 0.1) !important;
+            stroke-width: 2.8 !important;
         }
-        .circle { 
-            fill: none !important; 
-            stroke: #002fa7 !important; 
-            stroke-width: 2.8 !important; 
-            stroke-linecap: square !important; 
-            transition: stroke-dasharray 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important; 
+
+        .circle {
+            fill: none !important;
+            stroke: #002fa7 !important;
+            stroke-width: 2.8 !important;
+            stroke-linecap: square !important;
+            transition: stroke-dasharray 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #ffffff; }
-        ::-webkit-scrollbar-thumb { background: #a3bdf2; }
-        ::-webkit-scrollbar-thumb:hover { background: #002fa7; }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
 
-        .hidden { display: none !important; }
+        ::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #a3bdf2;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #002fa7;
+        }
+
+        .hidden {
+            display: none !important;
+        }
 
         @media print {
             .no-print {
@@ -171,7 +211,12 @@
             }
         }
     </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script></head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="static/ucan-parser.js"></script>
+    <script src="static/brand-knowledge.js"></script>
+    <script src="static/brand-engine.js"></script>
+</head>
+
 <body class="antialiased selection:bg-klein selection:text-white min-h-screen flex flex-col bg-white">
 
     <!-- Landing View -->
@@ -181,16 +226,18 @@
         <nav class="fixed w-full z-50 border-b border-klein/10 bg-white/90 backdrop-blur-xl">
             <div class="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-12 h-16 sm:h-20 flex items-center justify-between">
                 <a href="index.html" class="flex items-center gap-2 sm:gap-4 group shrink-0">
-                    <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-base sm:text-xl group-hover:bg-klein group-hover:text-white transition-all">
+                    <div
+                        class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-klein/20 text-klein font-mono text-base sm:text-xl group-hover:bg-klein group-hover:text-white transition-all">
                         <i class="fa-solid fa-bolt"></i>
                     </div>
                     <div class="flex flex-col">
-                        <span class="font-syne font-extrabold text-lg sm:text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
+                        <span
+                            class="font-syne font-extrabold text-lg sm:text-2xl tracking-tighter uppercase text-klein">CareerDNA</span>
                     </div>
                 </a>
-                
+
                 <div class="hidden md:flex items-center gap-8">
-                    <a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">首頁</a>
+<a href="index.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">首頁</a>
                     <a href="brand_test.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein border-b-2 border-klein pb-1">品牌測驗</a>
                     <a href="career_fit.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">履歷健檢</a>
                     <a href="lab_recommendation.html" class="font-mono uppercase text-xs font-bold tracking-[0.2em] text-klein/60 hover:text-klein transition-colors">系所推薦</a>
@@ -204,14 +251,18 @@
                         <span class="hidden sm:inline">返回首頁</span>
                         <span class="sm:hidden">首頁</span>
                     </a>
-                    <div id="nav-auth-section" class="flex items-center gap-2 sm:gap-3 border-l border-klein/10 pl-2 sm:pl-4 shrink-0">
+                    </a>
+                    <div id="nav-auth-section"
+                        class="flex items-center gap-2 sm:gap-3 border-l border-klein/10 pl-2 sm:pl-4 shrink-0">
                         <button id="nav-login-btn"
                             onclick="window.CareerDNA_DB && window.CareerDNA_DB.showAuthModal((u) => window.location.reload())"
                             class="font-mono uppercase text-[11px] sm:text-xs font-bold tracking-wider text-klein bg-[#EBF2FF] hover:text-white hover:bg-klein border border-klein px-2.5 sm:px-4 py-1 sm:py-1.5 transition-all">登入</button>
                         <div id="nav-user-info" class="hidden flex items-center gap-2 sm:gap-3">
                             <div class="flex flex-col text-right">
-                                <span id="nav-user-name" class="text-[11px] sm:text-xs font-bold text-klein truncate max-w-[80px] sm:max-w-[120px]"></span>
-                                <button onclick="window.CareerDNA_DB && window.CareerDNA_DB.logout(); window.location.reload();"
+                                <span id="nav-user-name"
+                                    class="text-[11px] sm:text-xs font-bold text-klein truncate max-w-[80px] sm:max-w-[120px]"></span>
+                                <button
+                                    onclick="window.CareerDNA_DB && window.CareerDNA_DB.logout(); window.location.reload();"
                                     class="text-[10px] text-klein/60 hover:text-klein underline text-right">登出</button>
                             </div>
                             <div id="nav-user-avatar"
@@ -224,7 +275,7 @@
         </nav>
 
         <!-- Mobile Fixed Bottom Navigation Bar -->
-        <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
+<nav class="md:hidden fixed bottom-0 left-0 right-0 w-full z-50 bg-white/95 backdrop-blur-xl border-t border-klein/10 px-2 py-2 flex justify-between items-center overflow-x-auto whitespace-nowrap shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-[calc(8px+env(safe-area-inset-bottom))]">
             <a href="index.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0 flex items-center gap-1"><i class="fa-solid fa-house text-[10px]"></i> 首頁</a>
             <a href="brand_test.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein border-b-2 border-klein pb-0.5 px-2 py-1 transition-colors shrink-0">品牌測驗</a>
             <a href="career_fit.html" class="font-mono uppercase text-[11px] font-bold tracking-tight text-klein/70 hover:text-klein px-2 py-1 transition-colors shrink-0">履歷健檢</a>
@@ -235,70 +286,83 @@
 
         <!-- Hero Canvas -->
         <main class="flex-grow pt-32 pb-20 px-6 md:px-12 flex items-center">
-            <section class="max-w-[1400px] w-full mx-auto min-h-[72vh] flex flex-col justify-center relative border-x border-klein/10 px-8 md:px-16 lg:px-24 py-16 crosshair-corner">
-                
+            <section
+                class="max-w-[1400px] w-full mx-auto min-h-[72vh] flex flex-col justify-center relative border-x border-klein/10 px-8 md:px-16 lg:px-24 py-16 crosshair-corner">
+
                 <div class="absolute top-0 left-0 w-full h-[1px] bg-klein/10"></div>
                 <div class="absolute bottom-0 left-0 w-full h-[1px] bg-klein/10"></div>
 
                 <div class="relative z-10 w-full flex flex-col gap-6 md:gap-8 pt-4">
-                    <div id="brand-test-breadcrumb" class="flex items-center gap-2 font-mono text-xs text-klein/60 reveal-up">
+<div id="brand-test-breadcrumb" class="flex items-center gap-2 font-mono text-xs text-klein/60 reveal-up">
                         <a href="index.html" class="hover:text-klein transition-colors flex items-center gap-1.5">
                             <i class="fa-solid fa-house text-[11px]"></i> 首頁
                         </a>
                         <span class="text-klein/30">/</span>
                         <span class="text-klein font-bold">品牌測驗</span>
                     </div>
-                    
-                    
 
-                    <h1 class="font-syne font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-[5.8rem] leading-[0.95] tracking-tight uppercase reveal-up reveal-delay-1 flex flex-col gap-2">
+
+
+                    <h1
+                        class="font-syne font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-[5.8rem] leading-[0.95] tracking-tight uppercase reveal-up reveal-delay-1 flex flex-col gap-2">
                         <span class="text-klein block">探索你的</span>
                         <span class="outline-text block">職涯基因序列</span>
                     </h1>
-                    
-                    <p class="font-body text-lg md:text-xl text-klein/70 max-w-2xl reveal-up reveal-delay-2 leading-relaxed">
-                        匯入教育部 UCAN 平台診斷數據。<br>
-                        一鍵生成：角色定位、Holland 職業性格、104 自傳亮點與 30/60/90 天成長計畫。
+
+                    <p
+                        class="font-body text-lg md:text-xl text-klein/70 max-w-2xl reveal-up reveal-delay-2 leading-relaxed">
+                        匯入教育部 UCAN 平台診斷報告。<br>
+                        依你的目標職務，產生專屬的 30/60/90 天行動計畫、社群經營策略與可參考的人物。
                     </p>
-                    
+
                     <div class="flex flex-col sm:flex-row gap-5 mt-6 md:mt-10 reveal-up reveal-delay-3 w-fit">
                         <!-- Primary Action -->
-                        <button onclick="window.app.start()" class="hover-spring bg-klein text-white font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 group rounded-none">
+                        <button onclick="window.app.start()"
+                            class="hover-spring bg-klein text-white font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 group rounded-none">
                             匯入UCAN測驗
-                            <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-400"></i>
+                            <i
+                                class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-400"></i>
                         </button>
-                        
+
                         <!-- UCAN Modal Trigger -->
-                        <button id="btn-import-ucan" onclick="window.app.start(); setTimeout(() => window.app.switchImportMode('manual'), 100);" class="hover-spring border border-klein/20 hover:border-klein bg-transparent hover:bg-klein/5 text-klein font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 transition-all rounded-none">
-                            <i class="fa-solid fa-pen-to-square text-klein/50 group-hover:text-klein transition-colors duration-400"></i>
+                        <button id="btn-import-ucan"
+                            onclick="window.app.start(); setTimeout(() => window.app.switchImportMode('manual'), 100);"
+                            class="hover-spring border border-klein/20 hover:border-klein bg-transparent hover:bg-klein/5 text-klein font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 transition-all rounded-none">
+                            <i
+                                class="fa-solid fa-pen-to-square text-klein/50 group-hover:text-klein transition-colors duration-400"></i>
                             手動輸入資料
                         </button>
 
                         <!-- Authenticated History Trigger (Unhidden via JS) -->
-                        <button id="btn-load-last" onclick="window.app.loadLastReport()" class="hidden hover-spring border border-klein/20 hover:border-klein bg-white hover:bg-klein/5 text-klein font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 transition-all rounded-none">
-                            <i class="fa-solid fa-clock-rotate-left text-klein/50 group-hover:text-klein transition-colors duration-400"></i>
+                        <button id="btn-load-last" onclick="window.app.loadLastReport()"
+                            class="hidden hover-spring border border-klein/20 hover:border-klein bg-white hover:bg-klein/5 text-klein font-heading font-bold text-lg md:text-xl tracking-wider uppercase px-10 py-5 flex items-center justify-center gap-4 transition-all rounded-none">
+                            <i
+                                class="fa-solid fa-clock-rotate-left text-klein/50 group-hover:text-klein transition-colors duration-400"></i>
                             查看上次結果
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Large abstract decoration -->
-                <div id="parallax-dna" class="absolute right-[-2%] top-1/2 -translate-y-1/2 text-[35vw] font-syne font-extrabold text-klein/[0.03] pointer-events-none select-none tracking-tighter leading-none hidden xl:block overflow-hidden">
+                <div id="parallax-dna"
+                    class="absolute right-[-2%] top-1/2 -translate-y-1/2 text-[35vw] font-syne font-extrabold text-klein/[0.03] pointer-events-none select-none tracking-tighter leading-none hidden xl:block overflow-hidden">
                     BRAND
                 </div>
             </section>
         </main>
 
         <!-- Global Footer -->
-        <footer class="border-t border-klein/10 p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-4 bg-white max-w-[1400px] mx-auto w-full">
+        <footer
+            class="border-t border-klein/10 p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-4 bg-white max-w-[1400px] mx-auto w-full">
             <div class="font-mono text-klein/50 text-xs tracking-wider">
                 CareerDNA &copy; 2026
             </div>
         </footer>
     </div>
-    <div id="view-ucan-import" class="hidden min-h-screen bg-gray-50 text-klein flex flex-col pt-20 pb-20 relative z-10">
+    <div id="view-ucan-import"
+        class="hidden min-h-screen bg-gray-50 text-klein flex flex-col pt-20 pb-20 relative z-10">
         <div class="max-w-4xl w-full mx-auto px-4 md:px-8">
-            <div id="ucan-wizard-nav" class="flex items-center justify-between mb-6 pb-4 border-b border-klein/10">
+<div id="ucan-wizard-nav" class="flex items-center justify-between mb-6 pb-4 border-b border-klein/10">
                 <a href="brand_test.html" class="text-xs font-mono font-bold text-klein/60 hover:text-klein flex items-center gap-1.5">
                     <i class="fa-solid fa-arrow-left"></i> 回測驗介紹
                 </a>
@@ -306,184 +370,252 @@
                     <i class="fa-solid fa-house"></i> 返回首頁
                 </a>
             </div>
-            <h2 class="font-heading font-black text-3xl uppercase tracking-tight text-klein mb-2 text-center">UCAN 數據精準匯入</h2>
-            <p class="text-klein/60 font-body text-center mb-8">為了提供最具公信力的職涯定位，我們採用教育部 UCAN 平台之測驗數據。</p>
-            
+            <h2 class="font-heading font-black text-3xl uppercase tracking-tight text-klein mb-2 text-center">UCAN
+                數據精準匯入</h2>
+            <p class="text-klein/60 font-body text-center mb-2">本系統不使用自編問卷，所有分析都來自教育部 UCAN 平台的官方診斷報告。</p>
+            <p class="text-klein/50 font-body text-center text-xs mb-8">資料只在你的瀏覽器解析；PDF 不會上傳。登入後才會把分析結果儲存到你的帳號。</p>
             <!-- 模式切換 -->
             <div class="flex justify-center gap-4 mb-8">
-                <button id="btn-mode-pdf" onclick="window.app.switchImportMode('pdf')" class="px-6 py-2 bg-klein text-white font-bold font-mono tracking-wider text-sm border border-klein hover-spring">上傳PDF</button>
-                <button id="btn-mode-manual" onclick="window.app.switchImportMode('manual')" class="px-6 py-2 bg-white text-klein font-bold font-mono tracking-wider text-sm border border-klein/30 hover:bg-klein/5 hover-spring">手動輸入UCAN資料</button>
+                <button id="btn-mode-pdf" onclick="window.app.switchImportMode('pdf')"
+                    class="px-6 py-2 bg-klein text-white font-bold font-mono tracking-wider text-sm border border-klein hover-spring">上傳PDF</button>
+                <button id="btn-mode-manual" onclick="window.app.switchImportMode('manual')"
+                    class="px-6 py-2 bg-white text-klein font-bold font-mono tracking-wider text-sm border border-klein/30 hover:bg-klein/5 hover-spring">手動輸入UCAN資料</button>
             </div>
 
             <!-- PDF 模式 -->
             <div id="import-mode-pdf" class="bg-white p-6 md:p-8 border border-klein/10 crosshair-corner shadow-sm">
-                <div class="border-2 border-dashed border-klein/30 p-8 md:p-12 text-center hover:bg-klein/5 transition-colors cursor-pointer relative" id="pdf-drop-zone">
-                    <input type="file" id="ucan-pdf-upload" accept="application/pdf" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="window.app.handlePDFUpload(event)">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-klein/5 border border-klein/20 flex items-center justify-center text-klein text-3xl pointer-events-none">
+                <div class="border-2 border-dashed border-klein/30 p-8 md:p-12 text-center hover:bg-klein/5 transition-colors cursor-pointer relative"
+                    id="pdf-drop-zone">
+                    <input type="file" id="ucan-pdf-upload" accept="application/pdf" multiple
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        onchange="window.app.handlePDFUpload(event)">
+                    <div
+                        class="w-16 h-16 mx-auto mb-4 bg-klein/5 border border-klein/20 flex items-center justify-center text-klein text-3xl pointer-events-none">
                         <i class="fa-solid fa-file-arrow-up"></i>
                     </div>
-                    <h3 class="font-heading font-black text-xl text-klein mb-2 uppercase tracking-tight pointer-events-none">點擊或拖曳上傳 UCAN 診斷報告 (PDF)</h3>
+                    <h3
+                        class="font-heading font-black text-xl text-klein mb-2 uppercase tracking-tight pointer-events-none">
+                        點擊或拖曳上傳 UCAN 診斷報告 (PDF)</h3>
                     <p class="text-sm font-body text-klein/70 max-w-xl mx-auto mb-3 pointer-events-none">
-                        上傳UCAN平台的"職業興趣探索診斷結果、職場共通職能診斷結果、專業職能診斷結果" PDF檔案
+                        上傳 UCAN 平台的「職業興趣探索診斷結果」「職場共通職能診斷結果」「專業職能診斷結果」PDF 檔案
                     </p>
                     <span class="inline-block px-3 py-1 bg-klein/10 text-klein text-xs font-mono font-bold">
-                        <i class="fa-solid fa-circle-info mr-1"></i> 可單份上傳或一次選取 1~3 份 PDF 檔案
+                        <i class="fa-solid fa-circle-info mr-1"></i> 可單份上傳或一次選取 1~3 份 PDF 檔案；三份都上傳，建議最精準
                     </span>
-                    <div id="pdf-loading" class="hidden mt-6 text-klein font-mono text-sm font-bold flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-spinner fa-spin text-lg"></i> <span id="pdf-loading-text">正在智能解析 PDF 數據，請稍候...</span>
+                    <div id="pdf-loading"
+                        class="hidden mt-6 text-klein font-mono text-sm font-bold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-spinner fa-spin text-lg"></i> <span id="pdf-loading-text">正在解析 PDF
+                            數據，請稍候...</span>
                     </div>
                 </div>
 
                 <!-- Parsed Summary Panel -->
                 <div id="pdf-parsed-summary" class="hidden mt-6 p-6 bg-klein/[0.03] border border-klein/20">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-klein/10">
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-klein/10">
                         <div class="flex items-center gap-2.5">
                             <span class="w-3 h-3 bg-emerald-500 rounded-full animate-ping"></span>
-                            <span class="font-heading font-black text-klein text-lg uppercase tracking-tight">UCAN 診斷數據解析完成</span>
+                            <span class="font-heading font-black text-klein text-lg uppercase tracking-tight">UCAN
+                                診斷數據解析結果</span>
                         </div>
-                        <span id="parsed-student-badge" class="font-mono text-xs bg-klein text-white px-3 py-1 font-bold">
-                            學生資訊載入中
-                        </span>
+                        <span id="parsed-student-badge"
+                            class="font-mono text-xs bg-klein text-white px-3 py-1 font-bold">學生資訊載入中</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <!-- Holland Status -->
                         <div class="p-4 bg-white border border-klein/10" id="card-status-holland">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold text-xs text-klein/60 uppercase font-mono">01. 職業性格 (Holland)</span>
-                                <span id="badge-status-holland" class="text-[11px] font-mono px-2 py-0.5 bg-gray-100 text-gray-500 font-bold">未偵測</span>
+                                <span class="font-bold text-xs text-klein/60 uppercase font-mono">01. 職業興趣探索</span>
+                                <span id="badge-status-holland"
+                                    class="text-[11px] font-mono px-2 py-0.5 bg-gray-100 text-gray-500 font-bold">未上傳</span>
                             </div>
                             <div class="font-heading font-black text-klein text-base" id="status-holland-val">尚未上傳</div>
-                            <div class="text-xs text-klein/60 font-body mt-1" id="status-holland-sub">包含 RIASEC 六大類型分數與 PR</div>
+                            <div class="text-xs text-klein/60 font-body mt-1" id="status-holland-sub">包含 RIASEC 六型分數與 16
+                                職涯類型</div>
                         </div>
-
-                        <!-- Common Competencies Status -->
                         <div class="p-4 bg-white border border-klein/10" id="card-status-common">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="font-bold text-xs text-klein/60 uppercase font-mono">02. 職場共通職能</span>
-                                <span id="badge-status-common" class="text-[11px] font-mono px-2 py-0.5 bg-gray-100 text-gray-500 font-bold">未偵測</span>
+                                <span id="badge-status-common"
+                                    class="text-[11px] font-mono px-2 py-0.5 bg-gray-100 text-gray-500 font-bold">未上傳</span>
                             </div>
                             <div class="font-heading font-black text-klein text-base" id="status-common-val">尚未上傳</div>
-                            <div class="text-xs text-klein/60 font-body mt-1" id="status-common-sub">包含溝通、問題解決等 8 項職能</div>
+                            <div class="text-xs text-klein/60 font-body mt-1" id="status-common-sub">包含溝通、問題解決等 8 項職能
+                            </div>
                         </div>
-
-                        <!-- Professional Status -->
                         <div class="p-4 bg-white border border-klein/10" id="card-status-prof">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="font-bold text-xs text-klein/60 uppercase font-mono">03. 專業職能 (途徑)</span>
-                                <span id="badge-status-prof" class="text-[11px] font-mono px-2 py-0.5 bg-gray-100 text-gray-500 font-bold">未偵測</span>
+                                <span id="badge-status-prof"
+                                    class="text-[11px] font-mono px-2 py-0.5 bg-gray-100 text-gray-500 font-bold">未上傳</span>
                             </div>
                             <div class="font-heading font-black text-klein text-base" id="status-prof-val">尚未上傳</div>
-                            <div class="text-xs text-klein/60 font-body mt-1" id="status-prof-sub">包含就業途徑、PR值與能力分數</div>
+                            <div class="text-xs text-klein/60 font-body mt-1" id="status-prof-sub">包含就業途徑與各專業職能項目</div>
                         </div>
                     </div>
 
+                    <div id="pdf-missing-note"
+                        class="hidden mb-5 text-xs font-body text-amber-800 bg-amber-50 border border-amber-200 px-3 py-2">
+                    </div>
+
                     <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-klein/10">
-                        <span class="text-xs font-body text-klein/60">
-                            💡 若需要進一步調整分數，可點擊「檢視手動表單」進行微調。
-                        </span>
-                        <div class="flex gap-3">
-                            <button onclick="window.app.switchImportMode('manual')" class="px-5 py-2.5 bg-white border border-klein/30 text-klein font-bold text-xs font-mono hover:bg-klein/5 hover-spring">
-                                <i class="fa-solid fa-pen-to-square mr-1.5"></i> 檢視 / 微調手動表單
-                            </button>
-                            <button onclick="window.app.submitParsedData()" class="px-8 py-2.5 bg-klein text-white font-bold text-xs font-mono uppercase tracking-wider hover-spring shadow-lg">
-                                <i class="fa-solid fa-bolt mr-1.5"></i> 立即產生個人品牌分析
-                            </button>
-                        </div>
+                        <span class="text-xs font-body text-klein/60">下一步：選擇你的未來目標，系統會依目標產生不同的 90 天計畫。</span>
+                        <button id="btn-to-goal" onclick="window.app.submitParsedData()"
+                            class="px-8 py-2.5 bg-klein text-white font-bold text-xs font-mono uppercase tracking-wider hover-spring shadow-lg">
+                            <i class="fa-solid fa-bullseye mr-1.5"></i> 下一步：選擇職涯目標
+                        </button>
                     </div>
                 </div>
             </div>
 
             <!-- 手動模式 (Wizard) -->
-            <div id="import-mode-manual" class="hidden bg-white p-6 md:p-8 border border-klein/10 crosshair-corner shadow-sm">
-                
-                <!-- Wizard Tabs -->
+            <div id="import-mode-manual"
+                class="hidden bg-white p-6 md:p-8 border border-klein/10 crosshair-corner shadow-sm">
+                <p class="text-xs font-body text-amber-800 bg-amber-50 border border-amber-200 px-3 py-2 mb-6">
+                    請照著 UCAN 報告上的數字填寫。不想填的整頁留空即可（表示沒有這份報告），系統不會替你補任何預設值。
+                </p>
                 <div class="flex mb-8 border-b border-klein/10 overflow-x-auto whitespace-nowrap">
-                    <button class="wizard-tab flex-1 py-3 px-4 font-heading font-bold text-center border-b-2 border-klein text-klein transition" data-step="1">1. 職業性格</button>
-                    <button class="wizard-tab flex-1 py-3 px-4 font-heading font-bold text-center border-b-2 border-transparent text-klein/40 hover:text-klein transition" data-step="2">2. 共通職能</button>
-                    <button class="wizard-tab flex-1 py-3 px-4 font-heading font-bold text-center border-b-2 border-transparent text-klein/40 hover:text-klein transition" data-step="3">3. 專業職能</button>
+                    <button
+                        class="wizard-tab flex-1 py-3 px-4 font-heading font-bold text-center border-b-2 border-klein text-klein transition"
+                        data-step="1">1. 職業興趣</button>
+                    <button
+                        class="wizard-tab flex-1 py-3 px-4 font-heading font-bold text-center border-b-2 border-transparent text-klein/40 hover:text-klein transition"
+                        data-step="2">2. 共通職能</button>
+                    <button
+                        class="wizard-tab flex-1 py-3 px-4 font-heading font-bold text-center border-b-2 border-transparent text-klein/40 hover:text-klein transition"
+                        data-step="3">3. 專業職能</button>
                 </div>
 
-                <!-- Step 1: Holland -->
+                <!-- Step 1 -->
                 <div class="wizard-step" id="step-1">
-                    <h3 class="font-mono font-bold text-sm text-klein mb-4 tracking-widest"><i class="fa-solid fa-cube mr-2"></i>職業性格 (RIASEC)</h3>
-                    <p class="text-xs text-klein/60 mb-6">請輸入各類型之分數 (滿分12分) 與 PR值 (1-100)。</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="holland-inputs">
-                        <!-- Generated by JS -->
+                    <h3 class="font-mono font-bold text-sm text-klein mb-4 tracking-widest"><i
+                            class="fa-solid fa-cube mr-2"></i>職業興趣探索 (RIASEC)</h3>
+                    <p class="text-xs text-klein/60 mb-4">請輸入報告中「職業性格」表格的分數（滿分 12）與 PR 值。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="holland-inputs"></div>
+                    <div class="mt-6">
+                        <label class="block text-xs font-bold text-klein mb-1">您的職業性格代碼（選填，例如 AES；留空則由分數推算）</label>
+                        <input type="text" id="h-code" maxlength="4" placeholder="例如 AES"
+                            class="w-full md:w-60 p-2 border border-klein/20 outline-none text-sm font-mono font-bold uppercase">
+                    </div>
+                    <div class="mt-6">
+                        <div class="text-xs font-bold text-klein mb-2">興趣度最高的職涯類型（選填，勾選報告中標示的前幾名）</div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2" id="cluster-inputs"></div>
                     </div>
                     <div class="mt-8 flex justify-end">
-                        <button onclick="window.app.nextWizardStep(2)" class="px-8 py-3 bg-klein text-white font-bold tracking-wider hover-spring">下一步</button>
+                        <button onclick="window.app.nextWizardStep(2)"
+                            class="px-8 py-3 bg-klein text-white font-bold tracking-wider hover-spring">下一步</button>
                     </div>
                 </div>
 
-                <!-- Step 2: 共通職能 -->
+                <!-- Step 2 -->
                 <div class="wizard-step hidden" id="step-2">
-                    <h3 class="font-mono font-bold text-sm text-klein mb-4 tracking-widest"><i class="fa-solid fa-users-gear mr-2"></i>職場共通職能</h3>
-                    <p class="text-xs text-klein/60 mb-6">請輸入各共通職能之分數 (1-5分，可含小數) 與 PR值 (1-100)。</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="common-competency-inputs">
-                        <!-- Generated by JS -->
-                    </div>
+                    <h3 class="font-mono font-bold text-sm text-klein mb-4 tracking-widest"><i
+                            class="fa-solid fa-users-gear mr-2"></i>職場共通職能</h3>
+                    <p class="text-xs text-klein/60 mb-6">請輸入 8 項共通職能的分數（1-5，可含小數）與 PR 值（1-100）。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="common-competency-inputs"></div>
                     <div class="mt-8 flex justify-between">
-                        <button onclick="window.app.nextWizardStep(1)" class="px-6 py-3 border border-klein/20 text-klein font-bold hover-spring">上一步</button>
-                        <button onclick="window.app.nextWizardStep(3)" class="px-8 py-3 bg-klein text-white font-bold tracking-wider hover-spring">下一步</button>
+                        <button onclick="window.app.nextWizardStep(1)"
+                            class="px-6 py-3 border border-klein/20 text-klein font-bold hover-spring">上一步</button>
+                        <button onclick="window.app.nextWizardStep(3)"
+                            class="px-8 py-3 bg-klein text-white font-bold tracking-wider hover-spring">下一步</button>
                     </div>
                 </div>
 
-                <!-- Step 3: 專業職能 -->
+                <!-- Step 3 -->
                 <div class="wizard-step hidden" id="step-3">
-                    <h3 class="font-mono font-bold text-sm text-klein mb-4 tracking-widest"><i class="fa-solid fa-laptop-code mr-2"></i>專業職能 (資訊領域)</h3>
-                    <p class="text-xs text-klein/60 mb-6">請選擇您在 UCAN 施測的資訊相關就業途徑，並輸入 PR值 (1-100)。</p>
+                    <h3 class="font-mono font-bold text-sm text-klein mb-4 tracking-widest"><i
+                            class="fa-solid fa-laptop-code mr-2"></i>專業職能診斷</h3>
+                    <p class="text-xs text-klein/60 mb-6">請照報告上的「職涯類型」與「就業途徑」名稱填寫（下拉僅供參考，可自行輸入）。</p>
                     <div class="space-y-4">
                         <div>
-                            <label class="block font-bold text-sm text-klein mb-2">就業途徑 (Employment Pathway)</label>
-                            <select id="prof-pathway" class="w-full p-3 border border-klein/20 bg-gray-50 focus:border-klein outline-none font-body">
-                                <option value="軟體開發">軟體開發 (Software Development)</option>
-                                <option value="系統分析">系統分析 (System Analysis)</option>
-                                <option value="資料科學與分析">資料科學與分析 (Data Science &amp; Analysis)</option>
-                                <option value="網路與系統維運">網路與系統維運 (Network &amp; System Admin)</option>
-                                <option value="資訊安全">資訊安全 (Information Security)</option>
-                                <option value="數位行銷與電子商務">數位行銷與電子商務 (Digital Marketing &amp; E-commerce)</option>
-                            </select>
+                            <label class="block font-bold text-sm text-klein mb-2">就業途徑</label>
+                            <input type="text" id="prof-pathway" list="pathway-options" placeholder="例如：視覺藝術"
+                                class="w-full p-3 border border-klein/20 bg-gray-50 outline-none font-body">
+                            <datalist id="pathway-options"></datalist>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-sm text-klein mb-2">職涯類型（選填）</label>
+                            <input type="text" id="prof-cluster" placeholder="例如：藝文與影音傳播"
+                                class="w-full p-3 border border-klein/20 bg-gray-50 outline-none font-body">
                         </div>
                         <div class="flex gap-4">
                             <div class="flex-1">
-                                <label class="block font-bold text-sm text-klein mb-2">分數 (1-5)</label>
-                                <input type="number" id="prof-score" step="0.1" min="1" max="5" class="w-full p-3 border border-klein/20 bg-gray-50 focus:border-klein outline-none" placeholder="例如: 4.2">
+                                <label class="block font-bold text-sm text-klein mb-2">平均分數 (1-5，選填)</label>
+                                <input type="number" id="prof-score" step="0.1" min="1" max="5"
+                                    class="w-full p-3 border border-klein/20 bg-gray-50 outline-none"
+                                    placeholder="例如: 3.5">
                             </div>
                             <div class="flex-1">
-                                <label class="block font-bold text-sm text-klein mb-2">PR 值 (1-100)</label>
-                                <input type="number" id="prof-pr" min="1" max="100" class="w-full p-3 border border-klein/20 bg-gray-50 focus:border-klein outline-none" placeholder="例如: 85">
+                                <label class="block font-bold text-sm text-klein mb-2">平均 PR 值 (1-100，選填)</label>
+                                <input type="number" id="prof-pr" min="1" max="100"
+                                    class="w-full p-3 border border-klein/20 bg-gray-50 outline-none"
+                                    placeholder="例如: 55">
                             </div>
                         </div>
+                        <p class="text-xs text-klein/50">提示：上傳 PDF 可取得各專業職能項目的 PR，計畫會更精準。</p>
                     </div>
                     <div class="mt-8 flex justify-between">
-                        <button onclick="window.app.nextWizardStep(2)" class="px-6 py-3 border border-klein/20 text-klein font-bold hover-spring">上一步</button>
-                        <button onclick="window.app.submitUCANManual()" class="px-8 py-3 bg-red-600 text-white font-bold tracking-wider hover:bg-red-700 transition">產生個人品牌分析</button>
+                        <button onclick="window.app.nextWizardStep(2)"
+                            class="px-6 py-3 border border-klein/20 text-klein font-bold hover-spring">上一步</button>
+                        <button onclick="window.app.submitManual()"
+                            class="px-8 py-3 bg-klein text-white font-bold tracking-wider hover-spring">下一步：選擇職涯目標</button>
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 
+    <!-- 選擇未來目標 -->
+    <div id="view-goal" class="hidden min-h-screen bg-gray-50 text-klein flex flex-col pt-20 pb-20 relative z-10">
+        <div class="max-w-5xl w-full mx-auto px-4 md:px-8">
+            <h2 class="font-heading font-black text-3xl uppercase tracking-tight text-klein mb-2 text-center">選擇你的未來目標
+            </h2>
+            <p class="text-klein/60 font-body text-center mb-6">不同目標會得到完全不同的 30/60/90 天行動計畫與社群策略。以下 3 個推薦，都是由你的 UCAN
+                數據計算出來的。</p>
 
-    <!-- Quiz Assessment View -->
-    
+            <div class="mb-8 p-4 bg-white border border-klein/10">
+                <div class="font-mono text-[11px] font-bold tracking-[0.2em] text-klein/50 mb-2 uppercase">你的 UCAN 數據
+                </div>
+                <div id="goal-data-summary" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div id="goal-suggestions" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10"></div>
+
+            <div class="bg-white border border-klein/10 p-5 flex flex-col md:flex-row md:items-center gap-4">
+                <div class="font-bold text-sm text-klein shrink-0">已經有想走的方向？</div>
+                <select id="goal-select" class="flex-1 p-3 border border-klein/20 outline-none font-body"></select>
+                <button onclick="window.app.chooseGoalFromSelect()"
+                    class="px-6 py-3 bg-klein text-white font-bold text-sm tracking-wider hover-spring">用這個目標產生計畫</button>
+            </div>
+            <div class="mt-6 text-center">
+                <button onclick="window.app.switchView('view-ucan-import')"
+                    class="font-mono text-xs font-bold text-klein/60 hover:text-klein underline">← 回上一步修改 UCAN
+                    資料</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Brand Canvas Report View -->
-    <div id="view-result" class="hidden min-h-screen bg-white text-klein py-8 px-6 md:px-12 selection:bg-klein selection:text-white">
-        
+    <div id="view-result"
+        class="hidden min-h-screen bg-white text-klein py-8 px-6 md:px-12 selection:bg-klein selection:text-white">
+
+        <div id="inapp-warning" class="hidden no-print max-w-[1400px] mx-auto mb-4 text-xs font-body text-amber-900 bg-amber-50 border border-amber-300 px-4 py-3 leading-relaxed"></div>
+
         <!-- Top Action Bar (no-print) -->
-        <div class="max-w-[1400px] mx-auto mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print border-b border-klein/10 pb-6">
+        <div
+            class="max-w-[1400px] mx-auto mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print border-b border-klein/10 pb-6">
             <div class="font-mono text-xs font-bold tracking-wider text-klein/70 uppercase flex items-center gap-2">
                 <span class="w-2 h-2 bg-klein"></span>
                 個人品牌定位報告
             </div>
             <div class="flex items-center gap-4">
-                <a href="index.html" class="hover-spring border border-klein/20 hover:border-klein text-klein bg-white hover:bg-klein/5 px-6 py-3 font-heading font-bold uppercase tracking-wider text-sm flex items-center gap-3 transition rounded-none">
+                <a href="index.html"
+                    class="hover-spring border border-klein/20 hover:border-klein text-klein bg-white hover:bg-klein/5 px-6 py-3 font-heading font-bold uppercase tracking-wider text-sm flex items-center gap-3 transition rounded-none">
                     <i class="fa-solid fa-arrow-left"></i> 返回首頁
                 </a>
-                <button id="btn-export-pdf" onclick="window.app.downloadPDF()" class="hover-spring bg-klein text-white hover:bg-klein/90 px-6 py-3 font-heading font-bold uppercase tracking-wider text-sm flex items-center gap-3 transition rounded-none">
+                <button id="btn-export-pdf" onclick="window.app.downloadPDF()"
+                    class="hover-spring bg-klein text-white hover:bg-klein/90 px-6 py-3 font-heading font-bold uppercase tracking-wider text-sm flex items-center gap-3 transition rounded-none">
                     <i class="fa-solid fa-file-pdf"></i> 下載完整報告 (PDF)
                 </button>
             </div>
@@ -491,155 +623,182 @@
 
         <!-- Master Report Container for PDF Export -->
         <div id="report-container" class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            <!-- 1. Hero Brand Canvas Panel -->
-            <div class="lg:col-span-12 p-8 md:p-12 bg-white border border-klein/10 crosshair-corner relative overflow-hidden">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-klein/10 pb-6 mb-8 gap-2">
+
+            <!-- 1. Hero -->
+            <div
+                class="lg:col-span-12 p-8 md:p-12 bg-white border border-klein/10 crosshair-corner relative overflow-hidden">
+                <div
+                    class="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-klein/10 pb-6 mb-8 gap-2">
                     <div>
-                        <span class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 uppercase">ASSESSMENT PROTOCOL // CAREER_DNA_V2</span>
-                        <h2 class="font-heading font-black text-3xl md:text-4xl uppercase tracking-tight text-klein mt-1">My Brand Canvas 品牌定位報告</h2>
+                        <span class="font-mono text-xs font-bold tracking-[0.2em] text-klein/50 uppercase">DATA SOURCE
+                            // UCAN</span>
+                        <h2
+                            class="font-heading font-black text-3xl md:text-4xl uppercase tracking-tight text-klein mt-1">
+                            My Brand Canvas 品牌定位報告</h2>
                     </div>
-                    <div class="font-mono text-xs font-bold tracking-[0.2em] text-klein/60 border border-klein/20 px-3 py-1.5" id="report-date"></div>
+                    <div class="font-mono text-[11px] font-bold tracking-wide text-klein/60 border border-klein/20 px-3 py-1.5"
+                        id="report-date"></div>
                 </div>
 
                 <div class="flex flex-col md:flex-row items-center justify-start gap-10 md:gap-14">
-                    <!-- Circular Fit Score -->
                     <div class="relative w-44 h-44 flex items-center justify-center flex-shrink-0">
                         <svg viewBox="0 0 36 36" class="circular-chart w-full h-full text-klein">
-                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                            <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                            <path class="circle-bg"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831">
+                            </path>
+                            <path class="circle" stroke-dasharray="0, 100"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831">
+                            </path>
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span id="score-display" class="font-mono font-black text-5xl text-klein tracking-tight">0</span>
-                            <span class="font-mono text-[10px] font-bold text-klein/50 uppercase tracking-[0.2em] mt-1">Fit Score</span>
+                            <span id="score-display"
+                                class="font-mono font-black text-5xl text-klein tracking-tight">0</span>
+                            <span
+                                class="font-mono text-[10px] font-bold text-klein/50 uppercase tracking-[0.2em] mt-1">Fit
+                                Score</span>
                         </div>
                     </div>
 
-                    <!-- Career Recommendation Details -->
                     <div class="text-left flex-1">
-                        <div class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 bg-klein"></span> 推薦職涯角色 (RECOMMENDED CAREER ROLES)
+                        <div
+                            class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 bg-klein"></span> 你的目標職務 (TARGET ROLE)
                         </div>
-                        <div id="best-dept" class="font-heading font-black text-3xl md:text-5xl uppercase tracking-tight text-klein">分析中...</div>
-                        <div id="archetype-desc" class="font-body text-base md:text-lg text-klein/70 mt-3 max-w-3xl leading-relaxed"></div>
-                        <div class="mt-6 inline-flex items-center gap-3 font-mono text-sm font-bold text-klein bg-klein/5 px-4 py-2 border border-klein/20">
+                        <div id="best-dept"
+                            class="font-heading font-black text-3xl md:text-5xl tracking-tight text-klein">分析中...</div>
+                        <div id="best-dept-en" class="font-mono text-sm text-klein/50 mt-1"></div>
+                        <div id="role-depts" class="mt-4"></div>
+                        <div id="archetype-desc"
+                            class="font-body text-base md:text-lg text-klein/70 mt-3 max-w-3xl leading-relaxed"></div>
+                        <div
+                            class="mt-4 inline-flex items-center gap-3 font-mono text-sm font-bold text-klein bg-klein/5 px-4 py-2 border border-klein/20">
                             <i class="fa-solid fa-circle-check text-klein"></i>
-                            與您的特質契合度高達 <span id="fit-score-text" class="font-mono font-bold text-xl text-klein tracking-tight">0%</span>
+                            與你的 UCAN 數據契合度 <span id="fit-score-text"
+                                class="font-mono font-bold text-xl text-klein tracking-tight">0%</span>
                         </div>
+                        <div id="data-provenance" class="mt-4"></div>
+                        <div id="role-switcher" class="no-print mt-5 flex flex-wrap gap-2"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. Left Column: Brand Strategy & Action Plan (6 Cols) -->
-            <div class="lg:col-span-6 flex flex-col gap-8">
-                
-                <!-- Social Media Strategy -->
-                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
-                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> 社群經營策略 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">STRATEGY</span>
-                    </h3>
-                    <div id="platform-card" class="space-y-4"></div>
-                </div>
-
-                <!-- Brand Action Card -->
-                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
-                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> 品牌行動卡片 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">ACTION_CARD</span>
-                    </h3>
-                    <div id="action-card-content" class="space-y-4"></div>
-                </div>
-
-                <!-- 30/60/90 Day Roadmap -->
-                <div class="p-8 bg-white border border-klein/10 crosshair-corner flex-1">
-                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> <span class="font-mono font-bold tracking-tight">30/60/90</span> 天成長計畫 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">ROADMAP</span>
-                    </h3>
-                    <div id="action-plan-timeline" class="space-y-4 divide-y divide-klein/10"></div>
-                </div>
+            <!-- 2. 為什麼推薦 -->
+            <div class="lg:col-span-12 p-8 bg-white border border-klein/10 crosshair-corner">
+                <h3
+                    class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-2 flex items-center gap-3">
+                    <span class="w-2 h-6 bg-klein"></span> 為什麼是這個目標？ <span
+                        class="font-mono text-xs text-klein/40 tracking-[0.2em]">EXPLAINABLE</span>
+                </h3>
+                <p class="text-xs font-body text-klein/60 mb-4 leading-relaxed">契合度 = 各項吻合度 × 權重：職業性格 35%、職涯類型興趣
+                    25%、專業職能途徑 20%、共通職能 20%（缺少的報告會自動略過並重新分配）。這是本專案依 Holland 人境適配理論設定的規則，不是 UCAN 官方公式。</p>
+                <div id="why-panel" class="divide-y divide-klein/10"></div>
             </div>
 
-            <!-- 3. Right Column: Quantitative Diagnostics & Strengths (6 Cols) -->
+            <!-- 3. 30/60/90 -->
+            <div class="lg:col-span-12 p-8 bg-white border border-klein/10 crosshair-corner">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4">
+                    <h3
+                        class="font-heading font-black text-xl uppercase tracking-tight text-klein flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> <span
+                            class="font-mono font-bold tracking-tight">30/60/90</span> 天行動計畫 <span
+                            class="font-mono text-xs text-klein/40 tracking-[0.2em]">ROADMAP</span>
+                    </h3>
+                    <div class="sm:w-64">
+                        <div id="plan-progress" class="font-mono text-xs font-bold text-klein/60 text-right mb-1"></div>
+                        <div class="h-1.5 bg-klein/10">
+                            <div id="plan-progress-bar" class="h-full bg-klein transition-all duration-500"
+                                style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="plan-summary"
+                    class="text-xs font-body text-klein/80 bg-klein/[0.04] border border-klein/10 p-3 mb-5 space-y-1 leading-relaxed">
+                </div>
+                <div id="ucan-ref-panel" class="space-y-3 mb-5"></div>
+                <div id="action-plan-timeline" class="grid grid-cols-1 md:grid-cols-3 gap-5"></div>
+            </div>
+
+            <!-- 4. 社群策略 + 人物 -->
+            <div class="lg:col-span-6 p-8 bg-white border border-klein/10 crosshair-corner">
+                <h3
+                    class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                    <span class="w-2 h-6 bg-klein"></span> 社群經營策略 <span
+                        class="font-mono text-xs text-klein/40 tracking-[0.2em]">STRATEGY</span>
+                </h3>
+                <div id="platform-card"></div>
+            </div>
+            <div class="lg:col-span-6 p-8 bg-white border border-klein/10 crosshair-corner">
+                <h3
+                    class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-2 flex items-center gap-3">
+                    <span class="w-2 h-6 bg-klein"></span> 值得參考的人 <span
+                        class="font-mono text-xs text-klein/40 tracking-[0.2em]">ROLE MODELS</span>
+                </h3>
+                <p class="text-xs font-body text-klein/60 mb-5 leading-relaxed">
+                    優先挑選台灣的經營者與社群。點進去看他們的作品或文章怎麼分段、怎麼寫標題，再模仿結構（不是複製內容）。</p>
+                <div id="creators-grid" class="grid grid-cols-1 gap-4"></div>
+            </div>
+
+            <!-- 5. 診斷數據 -->
             <div class="lg:col-span-6 flex flex-col gap-8">
-                
-                <!-- Dimension Quantitative Benchmarks -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner">
-                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> Holland 性格維度分析 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">HOLLAND_PROFILE</span>
+                    <h3
+                        class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> Holland 性格維度 <span
+                            class="font-mono text-xs text-klein/40 tracking-[0.2em]">HOLLAND_PROFILE</span>
                     </h3>
                     <div id="radar-details" class="space-y-5 divide-y divide-klein/10"></div>
                 </div>
-
-                <!-- UCAN Traffic Light Dashboard -->
-                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
-                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> UCAN 職能優勢分析 (Traffic Light) <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">PR_DASHBOARD</span>
-                    </h3>
-                    <p class="text-sm font-body text-klein/60 mb-6">依據 UCAN 標準：PR 67~99 為「優勢能力」(綠)，PR 34~66 為「中等能力」(黃)，PR 1~33 為「待加強」(紅)。</p>
-                    <div id="traffic-light-dashboard" class="space-y-4">
-                        <!-- Generated by JS -->
-                    </div>
-                </div>
-
-                <!-- Top 5 Talents -->
                 <div class="p-8 bg-white border border-klein/10 crosshair-corner flex-1">
-                    <h3 class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
-                        <span class="w-2 h-6 bg-klein"></span> <span class="font-mono font-bold tracking-tight">TOP 5</span> 天賦優勢 <span class="font-mono text-xs text-klein/40 tracking-[0.2em]">STRENGTHS</span>
+                    <h3
+                        class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> 共通職能 PR 排名 <span
+                            class="font-mono text-xs text-klein/40 tracking-[0.2em]">TOP 5</span>
                     </h3>
                     <div id="strength-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
+            </div>
+            <div class="lg:col-span-6 flex flex-col gap-8">
+                <div class="p-8 bg-white border border-klein/10 crosshair-corner">
+                    <h3
+                        class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> 職場共通職能 <span
+                            class="font-mono text-xs text-klein/40 tracking-[0.2em]">PR_DASHBOARD</span>
+                    </h3>
+                    <p class="text-sm font-body text-klein/60 mb-6">依 UCAN 標準：PR 67 以上為「優勢能力」(綠)，PR 34~66 為「中等能力」(黃)，PR
+                        33 以下為「待加強」(紅)。</p>
+                    <div id="traffic-light-dashboard" class="space-y-4"></div>
+                </div>
+                <div class="p-8 bg-white border border-klein/10 crosshair-corner flex-1">
+                    <h3
+                        class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-6 flex items-center gap-3">
+                        <span class="w-2 h-6 bg-klein"></span> 專業職能項目 <span
+                            class="font-mono text-xs text-klein/40 tracking-[0.2em]">PROFESSIONAL</span>
+                    </h3>
+                    <div id="prof-items"></div>
+                </div>
+            </div>
+
+            <!-- 6. 必備工具和概念說明 -->
+            <div class="lg:col-span-12 p-8 bg-white border border-klein/10 crosshair-corner">
+                <h3
+                    class="font-heading font-black text-xl uppercase tracking-tight text-klein mb-2 flex items-center gap-3">
+                    <span class="w-2 h-6 bg-klein"></span> 必備工具和概念說明 <span
+                        class="font-mono text-xs text-klein/40 tracking-[0.2em]">ESSENTIALS</span>
+                </h3>
+                <p class="text-xs font-body text-klein/60 mb-4">這份計畫會用到的工具、平台與專有名詞，各用一句話說明。看不懂計畫裡的詞時，回來這裡查。</p>
+                <dl id="glossary-panel" class="grid grid-cols-1 md:grid-cols-2 gap-x-10"></dl>
             </div>
         </div>
 
         <!-- Retake Button -->
         <div class="text-center pt-12 pb-16 no-print max-w-[1400px] mx-auto w-full">
-            <button id="btn-retake" onclick="location.reload()" class="font-mono text-sm font-bold uppercase tracking-[0.2em] text-klein/60 hover:text-klein hover:underline transition">
-                重新開始測驗 (RETAKE ASSESSMENT)
+            <button id="btn-retake" onclick="location.reload()"
+                class="font-mono text-sm font-bold uppercase tracking-[0.2em] text-klein/60 hover:text-klein hover:underline transition">
+                重新匯入 UCAN 資料 (RE-IMPORT)
             </button>
         </div>
     </div>
 
-    <!-- UCAN Import Modal -->
-    <div id="ucan-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-md" onclick="window.app.closeUCAN()"></div>
-        <div class="bg-white border border-klein/20 p-8 max-w-lg w-full relative z-10 shadow-2xl crosshair-corner reveal-up is-visible">
-            
-            <div class="flex items-center justify-between border-b border-klein/10 pb-4 mb-6">
-                <span class="font-mono text-xs font-bold tracking-wider text-klein/70 uppercase">UCAN 資料匯入</span>
-                <button onclick="window.app.closeUCAN()" class="text-klein/60 hover:text-klein font-mono text-xl leading-none">×</button>
-            </div>
-
-            <h3 class="font-heading font-black text-2xl uppercase tracking-tight text-klein mb-3">匯入 UCAN 測驗結果</h3>
-            <p class="font-body text-klein/70 text-sm mb-6 leading-relaxed">
-                如果你已經在學校做過 UCAN 測驗，請輸入你的主要職涯類型代碼（如：RIA、I、A 等），我們將直接為你進行職位配對與履歷生成。
-            </p>
-            
-            <div class="mb-6">
-                <label class="block font-mono text-xs font-bold uppercase tracking-[0.2em] text-klein mb-2">UCAN Holland Code 代碼 (1~3碼)</label>
-                <input type="text" id="ucan-input" placeholder="例如：RIA" class="w-full px-4 py-3 border border-klein/20 font-mono uppercase text-klein text-lg font-bold">
-            </div>
-
-            <div class="bg-klein/5 border border-klein/10 p-4 mb-6">
-                <p class="font-mono text-xs font-bold text-klein mb-3 uppercase tracking-[0.2em]">代碼對照表 (CODE MAPPING):</p>
-                <div class="grid grid-cols-2 gap-2 font-mono text-xs text-klein/80">
-                    <div><strong class="text-klein font-bold">R</strong> 實用型 (Hardware)</div>
-                    <div><strong class="text-klein font-bold">I</strong> 研究型 (Data/Algo)</div>
-                    <div><strong class="text-klein font-bold">A</strong> 藝術型 (UI/UX)</div>
-                    <div><strong class="text-klein font-bold">S</strong> 社會型 (DevRel)</div>
-                    <div><strong class="text-klein font-bold">E</strong> 企業型 (PM)</div>
-                    <div><strong class="text-klein font-bold">C</strong> 常規型 (QA/DevOps)</div>
-                </div>
-            </div>
-
-            <div class="flex gap-4">
-                <button id="btn-cancel-ucan" onclick="window.app.closeUCAN()" class="flex-1 py-4 border border-klein/20 text-klein font-heading font-bold uppercase tracking-wider text-sm hover:bg-klein/5 transition rounded-none">
-                    取消
-                </button>
-                <button id="btn-parse-ucan" onclick="window.app.submitUCAN()" class="flex-1 bg-klein text-white py-4 font-heading font-bold uppercase tracking-wider text-sm hover:bg-klein/90 transition shadow-sm rounded-none">
-                    確認匯入
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Core Script Module -->
     <script type="module">
@@ -648,7 +807,7 @@
         import { getFirestore, doc, setDoc, getDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g", 
+            apiKey: "AIzaSyAPnxw6I6cFxBsvZiSufmDPQmuJkY7jo-g",
             authDomain: "ai-resume-health-check.firebaseapp.com",
             projectId: "ai-resume-health-check",
             storageBucket: "ai-resume-health-check.firebasestorage.app",
@@ -663,25 +822,30 @@
 
         let currentUser = null;
         async function fetchLastReportForUser(uid) {
-            try {
-                if (typeof db !== 'undefined' && uid) {
+            // 只接受新版 (schemaVersion 2) 的 UCAN 資料；舊版自編問卷結果不再使用
+            const accept = data => {
+                if (!data || data.schemaVersion !== 2) return false;
+                window.app.state.lastReport = data;
+                const btnLast = document.getElementById('btn-load-last');
+                if (btnLast) btnLast.classList.remove('hidden');
+                return true;
+            };
+            // 1) Firebase 登入者：讀 Firestore (沒有 Firebase 登入或權限不足就略過，不影響下一步)
+            if (currentUser && typeof db !== 'undefined' && uid) {
+                try {
                     const docSnap = await getDoc(doc(db, "users", uid, "brand_results", "latest"));
-                    if (docSnap.exists()) {
-                        window.app.state.lastReport = docSnap.data();
-                        const btnLast = document.getElementById('btn-load-last');
-                        if (btnLast) btnLast.classList.remove('hidden');
-                        return;
-                    }
-                }
-                if (window.CareerDNA_DB && uid) {
-                    const res = await window.CareerDNA_DB.getBrandData(uid);
-                    if (res && res.brandData) {
-                        window.app.state.lastReport = res.brandData;
-                        const btnLast = document.getElementById('btn-load-last');
-                        if (btnLast) btnLast.classList.remove('hidden');
-                    }
-                }
-            } catch (e) { console.error("Error fetching last report:", e); }
+                    if (docSnap.exists() && accept(docSnap.data())) return;
+                } catch (e) { console.warn("Firestore 讀取略過：", e.code || e.message); }
+            }
+            // 2) 站內帳號 (MongoDB)：讀後端
+            if (window.CareerDNA_DB) {
+                try {
+                    const mongoUid = window.CareerDNA_DB.getEffectiveUid(currentUser) || uid;
+                    if (!mongoUid) return;
+                    const res = await window.CareerDNA_DB.getBrandResult(mongoUid);
+                    if (res && res.brand) accept(res.brand.ucanProfile);
+                } catch (e) { console.warn("後端讀取略過：", e.message || e); }
+            }
         }
 
         onAuthStateChanged(auth, async (user) => {
@@ -696,925 +860,15 @@
             fetchLastReportForUser(user.uid);
         });
 
-        const DATA = {
-            roles: {
-                'R': {
-                    title: '實作型人才 (Realistic)',
-                    jobs: ['網路維運助理', 'IoT 測試工程師'],
-                    stat: '依據 Collego 數據統計，約有 15% 具備實作特質的畢業生第一份工作選擇此領域。',
-                    plan: [
-                        { d: '30天 (短期)', t: '硬體與網路基礎', c: '學習網路七層協定，並練習使用 Wireshark 進行基礎封包分析，可考慮準備 CCNA 證照。' },
-                        { d: '60天 (中期)', t: '腳本與自動化', c: '學習 Python 或 Shell Script，撰寫一個自動化備份或監控腳本，並上傳至 GitHub。' },
-                        { d: '90天 (長期)', t: '實戰演練', c: '在家中建置一個小型網路環境 (例如使用 Raspberry Pi)，或參與 IoT 相關的開源專案。' }
-                    ],
-                    interviewQuestion: "情境題：公司內部網路突然大規模中斷，用戶回報無法連線。你的標準作業流程(SOP)是什麼？你會如何一步步排查問題並與團隊溝通？",
-                    resumeHighlight: "我是一位享受動手解決問題的實作型人才。我熱衷於透過實際操作來建構與維護穩定可靠的系統，並具備系統化解決硬體與網路問題的能力。在校期間，我透過 {請填寫相關專案或經驗}，成功 {請填寫量化成果，例如：將處理時間縮短 20%}。我相信我的特質能讓我在網路維運或 IoT 測試崗位上快速貢獻價值。"
-                },
-                'I': {
-                    title: '研究型人才 (Investigative)',
-                    jobs: ['後端工程師', '資料分析助理'],
-                    stat: '依據 104 人力銀行數據，後端工程師為資訊領域最大宗職缺，佔比超過 30%。',
-                    plan: [
-                        { d: '30天 (短期)', t: '程式與演算法', c: '精通一種後端語言 (如 Java/Python/Go)，並在 LeetCode 上完成 20 題 Easy/Medium 題目，理解時間/空間複雜度。' },
-                        { d: '60天 (中期)', t: '框架與資料庫', c: '學習一個主流後端框架 (如 Spring Boot/Django)，並完成一個包含 CRUD 功能的 API 專案，串接 SQL 或 NoSQL 資料庫。' },
-                        { d: '90天 (長期)', t: '系統設計與部署', c: '將專案打包成 Docker Image 並部署至雲端平台 (如 AWS/GCP)，並為你的 API 撰寫單元測試。' }
-                    ],
-                    interviewQuestion: "行為題：請描述一個你曾經遇過最複雜的技術問題。你是如何拆解它、尋找解決方案，最後又是如何解決的？從中你學到了什麼？",
-                    resumeHighlight: "我是一位具備深度思考與邏輯分析能力的研究型人才。我擅長拆解複雜問題，並透過數據與程式碼找出根本原因。在校期間，我專注於 {請填寫技術領域，如：後端開發}，並在 {請填寫相關專案或經驗} 中，負責 {請填寫擔任角色}，達成 {請填寫量化成果，例如：優化 API 效能 50%}。我對技術充滿熱情，相信能為後端或資料分析崗位帶來紮實的貢獻。"
-                },
-                'A': {
-                    title: '藝術型人才 (Artistic)',
-                    jobs: ['UI/UX 設計師', '前端工程師'],
-                    stat: '依據 104 人力銀行趨勢，前端與 UI/UX 職缺需求年增長率超過 15%，是市場熱門方向。',
-                    plan: [
-                        { d: '30天 (短期)', t: '設計與技術基礎', c: '精通 HTML/CSS/JavaScript，並學習使用 Figma 進行介面設計與 Prototype 製作。' },
-                        { d: '60天 (中期)', t: '框架與作品集', c: '學習一個前端框架 (如 React/Vue)，並將設計稿轉化為一個互動式的網頁作品，建置個人作品集網站。' },
-                        { d: '90天 (長期)', t: '使用者為中心', c: '學習使用者研究方法，為你的作品進行一次易用性測試，並根據回饋迭代設計，將過程記錄下來。' }
-                    ],
-                    interviewQuestion: "情境題：如果產品經理(PM)提出一個你認為不符合使用者體驗(UX)的設計需求，你會如何溝通？請描述你的思考過程與應對策略。",
-                    resumeHighlight: "我是一位兼具美感與技術實現能力的藝術型人才。我熱愛創造優雅且直觀的使用者介面，並能將設計理念轉化為高品質的前端程式碼。在 {請填寫相關專案或經驗} 中，我運用 {請填寫設計或前端技能}，成功 {請填寫量化成果，例如：提升使用者滿意度 10%}。我相信我對細節的追求與同理心，能為 UI/UX 設計或前端開發團隊創造獨特價值。"
-                },
-                'S': {
-                    title: '社交型人才 (Social)',
-                    jobs: ['IT 客服工程師', '軟體技術業務 (Pre-sales)'],
-                    stat: '根據調查，具備技術背景與溝通能力的 Pre-sales 人才，薪資成長潛力高於平均 20%。',
-                    plan: [
-                        { d: '30天 (短期)', t: '產品知識與溝通', c: '深入了解一項你感興趣的技術產品 (如雲端服務)，並練習用 3 分鐘向不懂技術的人說明其價值 (電梯簡報)。' },
-                        { d: '60天 (中期)', t: '簡報與問題解決', c: '製作一份該產品的介紹簡報，並模擬回答 10 個客戶可能會提出的尖銳問題。' },
-                        { d: '90天 (長期)', t: '建立人脈與實戰', c: '參加技術社群或研討會，主動與人交流。或嘗試在校內擔任助教，練習教學與解決他人問題的能力。' }
-                    ],
-                    interviewQuestion: "行為題：請描述一次你成功說服他人接受你想法的經驗。你當時的目標是什麼？你用了什麼方法？最後結果如何？",
-                    resumeHighlight: "我是一位善於溝通、樂於助人的社交型人才。我享受與人互動，並擅長將複雜的技術概念轉化為客戶能理解的語言，以解決他們的痛點。在 {請填寫社團或打工經驗} 中，我曾負責 {請填寫擔任角色}，成功 {請填寫量化成果，例如：提升客戶滿意度或活動參與人數}。我相信我的同理心與技術熱情，能在 IT 客戶服務或技術業務崗位上成為團隊與客戶間的關鍵橋樑。"
-                },
-                'E': {
-                    title: '企業型人才 (Enterprising)',
-                    jobs: ['專案管理助理 (PM)', '系統分析師 (SA)'],
-                    stat: '依據 PMI 報告，未來十年全球將需要近 2500 萬名新專案管理人才，是極具前景的職位。',
-                    plan: [
-                        { d: '30天 (短期)', t: '工具與方法論', c: '學習使用專案管理工具 (如 Trello/Jira)，並理解敏捷開發 (Agile/Scrum) 的基本流程。' },
-                        { d: '60天 (中期)', t: '規劃與文件', c: '為一個虛擬專案撰寫一份簡易的專案需求文件 (PRD)，包含目標、功能列表與時程規劃 (Gantt Chart)。' },
-                        { d: '90天 (長期)', t: '領導與溝通', c: '在分組報告或專題中主動擔任組長，練習任務分配、進度追蹤與跨組溝通，並記錄下遇到的困難與解法。' }
-                    ],
-                    interviewQuestion: "情境題：你的專案開發到一半，客戶突然提出一個全新的、不在原規劃內的功能需求，但時程(deadline)不變。你會如何處理？",
-                    resumeHighlight: "我是一位目標導向、具備商業思維的企業型人才。我擅長規劃與執行，能帶領團隊在時限內達成目標。在 {請填寫專案或社團經驗} 中，我擔任 {請填寫 PM 或組長角色}，透過 {請填寫你使用的方法}，最終達成 {請填寫量化成果，例如：提前一週完成專案或提升團隊效率 15%}。我享受從 0 到 1 打造產品的過程，並渴望在專案管理或系統分析領域持續成長。"
-                },
-                'C': {
-                    title: '常規型人才 (Conventional)',
-                    jobs: ['QA 測試工程師', '資料庫管理員 (DBA)'],
-                    stat: '軟體開發流程中，QA 測試是確保產品質量不可或缺的一環，職位穩定性高。',
-                    plan: [
-                        { d: '30天 (短期)', t: '細心與SOP', c: '學習軟體測試理論 (黑箱/白箱測試)，並為一個你常用的 APP 撰寫測試案例 (Test Case)。' },
-                        { d: '60天 (中期)', t: '工具與腳本', c: '學習使用自動化測試工具 (如 Selenium) 或 SQL 語法，撰寫一個簡單的自動化測試腳本或資料查詢指令。' },
-                        { d: '90天 (長期)', t: '實戰與回報', c: '參與開源專案的測試，或主動幫同學的專案找 Bug，並學習如何撰寫一份清晰、可重現的錯誤回報單 (Bug Report)。' }
-                    ],
-                    interviewQuestion: "行為題：請描述一個你發現的、別人沒注意到的細節或錯誤。你是如何發現的？你後續採取了什麼行動？",
-                    resumeHighlight: "我是一位注重細節、有條理的常規型人才。我享受在規範的流程中確保最高的品質與準確性。在 {請填寫相關課程或專案經驗} 中，我負責 {請填寫測試或資料整理任務}，透過細心檢查，成功 {請填寫量化成果，例如：找出 3 個潛在的嚴重 Bug 或將資料錯誤率降低 90%}。我相信我的耐心與責任感，能在 QA 測試或資料庫管理崗位上成為產品質量的堅實後盾。"
-                }
-            },
-
-            strengthsInfo: {
-                'Strategic': '策略思維', 'Learner': '學習渴望', 'Analytical': '邏輯分析', 'Ideation': '創新思維', 'Communication': '溝通表達',
-                'Achiever': '成就導向', 'Focus': '專注目標', 'Responsibility': '責任紀律', 'Developer': '伯樂特質', 'Relator': '深度交往'
-            },
-            hollandInfo: {
-                'R': {n:'實做型 (Doer)', c:'#002fa7'}, 
-                'I': {n:'研究型 (Thinker)', c:'#1a4ec4'}, 
-                'A': {n:'藝術型 (Creator)', c:'#00e5ff'},
-                'S': {n:'社交型 (Helper)', c:'#ff4500'}, 
-                'E': {n:'企業型 (Persuader)', c:'#001a5e'}, 
-                'C': {n:'常規型 (Organizer)', c:'#4338ca'}
-            },
-            platforms: {
-                'R': { 
-                    name: 'GitHub / 技術部落格', 
-                    role: '技術實踐者 (Builder)',
-                    strategy: '「Show, Don\'t Tell」代碼實證。**核心目標：** 透過公開 Commit 與清楚的 README，建立技術可信度並吸引軟體獵頭搜尋。**排程建議：** 保持每週至少 2 次有意義的 Commit，並每月發表 1 篇技術 Debug 複盤。',
-                    bio: '👨‍💻 後端 / 系統開發者 ｜ 靜宜大學資訊系 ｜ 專注高併發與資料庫優化 ｜ 開發日誌與專案連結：[附上個人 GitHub Repo 連結]',
-                    content: ['【Debug 複盤】：記錄一次實際解決的 Memory Leak 或 SQL 慢查詢問題，寫出排查步驟與解決對比 (Before/After)', '【開源貢獻與 PR】：記錄參與開源專案或課堂大型專題的架構重構紀錄，展示代碼規範與單元測試覆蓋率', '【Side Project 開發日誌】：分享自製工具/API 的實作動機、技術選型原因與雲端部署流程']
-                },
-                'I': { 
-                    name: 'Medium / 技術專欄', 
-                    role: '知識領袖 (Thought Leader)',
-                    strategy: '建立「深度技術思考權威」。**核心目標：** 將複雜算法或資料分析流程轉化為結構化文章，建立技術專業影響力。**排程建議：** 每隔兩週發布 1 篇深度技術分析，並同步分享至 LinkedIn 或 iThome。',
-                    bio: '🔍 資料分析與演算法探索者 ｜ 擅長複雜問題拆解與模型評估 ｜ 閱讀我的技術筆記：[附上 Medium / 專欄連結]',
-                    content: ['【演算法/模型實測】：評測 2 種不同模型或資料庫解決方案的效能對比，附上實測數據圖表與分析結論', '【硬核學習筆記】：拆解一個複雜技術（如 Docker 底層原理、分散式鎖機制），附結構化心智圖', '【產業數據洞察報告】：以公開資料集（如政府開放資料）進行探索性資料分析 (EDA) 並提出商業建議']
-                },
-                'A': { 
-                    name: 'Behance / Instagram', 
-                    role: '風格創作者 (Creator)',
-                    strategy: '視覺化成果與流程展現。**核心目標：** 建立個人視覺品牌公信力，累積作品知名度與實習/接案機會。**排程建議：** 每週 1 篇多圖「介面專案拆解 (Carousel)」+ 1 支「Figma 縮時 (Reels)」，自介放作品集導流連結。',
-                    bio: '🎨 UI/UX & 前端設計師 ｜ 靜宜資院 ｜ 專注使用者體驗與直覺互動 ｜ 最新作品集與 Prototype：[附上 Linktree / Behance 連結]',
-                    content: ['【30 秒縮時 Reels】：記錄從紙本 Wireframe 草稿到 Figma 高保真原型的設計演化，搭配 #UIUX #DesignProcess 標籤', '【體驗痛點重構圖文】：挑選常用校園或商業產品，發表「我如何改善它 3 個操作痛點」的改版前後對照', '【設計規範與元件庫】：公開個人的色彩計畫、Typography 字級規範與可複用元件設計，展現模組化能力']
-                },
-                'S': { 
-                    name: 'LinkedIn / 技術社群', 
-                    role: '社群連結者 (Connector)',
-                    strategy: '建立跨領域人脈與軟實力影響力。**核心目標：** 與 50+ 產業前輩建立連結，展現溝通協調與團隊合作成果。**排程建議：** 每週發表 1 篇活動/專題反思，每月主動聯繫 2 位學長姐或業界前輩請益。',
-                    bio: '🤝 資訊人・社群共學推動者 ｜ 擅長跨部門溝通與敏捷專案協同 ｜ 正在尋找技術實習機會 ｜ 歡迎交流：[附上個人 LinkedIn 連結]',
-                    content: ['【跨組協作經驗復盤】：分享專題或黑客松中如何協調團隊意見分歧、成功推動專案按時交付的心得', '【前輩訪談/研討會筆記】：整理參加技術研討會（如 COSCUP、SITCON）或請益學長姐後的 3 點職涯精華', '【讀書會/共學幕後花絮】：記錄發起小組讀書會或課後技術討論的過程，展現正向團隊影響力']
-                },
-                'E': { 
-                    name: 'LinkedIn / 個人官網', 
-                    role: '商業推動者 (Driver)',
-                    strategy: '塑造商業價值與專案領導形象。**核心目標：** 吸引獵頭、PM 職缺與儲備幹部計畫目光，展現商業嗅覺與目標達成力。**排程建議：** 每兩週發表 1 篇產品分析或專案里程碑回顧。',
-                    bio: '🚀 專案管理 (PM) & 商業分析 ｜ 擅長產品需求拆解與團隊推進 ｜ 查看我的專案成果：[附上個人官網 / Notion 總覽連結]',
-                    content: ['【商業模式分析】：拆解一項知名科技產品的商業變現模式與使用者留存策略', '【專案復盤 (Post-mortem)】：分享身為組長如何帶領 4 人小組在時限內達成 MVP 開發的時程管理工具與心得', '【科技趨勢觀點】：對當週關鍵科技新聞（如 AI 落地應用）提出個人觀察與未來預測']
-                },
-                'C': { 
-                    name: 'Notion / 專業作品庫', 
-                    role: '流程優化師 (Optimizer)',
-                    strategy: '展現流程優化、品質紀律與條理化輸出。**核心目標：** 展現 SOP 建立與測試規範能力，吸引重視交付品質的 QA、資料庫或 DevOps 團隊。**排程建議：** 每月整理 1 份高品質模板或流程優化指南。',
-                    bio: '⚡ 流程優化與 QA 品質專員 ｜ 重視規範、自動化與交付品質 ｜ 我的知識庫與流程模板：[附上 Notion 公開頁面連結]',
-                    content: ['【工作流程優化 Before/After】：展示如何將原本混亂的專案檔案或測試流程，改造成清晰的標準化 SOP', '【測試案例 (Test Case) 範本】：分享針對某電商購物車或登入模組撰寫的完整測試情境與邊界條件檢查表', '【新手友善入門工具包】：整理一份資訊領域某技術（如 SQL 指令、Git 常用指令）的高效率自查清單 (Cheat Sheet)']
-                }
-            },
-            actionCards: {
-                'Strategic': { book: '《好策略壞策略》', skill: '心智圖繪製、SWOT分析', task: '每週挑選一則產業新聞，練習寫出 3 種可能的未來發展劇本。' },
-                'Learner': { book: '《刻意練習》', skill: '快速閱讀、知識管理系統(Obsidian)', task: '建立一個「學習收件匣」，每天記錄 3 個新學到的知識點。' },
-                'Analytical': { book: '《思考快與慢》', skill: 'Python 數據分析、Tableau 視覺化', task: '嘗試用數據來佐證你的一個日常決策 (例如：記帳分析)。' },
-                'Ideation': { book: '《創意自信帶來力量》', skill: '設計思考 (Design Thinking)、腦力激盪引導', task: '每天強迫自己寫下 10 個關於現有產品的改進點子 (Idea Quota)。' },
-                'Communication': { book: '《跟 TED 學表達》', skill: '簡報設計、故事行銷 (Storytelling)', task: '練習用「黃金圈法則 (Why-How-What)」來介紹你自己或一個專案。' },
-                'Achiever': { book: '《原子習慣》', skill: '專案管理 (Agile/Scrum)、時間管理 (Pomodoro)', task: '列出明天的 3 個最重要的待辦事項 (MIT)，並堅持完成。' },
-                'Focus': { book: '《深度工作力》', skill: '目標設定 (OKR)、心流觸發', task: '每天設定一段 90 分鐘的「無干擾工作時間」，手機開飛航。' },
-                'Responsibility': { book: '《當責》', skill: '風險管理、品質控管', task: '在小組作業中主動擔任「最後檢查者 (Gatekeeper)」，確保交付品質。' },
-                'Developer': { book: '《教練》', skill: '導師引導 (Coaching)、教育訓練設計', task: '教一位同學學會你擅長的一個小技能，直到他能教會別人。' },
-                'Relator': { book: '《人性的弱點》', skill: '同理心傾聽、衝突管理', task: '本週約一位很久沒見的朋友或前輩喝咖啡，只傾聽不評判。' }
-            }
+        const UP = window.UcanParser, BE = window.BrandEngine, KB = window.BrandKB;
+        const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const LV = {
+            strong: { t: '優勢', bar: 'bg-emerald-500', txt: 'text-emerald-600' },
+            mid: { t: '中等', bar: 'bg-amber-400', txt: 'text-amber-600' },
+            weak: { t: '待加強', bar: 'bg-rose-500', txt: 'text-rose-600' }
         };
-
-        window.app = {
-    state: {
-        lastReport: null,
-        wizardStep: 1,
-        hollandKeys: ['R', 'I', 'A', 'S', 'E', 'C'],
-        compKeys: ['溝通表達', '持續學習', '人際互動', '團隊合作', '問題解決', '創新', '工作責任', '科技應用'],
-        parsedUcanData: {
-            student: {},
-            holland: {},
-            commonComps: {},
-            prof: {}
-        }
-    },
-
-    loadLastReport() {
-        if (!this.state.lastReport) {
-            const localData = localStorage.getItem('ucan_dna_result');
-            if (localData) {
-                try { this.state.lastReport = JSON.parse(localData); } catch (e) {}
-            }
-        }
-        if (!this.state.lastReport) {
-            alert('尚未找到先前的測驗紀錄，請先填寫或匯入資料！');
-            return;
-        }
-        this.switchView('view-result');
-        this.renderReportView(this.state.lastReport);
-    },
-
-    closeUCAN() {
-        const modal = document.getElementById('ucan-modal');
-        if (modal) modal.classList.add('hidden');
-    },
-
-    openUCAN() {
-        const modal = document.getElementById('ucan-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
-            if (window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                gsap.fromTo(modal.firstElementChild || modal, { autoAlpha: 0, y: 18, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.35, ease: 'power3.out' });
-            }
-        }
-    },
-
-    submitUCAN() {
-        const input = document.getElementById('ucan-input');
-        const rawCode = input ? input.value.trim().toUpperCase() : '';
-        if (!rawCode) {
-            alert('請輸入您的 UCAN Holland 類型代碼（如：RIA、I、A 等）');
-            return;
-        }
-        
-        const validLetters = ['R', 'I', 'A', 'S', 'E', 'C'];
-        const filteredCode = rawCode.split('').filter(ch => validLetters.includes(ch));
-        if (filteredCode.length === 0) {
-            alert('請輸入有效的 Holland 代碼（R, I, A, S, E, C）');
-            return;
-        }
-
-        const hData = {};
-        validLetters.forEach(k => {
-            hData[k] = { score: 2.5, pr: 40 };
-        });
-
-        filteredCode.slice(0, 3).forEach((k, idx) => {
-            hData[k] = { score: Number((5.0 - idx * 0.6).toFixed(1)), pr: 95 - idx * 10 };
-        });
-
-        const primary = filteredCode[0];
-        const cData = {};
-        this.state.compKeys.forEach(k => {
-            cData[k] = { score: 3.8, pr: 68 };
-        });
-
-        const pPathway = primary === 'R' ? '網路與系統維運' : (primary === 'A' ? '互動多媒體' : (primary === 'E' ? '資訊商務' : '軟體開發'));
-
-        const resultData = {
-            student: {},
-            date: new Date().toLocaleDateString('zh-TW'),
-            holland: hData,
-            hollandCode: filteredCode.join(''),
-            primaryHolland: primary,
-            commonComps: cData,
-            profPathway: pPathway,
-            profScore: 4.0,
-            profPr: 75
-        };
-
-        this.closeUCAN();
-        this.saveAndShowResult(resultData);
-    },
-
-    async saveAndShowResult(resultData) {
-        localStorage.setItem('ucan_dna_result', JSON.stringify(resultData));
-        localStorage.setItem('cdna_primary_holland', resultData.primaryHolland);
-        if (resultData.student?.dept) {
-            let dCode = 'IM';
-            if (resultData.student.dept.includes('資工') || resultData.student.dept.includes('工程')) dCode = 'CS';
-            else if (resultData.student.dept.includes('AI') || resultData.student.dept.includes('人工智慧')) dCode = 'AI';
-            localStorage.setItem('cdna_department', dCode);
-        }
-
-        this.state.lastReport = resultData;
-
-        // Async cloud sync to MongoDB Atlas & Firebase Firestore
-        const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(currentUser) : (currentUser?.uid);
-        
-        // 1. Sync to MongoDB Atlas
-        if (window.CareerDNA_DB && effectiveUid) {
-            try {
-                await window.CareerDNA_DB.saveBrandData(effectiveUid, {
-                    brandData: resultData,
-                    hollandCode: resultData.hollandCode,
-                    primaryHolland: resultData.primaryHolland,
-                    updatedAt: new Date().toISOString()
-                });
-                console.log("✅ 個人品牌分析已同步至 MongoDB Atlas！");
-            } catch (err) {
-                console.warn("MongoDB Atlas 儲存略過：", err);
-            }
-        }
-
-        // 2. Sync to Firebase Firestore
-        if (currentUser && typeof db !== 'undefined') {
-            try {
-                await setDoc(doc(db, "users", currentUser.uid, "brand_results", "latest"), resultData);
-                await setDoc(doc(db, "users", currentUser.uid), {
-                    summary_cache: {
-                        brand: {
-                            updatedAt: new Date().toISOString(),
-                            primaryHolland: resultData.primaryHolland,
-                            hollandCode: resultData.hollandCode
-                        }
-                    }
-                }, { merge: true });
-                console.log("✅ 個人品牌分析已同步至 Firestore 雲端！");
-            } catch (e) {
-                console.warn("Firestore 儲存略過：", e);
-            }
-        }
-
-        this.switchView('view-result');
-        this.renderReportView(resultData);
-    },
-
-    init() {
-        this.renderWizardInputs();
-        
-        if (typeof pdfjsLib !== 'undefined') {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        }
-
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('view') === 'report') {
-            const localData = localStorage.getItem('ucan_dna_result');
-            if (localData) {
-                try {
-                    const parsed = JSON.parse(localData);
-                    if (parsed) {
-                        this.state.lastReport = parsed;
-                        this.switchView('view-result');
-                        this.renderReportView(parsed);
-                        return;
-                    }
-                } catch (e) {
-                    console.error("Error parsing ucan_dna_result:", e);
-                }
-            }
-        }
-    },
-
-    start() {
-        this.switchView('view-ucan-import');
-        window.scrollTo(0, 0);
-    },
-
-    switchView(id) {
-        ['view-landing', 'view-ucan-import', 'view-result'].forEach(v => {
-            const el = document.getElementById(v);
-            if (el) el.classList.add('hidden');
-        });
-        const target = document.getElementById(id);
-        if (target) target.classList.remove('hidden');
-    },
-
-    switchImportMode(mode) {
-        if (mode === 'pdf') {
-            const isAlreadyActive = !document.getElementById('import-mode-pdf').classList.contains('hidden');
-            if (isAlreadyActive) {
-                // If already on PDF mode, clicking the tab again triggers the file upload
-                document.getElementById('ucan-pdf-upload').click();
-                return;
-            }
-            document.getElementById('import-mode-pdf').classList.remove('hidden');
-            document.getElementById('import-mode-manual').classList.add('hidden');
-            document.getElementById('btn-mode-pdf').className = "px-6 py-2 bg-klein text-white font-bold font-mono tracking-wider text-sm border border-klein hover-spring";
-            document.getElementById('btn-mode-manual').className = "px-6 py-2 bg-white text-klein font-bold font-mono tracking-wider text-sm border border-klein/30 hover:bg-klein/5 hover-spring";
-        } else {
-            document.getElementById('import-mode-pdf').classList.add('hidden');
-            document.getElementById('import-mode-manual').classList.remove('hidden');
-            document.getElementById('btn-mode-manual').className = "px-6 py-2 bg-klein text-white font-bold font-mono tracking-wider text-sm border border-klein hover-spring";
-            document.getElementById('btn-mode-pdf').className = "px-6 py-2 bg-white text-klein font-bold font-mono tracking-wider text-sm border border-klein/30 hover:bg-klein/5 hover-spring";
-        }
-    },
-
-    renderWizardInputs() {
-        const hContainer = document.getElementById('holland-inputs');
-        if (hContainer) {
-            hContainer.innerHTML = this.state.hollandKeys.map(k => `
-                <div class="border border-klein/10 p-4 bg-gray-50 flex items-center gap-4">
-                    <div class="w-10 h-10 bg-klein text-white flex items-center justify-center font-bold text-lg font-mono">${k}</div>
-                    <div class="flex-1">
-                        <label class="block text-xs font-bold text-klein mb-1">分數 (0-12)</label>
-                        <input type="number" id="h-score-${k}" min="0" max="12" class="w-full p-2 border border-klein/20 outline-none text-sm font-mono font-bold" value="0">
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-xs font-bold text-klein mb-1">PR 值 (1-100)</label>
-                        <input type="number" id="h-pr-${k}" min="1" max="100" class="w-full p-2 border border-klein/20 outline-none text-sm font-mono font-bold" value="50">
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        const cContainer = document.getElementById('common-competency-inputs');
-        if (cContainer) {
-            cContainer.innerHTML = this.state.compKeys.map((k, i) => `
-                <div class="border border-klein/10 p-4 bg-gray-50 flex flex-col gap-2">
-                    <div class="font-bold text-sm text-klein flex justify-between">
-                        <span>${k}</span>
-                        <span class="text-xs font-mono text-klein/40">#${i+1}</span>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="flex-1">
-                            <label class="block text-[10px] font-bold text-klein/60 mb-1">分數 (1-5)</label>
-                            <input type="number" id="c-score-${i}" step="0.01" min="1" max="5" class="w-full p-2 border border-klein/20 outline-none text-sm font-mono font-bold" value="3.0">
-                        </div>
-                        <div class="flex-1">
-                            <label class="block text-[10px] font-bold text-klein/60 mb-1">PR 值 (1-100)</label>
-                            <input type="number" id="c-pr-${i}" min="1" max="100" class="w-full p-2 border border-klein/20 outline-none text-sm font-mono font-bold" value="50">
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-    },
-
-    nextWizardStep(step) {
-        document.querySelectorAll('.wizard-step').forEach(el => el.classList.add('hidden'));
-        const target = document.getElementById('step-' + step);
-        if (target) target.classList.remove('hidden');
-        
-        document.querySelectorAll('.wizard-tab').forEach(el => {
-            if (el.dataset.step == step) {
-                el.className = "wizard-tab flex-1 py-3 px-4 font-heading font-bold text-center border-b-2 border-klein text-klein transition";
-            } else {
-                el.className = "wizard-tab flex-1 py-3 px-4 font-heading font-bold text-center border-b-2 border-transparent text-klein/40 hover:text-klein transition";
-            }
-        });
-    },
-
-    parseUcanText(fullText) {
-        const result = {
-            detectedTypes: [],
-            student: {},
-            holland: {},
-            commonComps: {},
-            prof: {}
-        };
-
-        // Extract student info
-        const nameMatch = fullText.match(/姓名\s*[：:]\s*([^\s\n\r]+)/);
-        const schoolMatch = fullText.match(/學校\s*[：:]\s*([^\s\n\r]+)/);
-        const deptMatch = fullText.match(/系級\s*[：:]\s*([^\n\r]+)/);
-        const studentIdMatch = fullText.match(/學號\s*[：:]\s*([^\s\n\r]+)/);
-        const testDateMatch = fullText.match(/施測日期\s*[：:]\s*([^\s\n\r]+)/);
-
-        if (nameMatch) result.student.name = nameMatch[1].trim();
-        if (schoolMatch) result.student.school = schoolMatch[1].trim();
-        if (deptMatch) result.student.dept = deptMatch[1].trim();
-        if (studentIdMatch) result.student.id = studentIdMatch[1].trim();
-        if (testDateMatch) result.student.date = testDateMatch[1].trim();
-
-        // 1. 職業興趣探索 (Holland)
-        if (fullText.includes('職業興趣探索') || fullText.includes('您的職業性格代碼')) {
-            result.detectedTypes.push('holland');
-            
-            const codeMatch = fullText.match(/您的職業性格代碼[\s\r\n]+([A-Z]{2,4})/);
-            if (codeMatch) result.holland.code = codeMatch[1].trim();
-
-            const hollandMap = [
-                { key: 'R', name: '實用型' },
-                { key: 'I', name: '研究型' },
-                { key: 'A', name: '藝術型' },
-                { key: 'S', name: '社會型' },
-                { key: 'E', name: '企業型' },
-                { key: 'C', name: '事務型' }
-            ];
-
-            hollandMap.forEach(h => {
-                const re = new RegExp(`${h.name}\\s*${h.key}\\s*(\\d+)\\s*(\\d+)`);
-                const m = fullText.match(re);
-                if (m) {
-                    result.holland[h.key] = {
-                        name: h.name,
-                        score: parseInt(m[1], 10),
-                        pr: parseInt(m[2], 10)
-                    };
-                }
-            });
-
-            const topClustersMatch = fullText.match(/興趣度最高的前幾名依序是：[\s\r\n]*([^\n\r]+)/);
-            if (topClustersMatch) {
-                result.holland.topClusters = topClustersMatch[1].split(/[、,，]/).map(s => s.trim()).filter(Boolean);
-            }
-        }
-
-        // 2. 職場共通職能 (Common Competencies)
-        if (fullText.includes('職場共通職能診斷結果') || (fullText.includes('職場共通職能') && !fullText.includes('職業興趣探索'))) {
-            result.detectedTypes.push('common');
-
-            const compNames = [
-                '溝通表達', '持續學習', '人際互動', '團隊合作',
-                '問題解決', '創新', '工作責任及紀律', '資訊科技應用'
-            ];
-
-            // Match from paragraphs: 您在「創新」這項共通職能的原始分數是3.67分，PR值是48
-            const paraRe = /您在「([^」]+)」這項共通職能的原始分數是([\d\.]+)分，PR值是(\d+)/g;
-            let pm;
-            while ((pm = paraRe.exec(fullText)) !== null) {
-                let name = pm[1].trim();
-                if (name === '工作責任及紀律') name = '工作責任';
-                if (name === '資訊科技應用') name = '科技應用';
-                result.commonComps[name] = {
-                    score: parseFloat(pm[2]),
-                    pr: parseInt(pm[3], 10)
-                };
-            }
-
-            // Match from table: 溝通表達 s+ 27 s+ 3.43
-            compNames.forEach(name => {
-                const shortName = name === '工作責任及紀律' ? '(?:工作責任及紀律|工作責任)' : (name === '資訊科技應用' ? '(?:資訊科技應用|科技應用)' : name);
-                const tableRe = new RegExp(`${shortName}\\s+(\\d+)\\s+([\\d\\.]+)`);
-                const tm = fullText.match(tableRe);
-                if (tm) {
-                    let normName = name;
-                    if (name === '工作責任及紀律') normName = '工作責任';
-                    if (name === '資訊科技應用') normName = '科技應用';
-                    if (!result.commonComps[normName]) {
-                        result.commonComps[normName] = {
-                            pr: parseInt(tm[1], 10),
-                            score: parseFloat(tm[2])
-                        };
-                    }
-                }
-            });
-        }
-
-        // 3. 專業職能診斷 (Professional Competencies)
-        if (fullText.includes('專業職能診斷結果') || fullText.includes('就業途徑：')) {
-            result.detectedTypes.push('professional');
-
-            const careerMatch = fullText.match(/職涯類型\s*[：:]\s*([^\s\n\r]+)/);
-            const pathwayMatch = fullText.match(/就業途徑\s*[：:]\s*([^\s\n\r]+)/);
-
-            if (careerMatch) result.prof.careerCluster = careerMatch[1].trim();
-            if (pathwayMatch) result.prof.pathway = pathwayMatch[1].trim();
-
-            const avgMatch = fullText.match(/「[^」]+」平均數\s*(\d+)\s*([\d\.]+)/);
-            if (avgMatch) {
-                result.prof.pr = parseInt(avgMatch[1], 10);
-                result.prof.score = parseFloat(avgMatch[2]);
-            } else {
-                const altMatch = fullText.match(/([\d\.]+)分\s*\/\s*PR(\d+)/);
-                if (altMatch) {
-                    result.prof.score = parseFloat(altMatch[1]);
-                    result.prof.pr = parseInt(altMatch[2], 10);
-                }
-            }
-        }
-
-        return result;
-    },
-
-    async handlePDFUpload(event) {
-        const files = event.target.files;
-        if (!files || files.length === 0) return;
-
-        const loadingEl = document.getElementById('pdf-loading');
-        const loadingText = document.getElementById('pdf-loading-text');
-        if (loadingEl) loadingEl.classList.remove('hidden');
-
-        try {
-            let processedCount = 0;
-            for (let fIdx = 0; fIdx < files.length; fIdx++) {
-                const file = files[fIdx];
-                if (loadingText) loadingText.innerText = `正在解析 (${fIdx + 1}/${files.length})：${file.name}...`;
-
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                let fullText = "";
-
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent();
-                    let pageText = "";
-                    for (const item of textContent.items) {
-                        if (typeof item.str === 'string') {
-                            pageText += item.str;
-                            if (item.hasEOL) pageText += "\n";
-                            else pageText += " ";
-                        }
-                    }
-                    fullText += pageText + "\n";
-                }
-
-                const parsed = this.parseUcanText(fullText);
-                console.log('PDF Parsed result for:', file.name, parsed);
-
-                // Merge student info
-                if (Object.keys(parsed.student).length) {
-                    Object.assign(this.state.parsedUcanData.student, parsed.student);
-                }
-
-                // Merge Holland
-                if (Object.keys(parsed.holland).length) {
-                    Object.assign(this.state.parsedUcanData.holland, parsed.holland);
-                }
-
-                // Merge Common
-                if (Object.keys(parsed.commonComps).length) {
-                    Object.assign(this.state.parsedUcanData.commonComps, parsed.commonComps);
-                }
-
-                // Merge Prof
-                if (Object.keys(parsed.prof).length) {
-                    Object.assign(this.state.parsedUcanData.prof, parsed.prof);
-                }
-
-                processedCount++;
-            }
-
-            // Sync with manual inputs DOM
-            this.syncParsedToForm();
-
-            // Update PDF summary card
-            this.updateParsedSummaryUI();
-
-        } catch (e) {
-            console.error('PDF parsing error:', e);
-            alert("PDF 解析過程發生錯誤，已為您切換至手動輸入精靈！");
-            this.switchImportMode('manual');
-        } finally {
-            if (loadingEl) loadingEl.classList.add('hidden');
-        }
-    },
-
-    syncParsedToForm() {
-        const p = this.state.parsedUcanData;
-
-        // Holland
-        this.state.hollandKeys.forEach(k => {
-            if (p.holland[k]) {
-                const sEl = document.getElementById('h-score-' + k);
-                const pEl = document.getElementById('h-pr-' + k);
-                if (sEl) sEl.value = p.holland[k].score;
-                if (pEl) pEl.value = p.holland[k].pr;
-            }
-        });
-
-        // Common Competencies
-        this.state.compKeys.forEach((k, i) => {
-            if (p.commonComps[k]) {
-                const sEl = document.getElementById('c-score-' + i);
-                const pEl = document.getElementById('c-pr-' + i);
-                if (sEl) sEl.value = p.commonComps[k].score;
-                if (pEl) pEl.value = p.commonComps[k].pr;
-            }
-        });
-
-        // Professional
-        if (p.prof && p.prof.pathway) {
-            const pathSelect = document.getElementById('prof-pathway');
-            if (pathSelect) {
-                let exists = false;
-                for (let i = 0; i < pathSelect.options.length; i++) {
-                    if (pathSelect.options[i].value === p.prof.pathway) {
-                        pathSelect.selectedIndex = i;
-                        exists = true;
-                        break;
-                    }
-                }
-                if (!exists) {
-                    const opt = document.createElement('option');
-                    opt.value = p.prof.pathway;
-                    opt.text = `${p.prof.pathway} (來自 UCAN: ${p.prof.careerCluster || '專業'})`;
-                    opt.selected = true;
-                    pathSelect.add(opt, 0);
-                }
-            }
-            const prEl = document.getElementById('prof-pr');
-            const scEl = document.getElementById('prof-score');
-            if (prEl && p.prof.pr !== undefined) prEl.value = p.prof.pr;
-            if (scEl && p.prof.score !== undefined) scEl.value = p.prof.score;
-        }
-    },
-
-    updateParsedSummaryUI() {
-        const p = this.state.parsedUcanData;
-        const summaryPanel = document.getElementById('pdf-parsed-summary');
-        if (!summaryPanel) return;
-        summaryPanel.classList.remove('hidden');
-
-        // Student Badge
-        const stuBadge = document.getElementById('parsed-student-badge');
-        if (stuBadge) {
-            const s = p.student;
-            const text = [s.school, s.dept, s.name, s.id ? `(${s.id})` : ''].filter(Boolean).join(' ');
-            stuBadge.innerText = text || '學生身分已辨識';
-        }
-
-        // Holland status
-        const hVal = document.getElementById('status-holland-val');
-        const hSub = document.getElementById('status-holland-sub');
-        const hBadge = document.getElementById('badge-status-holland');
-        if (p.holland && p.holland.code) {
-            let topCode = p.holland.code[0];
-            let topScore = p.holland[topCode]?.score || 0;
-            let topPr = p.holland[topCode]?.pr || 0;
-            if (hVal) hVal.innerText = `代碼：${p.holland.code}`;
-            if (hSub) hSub.innerText = `最高：${topCode}型 (${topScore}分 / PR${topPr})`;
-            if (hBadge) {
-                hBadge.className = "text-[11px] font-mono px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold";
-                hBadge.innerText = "已解析 ✓";
-            }
-        }
-
-        // Common status
-        const cVal = document.getElementById('status-common-val');
-        const cSub = document.getElementById('status-common-sub');
-        const cBadge = document.getElementById('badge-status-common');
-        const cCount = Object.keys(p.commonComps).length;
-        if (cCount > 0) {
-            if (cVal) cVal.innerText = `已載入 ${cCount} / 8 項職能`;
-            const topC = Object.entries(p.commonComps).sort((a,b) => b[1].pr - a[1].pr)[0];
-            if (cSub && topC) cSub.innerText = `最強能力：${topC[0]} (PR ${topC[1].pr})`;
-            if (cBadge) {
-                cBadge.className = "text-[11px] font-mono px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold";
-                cBadge.innerText = "已解析 ✓";
-            }
-        }
-
-        // Prof status
-        const pVal = document.getElementById('status-prof-val');
-        const pSub = document.getElementById('status-prof-sub');
-        const pBadge = document.getElementById('badge-status-prof');
-        if (p.prof && p.prof.pathway) {
-            if (pVal) pVal.innerText = p.prof.pathway;
-            if (pSub) pSub.innerText = `${p.prof.careerCluster || '職涯類型'} / PR ${p.prof.pr || 50} (${p.prof.score || 3.5}分)`;
-            if (pBadge) {
-                pBadge.className = "text-[11px] font-mono px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold";
-                pBadge.innerText = "已解析 ✓";
-            }
-        }
-    },
-
-    submitParsedData() {
-        const p = this.state.parsedUcanData;
-
-        // Build Holland object
-        const hData = {};
-        let topHolland = { key: 'I', score: 0 };
-        this.state.hollandKeys.forEach(k => {
-            const item = p.holland[k] || {};
-            const score = item.score !== undefined ? item.score : (parseFloat(document.getElementById('h-score-' + k)?.value) || 3);
-            const pr = item.pr !== undefined ? item.pr : (parseInt(document.getElementById('h-pr-' + k)?.value, 10) || 50);
-            hData[k] = { score, pr };
-            if (score > topHolland.score) {
-                topHolland = { key: k, score };
-            }
-        });
-        const hollandCode = p.holland.code || (topHolland.key + 'IE');
-
-        // Build Common Comps object
-        const cData = {};
-        this.state.compKeys.forEach((k, i) => {
-            const item = p.commonComps[k] || {};
-            const score = item.score !== undefined ? item.score : (parseFloat(document.getElementById('c-score-' + i)?.value) || 3.0);
-            const pr = item.pr !== undefined ? item.pr : (parseInt(document.getElementById('c-pr-' + i)?.value, 10) || 50);
-            cData[k] = { score, pr };
-        });
-
-        // Build Professional
-        const pPathway = p.prof.pathway || document.getElementById('prof-pathway')?.value || '軟體開發';
-        const pScore = p.prof.score !== undefined ? p.prof.score : (parseFloat(document.getElementById('prof-score')?.value) || 3.5);
-        const pPr = p.prof.pr !== undefined ? p.prof.pr : (parseInt(document.getElementById('prof-pr')?.value, 10) || 70);
-
-        const resultData = {
-            student: p.student,
-            date: p.student?.date || new Date().toLocaleDateString('zh-TW'),
-            holland: hData,
-            hollandCode: hollandCode,
-            primaryHolland: p.holland.code ? p.holland.code[0] : topHolland.key,
-            commonComps: cData,
-            profPathway: pPathway,
-            profCareerCluster: p.prof.careerCluster || '',
-            profScore: pScore,
-            profPr: pPr
-        };
-
-        // Save
-        localStorage.setItem('ucan_dna_result', JSON.stringify(resultData));
-        localStorage.setItem('cdna_primary_holland', resultData.primaryHolland);
-        this.saveAndShowResult(resultData);
-    },
-
-    submitUCANManual() {
-        const hData = {};
-        let topHolland = { key: 'I', score: 0 };
-        
-        this.state.hollandKeys.forEach(k => {
-            const score = parseFloat(document.getElementById('h-score-' + k)?.value) || 0;
-            const pr = parseInt(document.getElementById('h-pr-' + k)?.value, 10) || 0;
-            hData[k] = { score, pr };
-            if (score > topHolland.score) {
-                topHolland = { key: k, score };
-            }
-        });
-
-        const cData = {};
-        this.state.compKeys.forEach((k, i) => {
-            const score = parseFloat(document.getElementById('c-score-' + i)?.value) || 0;
-            const pr = parseInt(document.getElementById('c-pr-' + i)?.value, 10) || 0;
-            cData[k] = { score, pr };
-        });
-
-        const pPathway = document.getElementById('prof-pathway')?.value || '軟體開發';
-        const pScore = parseFloat(document.getElementById('prof-score')?.value) || 3.5;
-        const pPr = parseInt(document.getElementById('prof-pr')?.value, 10) || 50;
-
-        const resultData = {
-            student: this.state.parsedUcanData.student || {},
-            date: new Date().toLocaleDateString('zh-TW'),
-            holland: hData,
-            hollandCode: topHolland.key + 'IE',
-            primaryHolland: topHolland.key,
-            commonComps: cData,
-            profPathway: pPathway,
-            profScore: pScore,
-            profPr: pPr
-        };
-
-        this.saveAndShowResult(resultData);
-    },
-
-    renderReportView(data) {
-        window.scrollTo(0,0);
-        const { date, primaryHolland, holland, hollandCode, commonComps, profPathway, profPr, profScore, student } = data;
-        
-        // Date & Student Header
-        const dateEl = document.getElementById('report-date');
-        if (dateEl) {
-            let stuStr = '';
-            if (student && student.name) {
-                stuStr = `${student.school || '靜宜大學'} ${student.dept || ''} ${student.name} | `;
-            }
-            dateEl.innerText = stuStr + '測驗日期：' + date;
-        }
-
-        // Roles Mapping Based on Pathway & Department
-        let mappedDept = "資訊管理系";
-        let roleTitle = "跨域資訊應用人才";
-        let highlightResume = "我擅長將商業與使用者需求轉化為清晰的規格設計...";
-        
-        if (['軟體開發', '網路與系統維運'].includes(profPathway) || profPathway.includes('軟體') || profPathway.includes('網路') || profPathway.includes('維運')) {
-            mappedDept = "資訊工程系";
-            roleTitle = "核心軟體工程師";
-            highlightResume = "我具備扎實的演算法底層架構知識與軟體研發實力...";
-        } else if (['資料科學與分析', '資訊安全'].includes(profPathway) || profPathway.includes('資料') || profPathway.includes('AI') || profPathway.includes('資安')) {
-            mappedDept = "人工智慧系";
-            roleTitle = "AI 與數據科學家";
-            highlightResume = "我專注於數據處理、特徵工程與機器學習模型訓練...";
-        } else if (['視覺藝術', '數位行銷與電子商務'].includes(profPathway) || profPathway.includes('藝術') || profPathway.includes('影音') || profPathway.includes('行銷')) {
-            mappedDept = "資訊管理系 (跨域多媒體與電商組)";
-            roleTitle = "數位產品設計師 / 跨域專案經理";
-            highlightResume = "我兼具美感設計與資訊技術視野，擅長數位內容創作與專案跨界溝通...";
-        }
-
-        const deptEl = document.getElementById('best-dept');
-        if (deptEl) deptEl.innerText = roleTitle + ' / ' + mappedDept;
-
-        // Circular Fit Score
-        const circle = document.querySelector('.circle');
-        if (circle) {
-            circle.style.stroke = profPr >= 80 ? '#002fa7' : (profPr >= 60 ? '#1a4ec4' : '#001a5e');
-            setTimeout(() => {
-                circle.style.strokeDasharray = `${profPr || 0}, 100`;
-                let start = 0;
-                const scoreEl = document.getElementById('score-display');
-                if (!scoreEl) return;
-                const timer = setInterval(() => {
-                    start++;
-                    scoreEl.innerText = start;
-                    if (start >= profPr) {
-                        clearInterval(timer);
-                        scoreEl.innerText = profPr;
-                    }
-                }, 10);
-            }, 100);
-        }
-        const fitTextEl = document.getElementById('fit-score-text');
-        if (fitTextEl) fitTextEl.innerText = profPr + '%';
-
-        // Traffic Light Dashboard
-        const tlContainer = document.getElementById('traffic-light-dashboard');
-        if (tlContainer) {
-            let html = "";
-            Object.keys(commonComps).forEach(k => {
-                const pr = commonComps[k].pr;
-                const score = commonComps[k].score;
-                let colorClass = pr >= 67 ? "bg-emerald-500" : (pr >= 34 ? "bg-amber-400" : "bg-rose-500");
-                let label = pr >= 67 ? "優勢" : (pr >= 34 ? "中等" : "待加強");
-                html += `
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                        <div class="w-full sm:w-28 text-sm font-bold text-klein">${k}</div>
-                        <div class="flex-1 h-4 bg-gray-100 relative rounded-md overflow-hidden border border-gray-200 shadow-inner">
-                            <div class="absolute inset-0">
-                                <div class="absolute top-0 bottom-0 w-px bg-white/70 z-10" style="left: 20%"></div>
-                                <div class="absolute top-0 bottom-0 w-px bg-white/70 z-10" style="left: 40%"></div>
-                                <div class="absolute top-0 bottom-0 w-px bg-white/70 z-10" style="left: 60%"></div>
-                                <div class="absolute top-0 bottom-0 w-px bg-white/70 z-10" style="left: 80%"></div>
-                            </div>
-                            <div class="absolute left-0 top-0 h-full ${colorClass} transition-all duration-1000 z-0" style="width: ${pr}%"></div>
-                        </div>
-                        <div class="w-full sm:w-40 text-right text-xs font-mono font-bold ${colorClass.replace('bg-', 'text-')} flex justify-end gap-3">
-                            <span>${score}分</span>
-                            <span>PR ${pr} (${label})</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            let pColor = profPr >= 67 ? "bg-emerald-500" : (profPr >= 34 ? "bg-amber-400" : "bg-rose-500");
-            let pLabel = profPr >= 67 ? "優勢" : (profPr >= 34 ? "中等" : "待加強");
-            html += `
-                <div class="mt-4 pt-4 border-t border-klein/10 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                    <div class="w-full sm:w-28 text-sm font-bold text-klein">專業途徑: ${profPathway}</div>
-                    <div class="flex-1 h-4 bg-gray-100 relative rounded-md overflow-hidden border border-gray-200 shadow-inner">
-                        <div class="absolute inset-0">
-                            <div class="absolute top-0 bottom-0 w-px bg-white/70 z-10" style="left: 20%"></div>
-                            <div class="absolute top-0 bottom-0 w-px bg-white/70 z-10" style="left: 40%"></div>
-                            <div class="absolute top-0 bottom-0 w-px bg-white/70 z-10" style="left: 60%"></div>
-                            <div class="absolute top-0 bottom-0 w-px bg-white/70 z-10" style="left: 80%"></div>
-                        </div>
-                        <div class="absolute left-0 top-0 h-full ${pColor} transition-all duration-1000 z-0" style="width: ${profPr}%"></div>
-                    </div>
-                    <div class="w-full sm:w-40 text-right text-xs font-mono font-bold ${pColor.replace('bg-', 'text-')} flex justify-end gap-3">
-                        <span>${profScore || '-'}分</span>
-                        <span>PR ${profPr} (${pLabel})</span>
-                    </div>
-                </div>
-            `;
-            tlContainer.innerHTML = html;
-        }
-
-        // Persona Description
-        const descEl = document.getElementById('archetype-desc');
-        if (descEl) {
-            const hCodeDisp = hollandCode ? `Holland 測量代碼為【${hollandCode}】` : `Holland 主要性格為【${primaryHolland}型】`;
-            descEl.innerText = `依據 UCAN 官方診斷，您的 ${hCodeDisp}，專業職能（${profPathway}）強度為 PR ${profPr}。系統判定您的職涯發展路徑最契合【${mappedDept}】的培育方向。`;
-        }
-
-        // Holland Dimension Quantitative Benchmarks ( radar-details replacement )
-        const hollandMap = {
+        const REPORT_LABEL = { holland: '職業興趣探索', common: '職場共通職能', professional: '專業職能診斷' };
+        const HOLLAND_INFO = {
             'R': { name: '實用型', en: 'Realistic', desc: '偏好具體、實用的操作，擅長使用工具與機械。' },
             'I': { name: '研究型', en: 'Investigative', desc: '喜歡觀察、分析及解決複雜問題，具備科學探究精神。' },
             'A': { name: '藝術型', en: 'Artistic', desc: '富有創意、想像力，偏好非結構化的活動與自我表達。' },
@@ -1622,267 +876,886 @@
             'E': { name: '企業型', en: 'Enterprising', desc: '具備領導特質，喜歡說服他人並追求組織目標或經濟效益。' },
             'C': { name: '事務型', en: 'Conventional', desc: '做事有條理，偏好處理數據、紀錄及遵循明確程序的任務。' }
         };
+        const CREATOR_TYPE = { person: '個人經營者', community: '社群 / 共筆', discovery: '探索入口' };
+        const PATHWAY_EXAMPLES = ['視覺藝術', '軟體開發', '系統分析', '資料科學與分析', '人工智慧技術應用', '網路與系統維運', '資訊安全', '企業資源規劃', '數位行銷與電子商務', '互動多媒體'];
 
-        const radarDetailsEl = document.getElementById('radar-details');
-        if (radarDetailsEl) {
-            let radarHTML = '';
-            ['R', 'I', 'A', 'S', 'E', 'C'].forEach(key => {
-                const hData = holland[key];
-                if (!hData) return;
-                const score = hData.score || 0;
-                const pr = hData.pr || 0;
-                const info = hollandMap[key];
-                let scoreColor = pr >= 75 ? 'text-emerald-500' : (pr >= 50 ? 'text-klein' : 'text-rose-500');
-                
-                radarHTML += `
-                    <div class="py-4 first:pt-0 flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-center no-break hover:bg-klein/5 transition-colors p-2">
-                        <div class="w-full sm:w-1/3 flex sm:flex-col justify-between items-baseline">
-                            <div class="flex items-baseline gap-1.5 flex-wrap">
-                                <span class="font-bold text-klein text-sm md:text-base">${info.name}</span>
-                                <span class="font-mono text-xs text-klein/60 font-semibold">(${info.en})</span>
-                            </div>
-                            <div class="flex items-baseline gap-1 mt-1">
-                                <span class="font-mono font-bold text-2xl md:text-3xl ${scoreColor}">${score}</span>
-                                <span class="font-mono text-xs text-klein/40">/12 (PR ${pr})</span>
-                            </div>
-                        </div>
-                        <div class="w-full sm:w-2/3 sm:pl-6 sm:border-l border-klein/10">
-                            <p class="font-body text-xs md:text-sm text-klein/70 leading-relaxed">${info.desc}</p>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            if (!radarHTML) {
-                radarHTML = '<div class="text-sm text-klein/60 py-4">無 Holland 職業性格資料。</div>';
-            }
-            radarDetailsEl.innerHTML = radarHTML;
+        function levelBar(pr) {
+            const lv = LV[UP.levelFromPr(pr)] || LV.weak;
+            return lv;
+        }
+        function dateLabel(iso) { return iso ? iso : '手動輸入'; }
+        function isStale(iso) {
+            if (!iso) return false;
+            const t = Date.parse(iso);
+            return !isNaN(t) && (Date.now() - t) > 365 * 24 * 3600 * 1000;
         }
 
-        // Top 5 Strengths Cards
-        const strengthsList = Object.entries(commonComps).sort((a,b) => b[1].pr - a[1].pr).slice(0, 5).map(x => x[0]);
-        const strengthsEl = document.getElementById('strength-cards');
-        if (strengthsEl) {
-            strengthsEl.innerHTML = strengthsList.map((s, i) => `
-                <div class="p-4 bg-white border border-klein/15 flex items-center justify-between hover-spring rounded-none">
-                    <span class="font-bold text-klein text-sm md:text-base flex items-center">
-                        <span class="font-mono font-bold text-klein/70 mr-2 text-sm">#${i + 1}</span>
-                        <span>${s}</span>
-                    </span>
-                    <span class="font-mono text-xs bg-klein/5 border border-klein/20 px-2 py-1 text-klein font-bold">
-                        PR ${commonComps[s]?.pr || 0}
-                    </span>
-                </div>
-            `).join('');
-        }
-
-        // Brand Action Card
-        const actionMap = {
-            '溝通表達': 'Communication', '持續學習': 'Learner', '人際互動': 'Relator', 
-            '團隊合作': 'Developer', '問題解決': 'Analytical', '創新': 'Ideation', 
-            '工作責任': 'Responsibility', '科技應用': 'Focus'
-        };
-        const actionKey = actionMap[strengthsList[0]] || 'Strategic';
-        const actionInfo = DATA.actionCards[actionKey] || DATA.actionCards['Strategic'];
-        const actionEl = document.getElementById('action-card-content');
-        if (actionEl) {
-            actionEl.innerHTML = `
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                    <div class="p-3 bg-white border border-klein/15">
-                        <span class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] block mb-1">📚 推薦書籍</span>
-                        <span class="font-heading font-bold text-klein text-sm">${actionInfo.book}</span>
-                    </div>
-                    <div class="p-3 bg-white border border-klein/15">
-                        <span class="font-mono text-xs font-bold text-klein/50 uppercase tracking-[0.2em] block mb-1">🛠️ 軟實力工具</span>
-                        <span class="font-heading font-bold text-klein text-sm">${actionInfo.skill}</span>
-                    </div>
-                </div>
-                <div class="p-4 bg-klein text-white">
-                    <span class="font-mono text-xs font-bold text-white/50 uppercase tracking-[0.2em] block mb-2">🎯 每週行動任務</span>
-                    <span class="font-body text-sm font-bold leading-relaxed">${actionInfo.task}</span>
-                </div>
-            `;
-        }
-
-        // 30/60/90 Day Roadmap
-        const roleInfo = DATA.roles[primaryHolland] || DATA.roles['R'];
-        const planEl = document.getElementById('action-plan-timeline');
-        if (planEl) {
-            planEl.innerHTML = roleInfo.plan.map((p, idx) => {
-                const storageKey = `careerDNA-brand-plan-${primaryHolland}-${idx}`;
-                const isChecked = localStorage.getItem(storageKey) === 'true';
-                return `
-                <div class="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6 group">
-                    <div class="w-full sm:w-28 font-mono font-bold text-klein/60 text-xs mt-1 shrink-0 flex items-center gap-2">
-                        <input type="checkbox" 
-                            class="w-4 h-4 rounded border-klein/30 text-klein focus:ring-klein cursor-pointer transition-colors"
-                            ${isChecked ? 'checked' : ''}
-                            onchange="localStorage.setItem('${storageKey}', this.checked); this.closest('.group').querySelector('div:last-child').classList.toggle('opacity-50', this.checked); this.closest('.group').querySelector('div:last-child').classList.toggle('line-through', this.checked);"
-                        >
-                        ${p.d}
-                    </div>
-                    <div class="transition-all duration-300 ${isChecked ? 'opacity-50 line-through' : ''}">
-                        <h4 class="font-bold text-klein text-sm mb-1">${p.t}</h4>
-                        <p class="text-sm font-body text-klein/70">${p.c}</p>
-                    </div>
-                </div>
-                `;
-            }).join('');
-        }
-
-        // Social Media Strategy
-        const pInfo = DATA.platforms[primaryHolland] || DATA.platforms['R'];
-        const platEl = document.getElementById('platform-card');
-        if (platEl) {
-            platEl.innerHTML = `
-                <div class="flex items-center justify-between mb-4">
-                    <span class="font-bold text-lg text-klein">${pInfo.name}</span>
-                    <span class="text-xs bg-klein/10 px-2 py-1 text-klein font-bold uppercase tracking-wider">${pInfo.role}</span>
-                </div>
-                <p class="text-sm font-body text-klein/80 mb-4">${pInfo.strategy}</p>
-                <div class="bg-klein/5 p-4 border-l-2 border-klein/30 mb-4">
-                    <div class="text-xs font-bold text-klein/50 mb-1 uppercase tracking-wider">Bio (自介草稿)</div>
-                    <div class="text-sm font-mono font-bold text-klein">${pInfo.bio}</div>
-                </div>
-                ${pInfo.content && pInfo.content.length > 0 ? `
-                    <div class="mt-4 pt-3 border-t border-klein/10">
-                        <div class="text-xs font-bold text-klein/60 mb-2 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-lightbulb text-amber-500"></i> 推薦發文靈感 (實作題目)
-                        </div>
-                        <ul class="space-y-2 text-xs font-body text-klein/80">
-                            ${pInfo.content.map((c, idx) => {
-                                const storageKey = `careerDNA-brand-social-${primaryHolland}-${idx}`;
-                                const isChecked = localStorage.getItem(storageKey) === 'true';
-                                return `
-                                <li class="flex items-start gap-2 bg-klein/[0.03] p-2.5 border border-klein/10 group transition-all duration-300 ${isChecked ? 'opacity-50' : ''}">
-                                    <input type="checkbox" 
-                                        class="w-4 h-4 mt-0.5 rounded border-klein/30 text-klein focus:ring-klein cursor-pointer shrink-0"
-                                        ${isChecked ? 'checked' : ''}
-                                        onchange="localStorage.setItem('${storageKey}', this.checked); this.closest('li').classList.toggle('opacity-50', this.checked); this.nextElementSibling.classList.toggle('line-through', this.checked);"
-                                    >
-                                    <span class="leading-relaxed ${isChecked ? 'line-through' : ''}">${c}</span>
-                                </li>
-                                `;
-                            }).join('')}
-                        </ul>
-                    </div>
-                ` : ''}
-            `;
-        }
-
-        // Draft Resume
-        const draftEl = document.getElementById('resume-draft');
-        if (draftEl) {
-            draftEl.innerText = `【個人品牌定位】\n${highlightResume}\n我的 Holland 核心性格為 ${primaryHolland}，能在專業領域中發揮我的特質。\n在共通職能上，我的強項包含：${strengthsList.slice(0,3).join(', ')}。\n目標是朝向 ${profPathway} 的職涯發展。`;
-        }
-
-        if (window.CareerDNAMotion) {
-            window.CareerDNAMotion.showToast('個人品牌職能報告與行動藍圖已解碼完成', 'success');
-        }
-        if (window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            gsap.fromTo('#report-container > div', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power3.out', overwrite: true });
-            gsap.fromTo('#strength-cards > div', { autoAlpha: 0, x: -12 }, { autoAlpha: 1, x: 0, duration: 0.4, stagger: 0.06, ease: 'power2.out', delay: 0.15 });
-        }
-    },
-
-    downloadPDF() {
-        const element = document.getElementById('report-container');
-        if (!element) return;
-        
-        const btn = document.getElementById('btn-export-pdf');
-        if (btn) {
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 產生中...';
-            btn.classList.add('opacity-70', 'cursor-not-allowed');
-        }
-
-        const scrollY = window.scrollY;
-        window.scrollTo(0, 0);
-
-        const printContainer = document.createElement('div');
-        printContainer.id = 'print-a4-temp-container';
-        printContainer.style.position = 'absolute';
-        printContainer.style.top = '0';
-        printContainer.style.left = '0';
-        printContainer.style.width = '1024px'; // Force lg breakpoint for tailwind
-        printContainer.style.backgroundColor = '#ffffff';
-        printContainer.style.zIndex = '999999';
-        printContainer.style.padding = '30px';
-        
-        // Clone the report container
-        const clone = element.cloneNode(true);
-        // Remove lg: constrain to force grid on 1024px container
-        clone.className = clone.className.replace('grid-cols-1', 'grid-cols-12').replace('lg:grid-cols-12', '');
-        
-        printContainer.appendChild(clone);
-        document.body.appendChild(printContainer);
-
-        const opt = {
-            margin:       [0.3, 0, 0.3, 0],
-            filename:     'CareerDNA_UCAN_Brand_Report.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
-                scale: 2, 
-                useCORS: true, 
-                logging: false,
-                scrollY: 0,
-                scrollX: 0,
-                windowWidth: 1024
+        window.app = {
+            state: {
+                lastReport: null,
+                wizardStep: 1,
+                hollandKeys: ['R', 'I', 'A', 'S', 'E', 'C'],
+                compKeys: UP.COMMON_KEYS,
+                reports: { holland: null, common: null, professional: null },
+                student: {},
+                profile: null,
+                goalRoleId: null
             },
-            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+
+            /* ------------------------- 視圖切換 ------------------------- */
+            switchView(id) {
+                ['view-landing', 'view-ucan-import', 'view-goal', 'view-result'].forEach(v => {
+                    const el = document.getElementById(v);
+                    if (el) el.classList.add('hidden');
+                });
+                const target = document.getElementById(id);
+                if (target) target.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            },
+
+            start() { this.switchView('view-ucan-import'); },
+
+            switchImportMode(mode) {
+                if (mode === 'pdf') {
+                    const isAlreadyActive = !document.getElementById('import-mode-pdf').classList.contains('hidden');
+                    if (isAlreadyActive) { document.getElementById('ucan-pdf-upload').click(); return; }
+                    document.getElementById('import-mode-pdf').classList.remove('hidden');
+                    document.getElementById('import-mode-manual').classList.add('hidden');
+                    document.getElementById('btn-mode-pdf').className = "px-6 py-2 bg-klein text-white font-bold font-mono tracking-wider text-sm border border-klein hover-spring";
+                    document.getElementById('btn-mode-manual').className = "px-6 py-2 bg-white text-klein font-bold font-mono tracking-wider text-sm border border-klein/30 hover:bg-klein/5 hover-spring";
+                } else {
+                    document.getElementById('import-mode-pdf').classList.add('hidden');
+                    document.getElementById('import-mode-manual').classList.remove('hidden');
+                    document.getElementById('btn-mode-manual').className = "px-6 py-2 bg-klein text-white font-bold font-mono tracking-wider text-sm border border-klein hover-spring";
+                    document.getElementById('btn-mode-pdf').className = "px-6 py-2 bg-white text-klein font-bold font-mono tracking-wider text-sm border border-klein/30 hover:bg-klein/5 hover-spring";
+                }
+            },
+
+            /* ------------------------- 讀取上次結果 ------------------------- */
+            loadLastReport() {
+                if (!this.state.lastReport) {
+                    const localData = localStorage.getItem('ucan_dna_result');
+                    if (localData) { try { this.state.lastReport = JSON.parse(localData); } catch (e) { /* ignore */ } }
+                }
+                const p = this.state.lastReport;
+                if (!p) { alert('尚未找到先前的紀錄，請先匯入 UCAN 報告！'); return; }
+                if (p.schemaVersion !== 2) {
+                    alert('這是舊版格式的紀錄（可能含有系統預設值，不是 UCAN 官方數據）。請重新匯入 UCAN 報告，以取得新版分析。');
+                    return;
+                }
+                this.state.profile = p;
+                if (p.goalRoleId && BE.getRole(p.goalRoleId)) {
+                    this.state.goalRoleId = p.goalRoleId;
+                    this.switchView('view-result');
+                    this.renderReport(p, p.goalRoleId);
+                } else {
+                    this.renderGoalView();
+                    this.switchView('view-goal');
+                }
+            },
+
+            /* ------------------------- 手動輸入表單 ------------------------- */
+            renderWizardInputs() {
+                const hContainer = document.getElementById('holland-inputs');
+                if (hContainer) {
+                    hContainer.innerHTML = this.state.hollandKeys.map(k => `
+                        <div class="border border-klein/10 p-4 bg-gray-50 flex items-center gap-4">
+                            <div class="w-10 h-10 bg-klein text-white flex items-center justify-center font-bold text-lg font-mono">${k}</div>
+                            <div class="flex-1">
+                                <label class="block text-xs font-bold text-klein mb-1">${HOLLAND_INFO[k].name} 分數 (0-12)</label>
+                                <input type="number" id="h-score-${k}" min="0" max="12" step="1" placeholder="例如 6" class="w-full p-2 border border-klein/20 outline-none text-sm font-mono font-bold">
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-xs font-bold text-klein mb-1">PR 值 (1-100)</label>
+                                <input type="number" id="h-pr-${k}" min="1" max="100" placeholder="例如 72" class="w-full p-2 border border-klein/20 outline-none text-sm font-mono font-bold">
+                            </div>
+                        </div>`).join('');
+                }
+                const cl = document.getElementById('cluster-inputs');
+                if (cl) {
+                    cl.innerHTML = UP.CLUSTERS.map((c, i) => `
+                        <label class="flex items-center gap-2 text-xs font-body text-klein/80 border border-klein/10 px-3 py-2 bg-gray-50 cursor-pointer">
+                            <input type="checkbox" id="cl-${i}" value="${esc(c)}" class="w-4 h-4 rounded border-klein/30 text-klein"> ${esc(c)}
+                        </label>`).join('');
+                }
+                const cContainer = document.getElementById('common-competency-inputs');
+                if (cContainer) {
+                    cContainer.innerHTML = this.state.compKeys.map((k, i) => `
+                        <div class="border border-klein/10 p-4 bg-gray-50 flex flex-col gap-2">
+                            <div class="font-bold text-sm text-klein flex justify-between">
+                                <span>${esc(k)}</span><span class="text-xs font-mono text-klein/40">#${i + 1}</span>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="flex-1">
+                                    <label class="block text-[10px] font-bold text-klein/60 mb-1">分數 (1-5)</label>
+                                    <input type="number" id="c-score-${i}" step="0.01" min="1" max="5" placeholder="例如 3.43" class="w-full p-2 border border-klein/20 outline-none text-sm font-mono font-bold">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="block text-[10px] font-bold text-klein/60 mb-1">PR 值 (1-100)</label>
+                                    <input type="number" id="c-pr-${i}" min="1" max="100" placeholder="例如 27" class="w-full p-2 border border-klein/20 outline-none text-sm font-mono font-bold">
+                                </div>
+                            </div>
+                        </div>`).join('');
+                }
+                const dl = document.getElementById('pathway-options');
+                if (dl) dl.innerHTML = PATHWAY_EXAMPLES.map(p => `<option value="${esc(p)}"></option>`).join('');
+            },
+
+            nextWizardStep(step) {
+                document.querySelectorAll('.wizard-step').forEach(el => el.classList.add('hidden'));
+                const target = document.getElementById('step-' + step);
+                if (target) target.classList.remove('hidden');
+                document.querySelectorAll('.wizard-tab').forEach(el => {
+                    el.className = (el.dataset.step == step)
+                        ? "wizard-tab flex-1 py-3 px-4 font-heading font-bold text-center border-b-2 border-klein text-klein transition"
+                        : "wizard-tab flex-1 py-3 px-4 font-heading font-bold text-center border-b-2 border-transparent text-klein/40 hover:text-klein transition";
+                });
+            },
+
+            /** 手動輸入：空白就是「沒有這份資料」，不會補任何預設值 */
+            submitManual() {
+                const val = id => { const el = document.getElementById(id); const v = el ? el.value.trim() : ''; return v === '' ? null : Number(v); };
+                const errors = [];
+
+                const hKeys = this.state.hollandKeys;
+                const hVals = hKeys.map(k => ({ k, score: val('h-score-' + k), pr: val('h-pr-' + k) }));
+                const hAny = hVals.some(v => v.score !== null || v.pr !== null);
+                let holland;
+                if (hAny) {
+                    if (hVals.some(v => v.score === null || v.pr === null)) errors.push('職業性格：六種類型的分數與 PR 都要填寫（或整頁留空表示沒有這份報告）。');
+                    else {
+                        const scores = {};
+                        hVals.forEach(v => { scores[v.k] = { score: v.score, pr: v.pr, name: HOLLAND_INFO[v.k].name }; });
+                        const codeRaw = (document.getElementById('h-code').value || '').trim().toUpperCase();
+                        if (codeRaw && !/^[RIASEC]{1,4}$/.test(codeRaw)) errors.push('Holland 代碼只能包含 R、I、A、S、E、C（最多 4 碼）。');
+                        const topClusters = UP.CLUSTERS.filter((c, i) => document.getElementById('cl-' + i)?.checked);
+                        holland = { scores, code: /^[RIASEC]{1,4}$/.test(codeRaw) ? codeRaw : null, clusters: [], topClusters };
+                    }
+                }
+
+                const cVals = this.state.compKeys.map((k, i) => ({ k, score: val('c-score-' + i), pr: val('c-pr-' + i) }));
+                const cAny = cVals.some(v => v.score !== null || v.pr !== null);
+                let common;
+                if (cAny) {
+                    if (cVals.some(v => v.score === null || v.pr === null)) errors.push('共通職能：8 項的分數與 PR 都要填寫（或整頁留空表示沒有這份報告）。');
+                    else { common = {}; cVals.forEach(v => { common[v.k] = { score: v.score, pr: v.pr }; }); }
+                }
+
+                const pathway = (document.getElementById('prof-pathway').value || '').trim();
+                const pCluster = (document.getElementById('prof-cluster').value || '').trim();
+                const pScore = val('prof-score'), pPr = val('prof-pr');
+                let professional;
+                if (pathway) professional = { pathway, cluster: pCluster || null, items: [], avg: (pScore !== null || pPr !== null) ? { score: pScore, pr: pPr } : null };
+                else if (pScore !== null || pPr !== null || pCluster) errors.push('專業職能：請填寫就業途徑名稱。');
+
+                if (!holland && !common && !professional && !errors.length) errors.push('請至少填寫一份 UCAN 報告的數據。');
+                if (errors.length) { alert(errors.join('\n')); return; }
+
+                const profile = UP.buildProfile([{ student: this.state.student, date: null, holland, common, professional }]);
+                if (profile.profPathway && profile.profScore === undefined) profile.profScore = null;
+                profile.source = 'manual';
+                profile.date = new Date().toISOString().slice(0, 10);
+                const bad = UP.validateProfile(profile);
+                if (bad.length) { alert(bad.join('\n')); return; }
+                this.afterProfile(profile);
+            },
+
+            /* ------------------------- PDF 匯入 ------------------------- */
+            async handlePDFUpload(event) {
+                const input = event.target;
+                const files = input.files;
+                if (!files || files.length === 0) return;
+
+                const loadingEl = document.getElementById('pdf-loading');
+                const loadingText = document.getElementById('pdf-loading-text');
+                if (loadingEl) loadingEl.classList.remove('hidden');
+                const unknown = [];
+
+                try {
+                    for (let fIdx = 0; fIdx < files.length; fIdx++) {
+                        const file = files[fIdx];
+                        if (loadingText) loadingText.innerText = `正在解析 (${fIdx + 1}/${files.length})：${file.name}...`;
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                        let fullText = '';
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            let pageText = '';
+                            for (const item of textContent.items) {
+                                if (typeof item.str === 'string') { pageText += item.str; pageText += item.hasEOL ? '\n' : ' '; }
+                            }
+                            fullText += pageText + '\n';
+                        }
+                        const parsed = UP.parseReport(fullText);
+                        if (!parsed.types.length) { unknown.push(file.name); continue; }
+                        Object.assign(this.state.student, parsed.student);
+                        parsed.types.forEach(t => { this.state.reports[t] = parsed; });
+                    }
+                    this.refreshStatus();
+                    if (unknown.length) alert('下列檔案無法辨識為 UCAN 診斷報告，已略過：\n' + unknown.join('\n'));
+                } catch (e) {
+                    console.error('PDF parsing error:', e);
+                    alert('PDF 解析過程發生錯誤，已為您切換至手動輸入。');
+                    this.switchImportMode('manual');
+                } finally {
+                    if (loadingEl) loadingEl.classList.add('hidden');
+                    input.value = '';
+                }
+            },
+
+            currentPartsProfile() {
+                const parts = Object.values(this.state.reports).filter(Boolean);
+                const unique = Array.from(new Set(parts));
+                return UP.buildProfile(unique);
+            },
+
+            refreshStatus() {
+                const p = this.currentPartsProfile();
+                const panel = document.getElementById('pdf-parsed-summary');
+                if (!panel) return;
+                panel.classList.remove('hidden');
+
+                const s = p.student;
+                const stuBadge = document.getElementById('parsed-student-badge');
+                if (stuBadge) stuBadge.innerText = [s.school, s.dept, s.name, s.id ? `(${s.id})` : ''].filter(Boolean).join(' ') || '學生身分已辨識';
+
+                const setCard = (key, ok, val, sub) => {
+                    const v = document.getElementById(`status-${key}-val`);
+                    const sb = document.getElementById(`status-${key}-sub`);
+                    const b = document.getElementById(`badge-status-${key}`);
+                    if (v) v.innerText = val;
+                    if (sb) sb.innerText = sub;
+                    if (b) {
+                        b.className = ok ? "text-[11px] font-mono px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold" : "text-[11px] font-mono px-2 py-0.5 bg-gray-100 text-gray-500 font-bold";
+                        b.innerText = ok ? '已解析 ✓' : '未上傳';
+                    }
+                };
+
+                const hasH = !p.missing.includes('holland');
+                if (hasH) {
+                    const top = p.hollandCode[0];
+                    setCard('holland', true, `代碼：${p.hollandCode}`, `最高：${HOLLAND_INFO[top].name} ${top}（${p.holland[top].score} 分 / PR${p.holland[top].pr}）｜施測 ${dateLabel(p.reportDates.holland)}`);
+                } else setCard('holland', false, '尚未上傳', '沒有這份報告：職業性格與職涯類型相關建議會略過');
+
+                const cCount = Object.keys(p.commonComps).length;
+                if (cCount) {
+                    const topC = Object.entries(p.commonComps).sort((a, b) => b[1].pr - a[1].pr)[0];
+                    setCard('common', true, `已載入 ${cCount} / 8 項職能`, `PR 最高：${topC[0]} (PR ${topC[1].pr})｜施測 ${dateLabel(p.reportDates.common)}`);
+                } else setCard('common', false, '尚未上傳', '沒有這份報告：不會產生「補強共通職能」的任務');
+
+                if (p.profPathway) {
+                    setCard('prof', true, p.profPathway, `${p.profCareerCluster || '職涯類型'}｜${p.profPr != null ? `平均 PR ${p.profPr}` : ''}｜共 ${p.profItems.length} 個職能項目｜施測 ${dateLabel(p.reportDates.professional)}`);
+                } else setCard('prof', false, '尚未上傳', '沒有這份報告：職務推薦不會參考就業途徑');
+
+                const note = document.getElementById('pdf-missing-note');
+                if (note) {
+                    if (p.missing.length) { note.classList.remove('hidden'); note.innerText = `尚缺：${p.missing.map(m => REPORT_LABEL[m]).join('、')}。你仍可繼續，系統只會根據已匯入的數據產生建議，不會補任何預設值。`; }
+                    else note.classList.add('hidden');
+                }
+                const btn = document.getElementById('btn-to-goal');
+                if (btn) { btn.disabled = p.missing.length === 3; btn.classList.toggle('opacity-40', p.missing.length === 3); }
+            },
+
+            submitParsedData() {
+                const p = this.currentPartsProfile();
+                if (p.missing.length === 3) { alert('請先上傳至少一份 UCAN 診斷報告。'); return; }
+                this.afterProfile(p);
+            },
+
+            /* ------------------------- 選擇目標 ------------------------- */
+            afterProfile(profile) {
+                profile.goalRoleId = null;
+                this.state.profile = profile;
+                this.persist(profile);
+                this.renderGoalView();
+                this.switchView('view-goal');
+            },
+
+            renderGoalView() {
+                const p = this.state.profile;
+                const sumEl = document.getElementById('goal-data-summary');
+                if (sumEl) {
+                    const chips = [];
+                    if (p.hollandCode) chips.push(`Holland 代碼 <b>${esc(p.hollandCode)}</b>`);
+                    if (p.topClusters.length) chips.push(`興趣前幾名：${esc(p.topClusters.join('、'))}`);
+                    if (p.profPathway) chips.push(`就業途徑 <b>${esc(p.profPathway)}</b>`);
+                    const weak = BE.findWeakCommon(p, { focus: [] }).map(w => `${w.name} PR${w.pr}`);
+                    if (weak.length) chips.push(`待加強共通職能：${esc(weak.join('、'))}`);
+                    sumEl.innerHTML = chips.map(c => `<span class="inline-block bg-klein/5 border border-klein/15 px-3 py-1.5 text-xs font-body text-klein">${c}</span>`).join(' ');
+                }
+                const top = BE.suggestRoles(p, 3);
+                const wrap = document.getElementById('goal-suggestions');
+                if (wrap) {
+                    wrap.innerHTML = top.map((r, i) => {
+                        const role = BE.getRole(r.roleId);
+                        return `
+                        <div class="border border-klein/15 bg-white p-6 flex flex-col gap-4 hover-spring crosshair-corner">
+                            <div class="flex items-center justify-between">
+                                <span class="font-mono text-[11px] font-bold text-klein/50 tracking-[0.2em]">推薦 #${i + 1}</span>
+                                <span class="font-mono font-black text-2xl text-klein">${r.score}<span class="text-xs text-klein/40">%</span></span>
+                            </div>
+                            <div>
+                                <div class="font-heading font-black text-xl text-klein">${esc(role.title)}</div>
+                                <div class="font-mono text-[11px] text-klein/50 mt-0.5">${esc(role.en)}</div>
+                                <div class="text-xs font-body font-bold text-klein mt-2"><i class="fa-solid fa-graduation-cap mr-1"></i>對應系所：${BE.departmentsFor(r.roleId).map(d => esc(d.name) + (d.primary ? '' : '（可跨修）')).join('、')}</div>
+                                <p class="text-sm font-body text-klein/70 mt-3 leading-relaxed">${esc(role.summary)}</p>
+                            </div>
+                            <ul class="text-xs font-body text-klein/70 space-y-1.5 border-t border-klein/10 pt-3">
+                                ${r.parts.map(pt => `<li><span class="font-bold text-klein">${esc(pt.label)}</span>：${esc(pt.detail)}</li>`).join('')}
+                            </ul>
+                            <button onclick="window.app.chooseGoal('${esc(r.roleId)}')" class="mt-auto px-5 py-3 bg-klein text-white font-heading font-bold text-sm tracking-wider hover-spring">選這個目標 <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                        </div>`;
+                    }).join('');
+                }
+                const sel = document.getElementById('goal-select');
+                if (sel) sel.innerHTML = '<option value="">— 從全部職務挑選 —</option>' + KB.roles.map(r => `<option value="${esc(r.id)}">${esc(r.title)}</option>`).join('');
+            },
+
+            chooseGoalFromSelect() {
+                const v = document.getElementById('goal-select').value;
+                if (!v) { alert('請先選擇一個職務。'); return; }
+                this.chooseGoal(v);
+            },
+
+            chooseGoal(roleId) {
+                if (!BE.getRole(roleId)) return;
+                const p = this.state.profile;
+                this.state.goalRoleId = roleId;
+                p.goalRoleId = roleId;
+                this.persist(p);
+                this.switchView('view-result');
+                this.renderReport(p, roleId);
+            },
+
+            backToGoal() { this.renderGoalView(); this.switchView('view-goal'); },
+
+            /* ------------------------- 儲存 ------------------------- */
+            async persist(profile) {
+                try {
+                    localStorage.setItem('ucan_dna_result', JSON.stringify(profile));
+                    if (profile.primaryHolland) localStorage.setItem('cdna_primary_holland', profile.primaryHolland);
+                    const dept = profile.student && profile.student.dept;
+                    if (dept) {
+                        let dCode = 'IM';
+                        if (dept.includes('資工') || dept.includes('工程')) dCode = 'CS';
+                        else if (dept.includes('AI') || dept.includes('人工智慧')) dCode = 'AI';
+                        localStorage.setItem('cdna_department', dCode);
+                    }
+                } catch (e) { console.warn('localStorage 寫入失敗', e); }
+
+                const role = profile.goalRoleId ? BE.getRole(profile.goalRoleId) : null;
+                const effectiveUid = window.CareerDNA_DB ? window.CareerDNA_DB.getEffectiveUid(currentUser) : (currentUser && currentUser.uid);
+                if (window.CareerDNA_DB && effectiveUid) {
+                    try {
+                        await window.CareerDNA_DB.saveBrandResult(effectiveUid, {
+                            date: new Date().toISOString(),
+                            hollandCode: profile.hollandCode,
+                            topHollandCode: profile.hollandCode,
+                            fitScore: role ? BE.rankRoles(profile).find(r => r.roleId === role.id).score : 0,
+                            topStrengths: BE.findStrengths(profile).slice(0, 5).map(s => s.name),
+                            radarData: this.state.hollandKeys.map(k => (profile.holland[k] ? profile.holland[k].score : 0)),
+                            bestDept: role ? role.title : '',
+                            ucanProfile: profile,
+                            goalRoleId: profile.goalRoleId || '',
+                            goalRoleTitle: role ? role.title : '',
+                            kbVersion: KB.VERSION
+                        });
+                    } catch (err) { console.warn('MongoDB Atlas 儲存略過：', err); }
+                }
+                if (currentUser && typeof db !== 'undefined') {
+                    try {
+                        await setDoc(doc(db, 'users', currentUser.uid, 'brand_results', 'latest'), JSON.parse(JSON.stringify(profile)));
+                        await setDoc(doc(db, 'users', currentUser.uid), {
+                            summary_cache: { brand: { updatedAt: new Date().toISOString(), primaryHolland: profile.primaryHolland, hollandCode: profile.hollandCode, goalRoleId: profile.goalRoleId || '' } }
+                        }, { merge: true });
+                    } catch (e) { console.warn('Firestore 儲存略過：', e); }
+                }
+            },
+
+            /* ------------------------- 初始化 ------------------------- */
+            init() {
+                this.renderWizardInputs();
+                if (typeof pdfjsLib !== 'undefined') {
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                }
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('view') === 'report') this.loadLastReport();
+            },
+
+            /* ------------------------- 報告 ------------------------- */
+            switchRole(roleId) {
+                if (roleId === this.state.goalRoleId) return;
+                this.chooseGoal(roleId);
+            },
+
+            onTaskToggle(el) {
+                localStorage.setItem(el.dataset.key, el.checked);
+                const li = el.closest('li');
+                if (li) { li.classList.toggle('opacity-50', el.checked); li.querySelector('.task-text').classList.toggle('line-through', el.checked); }
+                this.updateProgress();
+            },
+
+            updateProgress() {
+                const all = document.querySelectorAll('#action-plan-timeline .task-cb');
+                const done = Array.from(all).filter(c => c.checked).length;
+                const el = document.getElementById('plan-progress');
+                if (el) el.innerText = `${done} / ${all.length} 項已完成`;
+                const bar = document.getElementById('plan-progress-bar');
+                if (bar) bar.style.width = all.length ? `${Math.round(done / all.length * 100)}%` : '0%';
+            },
+
+            renderReport(profile, roleId) {
+                const plan = BE.buildPlan(profile, roleId);
+                this.showInAppWarning();
+                const social = BE.buildSocial(profile, roleId);
+                const role = BE.getRole(roleId);
+                const ranked = BE.rankRoles(profile);
+                const rankIdx = ranked.findIndex(r => r.roleId === roleId);
+                const topIds = ranked.slice(0, 3).map(r => r.roleId);
+
+                // 標頭
+                const dateEl = document.getElementById('report-date');
+                if (dateEl) {
+                    const s = profile.student || {};
+                    const who = s.name ? `${s.school || ''} ${s.dept || ''} ${s.name} | ` : '';
+                    const ds = Object.keys(profile.reportDates || {}).map(k => `${REPORT_LABEL[k]} ${profile.reportDates[k]}`).join('｜');
+                    dateEl.innerText = who + (ds || (profile.source === 'manual' ? '手動輸入 ' + profile.date : ''));
+                }
+
+                // 英雄區
+                const deptEl = document.getElementById('best-dept');
+                if (deptEl) deptEl.innerText = role.title;
+                const enEl = document.getElementById('best-dept-en');
+                if (enEl) enEl.innerText = role.en;
+                const roleDeptsEl = document.getElementById('role-depts');
+                if (roleDeptsEl) {
+                    roleDeptsEl.innerHTML = '<div class="text-xs font-mono font-bold text-klein/60 mb-1.5 tracking-wider">對應靜宜大學資訊系所</div><div class="flex flex-wrap items-center gap-2">' +
+                        plan.depts.map(d => `<a href="career_fit.html?dept=${esc(d.key)}" title="查看該系必修課" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold border ${d.primary ? 'bg-klein text-white border-klein' : 'border-klein/30 text-klein hover:bg-klein/5'}"><i class="fa-solid fa-graduation-cap text-xs"></i>${esc(d.name)}<span class="text-[10px] font-mono font-normal opacity-80">${d.primary ? '主要對應' : '可跨修 / 輔修'}</span></a>`).join('') +
+                        '</div><div class="text-[11px] font-body text-klein/50 mt-1.5">依職務性質與各系特色整理，僅供參考，非學校官方分發依據。點系名可查看該系必修課。</div>';
+                }
+                const circle = document.querySelector('.circle');
+                if (circle) {
+                    circle.style.stroke = plan.fitScore >= 70 ? '#002fa7' : (plan.fitScore >= 50 ? '#1a4ec4' : '#001a5e');
+                    setTimeout(() => {
+                        circle.style.strokeDasharray = `${plan.fitScore}, 100`;
+                        const scoreEl = document.getElementById('score-display');
+                        if (!scoreEl) return;
+                        let start = 0;
+                        const timer = setInterval(() => { start++; scoreEl.innerText = start; if (start >= plan.fitScore) { clearInterval(timer); scoreEl.innerText = plan.fitScore; } }, 10);
+                    }, 100);
+                }
+                const fitTextEl = document.getElementById('fit-score-text');
+                if (fitTextEl) fitTextEl.innerText = plan.fitScore + '%';
+
+                const descEl = document.getElementById('archetype-desc');
+                if (descEl) {
+                    const bits = [];
+                    if (profile.hollandCode) bits.push(`Holland 代碼 ${profile.hollandCode}`);
+                    if (profile.profPathway) bits.push(`就業途徑「${profile.profPathway}」`);
+                    const weakNames = plan.gaps.map(g => `${g.name} PR${g.pr}`);
+                    const origin = rankIdx === 0 ? '系統依你的 UCAN 數據推薦的第 1 名' : `你選擇的目標（系統推薦順位第 ${rankIdx + 1}）`;
+                    descEl.innerText = `這是${origin}。依據 ${bits.length ? bits.join('、') : '你匯入的 UCAN 數據'}，` + (weakNames.length ? `並針對你偏低的共通職能（${weakNames.join('、')}）加入補強任務，` : '') + '產生下方 90 天行動計畫。';
+                }
+
+                // 資料來源 / 缺漏 / 過期提醒
+                const provEl = document.getElementById('data-provenance');
+                if (provEl) {
+                    const chips = [];
+                    if (profile.hollandCode) chips.push(`Holland ${esc(profile.hollandCode)}`);
+                    if (profile.profPathway) chips.push(esc(profile.profPathway));
+                    if (Object.keys(profile.commonComps).length) chips.push(`共通職能 ${Object.keys(profile.commonComps).length}/8`);
+                    let html = chips.map(c => `<span class="inline-block bg-klein/5 border border-klein/15 px-2.5 py-1 text-[11px] font-mono text-klein">${c}</span>`).join(' ');
+                    const notes = [];
+                    if (profile.missing.length) notes.push(`未匯入：${profile.missing.map(m => REPORT_LABEL[m]).join('、')}（相關建議已略過，未補預設值）`);
+                    Object.keys(profile.reportDates || {}).forEach(k => { if (isStale(profile.reportDates[k])) notes.push(`${REPORT_LABEL[k]}施測已超過 1 年（${profile.reportDates[k]}），建議重新施測`); });
+                    if (notes.length) html += `<div class="mt-3 text-xs font-body text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2">${notes.map(esc).join('<br>')}</div>`;
+                    provEl.innerHTML = html;
+                }
+
+                // 角色切換
+                const switcher = document.getElementById('role-switcher');
+                if (switcher) {
+                    switcher.innerHTML = topIds.map(id => {
+                        const r = BE.getRole(id);
+                        const active = id === roleId;
+                        return `<button onclick="window.app.switchRole('${esc(id)}')" class="px-3 py-1.5 text-xs font-mono font-bold border ${active ? 'bg-klein text-white border-klein' : 'border-klein/30 text-klein hover:bg-klein/5'}">${esc(r.title)}</button>`;
+                    }).join('') + `<button onclick="window.app.backToGoal()" class="px-3 py-1.5 text-xs font-mono font-bold border border-dashed border-klein/40 text-klein/70 hover:bg-klein/5">更換目標…</button>`;
+                }
+
+                // 為什麼推薦
+                const why = document.getElementById('why-panel');
+                if (why) {
+                    why.innerHTML = plan.reasons.map(pt => `
+                        <div class="py-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+                            <div class="sm:w-56 shrink-0">
+                                <div class="font-bold text-sm text-klein">${esc(pt.label)}</div>
+                                <div class="font-mono text-[10px] text-klein/50">來源：UCAN ${esc(pt.source)}</div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="h-2 bg-klein/10 overflow-hidden"><div class="h-full bg-klein" style="width:${Math.round(pt.value * 100)}%"></div></div>
+                                <div class="text-xs font-body text-klein/70 mt-1.5">${esc(pt.detail)}</div>
+                            </div>
+                            <div class="font-mono font-bold text-klein w-14 text-right">${Math.round(pt.value * 100)}%</div>
+                        </div>`).join('') || '<div class="text-sm text-klein/60 py-3">資料不足，無法說明。</div>';
+                }
+
+                // 30/60/90 行動計畫
+                const planEl = document.getElementById('action-plan-timeline');
+                if (planEl) {
+                    planEl.innerHTML = plan.phases.map(ph => `
+                        <div class="border border-klein/10 bg-white p-5 flex flex-col gap-4">
+                            <div>
+                                <div class="font-mono text-[11px] font-bold tracking-[0.2em] text-klein/50 uppercase">${esc(ph.label)}</div>
+                                <div class="font-heading font-black text-lg text-klein mt-0.5">${esc(ph.theme)}</div>
+                            </div>
+                            <ul class="space-y-4">
+                                ${ph.tasks.map((t, i) => {
+                        const key = `careerDNA-brand2-${roleId}-${ph.key}-${i}`;
+                        const checked = localStorage.getItem(key) === 'true';
+                        const badge = t.ucan ? `<span class="inline-block mb-1.5 text-[10px] font-mono font-bold bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5">來自 UCAN：${esc(t.ucan.name)} PR${t.ucan.pr}（${esc(t.ucan.level)}）</span>` : '';
+                        const tools = (t.tools || []).map(x => `<span class="inline-block text-[10px] font-mono border border-klein/20 text-klein/80 px-1.5 py-0.5 cursor-help" title="${esc(KB.glossary[x] || '')}">${esc(x)}</span>`).join(' ');
+                        return `
+                                    <li class="flex gap-3 ${checked ? 'opacity-50' : ''}">
+                                        <input type="checkbox" class="task-cb w-4 h-4 mt-1 shrink-0 rounded border-klein/30 text-klein cursor-pointer" data-key="${esc(key)}" ${checked ? 'checked' : ''} onchange="window.app.onTaskToggle(this)">
+                                        <div class="min-w-0 flex-1">
+                                            ${badge}
+                                            <p class="task-text text-sm font-body font-bold text-klein leading-relaxed ${checked ? 'line-through' : ''}">${esc(t.action)}</p>
+                                            <dl class="mt-1.5 text-xs font-body text-klein/70 space-y-0.5">
+                                                <div><dt class="inline font-bold text-klein">成果：</dt><dd class="inline">${esc(t.output)}</dd></div>
+                                                <div><dt class="inline font-bold text-klein">時間：</dt><dd class="inline">${esc(t.hours)}</dd></div>
+                                                <div><dt class="inline font-bold text-klein">完成標準：</dt><dd class="inline">${esc(t.done)}</dd></div>
+                                            </dl>
+                                            ${tools ? `<div class="mt-2 flex flex-wrap gap-1.5">${tools}</div>` : ''}
+                                        </div>
+                                    </li>`;
+                    }).join('')}
+                            </ul>
+                        </div>`).join('');
+                    this.updateProgress();
+                }
+
+                // 優勢與補強摘要
+                const sumEl = document.getElementById('plan-summary');
+                if (sumEl) {
+                    const parts = [];
+                    if (plan.strengths.length) parts.push(`<b>善用你的優勢</b>：${plan.strengths.slice(0, 3).map(s => `${esc(s.name)}（${s.kind} PR${s.pr}）`).join('、')}`);
+                    if (plan.gaps.length) parts.push(`<b>本計畫優先補強</b>：${plan.gaps.map(g => `${esc(g.name)}（PR${g.pr}）`).join('、')}`);
+                    if (plan.otherWeak.length) parts.push(`<b>其他待加強項目</b>（未排入本計畫）：${plan.otherWeak.map(g => `${esc(g.name)} PR${g.pr}`).join('、')}`);
+                    sumEl.innerHTML = parts.map(p => `<div>${p}</div>`).join('');
+                }
+
+                // UCAN 官方對補強項目的說明 (主要指標 / 相關活動)
+                const refEl = document.getElementById('ucan-ref-panel');
+                if (refEl) {
+                    refEl.innerHTML = plan.gaps.filter(g => g.ref).map(g => `
+                        <details class="border border-klein/15 bg-white p-4 group">
+                            <summary class="cursor-pointer font-bold text-sm text-klein flex flex-wrap items-center gap-2">
+                                <span>UCAN 官方說明：${esc(g.name)}</span>
+                                <span class="font-mono text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5">你的 PR ${g.pr}（待加強）</span>
+                            </summary>
+                            <p class="text-xs font-body text-klein/70 mt-3 leading-relaxed">${esc(g.ref.intro)}</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                <div>
+                                    <div class="text-xs font-bold text-klein mb-1.5">UCAN 看哪些行為（主要指標）</div>
+                                    <ul class="list-disc pl-5 text-xs font-body text-klein/80 space-y-1">${g.ref.indicators.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-klein mb-1.5">UCAN 建議的相關活動</div>
+                                    <ul class="list-disc pl-5 text-xs font-body text-klein/80 space-y-1">${g.ref.activities.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+                                    <div class="text-xs font-bold text-klein mt-3 mb-1.5">相關知識技能</div>
+                                    <div class="flex flex-wrap gap-1.5">${g.ref.skills.map(x => `<span class="text-[10px] font-mono border border-klein/20 text-klein/80 px-1.5 py-0.5">${esc(x)}</span>`).join('')}</div>
+                                </div>
+                            </div>
+                        </details>`).join('') + (plan.gaps.some(g => g.ref) ? `<div class="text-[11px] font-mono text-klein/50">來源：<a class="underline" target="_blank" rel="noopener noreferrer" href="${esc(plan.refSource.url)}">教育部 UCAN「職場共通職能查詢」</a>（${esc(plan.refSource.fetchedAt)} 擷取）</div>` : '');
+                }
+
+                // 社群策略 + 人物
+                const platEl = document.getElementById('platform-card');
+                if (platEl) {
+                    const link = pf => `<a href="${esc(pf.url)}" target="_blank" rel="noopener noreferrer" class="font-bold text-klein underline underline-offset-2">${esc(pf.name)}</a>`;
+                    platEl.innerHTML = `
+                        <div class="flex flex-wrap items-center gap-2 mb-3">
+                            <span class="text-xs bg-klein text-white px-2 py-1 font-bold">主要平台</span> ${link(social.primary)}
+                            <span class="text-xs bg-klein/10 text-klein px-2 py-1 font-bold ml-2">輔助平台</span> ${link(social.secondary)}
+                        </div>
+                        <p class="text-sm font-body text-klein/80 mb-4 leading-relaxed">${esc(social.why)}</p>
+                        <div class="text-xs font-bold text-klein/60 mb-2 uppercase tracking-wider">經營節奏</div>
+                        <ul class="list-disc pl-5 text-sm font-body text-klein/80 space-y-1 mb-4">${social.cadence.map(c => `<li>${esc(c)}</li>`).join('')}</ul>
+                        ${social.tips.length ? `<div class="mb-4 bg-amber-50 border border-amber-200 p-3">
+                            <div class="text-xs font-bold text-amber-800 mb-1.5">依你的 UCAN 數據調整</div>
+                            <ul class="space-y-1.5 text-xs font-body text-amber-900">${social.tips.map(t => `<li>${esc(t.text)} <span class="font-mono text-amber-700">(${esc(t.ucan)})</span></li>`).join('')}</ul>
+                        </div>` : ''}
+                        <div class="bg-klein/5 p-4 border-l-2 border-klein/30 mb-4">
+                            <div class="text-xs font-bold text-klein/50 mb-1 uppercase tracking-wider">Bio (自介草稿)</div>
+                            <div id="bio-draft" class="text-sm font-mono font-bold text-klein">${esc(social.bio)}</div>
+                            <button onclick="window.app.copyText('bio-draft')" class="no-print mt-2 text-[11px] font-mono text-klein/60 underline">複製</button>
+                        </div>
+                        <div class="text-xs font-bold text-klein/60 mb-2 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-500"></i> 推薦發文題目</div>
+                        <ul class="space-y-2 text-xs font-body text-klein/80">
+                            ${social.postIdeas.map((c, idx) => {
+                        const key = `careerDNA-brand2-social-${roleId}-${idx}`;
+                        const checked = localStorage.getItem(key) === 'true';
+                        return `<li class="flex items-start gap-2 bg-klein/[0.03] p-2.5 border border-klein/10 ${checked ? 'opacity-50' : ''}">
+                                    <input type="checkbox" class="w-4 h-4 mt-0.5 rounded border-klein/30 text-klein cursor-pointer shrink-0" ${checked ? 'checked' : ''}
+                                        onchange="localStorage.setItem('${esc(key)}', this.checked); this.closest('li').classList.toggle('opacity-50', this.checked); this.nextElementSibling.classList.toggle('line-through', this.checked);">
+                                    <span class="leading-relaxed ${checked ? 'line-through' : ''}">${esc(c)}</span></li>`;
+                    }).join('')}
+                        </ul>`;
+                }
+                const crEl = document.getElementById('creators-grid');
+                if (crEl) {
+                    crEl.innerHTML = social.creators.map(c => `
+                        <a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer" class="group border border-klein/15 bg-white p-4 flex flex-col gap-2 hover-spring">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-heading font-black text-klein text-base">${esc(c.name)}</span>
+                                <span class="text-[10px] font-mono bg-klein/10 text-klein px-1.5 py-0.5 shrink-0">${esc(CREATOR_TYPE[c.type] || '')}</span>
+                            </div>
+                            <div class="font-mono text-[11px] text-klein/50">${esc(c.platform)}</div>
+                            <div class="text-xs font-body text-klein/80"><b class="text-klein">內容：</b>${esc(c.focus)}</div>
+                            <div class="text-xs font-body text-klein/80"><b class="text-klein">可以學什麼：</b>${esc(c.learn)}</div>
+                            <div class="mt-auto pt-2 text-xs font-mono font-bold text-klein flex items-center gap-1.5">前往查看 <i class="fa-solid fa-arrow-up-right-from-square text-[10px] group-hover:translate-x-0.5 transition-transform"></i></div>
+                        </a>`).join('');
+                }
+
+                // Holland 維度
+                const radarDetailsEl = document.getElementById('radar-details');
+                if (radarDetailsEl) {
+                    let html = '';
+                    ['R', 'I', 'A', 'S', 'E', 'C'].forEach(key => {
+                        const h = profile.holland[key];
+                        if (!h) return;
+                        const info = HOLLAND_INFO[key];
+                        const color = h.pr >= 67 ? 'text-emerald-500' : (h.pr >= 34 ? 'text-klein' : 'text-rose-500');
+                        html += `
+                        <div class="py-4 first:pt-0 flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-center no-break hover:bg-klein/5 transition-colors p-2">
+                            <div class="w-full sm:w-1/3 flex sm:flex-col justify-between items-baseline">
+                                <div class="flex items-baseline gap-1.5 flex-wrap"><span class="font-bold text-klein text-sm md:text-base">${info.name}</span><span class="font-mono text-xs text-klein/60 font-semibold">(${info.en})</span></div>
+                                <div class="flex items-baseline gap-1 mt-1"><span class="font-mono font-bold text-2xl md:text-3xl ${color}">${h.score}</span><span class="font-mono text-xs text-klein/40">/12 (PR ${h.pr})</span></div>
+                            </div>
+                            <div class="w-full sm:w-2/3 sm:pl-6 sm:border-l border-klein/10"><p class="font-body text-xs md:text-sm text-klein/70 leading-relaxed">${info.desc}</p></div>
+                        </div>`;
+                    });
+                    const tc = profile.topClusters.length ? profile.topClusters : (profile.clusters || []).slice().sort((a, b) => b.pr - a.pr).slice(0, 4).map(c => c.name);
+                    if (tc.length) html += `<div class="pt-4"><div class="text-xs font-bold text-klein/60 mb-2">興趣度最高的職涯類型</div><div class="flex flex-wrap gap-2">${tc.map(n => `<span class="text-xs font-body bg-klein/5 border border-klein/15 px-2.5 py-1">${esc(n)}</span>`).join('')}</div></div>`;
+                    radarDetailsEl.innerHTML = html || '<div class="text-sm text-klein/60 py-4">沒有匯入職業興趣探索報告，因此沒有 Holland 資料。</div>';
+                }
+
+                // 紅綠燈 (共通職能 + 專業職能)
+                const tl = document.getElementById('traffic-light-dashboard');
+                if (tl) {
+                    const bar = (name, score, pr) => {
+                        const lv = levelBar(pr);
+                        return `
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                            <div class="w-full sm:w-28 text-sm font-bold text-klein">${esc(name)}</div>
+                            <div class="flex-1 h-4 bg-gray-100 relative overflow-hidden border border-gray-200">
+                                <div class="absolute left-0 top-0 h-full ${lv.bar}" style="width:${pr}%"></div>
+                            </div>
+                            <div class="w-full sm:w-44 text-right text-xs font-mono font-bold ${lv.txt}">${score != null ? score + ' 分 ' : ''}PR ${pr}（${lv.t}）</div>
+                        </div>`;
+                    };
+                    let html = Object.keys(profile.commonComps).map(k => bar(k, profile.commonComps[k].score, profile.commonComps[k].pr)).join('');
+                    if (!html) html = '<div class="text-sm text-klein/60">沒有匯入職場共通職能報告。</div>';
+                    tl.innerHTML = html;
+                }
+                const piEl = document.getElementById('prof-items');
+                if (piEl) {
+                    if (profile.profPathway) {
+                        const rows = (profile.profItems || []).map(i => {
+                            const lv = levelBar(i.pr);
+                            return `<div class="py-3"><div class="text-sm font-body text-klein leading-snug">${esc(i.name)}</div>
+                                <div class="flex items-center gap-3 mt-1.5"><div class="flex-1 h-3 bg-gray-100 border border-gray-200 overflow-hidden"><div class="h-full ${lv.bar}" style="width:${i.pr}%"></div></div>
+                                <span class="text-xs font-mono font-bold ${lv.txt} w-36 text-right">${i.score} 分 PR ${i.pr}（${lv.t}）</span></div></div>`;
+                        }).join('');
+                        piEl.innerHTML = `<div class="text-sm font-bold text-klein mb-1">${esc(profile.profCareerCluster || '')} ＞ ${esc(profile.profPathway)}${profile.profPr != null ? `　<span class="font-mono text-xs text-klein/60">平均 ${profile.profScore != null ? profile.profScore + ' 分 / ' : ''}PR ${profile.profPr}</span>` : ''}</div>
+                            <div class="divide-y divide-klein/10">${rows || '<div class="text-sm text-klein/60 py-3">此份報告沒有逐項資料。</div>'}</div>`;
+                    } else piEl.innerHTML = '<div class="text-sm text-klein/60">沒有匯入專業職能診斷報告。</div>';
+                }
+
+                // PR 排名
+                const sEl = document.getElementById('strength-cards');
+                if (sEl) {
+                    const top5 = Object.entries(profile.commonComps).sort((a, b) => b[1].pr - a[1].pr).slice(0, 5);
+                    sEl.innerHTML = top5.map(([name, c], i) => {
+                        const lv = levelBar(c.pr);
+                        return `<div class="p-4 bg-white border border-klein/15 flex items-center justify-between hover-spring">
+                            <span class="font-bold text-klein text-sm flex items-center"><span class="font-mono font-bold text-klein/70 mr-2 text-sm">#${i + 1}</span>${esc(name)}</span>
+                            <span class="font-mono text-xs bg-klein/5 border border-klein/20 px-2 py-1 text-klein font-bold">PR ${c.pr}・${lv.t}</span></div>`;
+                    }).join('') || '<div class="text-sm text-klein/60">沒有共通職能資料。</div>';
+                }
+
+                // 必備工具和概念說明
+                const gEl = document.getElementById('glossary-panel');
+                if (gEl) {
+                    gEl.innerHTML = BE.glossaryFor(plan, social).map(g => `<div class="py-3 border-b border-klein/10"><dt class="font-bold text-sm text-klein">${esc(g.term)}</dt><dd class="text-xs font-body text-klein/70 mt-0.5 leading-relaxed">${esc(g.meaning)}</dd></div>`).join('');
+                }
+
+                if (window.CareerDNAMotion) window.CareerDNAMotion.showToast('個人品牌報告與 90 天行動計畫已產生', 'success');
+                if (window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    gsap.fromTo('#report-container > div', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power3.out', overwrite: true });
+                }
+            },
+
+            /** 是否為 iOS / iPadOS (含偽裝成 Mac 的 iPad) */
+            isIOS() {
+                return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            },
+
+            /** 是否在 Messenger / Facebook / Instagram / LINE 等 App 內建瀏覽器 (這類瀏覽器常常無法下載檔案) */
+            isInAppBrowser() {
+                return /FBAN|FBAV|FB_IAB|Messenger|Instagram|\bLine\/|MicroMessenger|Zalo|TikTok|Snapchat/i.test(navigator.userAgent);
+            },
+
+            showInAppWarning() {
+                const el = document.getElementById('inapp-warning');
+                if (!el || !this.isInAppBrowser()) return;
+                el.classList.remove('hidden');
+                el.innerHTML = '<b>你正在 App 內建瀏覽器 (如 Messenger / Facebook / LINE) 中開啟。</b>這類瀏覽器常常無法下載 PDF。建議點右上角「⋯」→「在 Safari / Chrome 中開啟」，再按「下載完整報告」。';
+            },
+
+            /** 把 PDF 交給使用者：桌機直接下載；iOS / App 內建瀏覽器改用「分享」或「開啟」，避免下載被擋 */
+            async deliverPdf(blob, filename) {
+                const useShare = this.isIOS() || this.isInAppBrowser();
+                if (useShare) {
+                    try {
+                        const file = new File([blob], filename, { type: 'application/pdf' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({ files: [file], title: filename });
+                            return 'shared';
+                        }
+                    } catch (e) {
+                        if (e && e.name === 'AbortError') return 'cancelled';
+                        // 產生 PDF 花了幾秒，瀏覽器可能已不認為這是使用者操作 → 改顯示按鈕，讓使用者再點一次
+                    }
+                    this.showPdfFallback(blob, filename);
+                    return 'fallback';
+                }
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = filename; a.style.display = 'none';
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 60000);
+                return 'saved';
+            },
+
+            /** 自動分享失敗時顯示的底部面板：每個按鈕都是一次新的使用者點擊，iOS 才允許開啟 / 分享 */
+            showPdfFallback(blob, filename) {
+                const old = document.getElementById('pdf-fallback'); if (old) old.remove();
+                const url = URL.createObjectURL(blob);
+                const box = document.createElement('div');
+                box.id = 'pdf-fallback';
+                box.className = 'fixed inset-x-0 bottom-0 z-[200] bg-white border-t-2 border-klein shadow-2xl p-5 no-print';
+                box.innerHTML = `
+                    <div class="max-w-xl mx-auto">
+                        <div class="font-heading font-black text-klein text-lg mb-1">PDF 已產生</div>
+                        <p class="text-xs font-body text-klein/70 mb-4">請選一種方式取得檔案。若點了沒反應，請改用 Safari / Chrome 開啟本頁。</p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button id="pdf-share-btn" class="flex-1 px-5 py-3 bg-klein text-white font-bold text-sm">分享 / 儲存到「檔案」</button>
+                            <a href="${url}" target="_blank" rel="noopener" class="flex-1 px-5 py-3 border border-klein text-klein font-bold text-sm text-center">在新分頁開啟 PDF</a>
+                            <button id="pdf-close-btn" class="px-5 py-3 border border-klein/20 text-klein/70 text-sm">關閉</button>
+                        </div>
+                    </div>`;
+                document.body.appendChild(box);
+                document.getElementById('pdf-close-btn').onclick = () => { box.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000); };
+                document.getElementById('pdf-share-btn').onclick = async () => {
+                    try {
+                        const file = new File([blob], filename, { type: 'application/pdf' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: filename });
+                        else window.open(url, '_blank');
+                    } catch (e) { if (!e || e.name !== 'AbortError') window.open(url, '_blank'); }
+                };
+            },
+
+            downloadPDF() {
+                const element = document.getElementById('report-container');
+                if (!element) return;
+
+                const btn = document.getElementById('btn-export-pdf');
+                const resetBtn = () => {
+                    if (!btn) return;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> 下載完整報告 (PDF)';
+                    btn.classList.remove('opacity-70', 'cursor-not-allowed', '!bg-green-600', '!border-green-600');
+                };
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 產生中...';
+                    btn.classList.add('opacity-70', 'cursor-not-allowed');
+                }
+
+                const scrollY = window.scrollY;
+                window.scrollTo(0, 0);
+
+                const printContainer = document.createElement('div');
+                printContainer.id = 'print-a4-temp-container';
+                printContainer.style.position = 'relative'; // 不可用 absolute：html2pdf 會複製節點，absolute 會讓容器高度變 0 而輸出空白 PDF
+                printContainer.style.top = '0';
+                printContainer.style.left = '0';
+                printContainer.style.width = '1024px'; // Force lg breakpoint for tailwind
+                printContainer.style.backgroundColor = '#ffffff';
+                printContainer.style.zIndex = '999999';
+                printContainer.style.padding = '30px';
+
+                const clone = element.cloneNode(true);
+                clone.className = clone.className.replace('grid-cols-1', 'grid-cols-12').replace('lg:grid-cols-12', '');
+                clone.querySelectorAll('.no-print').forEach(n => n.remove());
+                clone.querySelectorAll('details').forEach(d => d.setAttribute('open', ''));
+
+                printContainer.appendChild(clone);
+                // 不需要把 printContainer 加進頁面：html2pdf 會自行複製並渲染，避免畫面閃動
+
+                // iOS Safari 的 canvas 面積上限約 1677 萬像素：報告很長時 scale 2 會超過而失敗 (iPad 上匯不出來)。
+                // 依內容高度自動降低解析度，把總像素控制在安全範圍內。
+                const approxHeight = Math.max(element.scrollHeight, 3000) + 60;
+                const pixelBudget = this.isIOS() || this.isInAppBrowser() ? 11000000 : 40000000;
+                const scale = Math.max(1, Math.min(2, Math.sqrt(pixelBudget / (1024 * approxHeight))));
+
+                const opt = {
+                    margin: [0.3, 0, 0.3, 0],
+                    filename: 'CareerDNA_UCAN_Brand_Report.pdf',
+                    image: { type: 'jpeg', quality: 0.92 },
+                    html2canvas: { scale, useCORS: true, logging: false, scrollY: 0, scrollX: 0, windowWidth: 1024 },
+                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+
+                const toastMsg = (html, ok) => {
+                    const toast = document.createElement('div');
+                    toast.className = (ok ? 'bg-green-600' : 'bg-amber-600') + ' rounded-lg text-white px-5 py-3 shadow-2xl flex items-center gap-3 transition-all duration-500 pointer-events-auto transform translate-y-0 opacity-100 font-body text-sm font-medium';
+                    toast.innerHTML = html;
+                    document.getElementById('toast-container').appendChild(toast);
+                    setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-2'); setTimeout(() => toast.remove(), 500); }, 5000);
+                };
+
+                html2pdf().set(opt).from(printContainer).outputPdf('blob').then(async blob => {
+                    window.scrollTo(0, scrollY);
+                    if (!blob || blob.size < 20000) throw new Error('產生的 PDF 內容為空 (可能是裝置記憶體不足)，請改用電腦或 Safari / Chrome 再試。');
+                    const how = await this.deliverPdf(blob, opt.filename);
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-check"></i> ' + (how === 'fallback' ? 'PDF 已產生' : '匯出成功');
+                        btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                        btn.classList.add('!bg-green-600', '!border-green-600');
+                        setTimeout(resetBtn, 3000);
+                    }
+                    if (how === 'saved' || how === 'shared') toastMsg('<i class="fa-solid fa-circle-check text-lg"></i> 已成功匯出品牌定位報告', true);
+                }).catch(err => {
+                    window.scrollTo(0, scrollY);
+                    resetBtn();
+                    toastMsg('<i class="fa-solid fa-triangle-exclamation text-lg"></i> PDF 匯出失敗：' + (err.message || err), false);
+                    alert('PDF 匯出失敗：' + (err.message || err) + (this.isInAppBrowser() ? '\n\n你正在 App 內建瀏覽器中，請改用 Safari / Chrome 開啟本頁再試。' : ''));
+                });
+            },
+
+            copyText(id, isInput = false) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const text = isInput ? el.value : el.innerText;
+                navigator.clipboard.writeText(text).then(() => { alert('已複製到剪貼簿！'); });
+            }
         };
 
-        html2pdf().set(opt).from(printContainer).save().then(() => {
-            if (document.body.contains(printContainer)) {
-                document.body.removeChild(printContainer);
-            }
-            window.scrollTo(0, scrollY);
-            
-            if (btn) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> 匯出成功';
-                btn.classList.remove('opacity-70', 'cursor-not-allowed');
-                btn.classList.add('!bg-green-600', '!border-green-600');
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> 下載完整報告 (PDF)';
-                    btn.classList.remove('!bg-green-600', '!border-green-600');
-                }, 3000);
-            }
-            
-            // Show Toast
-            const toast = document.createElement('div');
-            toast.className = 'bg-green-600 rounded-lg text-white px-5 py-3 shadow-2xl flex items-center gap-3 transition-all duration-500 pointer-events-auto transform translate-y-0 opacity-100 font-body text-sm font-medium';
-            toast.innerHTML = '<i class="fa-solid fa-circle-check text-lg"></i> 已成功匯出品牌定位報告';
-            document.getElementById('toast-container').appendChild(toast);
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 500);
-            }, 4000);
-            
-        }).catch(err => {
-            window.scrollTo(0, scrollY);
-            if (document.body.contains(printContainer)) {
-                document.body.removeChild(printContainer);
-            }
-            if (btn) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> 下載完整報告 (PDF)';
-                btn.classList.remove('opacity-70', 'cursor-not-allowed');
-            }
-            alert('PDF 匯出失敗：' + (err.message || err));
-        });
-    },
-
-    copyText(id, isInput = false) {
-        const el = document.getElementById(id);
-        const text = isInput ? el.value : el.innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            alert('已複製到剪貼簿！');
-        });
-    }
-};
-
-window.app.init();
+        window.app.init();
     </script>
 
     <!-- Scroll Animations & Parallax Watermark Script -->
@@ -1923,6 +1796,7 @@ window.app.init();
 
     <!-- Toast Container -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
-    
+
 </body>
+
 </html>

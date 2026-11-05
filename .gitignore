@@ -100,3 +100,6 @@ scripts/generate_symbol_only_logo.py
 scripts/remove_tag_and_version.py
 scripts/update_all_brand_and_docs.py
 scripts/update_official_logo.py
+
+# UCAN 個人診斷報告含真實姓名與學號，請勿提交 (測試改用 tests/brand/fixtures 的匿名化文字)
+/UCAN/

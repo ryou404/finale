@@ -13,6 +13,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="static/careerdna-motion.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="static/ucan-parser.js"></script>
+    <script src="static/brand-knowledge.js"></script>
+    <script src="static/brand-engine.js"></script>
     
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -229,7 +233,7 @@
                         資訊系所推薦探索
                     </h1>
                     <p class="font-body text-sm sm:text-base md:text-xl text-klein/70 max-w-3xl leading-relaxed">
-                        不知道自己適合資工、資管還是人工智慧？只需 2 分鐘回答 6 題情境選擇，系統就會根據你的偏好，推薦最適合你的靜宜大學資訊系所。
+                        不用再回答問卷：上傳你在教育部 UCAN 平台做過的診斷報告，系統會用你的 Holland 職業性格、職涯類型興趣、專業職能與共通職能，推薦最適合你的靜宜大學資訊系所，並說明每一項推薦對應的 UCAN 數字。
                     </p>
                 </div>
 
@@ -269,45 +273,32 @@
                     </div>
                 </div>
 
-                <!-- Start CTA Button -->
-                <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
-                    <button onclick="LabApp.start()" class="hover-spring bg-klein text-white font-heading font-black text-base sm:text-lg md:text-xl tracking-wider uppercase px-8 sm:px-12 py-4 sm:py-5 flex items-center justify-center gap-3 sm:gap-4 group cursor-pointer w-full sm:w-auto">
-                        <span>開始系所推薦探索</span>
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>
-                    </button>
-                    <div class="font-mono text-[10px] sm:text-xs tracking-tight sm:tracking-[0.2em] text-klein/50 uppercase flex items-center gap-2 sm:gap-3">
-                        <i class="fa-solid fa-clock"></i>
-                        <span>預計時間: 2 分鐘 · 6 個情境</span>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- 2. Quiz Screen -->
-            <div id="quiz-screen" class="hidden space-y-10">
-                
-                <!-- Progress HUD -->
-                <div class="border-b border-klein/10 pb-6">
-                    <div class="flex justify-between items-center mb-3">
-                        <div class="flex items-center gap-3">
-                            <span class="font-mono text-xs font-bold tracking-wider text-klein/70">測驗進度</span>
-                            <span id="progress-text" class="font-mono text-sm font-bold text-klein tracking-widest px-3 py-1 bg-klein/5 border border-klein/10">1/6</span>
-                        </div>
-                        <a id="quiz-back-home" href="index.html" class="font-mono text-xs font-bold text-klein/60 hover:text-klein flex items-center gap-1.5">
-                            <i class="fa-solid fa-house text-[11px]"></i> 返回首頁
+                <!-- UCAN Data Source -->
+                <div class="pt-2 space-y-4">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
+                        <button id="btn-use-stored" onclick="LabApp.useStored()" class="hidden hover-spring bg-klein text-white font-heading font-black text-base sm:text-lg tracking-wider uppercase px-8 sm:px-10 py-4 sm:py-5 flex items-center justify-center gap-3 sm:gap-4 group cursor-pointer w-full sm:w-auto">
+                            <span>使用已匯入的 UCAN 資料</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>
+                        </button>
+                        <label class="hover-spring border border-klein bg-white hover:bg-klein/5 text-klein font-heading font-black text-base sm:text-lg tracking-wider uppercase px-8 sm:px-10 py-4 sm:py-5 flex items-center justify-center gap-3 cursor-pointer w-full sm:w-auto">
+                            <i class="fa-solid fa-file-arrow-up"></i>
+                            <span>上傳 UCAN 報告 (PDF)</span>
+                            <input type="file" id="lab-pdf-upload" accept="application/pdf" multiple class="hidden" onchange="LabApp.handlePDFUpload(event)">
+                        </label>
+                        <a href="brand_test.html" class="hover-spring border border-klein/20 hover:border-klein text-klein font-heading font-bold text-sm sm:text-base tracking-wider px-6 py-4 sm:py-5 flex items-center justify-center gap-2 w-full sm:w-auto">
+                            <i class="fa-solid fa-pen-to-square text-klein/50"></i> 手動輸入 UCAN 數據
                         </a>
                     </div>
-                    <div class="w-full bg-klein/10 h-2 overflow-hidden">
-                        <div id="progress-bar" class="bg-klein h-full transition-all duration-500 ease-out" style="width: 16.66%;"></div>
+                    <div id="lab-status" class="font-mono text-xs text-klein/70"></div>
+                    <div class="font-mono text-[10px] sm:text-xs tracking-tight sm:tracking-[0.2em] text-klein/50 uppercase flex items-center gap-2 sm:gap-3">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>約 1 分鐘 · 不需作答 · PDF 只在你的瀏覽器解析</span>
                     </div>
                 </div>
 
-                <!-- Question Container (Dynamically Injected) -->
-                <div id="question-container" class="min-h-[420px] flex flex-col justify-center">
-                    <!-- Dynamic Question Injected Here -->
-                </div>
-
             </div>
+
+<!-- (已移除自編情境題：系所推薦改為完全依據 UCAN 診斷數據) -->
 
             <!-- 3. Result Screen -->
             <div id="result-screen" class="hidden reveal-up is-visible space-y-8 sm:space-y-10">
@@ -349,6 +340,15 @@
                         <div id="score-spectrum-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                             <!-- Populated dynamically -->
                         </div>
+                    </div>
+
+                    <!-- 推薦依據 (每一項都對應 UCAN 報告的數字) -->
+                    <div class="border-t border-klein/10 pt-6 sm:pt-8 mb-8 sm:mb-10">
+                        <h3 class="font-mono text-xs font-bold tracking-wider text-klein/70 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass-chart text-klein"></i>
+                            <span>為什麼推薦這個系所？(依據你的 UCAN 數據)</span>
+                        </h3>
+                        <div id="result-basis"></div>
                     </div>
 
                     <!-- Recommended Labs Section -->
@@ -421,57 +421,6 @@
             }
         });
 
-        const QUESTIONS = [
-            {
-                q: "遇到一個全新的技術問題時，你的直覺反應是？",
-                opts: [
-                    { t: "拆解它！我想了解底層運作原理與硬體架構。", type: "CS" },
-                    { t: "思考應用！我想知道這能解決什麼商業問題或改善流程。", type: "IM" },
-                    { t: "找數據！我想訓練模型來預測結果或自動化處理。", type: "AI" }
-                ]
-            },
-            {
-                q: "你比較喜歡哪種類型的課程作業？",
-                opts: [
-                    { t: "撰寫作業系統核心或組合語言，跟記憶體與 CPU 打交道。", type: "CS" },
-                    { t: "規劃一個電商網站的企劃書，包含介面設計與營運模式。", type: "IM" },
-                    { t: "收集大量圖片或文字，訓練一個神經網路來進行分類。", type: "AI" }
-                ]
-            },
-            {
-                q: "在團隊專案中，你通常擔任什麼角色？",
-                opts: [
-                    { t: "技術核心，負責解決最困難的 Bug 與系統架構。", type: "CS" },
-                    { t: "專案經理 (PM)，負責溝通協調、確認需求與進度。", type: "IM" },
-                    { t: "演算法工程師，負責優化模型的準確度與效能。", type: "AI" }
-                ]
-            },
-            {
-                q: "你對未來的職涯想像是？",
-                opts: [
-                    { t: "成為資安專家、系統架構師或嵌入式工程師。", type: "CS" },
-                    { t: "成為產品經理、系統分析師或數位轉型顧問。", type: "IM" },
-                    { t: "成為資料科學家、AI 研究員或電腦視覺工程師。", type: "AI" }
-                ]
-            },
-            {
-                q: "你覺得哪個關鍵字最吸引你？",
-                opts: [
-                    { t: "Linux Kernel / IoT / Cybersecurity", type: "CS" },
-                    { t: "Business Logic / UX / Management", type: "IM" },
-                    { t: "Deep Learning / GAN / Big Data", type: "AI" }
-                ]
-            },
-            {
-                q: "如果給你一筆預算，你會想買？",
-                opts: [
-                    { t: "樹莓派 (Raspberry Pi) 或開發板，想做硬體控制。", type: "CS" },
-                    { t: "雲端伺服器與網域，想架設一個服務平台。", type: "IM" },
-                    { t: "高階顯示卡 (GPU)，想跑深度學習模型。", type: "AI" }
-                ]
-            }
-        ];
-
         const RESULTS = {
             "CS": {
                 title: "資訊工程學系 (CS)",
@@ -505,98 +454,106 @@
             }
         };
 
+        const UP = window.UcanParser, BE = window.BrandEngine;
+        const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const REPORT_LABEL = { holland: '職業興趣探索', common: '職場共通職能', professional: '專業職能診斷' };
+
+        function readStored() {
+            try {
+                const p = JSON.parse(localStorage.getItem('ucan_dna_result') || 'null');
+                return p && p.schemaVersion === 2 ? p : null;
+            } catch (e) { return null; }
+        }
+
+        /** 新上傳的報告只覆蓋「有上傳的那幾份」，其餘沿用先前已匯入的資料 */
+        function mergeProfile(oldP, newP) {
+            if (!oldP) return newP;
+            const m = JSON.parse(JSON.stringify(oldP));
+            m.reportDates = m.reportDates || {};
+            if (!newP.missing.includes('holland')) {
+                ['holland', 'hollandCode', 'primaryHolland', 'hollandTop3', 'clusters', 'topClusters'].forEach(k => { m[k] = newP[k]; });
+                m.reportDates.holland = newP.reportDates.holland;
+            }
+            if (!newP.missing.includes('common')) { m.commonComps = newP.commonComps; m.reportDates.common = newP.reportDates.common; }
+            if (!newP.missing.includes('professional')) {
+                ['profPathway', 'profCareerCluster', 'profScore', 'profPr', 'profItems'].forEach(k => { m[k] = newP[k]; });
+                m.reportDates.professional = newP.reportDates.professional;
+            }
+            m.student = Object.assign({}, m.student, newP.student);
+            m.missing = [];
+            if (!Object.keys(m.holland || {}).length) m.missing.push('holland');
+            if (!Object.keys(m.commonComps || {}).length) m.missing.push('common');
+            if (!m.profPathway) m.missing.push('professional');
+            const dates = Object.values(m.reportDates).filter(Boolean).sort();
+            m.date = dates.length ? dates[dates.length - 1] : m.date;
+            return m;
+        }
+
         window.LabApp = {
-            scores: { "CS": 0, "IM": 0, "AI": 0 },
-            currentQ: 0,
+            init() {
+                if (typeof pdfjsLib !== 'undefined') {
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                }
+                const stored = readStored();
+                const btn = document.getElementById('btn-use-stored');
+                if (stored && stored.missing.length < 3 && btn) btn.classList.remove('hidden');
+            },
 
-            start() {
+            setStatus(msg, isError) {
+                const el = document.getElementById('lab-status');
+                if (!el) return;
+                el.innerText = msg || '';
+                el.className = 'font-mono text-xs ' + (isError ? 'text-rose-600' : 'text-klein/70');
+            },
+
+            useStored() {
+                const p = readStored();
+                if (!p || p.missing.length === 3) { this.setStatus('找不到已匯入的 UCAN 資料，請先上傳報告。', true); return; }
+                this.showResult(p);
+            },
+
+            async handlePDFUpload(event) {
+                const input = event.target;
+                const files = input.files;
+                if (!files || !files.length) return;
+                this.setStatus('正在解析 PDF…');
+                const parts = [], unknown = [];
+                try {
+                    for (const file of files) {
+                        const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+                        let full = '';
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const tc = await (await pdf.getPage(i)).getTextContent();
+                            let t = '';
+                            for (const it of tc.items) { if (typeof it.str === 'string') { t += it.str; t += it.hasEOL ? '\n' : ' '; } }
+                            full += t + '\n';
+                        }
+                        const r = UP.parseReport(full);
+                        if (r.types.length) parts.push(r); else unknown.push(file.name);
+                    }
+                } catch (e) {
+                    console.error(e);
+                    this.setStatus('PDF 解析失敗，請確認檔案是 UCAN 下載的診斷報告，或改用「手動輸入」。', true);
+                    input.value = '';
+                    return;
+                }
+                input.value = '';
+                if (!parts.length) { this.setStatus('無法辨識這些檔案為 UCAN 診斷報告：' + unknown.join('、'), true); return; }
+
+                const merged = mergeProfile(readStored(), UP.buildProfile(parts));
+                try { localStorage.setItem('ucan_dna_result', JSON.stringify(merged)); if (merged.primaryHolland) localStorage.setItem('cdna_primary_holland', merged.primaryHolland); } catch (e) { /* ignore */ }
+                this.showResult(merged);
+            },
+
+            async showResult(profile) {
+                const rec = BE.recommendDepartments(profile);
+                if (rec.completeness === 0) { this.setStatus('沒有可用的 UCAN 數據。', true); return; }
                 const introScreen = document.getElementById('intro-screen');
-                const quizScreen = document.getElementById('quiz-screen');
-                if (introScreen) introScreen.classList.add('hidden');
-                if (quizScreen) quizScreen.classList.remove('hidden');
-                this.renderQuestion();
-            },
-
-            renderQuestion() {
-                const q = QUESTIONS[this.currentQ];
-                const container = document.getElementById('question-container');
-                if (!q || !container) return;
-                
-                // Update Progress Bar & Counter
-                const pct = ((this.currentQ + 1) / QUESTIONS.length) * 100;
-                const progressBar = document.getElementById('progress-bar');
-                if (progressBar) progressBar.style.width = `${pct}%`;
-                
-                const progressText = document.getElementById('progress-text');
-                if (progressText) progressText.innerText = `${this.currentQ + 1}/${QUESTIONS.length}`;
-
-                const optionLabels = ['A', 'B', 'C'];
-
-                let html = `
-                    <div class="reveal-up is-visible space-y-8">
-                        <div class="space-y-3">
-                            <div class="inline-block px-3 py-1 border border-klein/20 bg-klein/5 font-mono text-[11px] md:text-xs font-bold tracking-[0.3em] text-klein uppercase">
-                                SCENARIO 0${this.currentQ + 1} // OF 06
-                            </div>
-                            <h2 class="font-heading font-black text-2xl md:text-4xl text-klein tracking-tight leading-snug">
-                                ${q.q}
-                            </h2>
-                        </div>
-                        
-                        <div class="space-y-4 pt-2">
-                `;
-                
-                q.opts.forEach((opt, idx) => {
-                    const label = optionLabels[idx] || (idx + 1);
-                    html += `
-                        <button onclick="LabApp.answer('${opt.type}')" class="hover-spring w-full text-left p-6 md:p-8 bg-white hover:bg-klein hover:text-white border border-klein/20 group transition-all flex items-center justify-between cursor-pointer">
-                            <div class="flex items-center gap-6">
-                                <div class="w-10 h-10 shrink-0 border border-klein/20 group-hover:border-white/40 flex items-center justify-center font-mono font-bold text-sm text-klein group-hover:text-white group-hover:bg-white/10 transition-all">
-                                    ${label}
-                                </div>
-                                <span class="font-heading font-bold text-base md:text-lg text-klein/90 group-hover:text-white leading-relaxed">
-                                    ${opt.t}
-                                </span>
-                            </div>
-                            <div class="hidden sm:flex items-center gap-2 font-mono text-[11px] md:text-xs text-klein/40 group-hover:text-white/80 uppercase tracking-widest pl-4">
-                                <span>SELECT</span>
-                                <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                            </div>
-                        </button>
-                    `;
-                });
-
-                html += `
-                        </div>
-                    </div>
-                `;
-                
-                container.innerHTML = html;
-                if (window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                    gsap.fromTo('#question-container h2', { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: 'power2.out' });
-                    gsap.fromTo('#question-container button', { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.38, stagger: 0.07, ease: 'power3.out' });
-                }
-            },
-
-            answer(type) {
-                this.scores[type]++;
-                if (this.currentQ < QUESTIONS.length - 1) {
-                    this.currentQ++;
-                    setTimeout(() => this.renderQuestion(), 150);
-                } else {
-                    this.showResult();
-                }
-            },
-
-            async showResult() {
-                const quizScreen = document.getElementById('quiz-screen');
                 const resultScreen = document.getElementById('result-screen');
-                if (quizScreen) quizScreen.classList.add('hidden');
+                if (introScreen) introScreen.classList.add('hidden');
                 if (resultScreen) {
                     resultScreen.classList.remove('hidden');
-                    if (window.CareerDNAMotion) {
-                        window.CareerDNAMotion.showToast('系所適配與專屬研究實驗室推薦已生成', 'success');
-                    }
+                    if (window.CareerDNAMotion) window.CareerDNAMotion.showToast('已依你的 UCAN 數據產生系所推薦', 'success');
                     if (window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                         setTimeout(() => {
                             gsap.fromTo('#result-screen > div', { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power3.out' });
@@ -604,123 +561,88 @@
                         }, 30);
                     }
                 }
+                window.scrollTo(0, 0);
 
-                // Calculate Highest Score & Detect Ties Fairly
-                const maxScore = Math.max(...Object.values(this.scores));
-                const topDepts = Object.keys(this.scores).filter(k => this.scores[k] === maxScore);
-                
-                let winner = topDepts[0];
-                const isTie = topDepts.length > 1;
-
-                if (isTie) {
-                    // Smart tie-breaker: check user's saved department or Holland code from brand test
-                    const savedDept = localStorage.getItem('cdna_department');
-                    const savedHolland = localStorage.getItem('cdna_primary_holland');
-                    if (savedDept && topDepts.includes(savedDept)) {
-                        winner = savedDept;
-                    } else if (savedHolland) {
-                        if (savedHolland === 'R' && topDepts.includes('CS')) winner = 'CS';
-                        else if (savedHolland === 'I' && topDepts.includes('AI')) winner = 'AI';
-                        else if (savedHolland === 'E' && topDepts.includes('IM')) winner = 'IM';
-                        else if (savedHolland === 'A' && topDepts.includes('AI')) winner = 'AI';
-                        else if (savedHolland === 'C' && topDepts.includes('IM')) winner = 'IM';
-                    }
-                }
+                const winner = rec.ranked[0].dept;
                 const data = RESULTS[winner];
-
                 const titleEl = document.getElementById('result-title');
                 if (titleEl) titleEl.innerText = data.title;
-
                 const iconEl = document.getElementById('result-icon');
                 if (iconEl) iconEl.innerText = data.icon;
 
                 const descEl = document.getElementById('result-desc');
                 if (descEl) {
-                    if (isTie) {
-                        const tiedTitles = topDepts.map(k => RESULTS[k].title.split(' ')[0]).join(' 與 ');
-                        descEl.innerHTML = `${data.desc}<br><span class="inline-block mt-3 px-3 py-1.5 bg-blue-50 border border-blue-200 text-xs font-mono font-bold text-klein">✨ 雙領域優勢提示：您在 ${tiedTitles} 獲得相同的高契合度（各 ${maxScore} 題），展現出跨領域整合潛力，建議未來可考慮跨系修課或雙主修！</span>`;
-                    } else {
-                        descEl.innerText = data.desc;
+                    descEl.innerText = data.desc;
+                    if (rec.tie) {
+                        const second = rec.ranked[1];
+                        const hint = document.createElement('span');
+                        hint.className = 'block mt-3 px-3 py-1.5 bg-blue-50 border border-blue-200 text-xs font-mono font-bold text-klein';
+                        hint.innerText = `✨ 雙領域提示：你的 UCAN 數據對 ${data.title.split(' ')[0]} 與 ${RESULTS[second.dept].title.split(' ')[0]} 的契合度幾乎相同（${rec.ranked[0].score}% / ${second.score}%），可考慮跨系修課或雙主修。`;
+                        descEl.appendChild(hint);
                     }
                 }
-
                 const labsEl = document.getElementById('result-labs');
                 if (labsEl) labsEl.innerHTML = data.labs.join('');
 
-                // Render Compatibility Spectrum Meters
-                const spectrumContainer = document.getElementById('score-spectrum-container');
-                if (spectrumContainer) {
-                    const totalQ = QUESTIONS.length;
-                    const depts = [
-                        { key: 'CS', name: '資訊工程 (CS)', score: this.scores['CS'] },
-                        { key: 'IM', name: '資訊管理 (IM)', score: this.scores['IM'] },
-                        { key: 'AI', name: '人工智慧 (AI)', score: this.scores['AI'] }
-                    ];
-
-                    spectrumContainer.innerHTML = depts.map(d => {
-                        const pct = Math.round((d.score / totalQ) * 100);
-                        const isWin = d.key === winner;
+                const spectrum = document.getElementById('score-spectrum-container');
+                if (spectrum) {
+                    spectrum.innerHTML = rec.ranked.map(d => {
+                        const isWin = d.dept === winner;
                         return `
-                            <div class="border ${isWin ? 'border-klein bg-klein/5' : 'border-klein/10 bg-white'} p-5 crosshair-corner">
-                                <div class="flex justify-between items-center mb-3">
-                                    <span class="font-heading font-black text-sm text-klein tracking-tight">${d.name}</span>
-                                    <span class="font-mono font-bold text-sm ${isWin ? 'text-klein' : 'text-klein/60'}">${pct}% (${d.score}題)</span>
-                                </div>
-                                <div class="w-full bg-klein/10 h-2 overflow-hidden">
-                                    <div class="${isWin ? 'bg-klein' : 'bg-klein/40'} h-full transition-all duration-700" style="width: ${pct}%"></div>
-                                </div>
+                        <div class="border ${isWin ? 'border-klein bg-klein/5' : 'border-klein/10 bg-white'} p-5 crosshair-corner">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="font-heading font-black text-sm text-klein tracking-tight">${esc(d.name)}</span>
+                                <span class="font-mono font-bold text-sm ${isWin ? 'text-klein' : 'text-klein/60'}">${d.score}%</span>
                             </div>
-                        `;
+                            <div class="w-full bg-klein/10 h-2 overflow-hidden"><div class="${isWin ? 'bg-klein' : 'bg-klein/40'} h-full transition-all duration-700" style="width:${d.score}%"></div></div>
+                        </div>`;
                     }).join('');
                 }
 
-                // Update Link to Career Fit
+                // 依據：每一項都對應到 UCAN 報告裡的數字
+                const basis = document.getElementById('result-basis');
+                if (basis) {
+                    const miss = profile.missing.length ? `<div class="mb-4 text-xs font-body text-amber-800 bg-amber-50 border border-amber-200 px-3 py-2">未匯入：${profile.missing.map(m => REPORT_LABEL[m]).join('、')}。推薦只使用已匯入的 ${rec.completeness} 份報告，沒有補任何預設值；三份都匯入會更準確。</div>` : '';
+                    const rows = rec.ranked[0].parts.map(pt => `
+                        <div class="py-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+                            <div class="sm:w-56 shrink-0"><div class="font-bold text-sm text-klein">${esc(pt.label)}</div><div class="font-mono text-[10px] text-klein/50">來源：UCAN ${esc(pt.source)}</div></div>
+                            <div class="flex-1"><div class="h-2 bg-klein/10 overflow-hidden"><div class="h-full bg-klein" style="width:${Math.round(pt.value * 100)}%"></div></div><div class="text-xs font-body text-klein/70 mt-1.5">${esc(pt.detail)}</div></div>
+                            <div class="font-mono font-bold text-klein w-14 text-right">${Math.round(pt.value * 100)}%</div>
+                        </div>`).join('');
+                    basis.innerHTML = miss + `<div class="divide-y divide-klein/10">${rows}</div>
+                        <p class="text-[11px] font-body text-klein/50 mt-4 leading-relaxed">計算方式：職業性格 35%、職涯類型興趣 25%、專業職能途徑 20%、共通職能 20%（缺少的報告自動略過並重新分配）。各系所對各項目的對應強度，是本專案依 Holland 人境適配理論設定的規則，並非 UCAN 或學校官方公式。</p>`;
+                }
+
                 const btn = document.getElementById('btn-career-fit');
                 if (btn) {
                     btn.href = `career_fit.html?dept=${winner}`;
                     btn.innerHTML = `<span>查看 ${winner} 必修課</span> <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>`;
                 }
 
+                const scores = {};
+                rec.ranked.forEach(d => { scores[d.dept] = d.score; });
                 const resultData = {
-                    dept: winner,
-                    deptName: data.title,
-                    date: new Date().toISOString(),
-                    scores: this.scores
+                    dept: winner, deptName: data.title, date: new Date().toISOString(), scores,
+                    answers: { source: 'ucan', completeness: rec.completeness, basis: rec.ranked[0].parts.map(p => ({ label: p.label, source: p.source, detail: p.detail, value: Math.round(p.value * 100) })) }
                 };
 
-                // Sync to MongoDB Atlas
                 if (window.CareerDNA_DB) {
                     const effectiveUid = window.CareerDNA_DB.getEffectiveUid(currentUser);
                     window.CareerDNA_DB.saveLabResult(effectiveUid, resultData)
-                        .then(() => console.log("✅ [MongoDB Atlas] 系所推薦結果已同步！"))
-                        .catch(err => console.error("❌ [MongoDB Atlas] 同步失敗:", err));
+                        .then(() => console.log('✅ [MongoDB Atlas] 系所推薦結果已同步！'))
+                        .catch(err => console.error('❌ [MongoDB Atlas] 同步失敗:', err));
                 }
-
-                // Persist Result to Firestore if Authenticated
                 if (currentUser) {
                     try {
                         const batch = writeBatch(db);
-                        
-                        // 1. Snapshot in user history
-                        const historyRef = doc(collection(db, "users", currentUser.uid, "history_lab"));
-                        batch.set(historyRef, resultData);
-
-                        // 2. Aggregate into summary cache
-                        const userRef = doc(db, "users", currentUser.uid);
-                        batch.set(userRef, {
-                            summary_cache: {
-                                lab: { dept: winner, deptName: data.title, date: resultData.date }
-                            }
-                        }, { merge: true });
-
+                        batch.set(doc(collection(db, 'users', currentUser.uid, 'history_lab')), resultData);
+                        batch.set(doc(db, 'users', currentUser.uid), { summary_cache: { lab: { dept: winner, deptName: data.title, date: resultData.date } } }, { merge: true });
                         await batch.commit();
-                        console.log("✅ [CareerDNA Lab] 推薦結果已儲存 (歷史快照 + 聚合快取)");
-                    } catch (e) {
-                        console.error("[CareerDNA Lab] 儲存失敗", e);
-                    }
+                    } catch (e) { console.error('[CareerDNA Lab] 儲存失敗', e); }
                 }
             }
         };
+        document.addEventListener('DOMContentLoaded', () => window.LabApp.init());
 
         // Initialize Intersection Observer for Stryde Reveal Up
         document.addEventListener('DOMContentLoaded', () => {

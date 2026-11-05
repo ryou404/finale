@@ -140,7 +140,7 @@ router.post('/auth/login', async (req, res) => {
 router.post('/auth/register-request', async (req, res) => {
   try {
     const { username, password, email, name, school, department, grade } = req.body || {};
-    
+
     if (!name || !name.trim()) {
       return res.status(400).json({ status: 'error', message: '請輸入姓名 / 暱稱' });
     }
@@ -210,7 +210,7 @@ router.post('/auth/register-request', async (req, res) => {
       console.info(`🔑 ==========================================`);
       console.info(`🔑 [RENDER OTP VERIFICATION CODE]: ${otpCode} for ${targetEmail}`);
       console.info(`🔑 ==========================================`);
-      
+
       res.json({
         status: 'ok',
         isSimulated: true,
@@ -498,7 +498,7 @@ router.get('/users/:uid', async (req, res) => {
     let user = await findUserFlexible(uid);
     if (!user) {
       // Auto create skeleton for guest or new user
-      user = await User.create({ uid, name: '新朋友', department: 'IM' });
+      user = await createSkeletonUser({ uid, name: '新朋友', department: 'IM' });
     }
     res.json({ status: 'ok', user });
   } catch (err) {
@@ -517,7 +517,7 @@ router.post('/users/sync', async (req, res) => {
       return res.status(400).json({ status: 'error', message: 'Missing uid in payload' });
     }
 
-    const updatedUser = await User.findOneAndUpdate(
+    const updatedUser = await safeUserUpdate(
       { $or: [{ uid }, { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null }] },
       { $set: { uid, ...data } },
       { returnDocument: 'after', upsert: true, setDefaultsOnInsert: true }
@@ -537,7 +537,7 @@ router.put('/users/:uid/profile', async (req, res) => {
   try {
     const { uid } = req.params;
     const { name, displayName, school, department, dept, grade, skills, settings } = req.body || {};
-    
+
     const updateFields = {};
     if (name !== undefined) updateFields.name = name;
     if (displayName !== undefined) updateFields.displayName = displayName;
@@ -550,12 +550,14 @@ router.put('/users/:uid/profile', async (req, res) => {
     updateFields.updatedAt = new Date();
 
     const user = await User.findOneAndUpdate(
-      { $or: [
-        { uid }, 
-        { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null },
-        { email: uid },
-        { username: uid }
-      ] },
+      {
+        $or: [
+          { uid },
+          { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null },
+          { email: uid },
+          { username: uid }
+        ]
+      },
       { $set: updateFields },
       { returnDocument: 'after', upsert: true }
     );
@@ -566,6 +568,53 @@ router.put('/users/:uid/profile', async (req, res) => {
     res.status(500).json({ status: 'error', message: err.message });
   }
 });
+
+/**
+ * 資料庫 career.users 有舊的 email_1 / username_1「唯一索引」，而使用者預設 email、username 是空字串，
+ * 所以第二個沒有 email 的使用者 (訪客 guest_* 或剛註冊尚未同步的新使用者) 會因重複鍵 (E11000) 失敗。
+ * 這裡不改資料庫，改在程式端為「沒有 email 的骨架使用者」補上唯一的佔位 email
+ * (.invalid 是保留網域，不會是真實信箱)，使用者之後登入/同步時會被真實 email 覆蓋。
+ */
+function isEmailDupError(err) {
+  return !!(err && err.code === 11000 && err.keyPattern && (err.keyPattern.email || err.keyPattern.username));
+}
+function placeholderEmail(uid) {
+  return `${String(uid).replace(/[^A-Za-z0-9_.-]/g, '_')}@guest.invalid`;
+}
+
+/** 建立骨架使用者；遇到 email / username 重複鍵時改用唯一佔位值重試 */
+async function createSkeletonUser(fields) {
+  try {
+    return await User.create(fields);
+  } catch (err) {
+    if (!isEmailDupError(err)) throw err;
+    console.warn('[API] email_1 / username_1 唯一索引衝突，改用佔位值建立骨架使用者:', fields.uid);
+    return await User.create({ ...fields, email: fields.email || placeholderEmail(fields.uid), username: fields.username || String(fields.uid) });
+  }
+}
+
+/** 更新使用者文件 (可 upsert)；遇到唯一索引重複鍵時以佔位 email / username 重試一次，仍失敗才略過快取更新 */
+async function safeUserUpdate(filter, update, options) {
+  try {
+    return await User.findOneAndUpdate(filter, update, options);
+  } catch (err) {
+    if (!isEmailDupError(err)) throw err;
+    const uid = filter && filter.$or && filter.$or[0] && filter.$or[0].uid;
+    if (uid && options && options.upsert) {
+      try {
+        const setKeys = Object.keys(update.$set || {});
+        const onInsert = { ...(update.$setOnInsert || {}) };
+        const defaults = { uid, email: placeholderEmail(uid), username: String(uid) };
+        Object.keys(defaults).forEach(k => { if (!setKeys.includes(k) && onInsert[k] === undefined) onInsert[k] = defaults[k]; });
+        return await User.findOneAndUpdate(filter, { ...update, $setOnInsert: onInsert }, options);
+      } catch (err2) {
+        if (!isEmailDupError(err2)) throw err2;
+      }
+    }
+    console.warn('[API] 略過使用者快取更新 (唯一索引重複鍵):', err.keyValue);
+    return null;
+  }
+}
 
 /**
  * 5. Save Brand / Holland Test Snapshot (Dual-collection sync)
@@ -584,7 +633,11 @@ router.post('/users/:uid/brand', async (req, res) => {
       topStrengths: Array.isArray(brandData.topStrengths) ? brandData.topStrengths : [],
       radarData: Array.isArray(brandData.radarData) ? brandData.radarData : [],
       hollandScores: brandData.hollandScores || [],
-      ucan: brandData.ucan || ''
+      ucan: brandData.ucan || '',
+      ucanProfile: brandData.ucanProfile || null,
+      goalRoleId: brandData.goalRoleId || '',
+      goalRoleTitle: brandData.goalRoleTitle || '',
+      kbVersion: brandData.kbVersion || ''
     };
 
     // 1. Create record in dedicated brand_test_results collection
@@ -598,11 +651,15 @@ router.post('/users/:uid/brand', async (req, res) => {
       topStrengths: snapshot.topStrengths,
       radarData: snapshot.radarData,
       resumeDraft: brandData.resumeDraft || '',
+      ucanProfile: snapshot.ucanProfile,
+      goalRoleId: snapshot.goalRoleId,
+      goalRoleTitle: snapshot.goalRoleTitle,
+      kbVersion: snapshot.kbVersion,
       answers: brandData.answers || {}
     });
 
     // 2. Update user document
-    const user = await User.findOneAndUpdate(
+    const user = await safeUserUpdate(
       { $or: [{ uid }, { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null }] },
       {
         $set: {
@@ -636,7 +693,7 @@ router.get('/users/:uid/brand', async (req, res) => {
     const { uid } = req.params;
     const user = await findUserFlexible(uid);
     let latestBrand = user?.brand_results?.latest || null;
-    
+
     if (!latestBrand || !latestBrand.topHollandCode) {
       // Fallback to query brand_test_results
       const legacyDoc = await BrandTestResult.findOne({ userId: uid }).sort({ createdAt: -1 });
@@ -700,7 +757,7 @@ router.post('/users/:uid/resume', async (req, res) => {
     // 2. Fetch user to check for rapid duplicate submissions (< 15 seconds)
     let user = await findUserFlexible(uid);
     if (!user) {
-      user = await User.create({ uid, name: '用戶' });
+      user = await createSkeletonUser({ uid, name: '用戶' });
     }
 
     user.careerFitResult = careerFitDoc._id;
@@ -716,7 +773,7 @@ router.post('/users/:uid/resume', async (req, res) => {
     const lastHistoryItem = user.history_resume.length > 0 ? user.history_resume[user.history_resume.length - 1] : null;
     const nowTime = new Date(updatedAtStr).getTime();
     const lastTime = lastHistoryItem?.updatedAt ? new Date(lastHistoryItem.updatedAt).getTime() : 0;
-    
+
     // If last history entry was added within 15 seconds, replace it to prevent duplicates
     if (lastHistoryItem && Math.abs(nowTime - lastTime) < 15000) {
       user.history_resume[user.history_resume.length - 1] = snapshot;
@@ -808,7 +865,7 @@ router.post('/users/:uid/lab', async (req, res) => {
     });
 
     // 2. Update user document
-    const user = await User.findOneAndUpdate(
+    const user = await safeUserUpdate(
       { $or: [{ uid }, { _id: mongoose.Types.ObjectId.isValid(uid) ? uid : null }] },
       {
         $set: {
@@ -839,7 +896,7 @@ router.get('/professors', async (req, res) => {
     const { dept } = req.query;
     const filter = dept ? { department: dept.toUpperCase() } : {};
     let professors = await Professor.find(filter);
-    
+
     // Auto-seed if collection is empty
     if (professors.length === 0 && !dept) {
       const defaultProfessors = [
@@ -876,7 +933,7 @@ router.get('/professors', async (req, res) => {
       ];
       professors = await Professor.insertMany(defaultProfessors);
     }
-    
+
     res.json({ status: 'ok', count: professors.length, professors });
   } catch (err) {
     console.error('[API /professors error]:', err);
@@ -895,7 +952,7 @@ router.post('/users/:uid/avatar', upload.single('avatar'), async (req, res) => {
     }
 
     const { key, url } = await uploadAvatarToR2(req.file.buffer, req.file.mimetype, uid, req.file.originalname);
-    
+
     // Update User in MongoDB Atlas
     let user = await User.findOneAndUpdate(
       { $or: [{ uid }, { username: uid }, { email: uid }] },
@@ -931,7 +988,7 @@ router.get('/r2/file/*', async (req, res) => {
     if (contentType) res.setHeader('Content-Type', contentType);
     if (contentLength) res.setHeader('Content-Length', contentLength);
     res.setHeader('Cache-Control', 'public, max-age=31536000');
-    
+
     if (body.pipe) {
       body.pipe(res);
     } else {
